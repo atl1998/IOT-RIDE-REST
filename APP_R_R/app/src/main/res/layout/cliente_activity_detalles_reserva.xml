@@ -1,0 +1,853 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    tools:context=".cliente.DetallesReserva">
+
+    <!-- Encabezado amarillo -->
+    <LinearLayout
+        android:id="@+id/headerLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@color/amarillo_dorado"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- Título + Chat + Notificaciones -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="6dp">
+
+            <!-- Título Ride & Rest -->
+            <TextView
+                android:id="@+id/titulo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Ride &amp; Rest"
+                android:textColor="#282828"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:gravity="center"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
+            <!-- Botón de Búsqueda -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/buscar"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:backgroundTint="@color/transparente"
+                app:icon="@drawable/search_24dp_e3e3e3_fill0_wght400_grad0_opsz24"
+                app:iconTint="@color/marron_oscuro"
+                app:iconGravity="textStart"
+                app:iconPadding="0dp"
+                android:padding="15dp"
+                android:minWidth="0dp"
+                android:minHeight="0dp"
+                android:contentDescription="Abrir chat de soporte"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/notificaciones_cliente"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginEnd="4dp"/>
+
+            <!-- Botón de Notificaciones -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/notificaciones_cliente"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:backgroundTint="@color/transparente"
+                app:icon="@drawable/notifications_24dp_e3e3e3_fill0_wght400_grad0_opsz24"
+                app:iconTint="@color/marron_oscuro"
+                app:iconGravity="textStart"
+                app:iconPadding="0dp"
+                android:padding="15dp"
+                android:minWidth="0dp"
+                android:minHeight="0dp"
+                android:contentDescription="Ver notificaciones nuevas"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- Categorías: ScrollView horizontal -->
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:overScrollMode="never"
+            android:scrollbars="none"
+            android:background="#FFC107"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp">
+
+                <!-- Botón Favoritos -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnFavoritos"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Favoritos"
+                    android:textColor="@color/marron_oscuro"
+                    app:icon="@drawable/outline_favorite_border_24"
+                    app:iconTint="@color/marron_oscuro"
+                    app:iconGravity="textStart"
+                    app:iconPadding="8dp"
+                    app:backgroundTint="@color/transparente"
+                    app:strokeColor="@color/marron_oscuro"
+                    app:strokeWidth="1dp"
+                    app:cornerRadius="30dp"
+                    android:layout_marginEnd="8dp"/>
+
+                <!-- Botón Reservas -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnAlojamientos"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Alojamientos"
+                    android:textColor="@color/marron_oscuro"
+                    app:icon="@drawable/outline_bed_24"
+                    app:iconTint="@color/marron_oscuro"
+                    app:iconGravity="textStart"
+                    app:iconPadding="8dp"
+                    app:backgroundTint="@color/transparente"
+                    app:strokeColor="@color/marron_oscuro"
+                    app:strokeWidth="1dp"
+                    app:cornerRadius="30dp"
+                    android:layout_marginEnd="8dp"/>
+
+                <!-- Botón Historial -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnHistorial"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Historial"
+                    android:textColor="@color/marron_oscuro"
+                    app:icon="@drawable/outline_history_24"
+                    app:iconTint="@color/marron_oscuro"
+                    app:iconGravity="textStart"
+                    app:iconPadding="8dp"
+                    app:backgroundTint="@color/transparente"
+                    app:strokeColor="@color/marron_oscuro"
+                    app:strokeWidth="1dp"
+                    app:cornerRadius="30dp" />
+
+                <!-- Botón taxi -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btntaxi"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Taxi"
+                    android:textColor="@color/marron_oscuro"
+                    app:icon="@drawable/local_taxi_24dp_e3e3e3_fill0_wght400_grad0_opsz24"
+                    app:iconTint="@color/marron_oscuro"
+                    app:iconGravity="textStart"
+                    app:iconPadding="8dp"
+                    app:backgroundTint="@color/transparente"
+                    app:strokeColor="@color/marron_oscuro"
+                    app:strokeWidth="1dp"
+                    app:cornerRadius="30dp" />
+            </LinearLayout>
+        </HorizontalScrollView>
+    </LinearLayout>
+    <!-- Línea negra abajo -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#000000"
+        app:layout_constraintTop_toBottomOf="@id/headerLayout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <!-- CUERPO DEL DETALLE -->
+    <ScrollView
+        android:id="@+id/scrollReserva"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/headerLayout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp">
+
+            <TextView
+                android:text="Tu reserva"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="#525252"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <!-- HOTEL -->
+            <LinearLayout
+                android:layout_marginTop="12dp"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <!-- Contenedor de los detalles del hotel -->
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/imageHotel"
+                    android:layout_width="99dp"
+                    android:layout_height="91dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginEnd="12dp"
+                    android:contentDescription="Imagen del hotel"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/hotel1"
+                    app:shapeAppearanceOverlay="@style/RoundedImageView" />
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/nombreHotel"
+                        android:text="Hotel MiM Ibiza"
+                        android:textStyle="bold"
+                        android:textSize="20sp"
+                        android:textColor="#2F2F2F"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp" />
+                    <TextView
+                        android:id="@+id/status"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="En progreso"
+                        android:layout_marginTop="3dp"
+                        android:textColor="#4CAF50"
+                        android:textSize="17sp"
+                         />
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:layout_marginTop="3dp"
+                            android:text="⭐ 8.5/10"
+
+                            android:textSize="16sp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+
+                        <TextView
+                            android:layout_marginTop="3dp"
+                            android:text="   📍 España, Ibiza"
+                            android:textSize="16sp"
+                            android:textColor="#808080"
+
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+            <TextView
+                android:layout_marginTop="13dp"
+                android:text="Detalles"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="#525252"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:gravity="center_vertical"
+                    android:paddingStart="0dp"
+                    android:paddingEnd="16dp">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginEnd="8dp"
+                        android:src="@drawable/calendar_month" />
+
+                    <RelativeLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1">
+
+                        <TextView
+                            android:id="@+id/labelFecha"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Fecha:"
+                            android:textSize="16sp"
+                            android:textColor="#000000"
+                            android:layout_alignParentStart="true" />
+
+                        <TextView
+                            android:id="@+id/valorFecha"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="28 Abr - 2 Mar 2024"
+                            android:textSize="16sp"
+                            android:textColor="#444444"
+                            android:layout_alignParentEnd="true" />
+                    </RelativeLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:paddingStart="0dp"
+                    android:paddingEnd="16dp">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginEnd="8dp"
+                        android:src="@drawable/person" />
+
+                    <RelativeLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1">
+
+                        <TextView
+                            android:id="@+id/labelPersonas"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Personas:"
+                            android:textSize="16sp"
+                            android:textColor="#000000"
+                            android:layout_alignParentStart="true" />
+
+                        <TextView
+                            android:id="@+id/valorPersonas"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="2 Personas (1 Habitación)"
+                            android:textSize="16sp"
+                            android:textColor="#444444"
+                            android:layout_alignParentEnd="true" />
+                    </RelativeLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:paddingStart="0dp"
+                    android:paddingEnd="16dp">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginEnd="8dp"
+                        android:src="@drawable/bedroom_parent" />
+
+                    <RelativeLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1">
+
+                        <TextView
+                            android:id="@+id/labelHabitacion"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Tipo de habitación:"
+                            android:textSize="16sp"
+                            android:textColor="#000000"
+                            android:layout_alignParentStart="true" />
+
+                        <TextView
+                            android:id="@+id/valorHabitacion"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Matrimonial"
+                            android:textSize="16sp"
+                            android:textColor="#444444"
+                            android:layout_alignParentEnd="true" />
+                    </RelativeLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:paddingStart="0dp"
+                    android:paddingEnd="16dp">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginEnd="8dp"
+                        android:src="@drawable/person" />
+
+                    <RelativeLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1">
+
+                        <TextView
+                            android:id="@+id/labelContacto"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Contacto:"
+                            android:textSize="16sp"
+                            android:textColor="#000000"
+                            android:layout_alignParentStart="true" />
+
+                        <TextView
+                            android:id="@+id/valorContacto"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="+34 911234567"
+                            android:textSize="16sp"
+                            android:textColor="#444444"
+                            android:layout_alignParentEnd="true" />
+                    </RelativeLayout>
+                </LinearLayout>
+
+            </LinearLayout>
+
+
+            <TextView
+                android:layout_marginTop="13dp"
+                android:text="Fechas Definidas"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="#525252"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp"
+                app:strokeWidth="0dp"
+                android:backgroundTint="#F2F2F2"
+                app:cardBackgroundColor="#F2F2F2">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingTop="20dp"
+                    android:paddingBottom="24dp"
+                    android:paddingStart="20dp"
+                    android:paddingEnd="20dp">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="6dp">
+
+                        <ImageView
+                            android:layout_width="26dp"
+                            android:layout_height="match_parent"
+
+                            android:contentDescription="Ícono de reloj"
+                            android:src="@drawable/checkin" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Check-In:"
+                            android:textColor="#000000"
+                            android:textSize="16sp" />
+                    </LinearLayout>
+
+                    <!-- Fecha y enlace -->
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp">
+
+                        <!-- Fecha -->
+                        <TextView
+                            android:id="@+id/fechaCheckIn"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="28 de Abril:"
+                            android:textSize="16sp"
+                            android:paddingStart="5dp"
+                            android:textColor="#474747"
+                            android:layout_alignParentStart="true" />
+
+                        <!-- Texto clickeable -->
+                        <TextView
+                            android:id="@+id/definirHoraLlegada"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Definir hora de llegada"
+                            android:textSize="16sp"
+                            android:paddingEnd="5dp"
+                            android:textColor="#007AFF"
+                            android:textStyle="bold"
+                            android:layout_alignParentEnd="true"
+                            android:clickable="true"
+                            android:focusable="true" />
+                    </RelativeLayout>
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp"
+                app:strokeWidth="0dp"
+                android:backgroundTint="#F2F2F2"
+                app:cardBackgroundColor="#F2F2F2">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingTop="20dp"
+                    android:paddingBottom="24dp"
+                    android:paddingStart="20dp"
+                    android:paddingEnd="20dp">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="6dp">
+
+                        <ImageView
+                            android:layout_width="26dp"
+                            android:layout_height="match_parent"
+
+                            android:contentDescription="Ícono de reloj"
+                            android:src="@drawable/checkout" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Check-Out:"
+                            android:textColor="#000000"
+                            android:textSize="16sp" />
+                    </LinearLayout>
+
+                    <!-- Fecha y enlace -->
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp">
+
+                        <!-- Fecha -->
+                        <TextView
+                            android:id="@+id/fechaCheckOut"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="2 de Marzo:"
+                            android:textSize="16sp"
+                            android:paddingStart="5dp"
+                            android:textColor="#474747"
+                            android:layout_alignParentStart="true" />
+
+                        <!-- Texto clickeable -->
+                        <TextView
+                            android:id="@+id/HoraDeSalida"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Por definir / Desde las 12 am"
+                            android:textSize="16sp"
+                            android:paddingEnd="5dp"
+                            android:textColor="#646464"
+                            android:textStyle="bold"
+                            android:layout_alignParentEnd="true"
+                            android:clickable="false"
+                            android:focusable="true" />
+                    </RelativeLayout>
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:paddingStart="0dp"
+                android:paddingEnd="16dp">
+
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:id="@+id/labelUbicacion"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:text="Ubicación"
+                        android:textStyle="bold"
+                        android:textSize="18sp"
+                        android:textColor="#525252"
+                        android:layout_alignParentStart="true" />
+
+                    <TextView
+                        android:id="@+id/abrirMapa"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:text="Abrir mapa"
+                        android:textSize="16sp"
+                        android:textColor="#007AFF"
+                        android:clickable="true"
+                        android:textStyle="bold"
+                        android:focusable="true"
+                        android:layout_alignParentEnd="true" />
+                </RelativeLayout>
+            </LinearLayout>
+
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="120dp"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="8dp"
+                >
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/hotel1_mapa1" />
+
+                    <com.google.android.material.floatingactionbutton.FloatingActionButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:backgroundTint="#3366CC"
+                        android:contentDescription="Ubicación del hotel"
+                        android:src="@drawable/baseline_location_on_24_black"/>
+                </RelativeLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:paddingStart="0dp"
+                android:paddingEnd="16dp">
+
+                    <TextView
+                        android:id="@+id/labServiciosAlojamiento"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="Servicios De Alojamiento"
+                        android:textStyle="bold"
+                        android:textSize="18sp"
+                        android:textColor="#525252"
+                        android:layout_alignParentStart="true" />
+
+
+            </LinearLayout>
+
+            <GridLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="15dp"
+                android:columnCount="2">
+
+                <!-- Servicio Taxi -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_columnWeight="1"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="16dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/local_taxi" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:text="Servicio de Taxi\n(Gratis)"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+                <!-- WiFi -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_columnWeight="1"
+                    android:layout_marginBottom="16dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/wifi" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:text="Wi-Fi\nGratuito"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+                <!-- Desayuno -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_columnWeight="1"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="16dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/cafe" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:text="Desayuno\nGratuito"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+                <!-- Servicios extras -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_columnWeight="1"
+                    android:layout_marginBottom="16dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/room_service"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:text="Servicios\nextras"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+                <!-- Gimnasio -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_columnWeight="1"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="16dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/gym" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:text="Cuenta con\nGimnasio"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+                <!-- Acepta mascotas -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_columnWeight="1"
+                    android:layout_marginBottom="16dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/pets" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:text="Acepta\nMascotas"
+                        android:textSize="12sp" />
+                </LinearLayout>
+            </GridLayout>
+
+            <Button
+                android:id="@+id/btnCheckout"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="0dp"
+                android:layout_weight="1"
+                android:backgroundTint="#3F51B5"
+                android:text="Procesar el Pago"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp" />
+
+
+        </LinearLayout>
+    </ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

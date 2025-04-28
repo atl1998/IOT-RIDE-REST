@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".cliente.HistorialEventos">
+
+    <!-- Encabezado superior -->
+
+    <!-- Contenido scrollable (reservas) -->
+    <LinearLayout
+        android:id="@+id/headerLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="#FFCC00"
+        android:orientation="vertical"
+        android:padding="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Ride and Rest"
+            android:textColor="#282828"
+            android:textSize="22sp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:weightSum="3">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnFavoritos"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:paddingStart="18dp"
+                android:paddingEnd="18dp"
+                android:text="Favoritos"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                app:backgroundTint="#10FF9800"
+                app:cornerRadius="20dp"
+                app:strokeColor="#4E4E4E"
+                app:strokeWidth="1dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnMisReservas"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="4dp"
+                android:layout_weight="1"
+                android:paddingStart="18dp"
+                android:paddingEnd="18dp"
+                android:text="Mis Reservas"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                app:backgroundTint="#10FF9800"
+                app:cornerRadius="20dp"
+                app:strokeColor="#4E4E4E"
+                app:strokeWidth="1dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnHistorial"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="4dp"
+                android:layout_weight="1"
+                android:paddingStart="18dp"
+                android:paddingEnd="18dp"
+                android:text="Historial"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                app:backgroundTint="#10FF9800"
+                app:cornerRadius="20dp"
+                app:strokeColor="#4E4E4E"
+                app:strokeWidth="1dp" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <ScrollView
+        android:id="@+id/scrollArea"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintTop_toBottomOf="@id/headerLayout"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:layout_marginHorizontal="4dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="6dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="12dp">
+
+                    <!-- TEXTO DE ESTADO ARRIBA DE LA IMAGEN -->
+
+                    <!-- CONTENIDO EN HORIZONTAL: IMAGEN + DETALLES -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:paddingBottom="4dp">
+
+                        <TextView
+                            android:id="@+id/status"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text=" En progreso"
+                            android:textColor="#4CAF50"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+
+                        <ImageView
+                            android:id="@+id/otroTexto"
+                            android:layout_width="98dp"
+                            android:layout_height="22dp"
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true"
+                            android:layout_marginEnd="12dp"
+                            android:contentDescription="Descripción de la imagen"
+                            android:src="@drawable/estrellas" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <!-- Imagen del hotel -->
+
+                        <!-- Contenedor de los detalles del hotel -->
+                        <com.google.android.material.imageview.ShapeableImageView
+                            android:id="@+id/imageHotel"
+                            android:layout_width="99dp"
+                            android:layout_height="91dp"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginEnd="12dp"
+                            android:contentDescription="Imagen del hotel"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/hotel1"
+                            app:shapeAppearanceOverlay="@style/RoundedImageView" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/nombreHotel"
+                                android:text="Hotel MiM Ibiza"
+                                android:textStyle="bold"
+                                android:textSize="20sp"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp" />
+
+                            <TextView
+                                android:id="@+id/fechas"
+                                android:text="Desde el 28 abr al 2 mar"
+                                android:textSize="16sp"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp" />
+
+                            <TextView
+                                android:id="@+id/ubicacion"
+                                android:text="📍 España, Ibiza"
+                                android:textSize="16sp"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp" />
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal">
+
+                                <Button
+                                    android:id="@+id/btnDetalles"
+                                    android:layout_width="0dp"
+                                    android:layout_height="38dp"
+                                    android:layout_weight="1"
+                                    android:backgroundTint="#2382D9"
+                                    android:text="Detalles"
+                                    android:textColor="#FFFFFF"
+                                    android:textSize="13sp"
+                                    android:paddingStart="0dp"
+                                    android:paddingEnd="0dp"
+                                    android:gravity="center"
+                                    android:layout_marginStart="2dp"/>
+
+                                <Button
+                                    android:id="@+id/btnTaxista"
+                                    android:layout_width="0dp"
+                                    android:layout_height="38dp"
+                                    android:layout_weight="1.5"
+                                    android:backgroundTint="#E6911C"
+                                    android:text="Solicitar Taxi"
+                                    android:textColor="#FFFFFF"
+                                    android:textSize="13sp"
+                                    android:paddingStart="0dp"
+                                    android:paddingEnd="0dp"
+                                    android:gravity="center"
+                                    android:layout_marginStart="2dp"/>
+
+                            </LinearLayout>
+
+
+
+
+                            <Button
+                                android:id="@+id/btnCheckout"
+                                android:layout_width="match_parent"
+                                android:layout_height="38dp"
+                                android:layout_marginTop="0dp"
+                                android:layout_weight="1"
+                                android:backgroundTint="#4CAF50"
+                                android:text="Solicitar Checkout"
+                                android:textColor="#FFFFFF"
+                                android:textSize="13sp" />
+
+
+                        </LinearLayout>
+
+
+                    </LinearLayout>
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+
+        </LinearLayout>
+    </ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>
