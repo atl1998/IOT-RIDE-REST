@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="amarillo_dorado">#FFC107</color>
+    <color name="marron_oscuro">#452C06</color>
+    <color name="crema">#FFEFAA</color>
+    <color name="dorado">#B48B0A</color>
+    <color name="dorado_oscuro">#7A5F12</color>}
+    <color name="amarillo">#CEBE38</color>
+
+
+    <!-- Colores principales de tu app -->
+    <color name="dorado_claro">#FFD54F</color>    <!-- Dorado más claro para variaciones -->
+    <color name="blanco">#FFFFFF</color>          <!-- Blanco para textos e íconos -->
+    <color name="negro">#000000</color>           <!-- Negro si lo necesitas -->
+    <color name="gris_medio">#757575</color>      <!-- Gris medio para textos secundarios -->
+    <color name="transparente">#00000000</color>  <!-- Color transparente -->
+
+</resources>

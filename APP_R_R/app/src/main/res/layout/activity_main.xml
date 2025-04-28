@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/amarillo"
+    android:padding="24dp">
+
+    <!-- Logo -->
+    <ImageView
+        android:id="@+id/logoImageView"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_marginTop="50dp"
+        android:contentDescription="Logo"
+        android:src="@drawable/logo_r_r_3"
+        app:layout_constraintBottom_toTopOf="@+id/btnCliente"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Botón: Ver como Cliente -->
+    <Button
+        android:id="@+id/btnCliente"
+        style="@style/MenuButton"
+        android:text="Cliente"
+        app:layout_constraintTop_toBottomOf="@id/logoImageView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"/>
+
+    <!-- Botón: Ver como Taxista -->
+    <Button
+        android:id="@+id/btnTaxista"
+        style="@style/MenuButton"
+        android:text="Taxista"
+        app:layout_constraintTop_toBottomOf="@id/btnCliente"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp"/>
+
+    <!-- Botón: Ver como Admin de Hotel -->
+    <Button
+        android:id="@+id/btnAdminHotel"
+        style="@style/MenuButton"
+        android:text="Admin de Hotel"
+        app:layout_constraintTop_toBottomOf="@id/btnTaxista"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp"/>
+
+    <!-- Botón: Ver como Superadmin -->
+    <Button
+        android:id="@+id/btnSuperadmin"
+        style="@style/MenuButton"
+        android:text="Superadmin"
+        app:layout_constraintTop_toBottomOf="@id/btnAdminHotel"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp"/>
+
+    <!-- Botón: Inicio -->
+    <Button
+        android:id="@+id/btnInicio"
+        style="@style/MenuButton"
+        android:text="Login"
+        app:layout_constraintTop_toBottomOf="@id/btnSuperadmin"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

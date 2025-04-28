@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Botón marron para el menú principal -->
+    <style name="MenuButton" parent="Widget.Material3.Button">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:backgroundTint">#453103</item> <!-- marron oscuro -->
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:textSize">17sp</item>
+        <item name="cornerRadius">35dp</item>
+        <item name="android:layout_marginHorizontal">50dp</item>
+    </style>
+
+    <!-- Estilo para formulario-->
+    <style name="EstiloFormularioMarron" parent="Widget.Material3.TextInputLayout.OutlinedBox">
+        <item name="boxStrokeColor">#452C06</item>
+        <item name="boxStrokeWidthFocused">2dp</item>
+        <item name="hintTextColor">#94751B</item>
+        <item name="android:textColorHint">#94751B</item>
+        <item name="android:textColor">#452C06</item>
+    </style>
+
+    <style name="SpinnerCustomTheme" parent="Theme.AppCompat.Light">
+        <item name="colorControlNormal">#452C06</item> <!-- Ícono flecha -->
+        <item name="android:textColorPrimary">#452C06</item> <!-- Texto -->
+    </style>
+
+    <style name="EstiloItemPerfil">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">#282828</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:layout_marginBottom">4dp</item>
+    </style>
+
+
+
+
+</resources>

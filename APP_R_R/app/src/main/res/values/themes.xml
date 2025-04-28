@@ -1,0 +1,21 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.HotelReservaApp" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Customize your light theme here. -->
+        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+
+        <item name="colorPrimary">@color/dorado</item> <!-- Marrón -->
+        <item name="colorOnPrimary">#FFFFFF</item>
+        <item name="colorPrimaryContainer">@color/marron_oscuro</item> <!-- Dorado -->
+        <item name="colorOutline">#452C06</item> <!-- Borde de TextInput -->
+        <item name="colorOnSurface">#452C06</item> <!-- Texto activo -->
+        <item name="android:colorAccent">#452C06</item> <!-- Cursor -->
+
+    </style>
+    <style name="SpinnerPopupTheme" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <item name="android:textColor">#452C06</item>
+    </style>
+
+
+    <style name="Theme.HotelReservaApp" parent="Base.Theme.HotelReservaApp" />
+</resources>

@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    android:fillViewport="true"
+    android:padding="24dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        tools:ignore="ExtraText">
+
+        <!-- Botón regresar -->
+        <ImageButton
+            android:id="@+id/btnBack"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="?attr/homeAsUpIndicator"
+            android:contentDescription="Volver"
+            android:layout_gravity="start"
+            app:tint="@color/marron_oscuro" />
+
+        <!-- Título -->
+        <TextView
+            android:id="@+id/tvTitulo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sube Una Foto Tuya"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="@color/dorado_oscuro"
+            android:layout_marginTop="16dp" />
+
+        <!-- Subtítulo -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Por seguridad, es necesario que subas una foto clara de tu rostro. Será visible para los usuarios y usada solo para verificación."
+            android:textColor="#0B0606"
+            android:textSize="14sp"
+            android:gravity="center"
+            android:layout_marginTop="8dp"
+            android:paddingHorizontal="12dp" />
+
+        <!-- Selector de imagen -->
+        <ImageView
+            android:id="@+id/imagenSeleccionada"
+            android:layout_width="260dp"
+            android:layout_height="180dp"
+            android:src="@android:drawable/ic_menu_gallery"
+            android:scaleType="centerInside"
+            android:layout_marginTop="24dp"
+            android:contentDescription="Vista previa de imagen" />
+
+        <!-- Botón de cámara -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnAbrirCamara"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Abrir cámara y tomar foto"
+            android:textColor="#452C06"
+            android:icon="@android:drawable/ic_menu_camera"
+            android:iconTint="#452C06"
+            android:backgroundTint="@color/crema"
+            android:layout_marginTop="24dp" />
+
+        <!-- Botón registrarse -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnRegistrarFinal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Registrarse"
+            android:textColor="@android:color/white"
+            android:backgroundTint="@color/dorado"
+            android:layout_marginTop="16dp" />
+
+        <!-- Texto con enlace a términos -->
+        <LinearLayout
+            android:id="@+id/layoutTerminos"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="16dp"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/tvInfoTerminos"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Al registrarte aceptas nuestros "
+                android:textColor="#757575"
+                android:textSize="12sp" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvTerminosLink"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Términos y Condiciones de Uso"
+            android:textColor="@color/dorado"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+</ScrollView>

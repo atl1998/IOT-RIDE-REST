@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">Ride&amp;Rest</string>
+    <string name="notificaciones" />
+    <string-array name="tipos_documento">
+        <item>DNI</item>
+        <item>Pasaporte</item>
+        <item>Carnet de Extranjería</item>
+    </string-array>
+    <string name="title_activity_cliente">ClienteActivity</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="title_activity_cliente_inicio">ClienteInicioActivity</string>
+
+
+</resources>
