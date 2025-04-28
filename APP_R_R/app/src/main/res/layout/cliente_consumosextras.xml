@@ -1,37 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="305dp"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="24dp"
-    android:layout_marginStart="40dp"
-    android:layout_marginEnd="40dp"
-    android:background="@drawable/modal_background"
+    android:background="@android:drawable/editbox_background_normal"
     android:gravity="center"
-    android:elevation="8dp"
-    android:layout_centerInParent="true"> <!-- Asegura que esté centrado -->
+    android:padding="24dp">
 
 
     <TextView
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="En caso hayas hecho consumos extras, porfavor indícalo"
-        android:textStyle="bold"
         android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_marginTop="12dp"
         android:textColor="#000000"
-        android:gravity="center" />
+        android:gravity="center"/>
 
-    <TextView
+    <!-- EditText para que el usuario ingrese el texto -->
+    <EditText
+        android:id="@+id/consumosExtras"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text=""
+        android:hint="Escribe aquí"
         android:textSize="14sp"
         android:textColor="#444444"
         android:layout_marginTop="16dp"
-        android:gravity="center" />
+        android:padding="12dp"
+        android:background="@android:drawable/editbox_background" />
 
     <Button
-        android:id="@+id/btn_continue"
+        android:id="@+id/btn_solicitar_checkout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Solicitar Checkout"

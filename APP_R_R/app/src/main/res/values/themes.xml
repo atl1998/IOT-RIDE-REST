@@ -25,5 +25,11 @@
         <item name="android:windowNoTitle">true</item>
     </style>
 
-    <style name="Theme.HotelReservaApp" parent="Base.Theme.HotelReservaApp" />
+    <style name="Theme.HotelReservaApp" parent="Base.Theme.HotelReservaApp">
+        <item name="colorControlActivated">@color/amarillo_dorado</item>
+        <item name="colorAccent">@color/amarillo_dorado</item>
+        <item name="clockNumberTextColor">@color/black</item>
+
+    </style>
+
 </resources>

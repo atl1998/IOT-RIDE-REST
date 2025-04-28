@@ -5,6 +5,8 @@ import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.hotelreservaapp.cliente.DetallesReserva;
+import com.example.hotelreservaapp.cliente.HistorialEventos;
 import com.example.hotelreservaapp.loginAndRegister.InicioActivity;
 import com.google.android.material.button.MaterialButton;
 
@@ -27,8 +29,8 @@ public class MainActivity extends AppCompatActivity {
 
         // Acciones por botón (por ahora sin abrir otra Activity)
         btnCliente.setOnClickListener(v -> {
-            // Ejemplo: ir a ClienteActivity
-            // startActivity(new Intent(this, ClienteActivity.class));
+            //por ahora directamente al mio bala
+            startActivity(new Intent(this, HistorialEventos.class));
         });
 
         btnTaxista.setOnClickListener(v -> {

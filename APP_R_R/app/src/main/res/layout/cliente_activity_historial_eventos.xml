@@ -8,90 +8,175 @@
     android:layout_height="match_parent"
     tools:context=".cliente.HistorialEventos">
 
-    <!-- Encabezado superior -->
-
-    <!-- Contenido scrollable (reservas) -->
+    <!-- Encabezado amarillo -->
     <LinearLayout
         android:id="@+id/headerLayout"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#FFCC00"
         android:orientation="vertical"
-        android:padding="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:background="@color/amarillo_dorado"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="Ride and Rest"
-            android:textColor="#282828"
-            android:textSize="22sp"
-            android:textStyle="bold" />
-
-        <LinearLayout
+        <!-- Título + Chat + Notificaciones -->
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:gravity="center"
-            android:orientation="horizontal"
-            android:weightSum="3">
+            android:padding="6dp">
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnFavoritos"
+            <!-- Título Ride & Rest -->
+            <TextView
+                android:id="@+id/titulo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_weight="1"
-                android:paddingStart="18dp"
-                android:paddingEnd="18dp"
-                android:text="Favoritos"
-                android:textColor="#FFFFFF"
-                android:textSize="16sp"
-                app:backgroundTint="#10FF9800"
-                app:cornerRadius="20dp"
-                app:strokeColor="#4E4E4E"
-                app:strokeWidth="1dp" />
+                android:text="Ride &amp; Rest"
+                android:textColor="#282828"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:gravity="center"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
 
+            <!-- Botón de Búsqueda -->
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnMisReservas"
+                android:id="@+id/buscar"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:backgroundTint="@color/transparente"
+                app:icon="@drawable/search_24dp_e3e3e3_fill0_wght400_grad0_opsz24"
+                app:iconTint="@color/marron_oscuro"
+                app:iconGravity="textStart"
+                app:iconPadding="0dp"
+                android:padding="15dp"
+                android:minWidth="0dp"
+                android:minHeight="0dp"
+                android:contentDescription="Abrir chat de soporte"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/notificaciones_cliente"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginEnd="4dp"/>
+
+            <!-- Botón de Notificaciones -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/notificaciones_cliente"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:backgroundTint="@color/transparente"
+                app:icon="@drawable/notifications_24dp_e3e3e3_fill0_wght400_grad0_opsz24"
+                app:iconTint="@color/marron_oscuro"
+                app:iconGravity="textStart"
+                app:iconPadding="0dp"
+                android:padding="15dp"
+                android:minWidth="0dp"
+                android:minHeight="0dp"
+                android:contentDescription="Ver notificaciones nuevas"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- Categorías: ScrollView horizontal -->
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:overScrollMode="never"
+            android:scrollbars="none"
+            android:background="#FFC107"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp">
+
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginStart="4dp"
-                android:layout_weight="1"
-                android:paddingStart="18dp"
-                android:paddingEnd="18dp"
-                android:text="Mis Reservas"
-                android:textColor="#FFFFFF"
-                android:textSize="16sp"
-                app:backgroundTint="#10FF9800"
-                app:cornerRadius="20dp"
-                app:strokeColor="#4E4E4E"
-                app:strokeWidth="1dp" />
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp">
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnHistorial"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginStart="4dp"
-                android:layout_weight="1"
-                android:paddingStart="18dp"
-                android:paddingEnd="18dp"
-                android:text="Historial"
-                android:textColor="#FFFFFF"
-                android:textSize="16sp"
-                app:backgroundTint="#10FF9800"
-                app:cornerRadius="20dp"
-                app:strokeColor="#4E4E4E"
-                app:strokeWidth="1dp" />
-        </LinearLayout>
+                <!-- Botón Favoritos -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnFavoritos"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Favoritos"
+                    android:textColor="@color/marron_oscuro"
+                    app:icon="@drawable/outline_favorite_border_24"
+                    app:iconTint="@color/marron_oscuro"
+                    app:iconGravity="textStart"
+                    app:iconPadding="8dp"
+                    app:backgroundTint="@color/transparente"
+                    app:strokeColor="@color/marron_oscuro"
+                    app:strokeWidth="1dp"
+                    app:cornerRadius="30dp"
+                    android:layout_marginEnd="8dp"/>
 
+                <!-- Botón Reservas -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnAlojamientos"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Alojamientos"
+                    android:textColor="@color/marron_oscuro"
+                    app:icon="@drawable/outline_bed_24"
+                    app:iconTint="@color/marron_oscuro"
+                    app:iconGravity="textStart"
+                    app:iconPadding="8dp"
+                    app:backgroundTint="@color/transparente"
+                    app:strokeColor="@color/marron_oscuro"
+                    app:strokeWidth="1dp"
+                    app:cornerRadius="30dp"
+                    android:layout_marginEnd="8dp"/>
+
+                <!-- Botón Historial -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnHistorial"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Historial"
+                    android:textColor="@color/marron_oscuro"
+                    app:icon="@drawable/outline_history_24"
+                    app:iconTint="@color/marron_oscuro"
+                    app:iconGravity="textStart"
+                    app:iconPadding="8dp"
+                    app:backgroundTint="@color/transparente"
+                    app:strokeColor="@color/marron_oscuro"
+                    app:strokeWidth="1dp"
+                    app:cornerRadius="30dp" />
+
+                <!-- Botón taxi -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btntaxi"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Taxi"
+                    android:textColor="@color/marron_oscuro"
+                    app:icon="@drawable/local_taxi_24dp_e3e3e3_fill0_wght400_grad0_opsz24"
+                    app:iconTint="@color/marron_oscuro"
+                    app:iconGravity="textStart"
+                    app:iconPadding="8dp"
+                    app:backgroundTint="@color/transparente"
+                    app:strokeColor="@color/marron_oscuro"
+                    app:strokeWidth="1dp"
+                    app:cornerRadius="30dp" />
+            </LinearLayout>
+        </HorizontalScrollView>
     </LinearLayout>
+    <!-- Línea negra abajo -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#000000"
+        app:layout_constraintTop_toBottomOf="@id/headerLayout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+
 
     <ScrollView
         android:id="@+id/scrollArea"
@@ -110,12 +195,16 @@
             android:padding="16dp">
 
             <androidx.cardview.widget.CardView
+                android:id="@+id/card_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
                 android:layout_marginHorizontal="4dp"
                 app:cardCornerRadius="12dp"
-                app:cardElevation="6dp">
+                app:cardElevation="6dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?android:attr/selectableItemBackground" >
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -130,7 +219,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:paddingBottom="4dp">
+                        android:paddingBottom="4dp"
+                        android:gravity="center_vertical">
 
                         <TextView
                             android:id="@+id/status"
@@ -140,19 +230,50 @@
                             android:text=" En progreso"
                             android:textColor="#4CAF50"
                             android:textSize="16sp"
-                            android:textStyle="bold" />
+                            android:textStyle="bold"
+                            android:layout_marginBottom="4dp"/>
 
-                        <ImageView
-                            android:id="@+id/otroTexto"
-                            android:layout_width="98dp"
-                            android:layout_height="22dp"
-                            android:layout_alignParentEnd="true"
-                            android:layout_centerVertical="true"
-                            android:layout_marginEnd="12dp"
-                            android:contentDescription="Descripción de la imagen"
-                            android:src="@drawable/estrellas" />
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_marginEnd="12dp">
+
+                            <!-- 5 estrellas -->
+                            <ImageView
+                                android:layout_width="22dp"
+                                android:layout_height="22dp"
+                                android:src="@drawable/star_fill_yellow"
+                                android:contentDescription="Estrella" />
+
+                            <ImageView
+                                android:layout_width="22dp"
+                                android:layout_height="22dp"
+                                android:src="@drawable/star_fill_yellow"
+                                android:contentDescription="Estrella" />
+
+                            <ImageView
+                                android:layout_width="22dp"
+                                android:layout_height="22dp"
+                                android:src="@drawable/star_fill_yellow"
+                                android:contentDescription="Estrella" />
+
+                            <ImageView
+                                android:layout_width="22dp"
+                                android:layout_height="22dp"
+                                android:src="@drawable/star_fill_yellow"
+                                android:contentDescription="Estrella" />
+
+                            <ImageView
+                                android:layout_width="22dp"
+                                android:layout_height="22dp"
+                                android:src="@drawable/star_fill_yellow"
+                                android:contentDescription="Estrella" />
+
+                        </LinearLayout>
 
                     </LinearLayout>
+
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -177,7 +298,9 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:orientation="vertical">
+                            android:orientation="vertical"
+                            android:layout_marginTop="5dp"
+                            android:layout_marginStart="6dp">
 
                             <TextView
                                 android:id="@+id/nombreHotel"
@@ -204,60 +327,48 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="2dp" />
 
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:orientation="horizontal">
 
-                                <Button
-                                    android:id="@+id/btnDetalles"
-                                    android:layout_width="0dp"
-                                    android:layout_height="38dp"
-                                    android:layout_weight="1"
-                                    android:backgroundTint="#2382D9"
-                                    android:text="Detalles"
-                                    android:textColor="#FFFFFF"
-                                    android:textSize="13sp"
-                                    android:paddingStart="0dp"
-                                    android:paddingEnd="0dp"
-                                    android:gravity="center"
-                                    android:layout_marginStart="2dp"/>
-
-                                <Button
-                                    android:id="@+id/btnTaxista"
-                                    android:layout_width="0dp"
-                                    android:layout_height="38dp"
-                                    android:layout_weight="1.5"
-                                    android:backgroundTint="#E6911C"
-                                    android:text="Solicitar Taxi"
-                                    android:textColor="#FFFFFF"
-                                    android:textSize="13sp"
-                                    android:paddingStart="0dp"
-                                    android:paddingEnd="0dp"
-                                    android:gravity="center"
-                                    android:layout_marginStart="2dp"/>
-
-                            </LinearLayout>
-
-
-
-
-                            <Button
-                                android:id="@+id/btnCheckout"
-                                android:layout_width="match_parent"
-                                android:layout_height="38dp"
-                                android:layout_marginTop="0dp"
-                                android:layout_weight="1"
-                                android:backgroundTint="#4CAF50"
-                                android:text="Solicitar Checkout"
-                                android:textColor="#FFFFFF"
-                                android:textSize="13sp" />
 
 
                         </LinearLayout>
 
 
                     </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <Button
+                            android:id="@+id/btnTaxista"
+                            android:layout_width="0dp"
+                            android:layout_height="38dp"
+                            android:layout_weight="1.5"
+                            android:backgroundTint="#E48B14"
+                            android:text="Solicitar Taxista"
+                            android:textColor="#FFFFFF"
+                            android:textSize="13sp"
+                            android:paddingStart="0dp"
+                            android:paddingEnd="0dp"
+                            android:gravity="center"
+                            android:layout_marginStart="2dp"
+                            android:layout_marginTop="8dp"/>
+
+                    </LinearLayout>
+
+
+
+
+                    <Button
+                        android:id="@+id/btnCheckout"
+                        android:layout_width="match_parent"
+                        android:layout_height="38dp"
+                        android:layout_marginTop="0dp"
+                        android:layout_weight="1"
+                        android:backgroundTint="#4CAF50"
+                        android:text="Solicitar Checkout"
+                        android:textColor="#FFFFFF"
+                        android:textSize="13sp" />
 
                 </LinearLayout>
             </androidx.cardview.widget.CardView>

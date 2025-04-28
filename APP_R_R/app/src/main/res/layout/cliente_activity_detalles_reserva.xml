@@ -248,13 +248,28 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content">
 
-                        <TextView
-                            android:layout_marginTop="3dp"
-                            android:text="⭐ 8.5/10"
-
-                            android:textSize="16sp"
+                        <LinearLayout
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:layout_marginTop="3dp">
+
+                            <!-- Imagen de la estrella -->
+                            <ImageView
+                                android:layout_width="22dp"
+                                android:layout_height="22dp"
+                                android:src="@drawable/star_fill_yellow"
+                                android:contentDescription="Estrella"
+                                android:layout_marginEnd="4dp"/>
+
+                            <!-- Texto del puntaje -->
+                            <TextView
+                                android:text="8.5/10"
+                                android:textSize="16sp"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"/>
+                        </LinearLayout>
 
                         <TextView
                             android:layout_marginTop="3dp"
@@ -591,7 +606,7 @@
                             android:id="@+id/HoraDeSalida"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Por definir / Desde las 12 am"
+                            android:text="Por definir / Rango: 11am-1pm"
                             android:textSize="16sp"
                             android:paddingEnd="5dp"
                             android:textColor="#646464"
@@ -661,14 +676,29 @@
                         android:scaleType="centerCrop"
                         android:src="@drawable/hotel1_mapa1" />
 
-                    <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    <FrameLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_centerInParent="true"
-                        android:backgroundTint="#3366CC"
-                        android:contentDescription="Ubicación del hotel"
-                        android:src="@drawable/baseline_location_on_24_black"/>
+                        android:layout_centerInParent="true">
+
+                        <!-- Fondo círculo azul -->
+                        <View
+                            android:layout_width="37dp"
+                            android:layout_height="37dp"
+                            android:background="@drawable/circle_blue" />
+
+                        <!-- Icono encima -->
+                        <ImageView
+                            android:layout_width="23dp"
+                            android:layout_height="23dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/location_white"
+                            android:contentDescription="Ubicación del hotel"/>
+                    </FrameLayout>
+
                 </RelativeLayout>
+
+
             </com.google.android.material.card.MaterialCardView>
 
             <LinearLayout
