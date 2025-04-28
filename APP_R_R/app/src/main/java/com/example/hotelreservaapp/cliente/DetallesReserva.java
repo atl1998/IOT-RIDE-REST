@@ -1,6 +1,7 @@
 package com.example.hotelreservaapp.cliente;
 
 import android.app.TimePickerDialog;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.widget.TextView;
@@ -34,6 +35,18 @@ public class DetallesReserva extends AppCompatActivity {
         definirHoraLlegada = findViewById(R.id.definirHoraLlegada);
         horaDefinida = false;
 
+        // Recuperar la hora guardada de SharedPreferences
+        SharedPreferences sharedPreferences = getSharedPreferences("ReservaPrefs", MODE_PRIVATE);
+        String horaGuardada = sharedPreferences.getString("horaLlegada", null);
+
+        if (horaGuardada != null) {
+            // Si hay una hora guardada, mostrarla y deshabilitar el TextView
+            definirHoraLlegada.setText("Hora de llegada: " + horaGuardada);
+            horaDefinida = true;
+            definirHoraLlegada.setClickable(false);
+            definirHoraLlegada.setTextColor(Color.parseColor("#646464"));
+        }
+
         definirHoraLlegada.setOnClickListener(v -> {
             if (!horaDefinida) {
                 // Crear un TimePickerDialog
@@ -46,6 +59,10 @@ public class DetallesReserva extends AppCompatActivity {
                                     // Mostrar la hora seleccionada
                                     String horaSeleccionada = String.format("%02d:%02d", hourOfDay, minute);
                                     definirHoraLlegada.setText("Hora de llegada: " + horaSeleccionada);
+
+                                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                                    editor.putString("horaLlegada", horaSeleccionada); // Guardamos la hora en SharedPreferences
+                                    editor.apply();
 
                                     // Cambiar el estado a "hora definida"
                                     horaDefinida = true;
