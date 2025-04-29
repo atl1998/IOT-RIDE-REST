@@ -127,6 +127,13 @@
                 app:strokeColor="@color/marron_oscuro"
                 app:strokeWidth="1dp" />
         </LinearLayout>
-
+        <!-- Línea negra abajo -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#000000"
+            app:layout_constraintTop_toBottomOf="@id/ly1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
