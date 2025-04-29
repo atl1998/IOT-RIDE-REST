@@ -1,0 +1,330 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:fillViewport="true"
+    android:paddingBottom="80dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <!-- 🟡 Toolbar -->
+        <TextView
+            android:id="@+id/tvMiCuenta"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Mi cuenta"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:textColor="@android:color/black"
+            android:padding="16dp"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- 🟨 Encabezado amarillo -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/header"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@color/amarillo"
+            android:padding="16dp"
+            app:layout_constraintTop_toBottomOf="@id/tvMiCuenta"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <ImageView
+                android:id="@+id/ivFotoPerfil"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:src="@drawable/default_user"
+                android:background="@drawable/circle_bg"
+                android:scaleType="centerCrop"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <TextView
+                android:id="@+id/tvNombreUsuario"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Hola, Nilo Cori"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="@android:color/black"
+                app:layout_constraintStart_toEndOf="@id/ivFotoPerfil"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <TextView
+                android:id="@+id/tvRol"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="SuperAdmin"
+                android:textSize="14sp"
+                android:textColor="@android:color/black"
+                app:layout_constraintTop_toBottomOf="@id/tvNombreUsuario"
+                app:layout_constraintStart_toStartOf="@id/tvNombreUsuario"
+                app:layout_constraintEnd_toEndOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- 📝 Datos personales -->
+        <TextView
+            android:id="@+id/tvDatosPersonales"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Datos Personales"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"
+            android:paddingStart="16dp"
+            android:paddingTop="12dp"
+            app:layout_constraintTop_toBottomOf="@id/header"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <!-- 🖊 Icono Editar -->
+        <ImageView
+            android:id="@+id/btnEditar"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/baseline_edit_24"
+            android:layout_marginEnd="16dp"
+            android:contentDescription="Editar"
+            app:layout_constraintTop_toTopOf="@id/tvDatosPersonales"
+            app:layout_constraintBottom_toBottomOf="@id/tvDatosPersonales"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- 📋 Card con campos -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardDatos"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="2dp"
+            app:layout_constraintTop_toBottomOf="@id/tvDatosPersonales"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="12dp">
+
+                <!-- Aquí puedes copiar y pegar bloques como este para cada campo -->
+                <!-- Etiqueta -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Nombre completo"
+                    android:textStyle="bold"
+                    android:textColor="@android:color/black"
+                    android:paddingBottom="4dp" />
+                <!-- Campo de datos -->
+                <EditText
+                    android:id="@+id/etNombre"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="48dp"
+                    android:hint="Nilo Rikel Cori Ramos"
+                    android:enabled="false"
+                    android:backgroundTint="@android:color/darker_gray"
+                    android:padding="12dp" />
+
+                <!-- Tipo de documento -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Tipo de documento"
+                    android:textStyle="bold"
+                    android:textColor="@android:color/black"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="4dp"/>
+                <EditText
+                    android:id="@+id/etTipoDoc"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="48dp"
+                    android:hint="DNI"
+                    android:enabled="false"
+                    android:padding="12dp"
+                    android:backgroundTint="@android:color/darker_gray"/>
+
+                <!-- Número de documento -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Número de documento"
+                    android:textStyle="bold"
+                    android:textColor="@android:color/black"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="4dp"/>
+                <EditText
+                    android:id="@+id/etNumDoc"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="48dp"
+                    android:hint="74582136"
+                    android:enabled="false"
+                    android:padding="12dp"
+                    android:backgroundTint="@android:color/darker_gray"/>
+
+                <!-- Fecha de nacimiento -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Fecha de nacimiento"
+                    android:textStyle="bold"
+                    android:textColor="@android:color/black"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="4dp"/>
+                <EditText
+                    android:id="@+id/etFechaNac"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="48dp"
+                    android:hint="15/06/2004"
+                    android:enabled="false"
+                    android:padding="12dp"
+                    android:backgroundTint="@android:color/darker_gray"/>
+
+                <!-- Correo electrónico -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Correo electrónico"
+                    android:textStyle="bold"
+                    android:textColor="@android:color/black"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="4dp"/>
+                <EditText
+                    android:id="@+id/etCorreo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="48dp"
+                    android:hint="nilokori@pucp.edu.pe"
+                    android:enabled="false"
+                    android:padding="12dp"
+                    android:inputType="textEmailAddress"
+                    android:backgroundTint="@android:color/darker_gray"/>
+
+                <!-- Teléfono -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Teléfono"
+                    android:textStyle="bold"
+                    android:textColor="@android:color/black"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="4dp"/>
+                <EditText
+                    android:id="@+id/etTelefono"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="48dp"
+                    android:hint="987 654 321"
+                    android:enabled="false"
+                    android:padding="12dp"
+                    android:inputType="phone"
+                    android:backgroundTint="@android:color/darker_gray"/>
+
+                <!-- Dirección -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Dirección"
+                    android:textStyle="bold"
+                    android:textColor="@android:color/black"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="4dp"/>
+                <EditText
+                    android:id="@+id/etDomicilio"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="48dp"
+                    android:hint="Jr. Las Gardenias 124, Lima"
+                    android:enabled="false"
+                    android:padding="12dp"
+                    android:inputType="textPostalAddress"
+                    android:backgroundTint="@android:color/darker_gray"/>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- 🔒 Seguridad -->
+        <TextView
+            android:id="@+id/tvSeguridad"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Seguridad"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"
+            android:paddingStart="16dp"
+            android:layout_marginTop="10dp"
+            app:layout_constraintTop_toBottomOf="@id/cardDatos"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <LinearLayout
+            android:id="@+id/seguridad"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_margin="16dp"
+            app:layout_constraintTop_toBottomOf="@id/tvSeguridad"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <!-- Botón Cambiar contraseña -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnCambiarContrasena"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Cambiar contraseña"
+                android:textColor="@android:color/black"
+                app:icon="@drawable/baseline_lock_24"
+                app:iconTint="@android:color/black"
+                android:backgroundTint="@android:color/transparent"
+                app:iconGravity="textStart"
+                app:iconPadding="12dp"
+                app:cornerRadius="8dp"
+                android:gravity="start|center_vertical"
+                android:layout_marginBottom="4dp" />
+
+            <!-- Botón Verificar correo -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnVerificarCorreo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Verificar correo"
+                android:textColor="@android:color/black"
+                app:icon="@drawable/baseline_email_24"
+                app:iconTint="@android:color/black"
+                android:backgroundTint="@android:color/transparent"
+                app:iconGravity="textStart"
+                app:iconPadding="12dp"
+                app:cornerRadius="8dp"
+                android:gravity="start|center_vertical" />
+        </LinearLayout>
+
+        <!-- 🔴 Botón cerrar sesión -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnCerrarSesion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Cerrar Sesión"
+            android:textColor="#FF0000"
+            app:icon="@drawable/baseline_logout_24"
+            app:iconTint="#FF0000"
+            android:backgroundTint="@android:color/white"
+            app:strokeColor="#FDC100"
+            app:strokeWidth="2dp"
+            app:cornerRadius="8dp"
+            app:iconPadding="2dp"
+            android:layout_margin="16dp"
+            app:layout_constraintTop_toBottomOf="@id/seguridad"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>
