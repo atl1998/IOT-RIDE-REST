@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+    <!-- 🟨 Encabezado -->
+    <TextView
+        android:id="@+id/tvTituloApp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="RIDE &amp; REST"
+        android:gravity="center"
+        android:textStyle="bold"
+        android:textSize="20sp"
+        android:padding="12dp"
+        android:background="@color/amarillo"
+        android:textColor="@android:color/black"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- 🟥 Subtítulo + icono -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/headerRegistro"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@color/amarillo"
+        app:layout_constraintTop_toBottomOf="@id/tvTituloApp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <TextView
+            android:id="@+id/tvSubtitulo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Registro de taxista"
+            android:textStyle="bold"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            android:padding="8dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginStart="16dp" />
+
+        <ImageView
+            android:id="@+id/iconHelp"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/baseline_help_24"
+            android:contentDescription="Ayuda"
+            app:tint="@android:color/white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tvSubtitulo"
+            app:layout_constraintBottom_toBottomOf="@id/tvSubtitulo"
+            android:layout_marginEnd="16dp" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- Scroll del formulario -->
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintTop_toBottomOf="@id/headerRegistro"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="2dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <!-- Reutiliza campos de nombre/apellido -->
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Nombres" android:textStyle="bold" android:textColor="@android:color/black"/>
+                <EditText android:id="@+id/etNombres" android:layout_width="match_parent" android:layout_height="wrap_content" android:background="@drawable/bg_edittext" android:hint="Nombres" android:padding="12dp" android:textColor="@android:color/black" android:textColorHint="#999999" android:layout_marginBottom="12dp"/>
+
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Apellidos" android:textStyle="bold" android:textColor="@android:color/black"/>
+                <EditText android:id="@+id/etApellidos" android:layout_width="match_parent" android:layout_height="wrap_content" android:background="@drawable/bg_edittext" android:hint="Apellidos" android:padding="12dp" android:textColor="@android:color/black" android:textColorHint="#999999" android:layout_marginBottom="12dp"/>
+
+                <!-- Tipo de documento -->
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Tipo de Documento" android:textStyle="bold" android:textColor="@android:color/black"/>
+                <com.google.android.material.chip.ChipGroup android:id="@+id/chipGroupTipoDoc" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:layout_marginBottom="12dp" app:singleSelection="true">
+                    <com.google.android.material.chip.Chip android:id="@+id/chipDni" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="DNI" android:checkable="true" android:textColor="@color/chip_text_selector" app:chipBackgroundColor="@color/white" app:chipStrokeColor="@color/chip_border_selector" app:strokeWidth="1dp"/>
+                    <com.google.android.material.chip.Chip android:id="@+id/chipPasaporte" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Pasaporte" android:checkable="true" android:textColor="@color/chip_text_selector" app:chipBackgroundColor="@color/white" app:chipStrokeColor="@color/chip_border_selector" app:strokeWidth="1dp"/>
+                    <com.google.android.material.chip.Chip android:id="@+id/chipCarnet" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Carnet" android:checkable="true" android:textColor="@color/chip_text_selector" app:chipBackgroundColor="@color/white" app:chipStrokeColor="@color/chip_border_selector" app:strokeWidth="1dp"/>
+                </com.google.android.material.chip.ChipGroup>
+
+                <!-- Otros campos -->
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Número de documento" android:textStyle="bold" android:textColor="@android:color/black"/>
+                <EditText android:id="@+id/etNumDoc" android:layout_width="match_parent" android:layout_height="wrap_content" android:background="@drawable/bg_edittext" android:hint="ejem. 12345678" android:padding="12dp" android:textColorHint="#999999" android:textColor="@android:color/black" android:layout_marginBottom="12dp"/>
+
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Fecha de nacimiento" android:textStyle="bold" android:textColor="@android:color/black"/>
+                <EditText android:id="@+id/etNacimiento" android:layout_width="match_parent" android:layout_height="wrap_content" android:background="@drawable/bg_edittext" android:hint="dd/mm/aaaa" android:padding="12dp" android:textColorHint="#999999" android:textColor="@android:color/black" android:layout_marginBottom="12dp"/>
+
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Correo" android:textStyle="bold" android:textColor="@android:color/black"/>
+                <EditText android:id="@+id/etCorreo" android:layout_width="match_parent" android:layout_height="wrap_content" android:background="@drawable/bg_edittext" android:hint="usuario@correo.com" android:padding="12dp" android:textColorHint="#999999" android:textColor="@android:color/black" android:layout_marginBottom="12dp"/>
+
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Teléfono" android:textStyle="bold" android:textColor="@android:color/black"/>
+                <EditText android:id="@+id/etTelefono" android:layout_width="match_parent" android:layout_height="wrap_content" android:background="@drawable/bg_edittext" android:hint="999999999" android:padding="12dp" android:textColorHint="#999999" android:textColor="@android:color/black" android:layout_marginBottom="12dp"/>
+
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Domicilio" android:textStyle="bold" android:textColor="@android:color/black"/>
+                <EditText android:id="@+id/etDomicilio" android:layout_width="match_parent" android:layout_height="wrap_content" android:background="@drawable/bg_edittext" android:hint="Dirección completa" android:padding="12dp" android:textColorHint="#999999" android:textColor="@android:color/black" android:layout_marginBottom="12dp"/>
+
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Placa del auto" android:textStyle="bold" android:textColor="@android:color/black"/>
+                <EditText android:id="@+id/etPlaca" android:layout_width="match_parent" android:layout_height="wrap_content" android:background="@drawable/bg_edittext" android:hint="ABC-123" android:padding="12dp" android:textColorHint="#999999" android:textColor="@android:color/black" android:layout_marginBottom="12dp"/>
+
+                <!-- 📷 Foto -->
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Foto del usuario" android:textStyle="bold" android:textColor="@android:color/black"/>
+                <com.google.android.material.button.MaterialButton android:id="@+id/btnSubirFotoUsuario" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Subir foto" android:textColor="@android:color/black" android:backgroundTint="#FDF1A5" app:strokeColor="#FDC100" app:strokeWidth="1dp" app:cornerRadius="8dp"/>
+
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Foto del auto" android:textStyle="bold" android:textColor="@android:color/black" android:layout_marginTop="12dp"/>
+                <com.google.android.material.button.MaterialButton android:id="@+id/btnSubirFotoAuto" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Subir foto" android:textColor="@android:color/black" android:backgroundTint="#FDF1A5" app:strokeColor="#FDC100" app:strokeWidth="1dp" app:cornerRadius="8dp" android:layout_marginBottom="24dp"/>
+
+                <!-- 🟡 Botón registrar -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnRegistrar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Registrar taxista"
+                    android:textColor="@android:color/black"
+                    android:backgroundTint="@color/amarillo"
+                    app:cornerRadius="8dp"
+                    app:icon="@drawable/baseline_person_add_24"
+                    app:iconTint="@android:color/black"
+                    app:iconPadding="8dp"
+                    app:iconGravity="textStart"
+                    android:gravity="start|center_vertical" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
