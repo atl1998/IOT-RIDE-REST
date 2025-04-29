@@ -13,16 +13,16 @@
         android:theme="@style/Theme.HotelReservaApp"
         tools:targetApi="31">
         <activity
-            android:name=".ProcesarPago"
+            android:name=".cliente.ProcesarPago"
             android:exported="false" />
         <activity
-            android:name=".cliente.ClienteInicioActivity"
+            android:name=".cliente.HomeCliente"
             android:exported="false"
-            android:label="@string/title_activity_cliente_inicio" />
+            />
         <activity
-            android:name=".cliente.ClienteActivity"
+            android:name=".cliente.ListaHotelesCliente"
             android:exported="false"
-            android:label="@string/title_activity_cliente" />
+            />
         <activity android:name=".cliente.DetallesReserva">
 
             <!-- Puedes agregar un intent-filter si es necesario -->
