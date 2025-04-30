@@ -113,50 +113,67 @@
                             android:layout_height="wrap_content" />
                     </com.google.android.material.textfield.TextInputLayout>
 
-                    <!-- Correo -->
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/tilCorreo"
-                        android:layout_width="match_parent"
+                    <!-- Documento -->
+                    <TextView
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:hint="Correo electrónico"
-                        app:startIconDrawable="@drawable/mail_icon"
-                        android:layout_marginTop="12dp">
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/etCorreo"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:inputType="textEmailAddress" />
-                    </com.google.android.material.textfield.TextInputLayout>
+                        android:text="Tipo de Documento"
+                        android:textStyle="bold"
+                        android:textColor="@android:color/black"
+                        android:layout_marginTop="12dp"/>
 
-                    <!-- Teléfono -->
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/tilTelefono"
-                        android:layout_width="match_parent"
+                    <com.google.android.material.chip.ChipGroup
+                        android:id="@+id/chipGroupTipoDoc"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:hint="Teléfono"
-                        app:startIconDrawable="@drawable/phone_icon"
-                        android:layout_marginTop="12dp">
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/etTelefono"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:inputType="phone" />
-                    </com.google.android.material.textfield.TextInputLayout>
+                        android:layout_marginBottom="12dp"
+                        app:singleSelection="true">
 
-                    <!-- Dirección -->
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chipDni"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="DNI"
+                            android:checkable="true"
+                            app:chipBackgroundColor="@color/white"
+                            android:textColor="@color/chip_text_selector"
+                            app:chipStrokeColor="@color/chip_border_selector"
+                            android:checked="true" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chipPasaporte"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Pasaporte"
+                            app:chipBackgroundColor="@color/white"
+                            android:textColor="@color/chip_text_selector"
+                            app:chipStrokeColor="@color/chip_border_selector"
+                            android:checkable="true" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chipCarnet"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Carnet"
+                            app:chipBackgroundColor="@color/white"
+                            android:textColor="@color/chip_text_selector"
+                            app:chipStrokeColor="@color/chip_border_selector"
+                            android:checkable="true" />
+                    </com.google.android.material.chip.ChipGroup>
+
+                    <!-- Documento -->
                     <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/tilDomicilio"
+                        android:id="@+id/tilNumDoc"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Dirección completa"
-                        app:startIconDrawable="@drawable/house_icon"
-                        android:layout_marginTop="12dp">
+                        android:hint="Número de documento"
+                        app:startIconDrawable="@drawable/id_card_24dp_e3e3e3_fill0_wght400_grad0_opsz24">
+
                         <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/etDomicilio"
+                            android:id="@+id/etNumDoc"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content" />
                     </com.google.android.material.textfield.TextInputLayout>
-
                     <!-- Fecha nacimiento -->
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/tilFechaNacimiento"
@@ -171,6 +188,59 @@
                             android:layout_height="wrap_content"
                             android:focusable="false"
                             android:clickable="true" />
+                    </com.google.android.material.textfield.TextInputLayout>
+                    <!-- Correo -->
+                    <LinearLayout
+                        android:id="@+id/layoutCorreo"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="12dp">
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/tilCorreo"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="2"
+                            android:hint="Correo"
+                            app:startIconDrawable="@drawable/mail_icon">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/etCorreo"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:inputType="textEmailAddress" />
+                        </com.google.android.material.textfield.TextInputLayout>
+                    </LinearLayout>
+
+                    <!-- Teléfono -->
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilTelefono"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Teléfono"
+                        app:startIconDrawable="@drawable/phone_icon"
+                        android:layout_marginTop="12dp">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etTelefono"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="number"
+                            android:maxLength="9" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <!-- Dirección -->
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilDomicilio"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Dirección completa"
+                        app:startIconDrawable="@drawable/house_icon"
+                        android:layout_marginTop="12dp">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etDomicilio"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <!-- Subir foto -->
@@ -189,6 +259,7 @@
                         android:text="Subir Foto"
                         android:textColor="@android:color/black"
                         android:backgroundTint="#FDF1A5"
+                        android:drawableLeft="@drawable/add_photo_icon"
                         app:strokeColor="#FDC100"
                         app:strokeWidth="1dp"
                         app:cornerRadius="8dp"
@@ -199,7 +270,7 @@
                         android:layout_height="200dp"
                         android:scaleType="centerCrop"
                         android:layout_marginTop="8dp"
-                        android:layout_marginBottom="24dp"
+                        android:layout_marginBottom="8dp"
                         android:visibility="gone"
                         android:background="@drawable/border_gray" />
                     <com.google.android.material.button.MaterialButton
@@ -207,11 +278,11 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Editar Foto"
+                        android:drawableLeft="@drawable/edit_icon"
                         android:textColor="@android:color/black"
                         android:backgroundTint="#FDF1A5"
                         app:strokeColor="#FDC100"
                         app:cornerRadius="8dp"
-                        android:layout_marginTop="8dp"
                         android:visibility="gone"/>
 
                     <!-- Botón registrar -->

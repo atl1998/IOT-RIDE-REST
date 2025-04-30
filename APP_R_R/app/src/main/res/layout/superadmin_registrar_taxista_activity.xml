@@ -88,7 +88,7 @@
 
                 <!-- Nombres -->
                 <com.google.android.material.textfield.TextInputLayout
-                    style="@style/EstiloFormularioMarron"
+                    android:id="@+id/tilNombres"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:startIconDrawable="@drawable/baseline_person_outline_24"
@@ -101,7 +101,7 @@
 
                 <!-- Apellidos -->
                 <com.google.android.material.textfield.TextInputLayout
-                    style="@style/EstiloFormularioMarron"
+                    android:id="@+id/tilApellidos"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:startIconDrawable="@drawable/baseline_person_outline_24"
@@ -114,6 +114,7 @@
 
                 <!-- Tipo documento -->
                 <TextView
+                    android:id="@+id/tilTipoDoc"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Tipo de Documento"
@@ -133,6 +134,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="DNI"
+                        app:chipBackgroundColor="@color/white"
+                        android:textColor="@color/chip_text_selector"
+                        app:chipStrokeColor="@color/chip_border_selector"
                         android:checkable="true" />
 
                     <com.google.android.material.chip.Chip
@@ -140,6 +144,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Pasaporte"
+                        app:chipBackgroundColor="@color/white"
+                        android:textColor="@color/chip_text_selector"
+                        app:chipStrokeColor="@color/chip_border_selector"
                         android:checkable="true" />
 
                     <com.google.android.material.chip.Chip
@@ -147,12 +154,15 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Carnet"
+                        app:chipBackgroundColor="@color/white"
+                        android:textColor="@color/chip_text_selector"
+                        app:chipStrokeColor="@color/chip_border_selector"
                         android:checkable="true" />
                 </com.google.android.material.chip.ChipGroup>
 
                 <!-- Documento -->
                 <com.google.android.material.textfield.TextInputLayout
-                    style="@style/EstiloFormularioMarron"
+                    android:id="@+id/tilNumDoc"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:startIconDrawable="@drawable/id_card_24dp_e3e3e3_fill0_wght400_grad0_opsz24"
@@ -165,13 +175,13 @@
 
                 <!-- Fecha nacimiento -->
                 <com.google.android.material.textfield.TextInputLayout
-                    style="@style/EstiloFormularioMarron"
+                    android:id="@+id/tilFechaNacimiento"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:startIconDrawable="@drawable/calendar_month_24dp_e3e3e3_fill0_wght400_grad0_opsz24"
                     android:hint="Fecha de nacimiento">
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/etNacimiento"
+                        android:id="@+id/etFechaNacimiento"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:focusable="false"/>
@@ -179,7 +189,7 @@
 
                 <!-- Correo -->
                 <com.google.android.material.textfield.TextInputLayout
-                    style="@style/EstiloFormularioMarron"
+                    android:id="@+id/tilCorreo"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:startIconDrawable="@drawable/baseline_mail_outline_24"
@@ -192,7 +202,7 @@
 
                 <!-- Teléfono -->
                 <com.google.android.material.textfield.TextInputLayout
-                    style="@style/EstiloFormularioMarron"
+                    android:id="@+id/tilTelefono"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:startIconDrawable="@drawable/call_24dp_e3e3e3_fill0_wght400_grad0_opsz24"
@@ -205,7 +215,7 @@
 
                 <!-- Domicilio -->
                 <com.google.android.material.textfield.TextInputLayout
-                    style="@style/EstiloFormularioMarron"
+                    android:id="@+id/tilDomicilio"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:startIconDrawable="@drawable/home_24dp_e3e3e3_fill0_wght400_grad0_opsz24"
@@ -218,7 +228,7 @@
 
                 <!-- Placa -->
                 <com.google.android.material.textfield.TextInputLayout
-                    style="@style/EstiloFormularioMarron"
+                    android:id="@+id/tilPlaca"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:startIconDrawable="@drawable/directions_car_icon"
@@ -239,6 +249,7 @@
                     android:id="@+id/btnSubirFotoUsuario"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:drawableLeft="@drawable/add_photo_icon"
                     android:text="Subir foto"
                     android:textColor="@android:color/black"
                     android:backgroundTint="#FDF1A5"
@@ -251,7 +262,7 @@
                     android:layout_height="200dp"
                     android:scaleType="centerCrop"
                     android:layout_marginTop="8dp"
-                    android:layout_marginBottom="24dp"
+                    android:layout_marginBottom="8dp"
                     android:visibility="gone"
                     android:background="@drawable/border_gray" />
                 <com.google.android.material.button.MaterialButton
@@ -259,6 +270,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Editar foto"
+                    android:drawableLeft="@drawable/edit_icon"
                     android:textColor="@android:color/black"
                     android:backgroundTint="#FDF1A5"
                     app:strokeColor="#FDC100"
@@ -275,6 +287,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Subir foto"
+                    android:drawableLeft="@drawable/add_photo_icon"
                     android:textColor="@android:color/black"
                     android:backgroundTint="#FDF1A5"
                     app:strokeColor="#FDC100"
@@ -286,7 +299,7 @@
                     android:layout_height="200dp"
                     android:scaleType="centerCrop"
                     android:layout_marginTop="8dp"
-                    android:layout_marginBottom="24dp"
+                    android:layout_marginBottom="8dp"
                     android:visibility="gone"
                     android:background="@drawable/border_gray" />
                 <com.google.android.material.button.MaterialButton
@@ -294,6 +307,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Editar foto"
+                    android:drawableLeft="@drawable/edit_icon"
                     android:textColor="@android:color/black"
                     android:backgroundTint="#FDF1A5"
                     app:strokeColor="#FDC100"
