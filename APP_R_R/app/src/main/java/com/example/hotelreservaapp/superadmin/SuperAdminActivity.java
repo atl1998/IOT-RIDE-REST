@@ -1,4 +1,4 @@
-package com.example.riderest.superadmin;
+package com.example.hotelreservaapp.superadmin;
 
 import android.os.Bundle;
 
@@ -12,7 +12,7 @@ import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
 
-import com.example.riderest.R;
+import com.example.hotelreservaapp.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class SuperAdminActivity extends AppCompatActivity {
