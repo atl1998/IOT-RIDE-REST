@@ -177,20 +177,40 @@
         app:layout_constraintEnd_toEndOf="parent"/>
 
     <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_constraintTop_toBottomOf="@id/ly1">
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/ly1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical" >
 
-            <TextView
-                android:id="@+id/textView2"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_hotels"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="El mariscal" />
+                android:clipToPadding="false"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"/>
+
+            <com.google.android.material.carousel.MaskableFrameLayout
+                android:id="@+id/carousel_item_container"
+                android:layout_width="150dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp"
+                android:foreground="?attr/selectableItemBackground"
+                app:shapeAppearance="?attr/shapeAppearanceCornerExtraLarge">
+                <ImageView
+                    android:id="@+id/carousel_image_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"/>
+            </com.google.android.material.carousel.MaskableFrameLayout>
         </LinearLayout>
     </ScrollView>
     <com.google.android.material.bottomnavigation.BottomNavigationView
