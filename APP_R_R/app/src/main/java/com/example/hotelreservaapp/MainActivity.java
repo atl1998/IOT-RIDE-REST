@@ -7,6 +7,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.hotelreservaapp.cliente.DetallesReserva;
 import com.example.hotelreservaapp.cliente.HistorialEventos;
+import com.example.hotelreservaapp.cliente.HomeCliente;
+import com.example.hotelreservaapp.cliente.ListaHotelesCliente;
 import com.example.hotelreservaapp.loginAndRegister.InicioActivity;
 import com.example.hotelreservaapp.superadmin.SuperAdminActivity;
 import com.google.android.material.button.MaterialButton;
