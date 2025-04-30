@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.hotelreservaapp.cliente.DetallesReserva;
 import com.example.hotelreservaapp.cliente.HistorialEventos;
 import com.example.hotelreservaapp.loginAndRegister.InicioActivity;
+import com.example.hotelreservaapp.superadmin.SuperAdminActivity;
 import com.google.android.material.button.MaterialButton;
 
 public class MainActivity extends AppCompatActivity {
@@ -42,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         btnSuperadmin.setOnClickListener(v -> {
-            // startActivity(new Intent(this, SuperadminActivity.class));
+            startActivity(new Intent(this, SuperAdminActivity.class));
         });
 
         btnInicio.setOnClickListener(v -> {

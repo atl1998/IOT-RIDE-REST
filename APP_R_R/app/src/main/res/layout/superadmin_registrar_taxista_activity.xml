@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+    <!-- 🟨 Encabezado con back, título y ayuda -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/headerRegistro"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/amarillo"
+        android:padding="12dp"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnBack"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:backgroundTint="@android:color/transparent"
+            android:minWidth="0dp"
+            android:minHeight="0dp"
+            android:padding="15dp"
+            app:icon="@drawable/outline_arrow_back_24"
+            app:iconTint="@color/marron_oscuro"
+            app:iconGravity="textStart"
+            app:iconPadding="0dp"
+            android:contentDescription="Volver"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <TextView
+            android:id="@+id/tvSubtitulo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Registrar taxista"
+            android:textStyle="bold"
+            android:textColor="#282828"
+            android:textSize="20sp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/btnBack"
+            app:layout_constraintHorizontal_bias="0.5"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- Scroll del formulario -->
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintTop_toBottomOf="@id/headerRegistro"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+        <!-- ✅ Texto introductorio fuera del CardView -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Llena el siguiente formulario para registrar un nuevo taxista en la plataforma."
+            android:textSize="14sp"
+            android:textColor="#333333"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- ✅ Todo el formulario dentro del CardView -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="2dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <!-- Nombres -->
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/EstiloFormularioMarron"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:startIconDrawable="@drawable/baseline_person_outline_24"
+                    android:hint="Nombres">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etNombres"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Apellidos -->
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/EstiloFormularioMarron"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:startIconDrawable="@drawable/baseline_person_outline_24"
+                    android:hint="Apellidos">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etApellidos"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Tipo documento -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Tipo de Documento"
+                    android:textStyle="bold"
+                    android:textColor="@android:color/black"
+                    android:layout_marginTop="12dp"/>
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/chipGroupTipoDoc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:singleSelection="true"
+                    android:layout_marginBottom="12dp">
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipDni"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="DNI"
+                        android:checkable="true" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipPasaporte"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Pasaporte"
+                        android:checkable="true" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipCarnet"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Carnet"
+                        android:checkable="true" />
+                </com.google.android.material.chip.ChipGroup>
+
+                <!-- Documento -->
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/EstiloFormularioMarron"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:startIconDrawable="@drawable/id_card_24dp_e3e3e3_fill0_wght400_grad0_opsz24"
+                    android:hint="Número de documento">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etNumDoc"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Fecha nacimiento -->
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/EstiloFormularioMarron"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:startIconDrawable="@drawable/calendar_month_24dp_e3e3e3_fill0_wght400_grad0_opsz24"
+                    android:hint="Fecha de nacimiento">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etNacimiento"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:focusable="false"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Correo -->
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/EstiloFormularioMarron"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:startIconDrawable="@drawable/baseline_mail_outline_24"
+                    android:hint="Correo">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etCorreo"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Teléfono -->
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/EstiloFormularioMarron"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:startIconDrawable="@drawable/call_24dp_e3e3e3_fill0_wght400_grad0_opsz24"
+                    android:hint="Teléfono">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etTelefono"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Domicilio -->
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/EstiloFormularioMarron"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:startIconDrawable="@drawable/home_24dp_e3e3e3_fill0_wght400_grad0_opsz24"
+                    android:hint="Domicilio">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etDomicilio"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Placa -->
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/EstiloFormularioMarron"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:startIconDrawable="@drawable/directions_car_icon"
+                    android:hint="Placa del auto">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etPlaca"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Subir fotos -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Foto del usuario"
+                    android:textStyle="bold"/>
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnSubirFotoUsuario"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Subir foto"
+                    android:textColor="@android:color/black"
+                    android:backgroundTint="#FDF1A5"
+                    app:strokeColor="#FDC100"
+                    app:cornerRadius="8dp"
+                    android:layout_marginBottom="8dp"/>
+                <ImageView
+                    android:id="@+id/imagePreview1"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:scaleType="centerCrop"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="24dp"
+                    android:visibility="gone"
+                    android:background="@drawable/border_gray" />
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnEditarFotoUsuario"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Editar foto"
+                    android:textColor="@android:color/black"
+                    android:backgroundTint="#FDF1A5"
+                    app:strokeColor="#FDC100"
+                    app:cornerRadius="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:visibility="gone"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Foto del auto"
+                    android:textStyle="bold"/>
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnSubirFotoAuto"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Subir foto"
+                    android:textColor="@android:color/black"
+                    android:backgroundTint="#FDF1A5"
+                    app:strokeColor="#FDC100"
+                    app:cornerRadius="8dp"
+                    android:layout_marginBottom="24dp"/>
+                <ImageView
+                    android:id="@+id/imagePreview2"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:scaleType="centerCrop"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="24dp"
+                    android:visibility="gone"
+                    android:background="@drawable/border_gray" />
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnEditarFotoAuto"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Editar foto"
+                    android:textColor="@android:color/black"
+                    android:backgroundTint="#FDF1A5"
+                    app:strokeColor="#FDC100"
+                    app:cornerRadius="8dp"
+                    android:layout_marginBottom="24dp"
+                    android:visibility="gone"/>
+                <!-- Registrar -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnRegistrar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Registrar taxista"
+                    android:textColor="@android:color/black"
+                    android:backgroundTint="@color/amarillo"
+                    app:cornerRadius="8dp"
+                    app:icon="@drawable/person_add_icon"
+                    app:iconTint="@android:color/black"
+                    app:iconPadding="8dp"
+                    app:iconGravity="textStart"
+                    android:gravity="start|center_vertical" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+        </LinearLayout>
+    </ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>
