@@ -31,7 +31,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="Lista"
+                android:text="Procesar Pago"
                 android:textColor="#282828"
                 android:textSize="20sp"
                 android:textStyle="bold"
@@ -43,11 +43,12 @@
                 app:layout_constraintVertical_bias="0.523" />
 
             <!-- Botón de Notificaciones -->
+
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/añadirfavoritos"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:layout_marginEnd="108dp"
+                android:layout_marginEnd="76dp"
                 android:backgroundTint="@color/transparente"
                 android:contentDescription="Abrir chat de soporte"
                 android:minWidth="0dp"
@@ -593,8 +594,21 @@
             </androidx.cardview.widget.CardView>
 
 
-
+            <!-- Espacio para evitar superposición con el BottomNavigationView -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="75dp" />
 
         </LinearLayout>
+
     </ScrollView>
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottonNavigationView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf= "parent"
+        app:menu="@menu/cliente_menu_navigation" />
 </androidx.constraintlayout.widget.ConstraintLayout>

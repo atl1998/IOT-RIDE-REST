@@ -1,9 +1,11 @@
 package com.example.hotelreservaapp.cliente;
 
 import android.app.TimePickerDialog;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -80,6 +82,11 @@ public class DetallesReserva extends AppCompatActivity {
                 timePickerDialog.show();
             }
         });
-
+        // Ahora accedemos al botón btnProcesarPago dentro del nuevo modal
+        Button btnProcesarPago = findViewById(R.id.btnProcesarPago);
+        btnProcesarPago.setOnClickListener(v -> {
+            Intent intent = new Intent(this, ProcesarPago.class);
+            startActivity(intent);
+        });
     }
 }

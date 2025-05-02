@@ -2,7 +2,6 @@ package com.example.hotelreservaapp.cliente;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 
 import androidx.activity.EdgeToEdge;
@@ -13,21 +12,21 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.example.hotelreservaapp.R;
 
-public class ProcesarPago extends AppCompatActivity {
+public class PagoConTarjeta extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.cliente_activity_procesar_pago);
+        setContentView(R.layout.activity_pago_con_tarjeta);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        Button btnrealizarpago = findViewById(R.id.btn_realizar_pago);
-        btnrealizarpago.setOnClickListener(v -> {
-            Intent intent = new Intent(this, PagoConTarjeta.class);
+        Button btnPagar = findViewById(R.id.btnPagar);
+        btnPagar.setOnClickListener(v -> {
+            Intent intent = new Intent(this, PagoConfirmado.class);
             startActivity(intent);
         });
     }

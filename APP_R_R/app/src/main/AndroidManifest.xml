@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools" >
 
     <application
         android:allowBackup="true"
@@ -11,7 +11,16 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.HotelReservaApp"
-        tools:targetApi="31">
+        tools:targetApi="31" >
+        <activity
+            android:name=".cliente.PagoConfirmado"
+            android:exported="false" />
+        <activity
+            android:name=".cliente.PagoConTarjeta"
+            android:exported="false" />
+        <activity
+            android:name=".MainActivity2"
+            android:exported="false" />
         <activity
             android:name=".superadmin.SolicitudesActivity"
             android:exported="false" />
@@ -45,11 +54,11 @@
         <activity
             android:name=".cliente.ListaHotelesCliente"
             android:exported="false" />
-        <activity android:name=".cliente.DetallesReserva">
+        <activity android:name=".cliente.DetallesReserva" >
 
             <!-- Puedes agregar un intent-filter si es necesario -->
         </activity>
-        <activity android:name=".cliente.HistorialEventos">
+        <activity android:name=".cliente.HistorialEventos" >
 
             <!-- Puedes agregar un intent-filter si es necesario -->
         </activity>
@@ -69,7 +78,7 @@
             android:exported="false" />
         <activity
             android:name=".loginAndRegister.SplashActivity"
-            android:exported="true">
+            android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
