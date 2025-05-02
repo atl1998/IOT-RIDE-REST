@@ -107,7 +107,6 @@
             android:padding="24dp">
 
             <RelativeLayout
-                xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:paddingTop="0dp">
@@ -142,6 +141,15 @@
                     android:textSize="18sp"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="310dp" />
+
+                <Button
+                    android:id="@+id/btn_calificar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:backgroundTint="#0D47A1"
+                    android:text="Realizar Pago"
+                    android:textColor="#FFFFFF" />
 
             </RelativeLayout>
 

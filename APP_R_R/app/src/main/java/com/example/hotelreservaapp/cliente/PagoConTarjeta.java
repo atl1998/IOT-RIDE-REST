@@ -54,14 +54,15 @@ public class PagoConTarjeta extends AppCompatActivity {
     private boolean isValidForm() {
         boolean valid = true;
 
-        // Validar número de tarjeta
         String cardNumber = etCardNumber.getText().toString().trim();
-        if (TextUtils.isEmpty(cardNumber) || !cardNumber.matches("\\d{4}-\\d{4}-\\d{4}-\\d{4}")) {
-            tilCardNumber.setError("Número de tarjeta inválido");
+
+        if (TextUtils.isEmpty(cardNumber) || !cardNumber.matches("\\d{12}")) {
+            tilCardNumber.setError("Debe contener exactamente 12 dígitos");
             valid = false;
         } else {
-            tilCardNumber.setError(null);  // Quitar el error
+            tilCardNumber.setError(null);  // Todo correcto
         }
+
 
         // Validar nombre del titular
         String cardHolder = etCardHolder.getText().toString().trim();
@@ -72,14 +73,35 @@ public class PagoConTarjeta extends AppCompatActivity {
             tilCardHolder.setError(null);  // Quitar el error
         }
 
-        // Validar fecha de vencimiento (MM/YY)
         String expiry = etExpiry.getText().toString().trim();
-        if (TextUtils.isEmpty(expiry) || !expiry.matches("\\d{2}/\\d{2}")) {
+
+        // Aceptar formato MMYY o MM/YY
+        if (TextUtils.isEmpty(expiry)) {
             tilExpiry.setError("Fecha inválida");
             valid = false;
         } else {
-            tilExpiry.setError(null);  // Quitar el error
+            // Normalizar formato: quitar cualquier carácter no numérico
+            String clean = expiry.replaceAll("[^\\d]", ""); // deja solo números
+
+            if (clean.length() != 4) {
+                tilExpiry.setError("Fecha inválida");
+                valid = false;
+            } else {
+                int mes = Integer.parseInt(clean.substring(0, 2));
+                int año = 2000 + Integer.parseInt(clean.substring(2, 4)); // convierte YY a YYYY
+
+                if (mes < 1 || mes > 12) {
+                    tilExpiry.setError("Mes inválido");
+                    valid = false;
+                } else if (año > 2030) {
+                    tilExpiry.setError("Año no permitido");
+                    valid = false;
+                } else {
+                    tilExpiry.setError(null); // Todo bien
+                }
+            }
         }
+
 
         // Validar CVV (tres dígitos)
         String cvv = etCVV.getText().toString().trim();

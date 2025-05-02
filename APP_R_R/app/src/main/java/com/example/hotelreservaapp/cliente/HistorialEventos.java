@@ -4,22 +4,32 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.RenderEffect;
 import android.graphics.Shader;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.hotelreservaapp.R;
 import com.example.hotelreservaapp.loginAndRegister.LoginActivity;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class HistorialEventos extends AppCompatActivity {
 
@@ -55,6 +65,7 @@ public class HistorialEventos extends AppCompatActivity {
         });
 
     }
+
     private void mostrarDialogoCheckout() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setView(R.layout.cliente_dialog_checkout);
