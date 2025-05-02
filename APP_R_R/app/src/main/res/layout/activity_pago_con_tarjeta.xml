@@ -154,6 +154,7 @@
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:id="@+id/tilCardNumber"
             android:hint="Número de tarjeta"
             app:boxBackgroundMode="outline"
             app:boxStrokeColor="#999"
@@ -174,6 +175,7 @@
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:id="@+id/tilCardHolder"
             android:hint="Nombre y Apellido del titular"
             app:boxBackgroundMode="outline"
             app:boxStrokeColor="#999"
@@ -185,10 +187,10 @@
             android:layout_marginBottom="12dp">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/NombreTitular"
+                android:id="@+id/etCardHolder"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="number" />
+                android:inputType="textPersonName" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Campos Expiry y CVV en fila -->
@@ -204,6 +206,7 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
+                android:id="@+id/tilExpiry"
                 android:hint="MM/YY"
                 app:boxStrokeColor="#999"
                 android:layout_marginTop="0dp"
@@ -219,7 +222,7 @@
                     android:id="@+id/etExpiry"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="text" />
+                    android:inputType="number" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <!-- CVV -->
@@ -227,6 +230,7 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
+                android:id="@+id/tilCVV"
                 android:hint="CVV"
                 app:boxStrokeColor="#999"
                 android:layout_marginTop="0dp"
@@ -242,7 +246,7 @@
                     android:id="@+id/etCVV"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="text" />
+                    android:inputType="number" />
             </com.google.android.material.textfield.TextInputLayout>
         </LinearLayout>
 

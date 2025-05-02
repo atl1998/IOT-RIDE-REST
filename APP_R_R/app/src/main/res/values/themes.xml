@@ -43,7 +43,11 @@
         <item name="colorControlActivated">@color/amarillo_dorado</item>
         <item name="colorAccent">@color/amarillo_dorado</item>
         <item name="clockNumberTextColor">@color/black</item>
+        <item name="bottomNavigationStyle">@style/Widget.MyBottomNavigation</item>
 
     </style>
-
+    <style name="Widget.MyBottomNavigation" parent="Widget.MaterialComponents.BottomNavigationView">
+        <!-- Fondo blanco para todos los BottomNavigationView -->
+        <item name="android:background">@android:color/white</item>
+    </style>
 </resources>

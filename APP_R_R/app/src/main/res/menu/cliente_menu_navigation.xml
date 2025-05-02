@@ -6,14 +6,14 @@
         android:id="@+id/inicioCliente">
     </item>
     <item
-        android:title="Mapa"
-        android:icon="@drawable/map_24dp"
-        android:id="@+id/mapaCliente">
-    </item>
-    <item
-        android:title="Historial"
+        android:title="Reservas"
         android:icon="@drawable/luggage_24dp"
         android:id="@+id/historialCliente">
+    </item>
+    <item
+        android:title="Chat"
+        android:icon="@drawable/outline_chat_bubble_outline_24"
+        android:id="@+id/mapaCliente">
     </item>
     <item
         android:title="Perfil"

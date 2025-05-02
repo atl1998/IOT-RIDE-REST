@@ -877,7 +877,18 @@
                 android:textColor="#FFFFFF"
                 android:textSize="16sp" />
 
-
+            <!-- Espacio para evitar superposición con el BottomNavigationView -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="45dp" />
         </LinearLayout>
     </ScrollView>
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottonNavigationView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf= "parent"
+        app:menu="@menu/cliente_menu_navigation" />
 </androidx.constraintlayout.widget.ConstraintLayout>

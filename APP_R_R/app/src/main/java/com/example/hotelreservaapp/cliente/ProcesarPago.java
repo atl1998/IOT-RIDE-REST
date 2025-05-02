@@ -12,6 +12,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.hotelreservaapp.R;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class ProcesarPago extends AppCompatActivity {
 
@@ -25,6 +26,26 @@ public class ProcesarPago extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottonNavigationView);
+        bottomNavigationView.setOnItemSelectedListener(item -> {
+            int id = item.getItemId();
+            if (id == R.id.inicioCliente) {
+                // startActivity(new Intent(this, InicioCliente.class));
+                return true;
+            } else if (id == R.id.mapaCliente) {
+                // startActivity(new Intent(this, MapaCliente.class));
+                return true;
+            } else if (id == R.id.historialCliente) {
+                startActivity(new Intent(this, HistorialEventos.class));
+                return true;
+            } else if (id == R.id.perfilCliente) {
+                // startActivity(new Intent(this, PerfilCliente.class));
+                return true;
+            }
+            return false;
+        });
+
         Button btnrealizarpago = findViewById(R.id.btn_realizar_pago);
         btnrealizarpago.setOnClickListener(v -> {
             Intent intent = new Intent(this, PagoConTarjeta.class);
