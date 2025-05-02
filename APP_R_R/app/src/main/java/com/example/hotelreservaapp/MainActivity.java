@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
         // Acciones por botón (por ahora sin abrir otra Activity)
         btnCliente.setOnClickListener(v -> {
             //por ahora directamente al mio bala
-            startActivity(new Intent(this, HistorialEventos.class));
+            startActivity(new Intent(this, HomeCliente.class));
         });
 
         btnTaxista.setOnClickListener(v -> {

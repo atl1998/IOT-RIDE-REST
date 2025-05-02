@@ -1,6 +1,9 @@
 package com.example.hotelreservaapp.cliente;
 
+import static androidx.core.content.ContextCompat.startActivity;
+
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,6 +53,7 @@ public class HotelAdapter extends RecyclerView.Adapter<HotelAdapter.HotelViewHol
         holder.btnVerDetalles.setOnClickListener(v -> {
             Toast.makeText(context, "Detalles de " + hotel.getNombre(), Toast.LENGTH_SHORT).show();
             // Aquí puedes abrir otra actividad o mostrar un dialog
+            context.startActivity(new Intent(context, DetallesHotel.class));
         });
     }
 

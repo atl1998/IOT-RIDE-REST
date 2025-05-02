@@ -36,6 +36,8 @@ public class ListaHotelesCliente extends AppCompatActivity {
 
         HotelAdapter adapter = new HotelAdapter(this, listaHoteles);
         recyclerView.setAdapter(adapter);
+
+
     }
 
     private void llenarListaHoteles() {

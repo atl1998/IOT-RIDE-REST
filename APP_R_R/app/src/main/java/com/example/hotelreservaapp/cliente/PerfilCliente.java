@@ -8,26 +8,20 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.LinearSnapHelper;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.SnapHelper;
 
 import com.example.hotelreservaapp.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.button.MaterialButton;
 
-public class HomeCliente extends AppCompatActivity {
-    MaterialButton btnBusqueda;
-    private HotelCarouselManager carouselManager;
+public class PerfilCliente extends AppCompatActivity {
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.cliente_activity_home);
+        setContentView(R.layout.cliente_activity_perfil);
 
         BottomNavigationView bottomNav = findViewById(R.id.bottonNavigationView);
-        bottomNav.setSelectedItemId(R.id.inicioCliente);
+        bottomNav.setSelectedItemId(R.id.perfilCliente);
         bottomNav.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
 
@@ -42,12 +36,6 @@ public class HomeCliente extends AppCompatActivity {
             }
 
             return true;
-        });
-
-        btnBusqueda = findViewById(R.id.buscar);
-        btnBusqueda.setOnClickListener(v -> {
-            //por ahora directamente al mio bala
-            startActivity(new Intent(this, ListaHotelesCliente.class));
         });
     }
 }
