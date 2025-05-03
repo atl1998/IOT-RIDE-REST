@@ -1,6 +1,7 @@
 package com.example.hotelreservaapp.cliente;
 
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -65,7 +66,9 @@ public class PagoConfirmado extends AppCompatActivity {
 
             // Mostrar mensaje de confirmación
             Toast.makeText(this, "¡Gracias por tu calificación!", Toast.LENGTH_SHORT).show();
-
+            // Redirigir a otro Activity después
+            Intent intent = new Intent(PagoConfirmado.this, HistorialEventos.class);
+            startActivity(intent);
             // Cerrar el diálogo
             dialog.dismiss();
         });

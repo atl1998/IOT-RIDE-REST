@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingTop="6dp"
+    android:paddingBottom="6dp"
+    android:paddingStart="8dp"
+    android:paddingEnd="8dp"
+    android:background="@android:color/white"
+    android:layout_marginBottom="2dp">
+
+    <!-- Notificación -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="4dp"
+        android:background="@android:color/white"
+        android:gravity="center_vertical">
+
+        <!-- Imagen del logo -->
+        <ImageView
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:src="@drawable/logo_r_r_2"
+            android:contentDescription="Logo R&amp;R"
+            android:layout_marginEnd="16dp" />
+
+        <!-- Texto de la notificación -->
+        <TextView
+            android:id="@+id/texto_mensaje"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="El checkout ha finalizado, por favor dirigirse a la opción de “Detalles” en el hotel seleccionado y buscar en la parte inferior el botón “Procesar pago.”"
+            android:textSize="16sp"
+            android:textColor="#000000"
+            android:layout_weight="1"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="8dp" />
+    </LinearLayout>
+
+    <!-- Línea negra (separador) -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1.5dp"
+        android:background="#000000" />
+</LinearLayout>

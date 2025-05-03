@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:background="#FFC107"
+        android:background="@color/amarillo_dorado"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
@@ -258,7 +258,7 @@
             android:layout_height="wrap_content"
             android:text="Pagar"
             android:textColor="#FFFFFF"
-            android:backgroundTint="#0A55C5"
+            android:backgroundTint="@color/dorado"
             android:elevation="4dp" />
         </LinearLayout>
     </ScrollView>

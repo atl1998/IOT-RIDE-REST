@@ -83,7 +83,7 @@
             android:layout_height="wrap_content"
             android:overScrollMode="never"
             android:scrollbars="none"
-            android:background="#FFC107"
+            android:background="@color/amarillo_dorado"
             android:paddingTop="8dp"
             android:paddingBottom="8dp">
 
@@ -265,7 +265,7 @@
 
                             <!-- Texto del puntaje -->
                             <TextView
-                                android:text="8.5/10"
+                                android:text="3.5/5"
                                 android:textSize="16sp"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"/>
@@ -872,7 +872,7 @@
                 android:layout_height="50dp"
                 android:layout_marginTop="0dp"
                 android:layout_weight="1"
-                android:backgroundTint="#3F51B5"
+                android:backgroundTint="@color/dorado"
                 android:text="Procesar el Pago"
                 android:textColor="#FFFFFF"
                 android:textSize="16sp" />

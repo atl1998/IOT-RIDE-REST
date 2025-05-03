@@ -14,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:background="#FFC107"
+        android:background="@color/amarillo_dorado"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
@@ -57,7 +57,7 @@
                 app:icon="@drawable/outline_arrow_back_24"
                 app:iconGravity="textStart"
                 app:iconPadding="0dp"
-                app:iconTint="@color/marron_oscuro"
+                app:iconTint="@color/transparente"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/PagoCompleto"
                 app:layout_constraintTop_toTopOf="parent"
@@ -69,7 +69,7 @@
                 android:layout_height="48dp"
                 android:backgroundTint="@color/transparente"
                 app:icon="@drawable/notifications_24dp_e3e3e3_fill0_wght400_grad0_opsz24"
-                app:iconTint="@color/marron_oscuro"
+                app:iconTint="@color/transparente"
                 app:iconGravity="textStart"
                 app:iconPadding="0dp"
                 android:padding="15dp"
@@ -144,11 +144,13 @@
 
                 <Button
                     android:id="@+id/btn_calificar"
-                    android:layout_width="match_parent"
+                    android:layout_width="214dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:backgroundTint="#0D47A1"
-                    android:text="Realizar Pago"
+                    android:layout_marginTop="350dp"
+                    android:backgroundTint="@color/dorado"
+                    android:text="Regresar al inicio"
+                    android:layout_centerHorizontal="true"
+                    android:textSize="15dp"
                     android:textColor="#FFFFFF" />
 
             </RelativeLayout>

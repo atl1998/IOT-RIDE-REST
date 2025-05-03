@@ -38,6 +38,6 @@
         android:text="Solicitar Checkout"
         android:textColor="#FFFFFF"
         android:layout_marginTop="20dp"
-        android:backgroundTint="#0055AA"
+        android:backgroundTint="@color/dorado"
         android:layout_gravity="center" />
 </LinearLayout>

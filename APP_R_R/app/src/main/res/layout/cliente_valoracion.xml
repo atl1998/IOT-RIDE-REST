@@ -59,7 +59,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="0dp"
-        android:backgroundTint="#0055AA"
+        android:backgroundTint="@color/dorado"
+        android:textSize="15dp"
         android:text="Enviar"
         android:textColor="#FFFFFF" />
 </LinearLayout>
