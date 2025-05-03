@@ -21,11 +21,11 @@
 
         <!-- Imagen del logo -->
         <ImageView
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:src="@drawable/logo_r_r_2"
+            android:layout_width="85dp"
+            android:layout_height="85dp"
+            android:src="@drawable/burbujaRideRest"
             android:contentDescription="Logo R&amp;R"
-            android:layout_marginEnd="16dp" />
+            android:layout_marginEnd="12dp" />
 
         <!-- Texto de la notificación -->
         <TextView
