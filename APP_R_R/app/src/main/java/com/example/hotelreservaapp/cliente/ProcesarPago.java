@@ -13,6 +13,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.example.hotelreservaapp.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.button.MaterialButton;
 
 public class ProcesarPago extends AppCompatActivity {
 
@@ -28,6 +29,7 @@ public class ProcesarPago extends AppCompatActivity {
         });
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottonNavigationView);
+        bottomNavigationView.getMenu().setGroupCheckable(0, false, true); // Desactiva el estado de selección
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
             if (id == R.id.inicioCliente) {
@@ -45,7 +47,11 @@ public class ProcesarPago extends AppCompatActivity {
             }
             return false;
         });
-
+        MaterialButton btnNotificaciones = findViewById(R.id.notificaciones_cliente);
+        btnNotificaciones.setOnClickListener(v -> {
+            Intent intent = new Intent(this, ClienteNotificaciones.class);
+            startActivity(intent);
+        });
         Button btnrealizarpago = findViewById(R.id.btn_realizar_pago);
         btnrealizarpago.setOnClickListener(v -> {
             Intent intent = new Intent(this, PagoConTarjeta.class);

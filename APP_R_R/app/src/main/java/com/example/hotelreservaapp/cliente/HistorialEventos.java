@@ -51,6 +51,7 @@ public class HistorialEventos extends AppCompatActivity {
         });
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottonNavigationView);
+        bottomNavigationView.setSelectedItemId(R.id.historialCliente); // Para que aparezca q esta seleccionado ese
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
             if (id == R.id.inicioCliente) {
@@ -60,7 +61,7 @@ public class HistorialEventos extends AppCompatActivity {
                 // startActivity(new Intent(this, MapaCliente.class));
                 return true;
             } else if (id == R.id.historialCliente) {
-                startActivity(new Intent(this, HistorialEventos.class));
+                // startActivity(new Intent(this, HistorialEventos.class));
                 return true;
             } else if (id == R.id.perfilCliente) {
                 // startActivity(new Intent(this, PerfilCliente.class));

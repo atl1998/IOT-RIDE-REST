@@ -17,6 +17,8 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.hotelreservaapp.R;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.button.MaterialButton;
 
 public class DetallesReserva extends AppCompatActivity {
     private TextView definirHoraLlegada;
@@ -32,6 +34,33 @@ public class DetallesReserva extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottonNavigationView);
+        bottomNavigationView.getMenu().setGroupCheckable(0, false, true); // Desactiva el estado de selección
+        bottomNavigationView.setOnItemSelectedListener(item -> {
+            int id = item.getItemId();
+            if (id == R.id.inicioCliente) {
+                // startActivity(new Intent(this, InicioCliente.class));
+                return true;
+            } else if (id == R.id.mapaCliente) {
+                // startActivity(new Intent(this, MapaCliente.class));
+                return true;
+            } else if (id == R.id.historialCliente) {
+                startActivity(new Intent(this, HistorialEventos.class));
+                return true;
+            } else if (id == R.id.perfilCliente) {
+                // startActivity(new Intent(this, PerfilCliente.class));
+                return true;
+            }
+            return false;
+        });
+
+        MaterialButton btnNotificaciones = findViewById(R.id.notificaciones_cliente);
+        btnNotificaciones.setOnClickListener(v -> {
+            Intent intent = new Intent(this, ClienteNotificaciones.class);
+            startActivity(intent);
+        });
+
 
         // Inicializamos el TextView y la variable para saber si la hora ya fue definida
         definirHoraLlegada = findViewById(R.id.definirHoraLlegada);

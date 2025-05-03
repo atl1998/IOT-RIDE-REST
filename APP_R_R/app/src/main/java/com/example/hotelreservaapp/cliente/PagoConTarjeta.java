@@ -12,6 +12,8 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.hotelreservaapp.R;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -23,6 +25,14 @@ public class PagoConTarjeta extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_pago_con_tarjeta);
+
+
+        MaterialButton btnNotificaciones = findViewById(R.id.notificaciones_cliente);
+        btnNotificaciones.setOnClickListener(v -> {
+            Intent intent = new Intent(PagoConTarjeta.this, ClienteNotificaciones.class);
+            startActivity(intent);
+        });
+
 
         // Iniciar los campos
         tilCardNumber = findViewById(R.id.tilCardNumber);
