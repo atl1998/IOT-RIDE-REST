@@ -120,7 +120,7 @@ public class SuperAdminActivity extends BaseBottomNavActivity {
     }
 
     private void cargarUsuariosDeEjemplo() {
-        listaOriginal.add(new UsuarioListaSuperAdmin("Jorge Coronado", "coronadomaxwell@pucp.edu.pe", "Administrador de hotel","coronado.png" , true));
+        listaOriginal.add(new UsuarioListaSuperAdmin("Jorge Coronado", "maxwell@pucp.edu.pe", "Administrador de hotel","coronado.png" , true));
         listaOriginal.add(new UsuarioListaSuperAdmin("Lucía Quispe", "lucia@email.com", "Taxista", "", true));
         listaOriginal.add(new UsuarioListaSuperAdmin("Ana Pérez", "ana@email.com", "Cliente", "", true));
         listaOriginal.add(new UsuarioListaSuperAdmin("Giorgio Maxwell", "gmaxwell@gmail.com", "Taxista", "coronado.png", true));

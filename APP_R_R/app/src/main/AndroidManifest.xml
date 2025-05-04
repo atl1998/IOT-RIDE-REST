@@ -12,7 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.HotelReservaApp"
         tools:targetApi="31">
-
+        <activity
+            android:name=".superadmin.DetalleSolicitudActivity"
+            android:exported="false" />
         <activity
             android:name=".cliente.ClienteChat"
             android:exported="false" />
@@ -37,9 +39,11 @@
         <activity
             android:name=".cliente.PagoConTarjeta"
             android:exported="false" />
-        <!-- Sale error aquí :'v <activity
+        <!--
+ Sale error aquí :'v <activity
             android:name=".MainActivity2"
-            android:exported="false" />  -->
+            android:exported="false" />
+        -->
         <activity
             android:name=".superadmin.SolicitudesActivity"
             android:exported="false" />
