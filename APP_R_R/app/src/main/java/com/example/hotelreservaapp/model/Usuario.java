@@ -2,6 +2,7 @@ package com.example.hotelreservaapp.model;
 
 public class Usuario {
     private String nombre;
+    private String apellido;
     private String rol;
     private String tipoDocumento;
     private String numeroDocumento;

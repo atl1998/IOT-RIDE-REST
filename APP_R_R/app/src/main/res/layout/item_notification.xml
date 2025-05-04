@@ -23,7 +23,7 @@
         <ImageView
             android:layout_width="85dp"
             android:layout_height="85dp"
-            android:src="@drawable/burbujaRideRest"
+            android:src="@drawable/bubble"
             android:contentDescription="Logo R&amp;R"
             android:layout_marginEnd="12dp" />
 
