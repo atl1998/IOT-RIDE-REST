@@ -36,7 +36,7 @@ import java.util.List;
 
 public class HistorialEventos extends AppCompatActivity {
 
-    private Button btnCheckout;  // 🔸 Referencia global
+    private Button btnCheckout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,10 +55,10 @@ public class HistorialEventos extends AppCompatActivity {
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
             if (id == R.id.inicioCliente) {
-                // startActivity(new Intent(this, InicioCliente.class));
+                startActivity(new Intent(this, HomeCliente.class));
                 return true;
-            } else if (id == R.id.mapaCliente) {
-                // startActivity(new Intent(this, MapaCliente.class));
+            } else if (id == R.id.chat_cliente) {
+                startActivity(new Intent(this, ClienteChat.class));
                 return true;
             } else if (id == R.id.historialCliente) {
                 // startActivity(new Intent(this, HistorialEventos.class));

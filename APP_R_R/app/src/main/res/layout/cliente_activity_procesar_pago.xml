@@ -291,7 +291,7 @@
                                     android:id="@+id/valorPersonas"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="2 Personas (1 Habitación)"
+                                    android:text="2 Pers. (1 Hab.)"
                                     android:textSize="16sp"
                                     android:textColor="#444444"
                                     android:layout_alignParentEnd="true" />
@@ -597,8 +597,7 @@
             <!-- Espacio para evitar superposición con el BottomNavigationView -->
             <View
                 android:layout_width="match_parent"
-                android:layout_height="45dp" />
-
+                android:layout_height="60dp" />
         </LinearLayout>
 
     </ScrollView>
