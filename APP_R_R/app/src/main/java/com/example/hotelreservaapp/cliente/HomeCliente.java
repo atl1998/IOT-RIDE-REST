@@ -33,8 +33,8 @@ public class HomeCliente extends AppCompatActivity {
 
             if (id == R.id.inicioCliente) {
                 startActivity(new Intent(this, HomeCliente.class));
-            } else if (id == R.id.mapaCliente) {
-                startActivity(new Intent(this, ListaHotelesCliente.class));
+            } else if (id == R.id.chat_cliente) {
+                startActivity(new Intent(this, ClienteChat.class));
             } else if (id == R.id.historialCliente) {
                 startActivity(new Intent(this, HistorialEventos.class));
             } else if (id == R.id.perfilCliente) {

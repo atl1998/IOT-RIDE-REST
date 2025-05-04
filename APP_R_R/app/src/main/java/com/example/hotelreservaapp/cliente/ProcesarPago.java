@@ -29,14 +29,13 @@ public class ProcesarPago extends AppCompatActivity {
         });
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottonNavigationView);
-        bottomNavigationView.getMenu().setGroupCheckable(0, false, true); // Desactiva el estado de selección
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
             if (id == R.id.inicioCliente) {
-                // startActivity(new Intent(this, InicioCliente.class));
+                startActivity(new Intent(this, HomeCliente.class));
                 return true;
-            } else if (id == R.id.mapaCliente) {
-                // startActivity(new Intent(this, MapaCliente.class));
+            } else if (id == R.id.chat_cliente) {
+                startActivity(new Intent(this, ClienteChat.class));
                 return true;
             } else if (id == R.id.historialCliente) {
                 startActivity(new Intent(this, HistorialEventos.class));

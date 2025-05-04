@@ -597,8 +597,7 @@
             <!-- Espacio para evitar superposición con el BottomNavigationView -->
             <View
                 android:layout_width="match_parent"
-                android:layout_height="45dp" />
-
+                android:layout_height="60dp" />
         </LinearLayout>
 
     </ScrollView>

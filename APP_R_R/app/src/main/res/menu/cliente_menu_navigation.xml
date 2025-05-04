@@ -13,7 +13,7 @@
     <item
         android:title="Chat"
         android:icon="@drawable/outline_chat_bubble_outline_24"
-        android:id="@+id/mapaCliente">
+        android:id="@+id/chat_cliente">
     </item>
     <item
         android:title="Perfil"

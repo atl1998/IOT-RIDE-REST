@@ -43,7 +43,7 @@
                 android:gravity="center_vertical">
 
                 <TextView
-                    android:id="@+id/nombre_cliente"
+                    android:id="@+id/nombreHotel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:maxWidth="120dp"
@@ -66,18 +66,20 @@
             </LinearLayout>
 
             <!-- Fila inferior: Último mensaje + check -->
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="start|center_vertical"
                 android:layout_marginTop="6dp"
-                android:layout_marginBottom="10dp">
+                android:layout_marginBottom="10dp"
+                android:paddingStart="0dp"
+                android:paddingEnd="8dp">
 
                 <ImageView
                     android:id="@+id/doble_check"
                     android:layout_width="18dp"
                     android:layout_height="18dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
                     android:src="@drawable/chat_enviado"
                     android:contentDescription="Mensaje leído"
                     android:layout_marginEnd="8dp" />
@@ -86,15 +88,26 @@
                     android:id="@+id/ultimo_mensaje"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:maxWidth="190dp"
+                    android:layout_toEndOf="@id/doble_check"
+                    android:layout_centerVertical="true"
+                    android:maxWidth="180dp"
                     android:ellipsize="end"
                     android:maxLines="1"
                     android:text="Ya he hecho el check-in"
                     android:textColor="#555555"
-                    android:textSize="14sp" />
+                    android:textSize="14sp"
+                    android:layout_marginEnd="8dp" />
 
-
-            </LinearLayout>
+                <ImageView
+                    android:id="@+id/chat_no_leido"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/fiber_manual_record_24dp_dea90d_fill1_wght400_grad0_opsz24"
+                    android:contentDescription="Mensaje no leído"
+                    android:layout_marginEnd="32dp"/>
+            </RelativeLayout>
 
         </LinearLayout>
     </LinearLayout>
