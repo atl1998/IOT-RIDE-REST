@@ -65,7 +65,7 @@ public class SolicitudAdapter extends RecyclerView.Adapter<SolicitudAdapter.Soli
     public void onBindViewHolder(@NonNull SolicitudViewHolder holder, int position) {
         SolicitudTaxista s = listaFiltrada.get(position);
 
-        holder.tvNombre.setText(s.getNombre());
+        holder.tvNombre.setText(s.getNombre() + " " + s.getApellido());
         holder.tvCorreo.setText(s.getCorreo());
         holder.tvPlaca.setText("Placa: " + s.getPlaca());
 

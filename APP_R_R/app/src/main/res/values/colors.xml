@@ -10,6 +10,8 @@
     <color name="dorado_transparente">#40B48B0A</color>
     <color name="dorado_oscuro">#7A5F12</color>
     <color name="amarillo">#CEBE38</color>
+    <color name="error_red">#D32F2F</color>
+    <color name="verde_aceptar">#6FD774</color>
 
 
     <!-- Colores principales de tu app -->

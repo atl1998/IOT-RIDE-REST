@@ -68,16 +68,94 @@
                 android:layout_gravity="center"
                 android:layout_marginBottom="16dp"
                 android:scaleType="centerCrop"
-                android:background="@drawable/border_gray"
                 android:src="@drawable/default_user_icon" />
 
             <!-- Nombre -->
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Nombre completo">
+                android:hint="Nombre"
+                android:layout_marginTop="8dp">
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etNombre"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:enabled="false"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Apellido -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Apellido"
+                android:layout_marginTop="8dp">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etApellido"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:enabled="false"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Tipo de documento -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Tipo de documento"
+                android:layout_marginTop="8dp">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etTipoDoc"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:enabled="false"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Número de documento -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Número de documento"
+                android:layout_marginTop="8dp">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etNumDoc"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:enabled="false"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Fecha de nacimiento -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Fecha de nacimiento"
+                android:layout_marginTop="8dp">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etFechaNacimiento"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:enabled="false"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Teléfono -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Teléfono"
+                android:layout_marginTop="8dp">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etTelefono"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:enabled="false"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Domicilio -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Domicilio"
+                android:layout_marginTop="8dp">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etDomicilio"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:enabled="false"/>
@@ -88,7 +166,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Correo electrónico"
-                android:layout_marginTop="12dp">
+                android:layout_marginTop="8dp">
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etCorreo"
                     android:layout_width="match_parent"
@@ -101,7 +179,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Placa del vehículo"
-                android:layout_marginTop="12dp">
+                android:layout_marginTop="8dp">
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etPlaca"
                     android:layout_width="match_parent"
@@ -116,15 +194,50 @@
                 android:text="Foto de la placa"
                 android:textStyle="bold"
                 android:textColor="@android:color/black"
-                android:layout_marginTop="16dp"/>
+                android:layout_marginTop="16dp"
+                android:includeFontPadding="false"
+                android:lineSpacingExtra="0dp"/>
 
             <ImageView
                 android:id="@+id/imageFotoPlaca"
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:layout_marginTop="8dp"
-                android:scaleType="centerInside"
-                android:background="@drawable/border_gray"/>
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:weightSum="2">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnHabilitar"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+
+                    android:layout_marginEnd="8dp"
+                    android:layout_weight="1"
+                    android:text="Habilitar"
+                    android:textColor="@android:color/white"
+                    android:backgroundTint="@color/verde_aceptar"
+                    style="@style/Widget.MaterialComponents.Button" />
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnRechazar"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_weight="1"
+                    android:text="Rechazar"
+                    android:textColor="@android:color/white"
+                    android:backgroundTint="@color/error_red"
+                    style="@style/Widget.MaterialComponents.Button" />
+            </LinearLayout>
         </LinearLayout>
+
     </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>
