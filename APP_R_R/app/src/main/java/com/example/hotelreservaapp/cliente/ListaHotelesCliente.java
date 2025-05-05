@@ -1,11 +1,14 @@
 package com.example.hotelreservaapp.cliente;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RadioGroup;
 
 import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -38,11 +41,103 @@ public class ListaHotelesCliente extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
 
 
+        // Obtener referencia al botón de ordenar
+        Button btnOrdenar = findViewById(R.id.btnOrdenar);
+
+        // Configurar el listener del clic en el botón
+        btnOrdenar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mostrarDialogoOrdenamiento();
+            }
+        });
+
     }
 
     private void llenarListaHoteles() {
         listaHoteles.add(new Hotel("Hotel Lima", 4.5f, "9.1 Excelente - 200 opiniones", "Centro de Lima", "28 abr al 2 may", "S/350", R.drawable.hotel1));
         listaHoteles.add(new Hotel("Hotel Cusco", 4.0f, "8.8 Fabuloso - 150 opiniones", "Cusco Histórico", "1 may al 5 may", "S/290", R.drawable.hotel2));
         // agrega más hoteles
+    }
+
+
+    private void mostrarDialogoOrdenamiento() {
+        // Inflar el layout del diálogo
+        LayoutInflater inflater = LayoutInflater.from(this);
+        View dialogView = inflater.inflate(R.layout.cliente_boton_ordenar_hoteles, null);
+
+        // Obtener referencia al grupo de radio buttons
+        final RadioGroup radioGroup = dialogView.findViewById(R.id.radio_group_ordenar);
+
+        // Crear el diálogo
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this)
+                .setView(dialogView)
+                .setPositiveButton("Aplicar", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Obtener el ID del radio button seleccionado
+                        int selectedId = radioGroup.getCheckedRadioButtonId();
+
+                        if (selectedId == R.id.rb_puntuacion) {
+                            // Ordenar por puntuación
+                            ordenarPorPuntuacion();
+                        } else if (selectedId == R.id.rb_precio_menor) {
+                            // Ordenar por precio de menor a mayor
+                            ordenarPorPrecioAscendente();
+                        } else if (selectedId == R.id.rb_precio_mayor) {
+                            // Ordenar por precio de mayor a menor
+                            ordenarPorPrecioDescendente();
+                        }
+
+                        dialog.dismiss();
+                    }
+                })
+                .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+
+        // Mostrar el diálogo
+        AlertDialog dialog = dialogBuilder.create();
+        dialog.show();
+    }
+
+    // Implementa estas funciones según tu lógica de ordenamiento
+    private void ordenarPorPuntuacion() {
+        // Aquí implementa la lógica para ordenar hoteles por puntuación
+        // Por ejemplo:
+        // Collections.sort(hotelesList, new Comparator<Hotel>() {
+        //     @Override
+        //     public int compare(Hotel h1, Hotel h2) {
+        //         return Float.compare(h2.getPuntuacion(), h1.getPuntuacion());
+        //     }
+        // });
+        // adapter.notifyDataSetChanged();
+    }
+
+    private void ordenarPorPrecioAscendente() {
+        // Aquí implementa la lógica para ordenar hoteles por precio ascendente
+        // Por ejemplo:
+        // Collections.sort(hotelesList, new Comparator<Hotel>() {
+        //     @Override
+        //     public int compare(Hotel h1, Hotel h2) {
+        //         return Double.compare(h1.getPrecio(), h2.getPrecio());
+        //     }
+        // });
+        // adapter.notifyDataSetChanged();
+    }
+
+    private void ordenarPorPrecioDescendente() {
+        // Aquí implementa la lógica para ordenar hoteles por precio descendente
+        // Por ejemplo:
+        // Collections.sort(hotelesList, new Comparator<Hotel>() {
+        //     @Override
+        //     public int compare(Hotel h1, Hotel h2) {
+        //         return Double.compare(h2.getPrecio(), h1.getPrecio());
+        //     }
+        // });
+        // adapter.notifyDataSetChanged();
     }
 }

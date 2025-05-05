@@ -38,7 +38,7 @@ public class HomeCliente extends AppCompatActivity {
             } else if (id == R.id.historialCliente) {
                 startActivity(new Intent(this, HistorialEventos.class));
             } else if (id == R.id.perfilCliente) {
-                startActivity(new Intent(this, PagoConfirmado.class));
+                startActivity(new Intent(this, PerfilCliente.class));
             }
 
             return true;
