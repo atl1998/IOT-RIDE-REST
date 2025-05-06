@@ -40,4 +40,17 @@
         <item name="android:maxHeight">22dp</item>
     </style>
 
+    <style name="EstiloTarjetaInicio" parent="Widget.MaterialComponents.CardView">
+        <item name="cardCornerRadius">12dp</item>
+        <item name="cardElevation">6dp</item>
+        <item name="android:layout_marginBottom">12dp</item>
+        <item name="android:layout_marginHorizontal">4dp</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+        <item name="android:foreground">?android:attr/selectableItemBackground</item>
+    </style>
+
+
+
+
 </resources>

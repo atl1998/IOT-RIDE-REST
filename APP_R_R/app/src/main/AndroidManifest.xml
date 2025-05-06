@@ -85,6 +85,11 @@
 
             <!-- Puedes agregar un intent-filter si es necesario -->
         </activity>
+
+
+        <!-- seccion taxistaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa -->
+        <activity android:name=".taxista.TaxistaMain" />
+        <!-- seccion taxistaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa -->
         <activity
             android:name=".loginAndRegister.PostulacionTaxistaActivity"
             android:exported="false" />

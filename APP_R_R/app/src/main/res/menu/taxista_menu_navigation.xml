@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:title="Inicio"
+        android:icon="@drawable/home_24dp"
+        android:id="@+id/inicioTaxista">
+    </item>
+    <item
+        android:title="Mapa"
+        android:icon="@drawable/map_24dp"
+        android:id="@+id/mapaTaxista">
+    </item>
+    <item
+        android:title="Historial"
+        android:icon="@drawable/pending_actions_icon"
+        android:id="@+id/historialTaxista">
+    </item>
+    <item
+        android:title="Perfil"
+        android:icon="@drawable/account_circle_24dp"
+        android:id="@+id/perfilTaxista">
+    </item>
+</menu>
