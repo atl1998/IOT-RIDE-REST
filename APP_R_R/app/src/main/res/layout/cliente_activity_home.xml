@@ -3,9 +3,9 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="#FFFFFF"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
     tools:context=".cliente.HomeCliente">
 
     <!-- Encabezado amarillo -->
@@ -180,7 +180,6 @@
     <ScrollView
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:fillViewport="true"
         app:layout_constraintTop_toBottomOf="@id/ly1"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -189,31 +188,55 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp">
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recycler_hotels"
+            android:orientation="vertical">
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:clipToPadding="false"
-                android:paddingStart="8dp"
-                android:paddingEnd="8dp"/>
-
-            <com.google.android.material.carousel.MaskableFrameLayout
-                android:id="@+id/carousel_item_container"
-                android:layout_width="150dp"
-                android:layout_height="match_parent"
-                android:layout_marginStart="4dp"
-                android:layout_marginEnd="4dp"
-                android:foreground="?attr/selectableItemBackground"
-                app:shapeAppearance="?attr/shapeAppearanceCornerExtraLarge">
-                <ImageView
-                    android:id="@+id/carousel_image_view"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:elevation="4dp"
+                android:layout_margin="8dp"
+                app:layout_constraintTop_toBottomOf="@id/ly1"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+                <EditText
+                    android:id="@+id/etDestino"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:scaleType="centerCrop"/>
-            </com.google.android.material.carousel.MaskableFrameLayout>
+                    android:layout_height="wrap_content"
+                    android:drawableStart="@drawable/search_icon"
+                    android:hint=" Ingrese el destino" />
+
+                <EditText
+                    android:id="@+id/etFecha"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableStart="@drawable/calendar_month"
+                    android:focusable="false"
+                    android:hint=" Seleccione las fechas"
+                    android:inputType="none" />
+
+                <EditText
+                    android:id="@+id/etCantidad"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableStart="@drawable/baseline_person_24"
+                    android:focusable="false"
+                    android:hint=" Cantidad de visitantes"
+                    android:inputType="none" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnBuscar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="12dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginRight="12dp"
+                    android:backgroundTint="#003366"
+                    android:text="Buscar"
+                    android:textColor="#FFFFFF" />
+
+            </LinearLayout>
+
         </LinearLayout>
     </ScrollView>
     <com.google.android.material.bottomnavigation.BottomNavigationView
