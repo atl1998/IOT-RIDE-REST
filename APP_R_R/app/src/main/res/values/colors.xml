@@ -12,7 +12,8 @@
     <color name="amarillo">#CEBE38</color>
     <color name="error_red">#D32F2F</color>
     <color name="verde_aceptar">#6FD774</color>
-
+    <color name="estado_confirmado">#2E7D32</color>
+    <color name="estado_cancelado">#C62828</color>
 
     <!-- Colores principales de tu app -->
     <color name="dorado_claro">#FFD54F</color>    <!-- Dorado más claro para variaciones -->

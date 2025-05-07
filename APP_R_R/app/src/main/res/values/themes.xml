@@ -5,6 +5,7 @@
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
 
         <item name="colorPrimary">@color/dorado</item> <!-- Marrón -->
+        <item name="colorSecondary">@color/dorado</item>
         <item name="colorOnPrimary">#FFFFFF</item>
         <item name="colorPrimaryContainer">@color/marron_oscuro</item> <!-- Dorado -->
         <item name="colorOutline">#452C06</item> <!-- Borde de TextInput -->

@@ -7,73 +7,115 @@
     android:layout_height="match_parent"
     android:background="@color/white">
 
-    <!-- 🟨 Encabezado (solo título y botón ayuda) -->
+    <!-- 🟨 Encabezado con fila de categorías tipo Booking -->
     <LinearLayout
         android:id="@+id/header"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:background="@color/amarillo"
         android:padding="12dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:gravity="center_vertical">
+        app:layout_constraintEnd_toEndOf="parent">
 
-        <TextView
-            android:id="@+id/tvTitulo"
-            android:layout_width="0dp"
+        <!-- 🟨 Título y ayuda -->
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Registros"
-            android:textStyle="bold"
-            android:textSize="20sp"
-            android:textColor="@android:color/black" />
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
 
-        <ImageView
-            android:id="@+id/iconHelp"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@drawable/help_icon"
-            android:contentDescription="Ayuda"
-            app:tint="@android:color/white" />
+            <TextView
+                android:id="@+id/tvTitulo"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Registros"
+                android:paddingStart="5sp"
+                android:textStyle="bold"
+                android:textSize="20sp"
+                android:textColor="@android:color/black" />
+
+            <ImageView
+                android:id="@+id/iconHelp"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/help_icon"
+                android:contentDescription="Ayuda"
+                app:tint="@android:color/white" />
+        </LinearLayout>
+
+        <!-- 🟨 Fila estilo Booking -->
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:id="@+id/menuBookingStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <!-- Opción Reportes -->
+                <LinearLayout
+                    android:id="@+id/opcionReportes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:paddingHorizontal="16dp"
+                    android:layout_marginEnd="12dp"
+                    android:background="@drawable/bg_opcion_selected"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/report_icon"
+                         />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Reportes"
+                        android:textSize="14sp"
+                        android:textColor="@android:color/white"
+                        android:layout_marginStart="8dp"/>
+                </LinearLayout>
+
+                <!-- Opción Logs -->
+                <LinearLayout
+                    android:id="@+id/opcionLogs"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:paddingHorizontal="16dp"
+                    android:background="@drawable/bg_opcion_unselected"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/monitoring_icon" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Logs"
+                        android:textSize="14sp"
+                        android:textColor="@android:color/white"
+                        android:layout_marginStart="8dp"/>
+                </LinearLayout>
+            </LinearLayout>
+        </HorizontalScrollView>
     </LinearLayout>
-
-    <!-- 🟦 Chips -->
-    <com.google.android.material.chip.ChipGroup
-        android:id="@+id/chipGroup"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        app:layout_constraintTop_toBottomOf="@id/header"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:singleSelection="true"
-        app:chipSpacing="8dp">
-
-        <com.google.android.material.chip.Chip
-            android:id="@+id/chipReportes"
-            style="@style/Widget.MaterialComponents.Chip.Choice"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="📋 Reportes"
-            android:checked="true"
-            app:chipBackgroundColor="@color/white"
-            app:strokeColor="@color/marron_oscuro"
-            app:strokeWidth="1dp" />
-
-        <com.google.android.material.chip.Chip
-            android:id="@+id/chipLogs"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            style="@style/Widget.MaterialComponents.Chip.Choice"
-            android:text="🕓 Logs"
-            app:chipBackgroundColor="@color/white"
-            app:strokeColor="@color/marron_oscuro"
-            app:strokeWidth="1dp" />
-    </com.google.android.material.chip.ChipGroup>
 
     <!-- 🟫 Filtros -->
     <LinearLayout
@@ -82,7 +124,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="16dp"
-        app:layout_constraintTop_toBottomOf="@id/chipGroup"
+        app:layout_constraintTop_toBottomOf="@id/header"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
@@ -96,7 +138,8 @@
                 android:id="@+id/spinnerHotel"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingStart="12dp"/>
+                android:paddingStart="12dp"
+                android:inputType="none"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <TextView
@@ -119,9 +162,14 @@
                 android:inputType="none"
                 android:focusable="false" />
         </com.google.android.material.textfield.TextInputLayout>
+        <Button
+            android:id="@+id/btnLimpiarFecha"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Quitar filtro de fecha" />
     </LinearLayout>
 
-    <!-- 🟩 Lista -->
+    <!-- 🟩 Lista sin fondo -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerRegistros"
         android:layout_width="0dp"
@@ -130,7 +178,9 @@
         app:layout_constraintTop_toBottomOf="@id/filtrosLayout"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        android:paddingBottom="80dp"/>
+
     <!-- 🧭 Bottom Nav -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigationView"
@@ -147,5 +197,3 @@
         android:background="@color/white"
         app:menu="@menu/bottom_nav_superadmin" />
 </androidx.constraintlayout.widget.ConstraintLayout>
-
-
