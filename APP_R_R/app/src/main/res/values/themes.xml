@@ -16,6 +16,8 @@
         <!-- Color del encabezado -->
         <item name="colorPrimary">@color/amarillo</item>
         <item name="colorAccent">@color/amarillo</item>
+        <!-- Fondo -->
+        <item name="android:windowBackground">#FFFFFF</item> <!-- Fondo blanco -->
         <!-- Texto -->
         <item name="android:textColorPrimary">@android:color/black</item>
         <!-- Color de los botones :D -->
