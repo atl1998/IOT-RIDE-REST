@@ -13,6 +13,6 @@
 
     <item
         android:id="@+id/nav_perfil"
-        android:icon="@drawable/baseline_person_outline_24"
+        android:icon="@drawable/account_circle_24dp"
         android:title="Profile" />
 </menu>

@@ -1,0 +1,13 @@
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_pressed="true">
+        <ripple android:color="#33FFFFFF" /> <!-- Ripple blanco leve -->
+    </item>
+    <item>
+        <shape android:shape="rectangle">
+            <!-- Fondo translúcido -->
+            <solid android:color="#1AE4E4E4" /> <!-- ← blanco 10% de opacidad -->
+            <stroke android:width="2dp" android:color="@android:color/white" />
+            <corners android:radius="20dp" />
+        </shape>
+    </item>
+</selector>

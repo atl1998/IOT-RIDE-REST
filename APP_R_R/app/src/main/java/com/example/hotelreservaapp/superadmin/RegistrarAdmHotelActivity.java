@@ -19,13 +19,18 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.hotelreservaapp.R;
 import com.example.hotelreservaapp.databinding.SuperadminRegistrarAdmHotelActivityBinding;
 import com.example.hotelreservaapp.databinding.SuperadminRegistrarTaxistaActivityBinding;
-import java.util.Calendar;
+import com.google.android.material.datepicker.CalendarConstraints;
+import com.google.android.material.datepicker.DateValidatorPointBackward;
+import com.google.android.material.datepicker.MaterialDatePicker;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Locale;
+import java.util.TimeZone;
 
 
 public class RegistrarAdmHotelActivity extends AppCompatActivity {
     private SuperadminRegistrarAdmHotelActivityBinding binding;
-    private final Calendar calendar = Calendar.getInstance();
 
     // 👉 Declaramos el launcher moderno para abrir galería
     private final ActivityResultLauncher<Intent> pickImageLauncher = registerForActivityResult(
@@ -171,25 +176,31 @@ public class RegistrarAdmHotelActivity extends AppCompatActivity {
     // Lógica de campo Fecha de Nacimiento
     private void configurarCampoFechaNacimiento() {
         binding.etFechaNacimiento.setOnClickListener(v -> {
-            int year = calendar.get(Calendar.YEAR);
-            int month = calendar.get(Calendar.MONTH);
-            int day = calendar.get(Calendar.DAY_OF_MONTH);
+            // ✅ Crea un validador que solo permite fechas hasta hoy
+            CalendarConstraints.DateValidator dateValidator =
+                    DateValidatorPointBackward.before(MaterialDatePicker.todayInUtcMilliseconds());
 
-            DatePickerDialog datePickerDialog = new DatePickerDialog(
-                    RegistrarAdmHotelActivity.this,
-                    R.style.CustomDatePickerDialog, // ← estilo
-                    (view, selectedYear, selectedMonth, selectedDay) -> {
-                        String fechaFormateada = String.format(Locale.getDefault(), "%02d/%02d/%04d",
-                                selectedDay, selectedMonth + 1, selectedYear);
-                        binding.etFechaNacimiento.setText(fechaFormateada);
-                    },
-                    year, month, day
-            );
-            //Bloquea fechas futuras
-            datePickerDialog.getDatePicker().setMaxDate(System.currentTimeMillis());
+            CalendarConstraints constraints = new CalendarConstraints.Builder()
+                    .setValidator(dateValidator)
+                    .build();
 
-            datePickerDialog.show();
+            MaterialDatePicker<Long> datePicker = MaterialDatePicker.Builder.datePicker()
+                    .setTitleText("Selecciona tu fecha de nacimiento")
+                    .setCalendarConstraints(constraints)
+                    .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
+                    .build();
+
+            datePicker.show(getSupportFragmentManager(), "MATERIAL_DATE_PICKER");
+
+            datePicker.addOnPositiveButtonClickListener(selection -> {
+                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+                sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+                String fechaFormateada = sdf.format(new Date(selection));
+                binding.etFechaNacimiento.setText(fechaFormateada);
+            });
         });
+
+
     }
 
     // Subir foto desde galería
