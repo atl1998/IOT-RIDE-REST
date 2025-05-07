@@ -91,6 +91,8 @@
         <activity android:name=".taxista.TaxistaMain" />
         <activity android:name=".taxista.DetallesViajeActivity" />
         <activity android:name=".taxista.MapaActividad" />
+        <activity android:name=".taxista.ViajeEnCursoActivity" />
+        <activity android:name=".taxista.QrLecturaActivity" />
         <!-- seccion taxistaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa -->
         <activity
             android:name=".loginAndRegister.PostulacionTaxistaActivity"

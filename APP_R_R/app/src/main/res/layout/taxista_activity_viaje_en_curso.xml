@@ -1,65 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".taxista.MapaActividad">
+    tools:context=".taxista.ViajeEnCursoActivity">
 
-    <!-- Encabezado amarillo -->
+    <!-- Encabezado -->
     <LinearLayout
         android:id="@+id/header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:background="@color/amarillo_dorado"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="12dp">
 
+            <!-- Título -->
             <TextView
-                android:id="@+id/actividad3"
+                android:id="@+id/titulo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Recoge al Cliente"
-                android:textColor="#282828"
+                android:text="Viaje Iniciado"
                 android:textSize="20sp"
                 android:textStyle="bold"
+                android:textColor="#282828"
                 android:gravity="center"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent" />
 
+            <!-- Botón volver -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnVolver"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:backgroundTint="@color/transparente"
+                android:minWidth="0dp"
+                android:minHeight="0dp"
+                android:padding="15dp"
                 android:contentDescription="Volver"
                 app:icon="@drawable/outline_arrow_back_24"
                 app:iconTint="@color/marron_oscuro"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"/>
+                app:layout_constraintBottom_toBottomOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </LinearLayout>
 
-    <!-- Imagen simulando mapa -->
+    <!-- Imagen del mapa estática -->
     <ImageView
-        android:id="@+id/fakeMap"
+        android:id="@+id/mapaImagen"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:scaleType="centerCrop"
-        android:src="@drawable/recoger_cliente"
-    app:layout_constraintTop_toBottomOf="@id/header"
-    app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintEnd_toEndOf="parent" />
+        android:src="@drawable/viaje_en_curso"
+        app:layout_constraintTop_toBottomOf="@id/header"
+        app:layout_constraintBottom_toTopOf="@id/cardCliente"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <!-- Tarjeta flotante con datos -->
     <androidx.cardview.widget.CardView
@@ -108,14 +113,31 @@
                     android:text="Contacto: 993202932" />
             </LinearLayout>
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnConfirmarRecojo"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Confirmar Recojo"
-                android:textColor="@android:color/white"
-                android:backgroundTint="@color/dorado"
-                app:cornerRadius="12dp" />
+                android:orientation="vertical">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnFinalizarViaje"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Finalizar Viaje"
+                    android:textColor="@android:color/white"
+                    android:backgroundTint="@color/estado_confirmado"
+                    app:cornerRadius="12dp"
+                    android:layout_marginBottom="8dp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnCancelarViaje"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Cancelar viaje"
+                    android:textColor="@android:color/white"
+                    android:backgroundTint="@color/estado_cancelado"
+                    app:cornerRadius="12dp" />
+            </LinearLayout>
+
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 

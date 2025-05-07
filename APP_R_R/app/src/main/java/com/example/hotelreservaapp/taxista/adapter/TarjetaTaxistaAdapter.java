@@ -18,16 +18,37 @@ import com.example.hotelreservaapp.taxista.DetallesViajeActivity;
 import com.example.hotelreservaapp.taxista.MapaActividad;
 import com.example.hotelreservaapp.taxista.model.TarjetaModel;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class TarjetaTaxistaAdapter extends RecyclerView.Adapter<TarjetaTaxistaAdapter.ViewHolder> {
 
-    public static List<TarjetaModel> listaCompartida;
+    public static List<TarjetaModel> listaCompartida = new ArrayList<>();
     private Context context;
 
-    public TarjetaTaxistaAdapter(List<TarjetaModel> datos, Context context) {
+    public TarjetaTaxistaAdapter(List<TarjetaModel> todas, Context context) {
         this.context = context;
-        listaCompartida = datos;
+        listaCompartida = ordenarPorPrioridad(todas);
+    }
+
+    private List<TarjetaModel> ordenarPorPrioridad(List<TarjetaModel> listaOriginal) {
+        List<TarjetaModel> enProgreso = new ArrayList<>();
+        List<TarjetaModel> solicitados = new ArrayList<>();
+
+        for (TarjetaModel item : listaOriginal) {
+            if ("En progreso".equalsIgnoreCase(item.getEstado())) {
+                enProgreso.add(item);
+            } else if ("Solicitado".equalsIgnoreCase(item.getEstado())) {
+                solicitados.add(item);
+            }
+        }
+
+        Collections.reverse(solicitados);
+        List<TarjetaModel> resultado = new ArrayList<>();
+        resultado.addAll(enProgreso);
+        resultado.addAll(solicitados);
+        return resultado;
     }
 
     @Override
@@ -49,8 +70,8 @@ public class TarjetaTaxistaAdapter extends RecyclerView.Adapter<TarjetaTaxistaAd
         switch (item.getEstado()) {
             case "En progreso":
                 holder.estado.setTextColor(context.getResources().getColor(R.color.verde_aceptar));
-                holder.btnCancelar.setVisibility(View.VISIBLE);
                 holder.btnAceptar.setVisibility(View.GONE);
+                holder.btnCancelar.setVisibility(View.VISIBLE);
                 break;
             case "Solicitado":
                 holder.estado.setTextColor(context.getResources().getColor(R.color.azul));
@@ -63,7 +84,7 @@ public class TarjetaTaxistaAdapter extends RecyclerView.Adapter<TarjetaTaxistaAd
                 holder.btnCancelar.setVisibility(View.GONE);
                 break;
             case "Finalizado":
-                holder.estado.setTextColor(context.getResources().getColor(R.color.gris_medio)); // gris
+                holder.estado.setTextColor(Color.GRAY);
                 holder.btnAceptar.setVisibility(View.GONE);
                 holder.btnCancelar.setVisibility(View.GONE);
                 break;
@@ -82,21 +103,28 @@ public class TarjetaTaxistaAdapter extends RecyclerView.Adapter<TarjetaTaxistaAd
                 Toast.makeText(context, "No puedes aceptar el viaje porque tienes uno en curso", Toast.LENGTH_SHORT).show();
             } else {
                 item.setEstado("En progreso");
+                listaCompartida = ordenarPorPrioridad(listaCompartida);
                 notifyDataSetChanged();
+
                 Intent intent = new Intent(context, MapaActividad.class);
-                intent.putExtra("ubicacion", item.getUbicacion());
+                intent.putExtra("nombre", item.getNombreUsuario());
+                intent.putExtra("telefono", item.getTelefono());
                 context.startActivity(intent);
             }
         });
 
         holder.btnCancelar.setOnClickListener(v -> {
             item.setEstado("Cancelado");
+            listaCompartida.remove(position);
             notifyDataSetChanged();
         });
 
         holder.btnVerMapa.setOnClickListener(v -> {
             Intent intent = new Intent(context, MapaActividad.class);
             intent.putExtra("ubicacion", item.getUbicacion());
+            intent.putExtra("nombre", item.getNombreUsuario());
+            intent.putExtra("telefono", item.getTelefono());
+            intent.putExtra("viajeEnCurso", "En progreso".equalsIgnoreCase(item.getEstado()));
             context.startActivity(intent);
         });
 
@@ -116,7 +144,7 @@ public class TarjetaTaxistaAdapter extends RecyclerView.Adapter<TarjetaTaxistaAd
 
     @Override
     public int getItemCount() {
-        return listaCompartida != null ? listaCompartida.size() : 0;
+        return listaCompartida.size();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
