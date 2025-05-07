@@ -60,11 +60,42 @@ public class ListaHabitaciones extends AppCompatActivity {
                 "Extra grande",
                 30
         ));
+        listaHabitaciones.add(new Habitacion(
+                "Habitacion deluxe cama extragrande",
+                "- Precio para 2 adultos\n- 1 cama doble extra grande\n- Turneño 30 m2\n- WiFi de alto velocidad\n- Desayuno incluido",
+                2,
+                417.00,
+                "Extra grande",
+                30
+        ));
+        listaHabitaciones.add(new Habitacion(
+                "Habitacion deluxe cama extragrande",
+                "- Precio para 2 adultos\n- 1 cama doble extra grande\n- Turneño 30 m2\n- WiFi de alto velocidad\n- Desayuno incluido",
+                2,
+                417.00,
+                "Extra grande",
+                30
+        ));
+        listaHabitaciones.add(new Habitacion(
+                "Habitacion deluxe cama extragrande",
+                "- Precio para 2 adultos\n- 1 cama doble extra grande\n- Turneño 30 m2\n- WiFi de alto velocidad\n- Desayuno incluido",
+                2,
+                417.00,
+                "Extra grande",
+                30
+        ));
 
-        // Configurar adaptador
-        adapter = new HabitacionAdapter(listaHabitaciones, position -> {
-            Habitacion habitacion = listaHabitaciones.get(position);
-            mostrarPopupSeleccion(habitacion);
+        adapter = new HabitacionAdapter(listaHabitaciones, new HabitacionAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(int position) {
+                Habitacion habitacion = listaHabitaciones.get(position);
+                mostrarPopupSeleccion(habitacion);
+            }
+
+            @Override
+            public void onSeleccionCambio() {
+                verificarSeleccion();
+            }
         });
 
         rvHabitaciones.setAdapter(adapter);
@@ -115,11 +146,21 @@ public class ListaHabitaciones extends AppCompatActivity {
 
         confirmar.setOnClickListener(v -> {
             Toast.makeText(this, "Reservaste " + cantidad[0] + " habitación(es)", Toast.LENGTH_SHORT).show();
-            // Aquí puedes actualizar la UI o marcar la habitación como seleccionada
-            habitacion.setSeleccionadas(cantidad[0]); // Debes agregar este campo en la clase Habitacion
+            habitacion.setSeleccionadas(cantidad[0]);
             adapter.notifyDataSetChanged();
             dialog.dismiss();
+            verificarSeleccion(); // <-- Nueva llamada aquí
         });
+    }
+    private void verificarSeleccion() {
+        boolean haySeleccion = false;
+        for (Habitacion h : listaHabitaciones) {
+            if (h.getSeleccionadas() > 0) {
+                haySeleccion = true;
+                break;
+            }
+        }
+        btnReservar.setVisibility(haySeleccion ? View.VISIBLE : View.GONE);
     }
 
 }
