@@ -8,6 +8,16 @@ public class Habitacion {
     private String tipoCama;
     private int tamano;
 
+    private int seleccionadas = 0;
+
+    public int getSeleccionadas() {
+        return seleccionadas;
+    }
+
+    public void setSeleccionadas(int seleccionadas) {
+        this.seleccionadas = seleccionadas;
+    }
+
     public Habitacion(String titulo, String detalles, int disponibles, double precio, String tipoCama, int tamano) {
         this.titulo = titulo;
         this.detalles = detalles;

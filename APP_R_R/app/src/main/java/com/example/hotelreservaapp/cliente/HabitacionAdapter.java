@@ -42,7 +42,25 @@ public class HabitacionAdapter extends RecyclerView.Adapter<HabitacionAdapter.Ha
         holder.tvDetalles.setText(habitacion.getDetalles());
         holder.tvDisponibles.setText("Habitaciones disponibles: " + habitacion.getDisponibles());
         holder.tvPrecio.setText(String.format("Precio para 2 noches: $%.2f", habitacion.getPrecio()));
+
+        if (habitacion.getSeleccionadas() > 0) {
+            holder.btnSeleccionar.setVisibility(View.GONE);
+            holder.tvSeleccionadas.setVisibility(View.VISIBLE);
+            holder.btnEliminar.setVisibility(View.VISIBLE);
+            holder.btnSeleccionar.setVisibility(View.VISIBLE);
+            holder.tvSeleccionadas.setText("Seleccionadas: " + habitacion.getSeleccionadas());
+        } else {
+            holder.btnSeleccionar.setVisibility(View.VISIBLE);
+            holder.tvSeleccionadas.setVisibility(View.GONE);
+            holder.btnEliminar.setVisibility(View.GONE);
+        }
+
+        holder.btnEliminar.setOnClickListener(v -> {
+            habitacion.setSeleccionadas(0);
+            notifyItemChanged(position);
+        });
     }
+
 
     @Override
     public int getItemCount() {
@@ -52,6 +70,8 @@ public class HabitacionAdapter extends RecyclerView.Adapter<HabitacionAdapter.Ha
     public static class HabitacionViewHolder extends RecyclerView.ViewHolder {
         TextView tvTitulo, tvDetalles, tvDisponibles, tvPrecio;
         Button btnSeleccionar;
+        TextView tvSeleccionadas;
+        Button btnEliminar;
 
         public HabitacionViewHolder(@NonNull View itemView, final OnItemClickListener listener) {
             super(itemView);
@@ -61,7 +81,8 @@ public class HabitacionAdapter extends RecyclerView.Adapter<HabitacionAdapter.Ha
             tvDisponibles = itemView.findViewById(R.id.tvDisponibles);
             tvPrecio = itemView.findViewById(R.id.tvPrecio);
             btnSeleccionar = itemView.findViewById(R.id.btnSeleccionar);
-
+            tvSeleccionadas = itemView.findViewById(R.id.tvSeleccionadas);
+            btnEliminar = itemView.findViewById(R.id.btnEliminar);
             btnSeleccionar.setOnClickListener(v -> {
                 if (listener != null) {
                     int position = getAdapterPosition();
