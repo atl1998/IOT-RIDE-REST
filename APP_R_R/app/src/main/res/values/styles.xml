@@ -5,7 +5,7 @@
     <style name="MenuButton" parent="Widget.Material3.Button">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:backgroundTint">#453103</item> <!-- marron oscuro -->
+        <item name="android:backgroundTint">@color/dorado_oscuro</item> <!-- marron oscuro -->
         <item name="android:textColor">#FFFFFF</item>
         <item name="android:textSize">17sp</item>
         <item name="cornerRadius">35dp</item>

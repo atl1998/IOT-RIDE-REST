@@ -21,4 +21,5 @@
     <color name="gris_medio">#757575</color>      <!-- Gris medio para textos secundarios -->
     <color name="transparente">#00000000</color>  <!-- Color transparente -->
 
+    <color name="azul">#1EA7E6</color>  <!-- Color transparente -->
 </resources>

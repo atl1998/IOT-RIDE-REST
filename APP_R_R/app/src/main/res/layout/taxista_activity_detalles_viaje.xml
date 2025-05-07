@@ -1,0 +1,551 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- Encabezado amarillo -->
+    <LinearLayout
+        android:id="@+id/headerLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="#FFC107"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- Título  + Notificaciones -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="12dp">
+
+            <!-- Botón de Búsqueda -->
+
+            <TextView
+                android:id="@+id/actividad3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="Detalles del Viaje"
+                android:textColor="#282828"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.472"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.523" />
+
+            <!-- Botón de Notificaciones -->
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/añadirfavoritos"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginEnd="56dp"
+                android:backgroundTint="@color/transparente"
+                android:contentDescription="Abrir chat de soporte"
+                android:minWidth="0dp"
+                android:minHeight="0dp"
+                android:padding="15dp"
+                app:icon="@drawable/outline_arrow_back_24"
+                app:iconGravity="textStart"
+                app:iconPadding="0dp"
+                app:iconTint="@color/marron_oscuro"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/actividad3"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="1.0" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/notificaciones_cliente"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:backgroundTint="@color/transparente"
+                app:icon="@drawable/notifications_24dp_e3e3e3_fill0_wght400_grad0_opsz24"
+                app:iconTint="@color/marron_oscuro"
+                app:iconGravity="textStart"
+                app:iconPadding="0dp"
+                android:padding="15dp"
+                android:minWidth="0dp"
+                android:minHeight="0dp"
+                android:contentDescription="Ver notificaciones nuevas"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
+    <!-- Línea negra abajo -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#000000"
+        app:layout_constraintTop_toBottomOf="@id/headerLayout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <!-- CUERPO DEL DETALLE -->
+    <ScrollView
+        android:id="@+id/scrollSolicitudTaxiDetalles"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/headerLayout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp">
+
+            <!-- Estado del viaje-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingBottom="0dp"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:id="@+id/status"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text=" Viaje En progreso"
+                    android:gravity="center"
+                    android:textColor="#4CAF50"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="1dp"/>
+            </LinearLayout>
+
+            <TextView
+                android:layout_marginTop="1dp"
+                android:text="Pasajero"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="#525252"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <LinearLayout
+                android:layout_marginTop="12dp"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <!-- Imagen y Detalles del viajero -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <com.google.android.material.imageview.ShapeableImageView
+                        android:id="@+id/imageFotoUsuario"
+                        android:layout_width="99dp"
+                        android:layout_height="91dp"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginEnd="12dp"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/coronado"
+                        app:shapeAppearanceOverlay="@style/RoundedImageView" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="6dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/tvNombreCompleto"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Roberto Carlos"
+                            android:textSize="20sp"
+                            android:textStyle="bold" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:layout_marginTop="1dp">
+
+                            <ImageView
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:src="@drawable/baseline_mail_outline_24"
+                                app:tint="@color/marron_oscuro" />
+                            <TextView
+                                android:id="@+id/correoviajero"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="roberto@gmial.com"
+                                android:layout_marginLeft="12dp"
+                                android:textSize="16sp" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:layout_marginTop="1dp">
+
+                            <ImageView
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:src="@drawable/call_24dp_e3e3e3_fill0_wght400_grad0_opsz24"
+                                app:tint="@color/marron_oscuro" />
+
+                            <TextView
+                                android:id="@+id/telefonoviajero"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="+954586475"
+                                android:layout_marginLeft="12dp"
+                                android:textSize="16sp" />
+
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+            <TextView
+                android:layout_marginTop="13dp"
+                android:text="Detalles"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="#525252"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:gravity="center_vertical"
+                    android:paddingStart="0dp"
+                    android:paddingEnd="1dp">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginEnd="8dp"
+                        android:src="@drawable/calendar_month" />
+
+                    <RelativeLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1">
+
+                        <TextView
+                            android:id="@+id/labelFecha"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Fecha:"
+                            android:textSize="16sp"
+                            android:textColor="#000000"
+                            android:layout_alignParentStart="true" />
+
+                        <TextView
+                            android:id="@+id/tvFecha"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="28 Abr - 2 Mar 2024"
+                            android:textSize="16sp"
+                            android:textColor="#444444"
+                            android:layout_alignParentEnd="true" />
+                    </RelativeLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:gravity="center_vertical"
+                    android:paddingStart="0dp"
+                    android:paddingEnd="4dp">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginEnd="8dp"
+                        android:src="@drawable/reloj"
+                        app:tint="@color/marron_oscuro" />
+
+                    <RelativeLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1">
+
+                        <TextView
+                            android:id="@+id/horaSolicitud"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Hora de solicitud:"
+                            android:textSize="16sp"
+                            android:textColor="#000000"
+                            android:layout_alignParentStart="true" />
+
+                        <TextView
+                            android:id="@+id/tvHora"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="3:00 pm"
+                            android:textSize="16sp"
+                            android:textColor="#444444"
+                            android:layout_alignParentEnd="true" />
+                    </RelativeLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:gravity="center_vertical"
+                    android:paddingStart="0dp"
+                    android:paddingEnd="4dp">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginEnd="8dp"
+                        android:src="@drawable/reloj"
+                        app:tint="@color/marron_oscuro" />
+
+                    <RelativeLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1">
+
+                        <TextView
+                            android:id="@+id/horaSolicitudLlegada"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Hora de fin del viaje:"
+                            android:textSize="16sp"
+                            android:textColor="#000000"
+                            android:layout_alignParentStart="true" />
+
+                        <TextView
+                            android:id="@+id/valorHoraLlegada"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="4:00 pm"
+                            android:textSize="16sp"
+                            android:textColor="#444444"
+                            android:layout_alignParentEnd="true" />
+                    </RelativeLayout>
+                </LinearLayout>
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:gravity="center_vertical"
+                    android:paddingStart="0dp"
+                    android:paddingEnd="4dp">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginEnd="8dp"
+                        android:src="@drawable/location_white"
+                        app:tint="@color/marron_oscuro" />
+
+                    <RelativeLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1">
+
+                        <TextView
+                            android:id="@+id/lugarOrigen"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Origen:"
+                            android:textSize="16sp"
+                            android:textColor="#000000"
+                            android:layout_alignParentStart="true" />
+
+                        <TextView
+                            android:id="@+id/tvUbicacion"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Hotel Bolivar"
+                            android:textSize="16sp"
+                            android:textColor="#444444"
+                            android:layout_alignParentEnd="true" />
+                    </RelativeLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:gravity="center_vertical"
+                    android:paddingStart="0dp"
+                    android:paddingEnd="4dp">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginEnd="8dp"
+                        android:src="@drawable/location_white"
+                        app:tint="@color/marron_oscuro" />/>
+
+                    <RelativeLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1">
+
+                        <TextView
+                            android:id="@+id/lugarDestino"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Destino:"
+                            android:textSize="16sp"
+                            android:textColor="#000000"
+                            android:layout_alignParentStart="true" />
+
+                        <TextView
+                            android:id="@+id/valorLugarDestino"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Aeropuerto Jorge Chavez"
+                            android:textSize="16sp"
+                            android:textColor="#444444"
+                            android:layout_alignParentEnd="true" />
+                    </RelativeLayout>
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:paddingStart="4dp"
+                android:paddingTop="8dp"
+                android:paddingEnd="16dp">
+
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:id="@+id/labelUbicacion"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:text="Ubicación"
+                        android:textStyle="bold"
+                        android:textSize="18sp"
+                        android:textColor="#525252"
+                        android:layout_alignParentStart="true" />
+
+                    <TextView
+                        android:id="@+id/abrirMapa"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:text="Abrir mapa"
+                        android:textSize="16sp"
+                        android:textColor="#007AFF"
+                        android:clickable="true"
+                        android:textStyle="bold"
+                        android:focusable="true"
+                        android:layout_alignParentEnd="true" />
+                </RelativeLayout>
+            </LinearLayout>
+
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="120dp"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="8dp"
+                >
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/hotel1_mapa1" />
+
+                    <FrameLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true">
+
+                        <!-- Fondo círculo azul -->
+                        <View
+                            android:layout_width="37dp"
+                            android:layout_height="37dp"
+                            android:background="@drawable/circle_blue" />
+
+                        <!-- Icono encima -->
+                        <ImageView
+                            android:layout_width="23dp"
+                            android:layout_height="23dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/location_white"
+                            android:contentDescription="Ubicación del hotel"/>
+                    </FrameLayout>
+
+                </RelativeLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+
+            <!-- Boton de acción dinámica -->
+            <Button
+                android:id="@+id/btnAceptarSolicitud"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:layout_marginTop="4dp"
+                android:backgroundTint="#4CAF50"
+                android:text="Aceptar"
+                android:textColor="#FFFFFF"
+                android:textSize="13sp"
+                android:gravity="center"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/btnCancelarSolicitud"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:layout_marginTop="4dp"
+                android:backgroundTint="#AF4917"
+                android:text="Cancelar"
+                android:textColor="#FFFFFF"
+                android:textSize="13sp"
+                android:gravity="center"
+                android:visibility="gone" />
+
+        </LinearLayout>
+    </ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>
