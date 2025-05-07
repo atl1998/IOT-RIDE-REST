@@ -4,7 +4,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -19,6 +21,7 @@ public class HabitacionAdapter extends RecyclerView.Adapter<HabitacionAdapter.Ha
 
     public interface OnItemClickListener {
         void onItemClick(int position);
+        void onSeleccionCambio();
     }
 
     public HabitacionAdapter(List<Habitacion> habitaciones, OnItemClickListener listener) {
@@ -45,22 +48,21 @@ public class HabitacionAdapter extends RecyclerView.Adapter<HabitacionAdapter.Ha
 
         if (habitacion.getSeleccionadas() > 0) {
             holder.btnSeleccionar.setVisibility(View.GONE);
-            holder.tvSeleccionadas.setVisibility(View.VISIBLE);
-            holder.btnEliminar.setVisibility(View.VISIBLE);
-            holder.btnSeleccionar.setVisibility(View.VISIBLE);
+            holder.layoutSeleccion.setVisibility(View.VISIBLE);
             holder.tvSeleccionadas.setText("Seleccionadas: " + habitacion.getSeleccionadas());
         } else {
             holder.btnSeleccionar.setVisibility(View.VISIBLE);
-            holder.tvSeleccionadas.setVisibility(View.GONE);
-            holder.btnEliminar.setVisibility(View.GONE);
+            holder.layoutSeleccion.setVisibility(View.GONE);
         }
 
         holder.btnEliminar.setOnClickListener(v -> {
             habitacion.setSeleccionadas(0);
             notifyItemChanged(position);
+            if (listener != null) {
+                listener.onSeleccionCambio();
+            }
         });
     }
-
 
     @Override
     public int getItemCount() {
@@ -70,6 +72,7 @@ public class HabitacionAdapter extends RecyclerView.Adapter<HabitacionAdapter.Ha
     public static class HabitacionViewHolder extends RecyclerView.ViewHolder {
         TextView tvTitulo, tvDetalles, tvDisponibles, tvPrecio;
         Button btnSeleccionar;
+        LinearLayout layoutSeleccion;
         TextView tvSeleccionadas;
         Button btnEliminar;
 
@@ -80,9 +83,12 @@ public class HabitacionAdapter extends RecyclerView.Adapter<HabitacionAdapter.Ha
             tvDetalles = itemView.findViewById(R.id.tvDetalles);
             tvDisponibles = itemView.findViewById(R.id.tvDisponibles);
             tvPrecio = itemView.findViewById(R.id.tvPrecio);
+
             btnSeleccionar = itemView.findViewById(R.id.btnSeleccionar);
+            layoutSeleccion = itemView.findViewById(R.id.layoutSeleccion);
             tvSeleccionadas = itemView.findViewById(R.id.tvSeleccionadas);
             btnEliminar = itemView.findViewById(R.id.btnEliminar);
+
             btnSeleccionar.setOnClickListener(v -> {
                 if (listener != null) {
                     int position = getAdapterPosition();

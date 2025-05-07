@@ -1,6 +1,7 @@
 package com.example.hotelreservaapp.cliente;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +18,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.hotelreservaapp.R;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import java.util.ArrayList;
@@ -50,6 +52,25 @@ public class ListaHotelesCliente extends AppCompatActivity {
             public void onClick(View v) {
                 mostrarDialogoOrdenamiento();
             }
+        });
+
+
+        BottomNavigationView bottomNav = findViewById(R.id.bottonNavigationView);
+        bottomNav.setSelectedItemId(R.id.inicioCliente);
+        bottomNav.setOnItemSelectedListener(item -> {
+            int id = item.getItemId();
+
+            if (id == R.id.inicioCliente) {
+                startActivity(new Intent(this, HomeCliente.class));
+            } else if (id == R.id.chat_cliente) {
+                startActivity(new Intent(this, ClienteChat.class));
+            } else if (id == R.id.historialCliente) {
+                startActivity(new Intent(this, HistorialEventos.class));
+            } else if (id == R.id.perfilCliente) {
+                startActivity(new Intent(this, PerfilCliente.class));
+            }
+
+            return true;
         });
 
     }
