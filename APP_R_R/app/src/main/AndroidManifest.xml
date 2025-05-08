@@ -12,6 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.HotelReservaApp"
         tools:targetApi="31" >
+
         <activity
             android:name=".SuperAdminMainActivity"
             android:exported="false" />
@@ -90,6 +91,7 @@
             android:name=".cliente.ListaHotelesCliente"
             android:exported="false" />
         <activity android:name=".cliente.DetallesReserva" >
+
 
             <!-- Puedes agregar un intent-filter si es necesario -->
         </activity>
