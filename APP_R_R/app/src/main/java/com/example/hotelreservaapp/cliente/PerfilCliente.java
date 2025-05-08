@@ -2,6 +2,8 @@ package com.example.hotelreservaapp.cliente;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,9 +14,14 @@ import androidx.core.view.WindowInsetsCompat;
 import com.example.hotelreservaapp.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.textfield.TextInputEditText;
 
 public class PerfilCliente extends AppCompatActivity {
     private MaterialButton btnNotificaciones;
+
+    private ImageView btnEditar;
+    private TextInputEditText etNombre, etApellido, etCorreo, etDni, etTelefono, etDireccion;
+    private boolean enModoEdicion = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +53,46 @@ public class PerfilCliente extends AppCompatActivity {
             //por ahora directamente al mio bala
             Intent intent = new Intent(this, ClienteNotificaciones.class);
             startActivity(intent);
+        });
+
+
+
+        // Enlazar vistas
+        btnEditar = findViewById(R.id.iv_edit_profile);
+        etNombre = findViewById(R.id.etNombre);
+        etApellido = findViewById(R.id.etApellido);
+        etCorreo = findViewById(R.id.etCorreo);
+        etDni = findViewById(R.id.etDni);
+        etTelefono = findViewById(R.id.etTelefono);
+        etDireccion = findViewById(R.id.etDireccion);
+
+        // Listener para el botón de edición
+        btnEditar.setOnClickListener(v -> {
+            enModoEdicion = !enModoEdicion;
+
+            etNombre.setEnabled(enModoEdicion);
+            etApellido.setEnabled(enModoEdicion);
+            etDni.setEnabled(enModoEdicion);
+            etTelefono.setEnabled(enModoEdicion);
+            etDireccion.setEnabled(enModoEdicion);
+            etCorreo.setEnabled(false); // El correo no se edita
+
+            if (enModoEdicion) {
+                btnEditar.setImageResource(R.drawable.save_icon);
+            } else {
+                btnEditar.setImageResource(R.drawable.edit_square_24dp_black);
+
+                // Obtener datos
+                String nombre = etNombre.getText().toString().trim();
+                String apellido = etApellido.getText().toString().trim();
+                String dni = etDni.getText().toString().trim();
+                String telefono = etTelefono.getText().toString().trim();
+                String direccion = etDireccion.getText().toString().trim();
+
+                // Aquí puedes hacer el update real en la base de datos o con ViewModel
+
+                Toast.makeText(this, "Datos actualizados", Toast.LENGTH_SHORT).show();
+            }
         });
     }
 }
