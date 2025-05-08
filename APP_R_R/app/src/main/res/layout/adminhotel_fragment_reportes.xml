@@ -98,6 +98,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center"
+                    android:textSize="18sp"
+                    android:textColor="@color/adminhotel_nombres"
                     android:text="Usuarios"/>
 
             </LinearLayout>
@@ -122,16 +124,19 @@
 
                 <ImageView
                     android:id="@+id/card2_image"
-                    android:layout_width="250dp"
-                    android:layout_height="250dp"
+                    android:layout_width="240dp"
+                    android:layout_height="240dp"
+                    android:layout_marginTop="12dp"
                     android:layout_gravity="center_horizontal"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/adminhote_settings" />
+                    android:src="@drawable/adminhotel_services" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center"
+                    android:textSize="18sp"
+                    android:textColor="@color/adminhotel_nombres"
                     android:text="Servicios"/>
 
             </LinearLayout>
