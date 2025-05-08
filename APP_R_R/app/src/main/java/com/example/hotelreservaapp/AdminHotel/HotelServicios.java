@@ -75,7 +75,7 @@ public class HotelServicios extends AppCompatActivity {
         });
 
         rvServicios.setAdapter(adapter);
-        MaterialButton btnDetalles = findViewById(R.id.btnAgregar);
+        //MaterialButton btnDetalles = findViewById(R.id.btnAgregar);
 
 
         //Para ir a notificaciones

@@ -103,7 +103,7 @@
                 android:nestedScrollingEnabled="false"
                 android:contentDescription="Lista de habitaciones disponibles" />
 
-            <!-- Botón para siguiente -->
+            <!-- Botón para siguiente
             <Button
                 android:id="@+id/btnAgregar"
                 android:layout_width="match_parent"
@@ -115,7 +115,7 @@
                 android:textAllCaps="false"
                 app:layout_constraintTop_toBottomOf="@id/rvHabitaciones"
                 android:textColor="@color/white"
-                android:backgroundTint="@color/dorado" />
+                android:backgroundTint="@color/dorado" />-->
         </LinearLayout>
 
     </ScrollView>

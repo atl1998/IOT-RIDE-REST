@@ -33,7 +33,7 @@ public class Adminhotel_UsuarioAdapter extends RecyclerView.Adapter<Adminhotel_U
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         // Inflar el layout de cada item (puede ser un TextView o un CardView)
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.superadmin_item_usuario, parent, false);
+                .inflate(R.layout.adminhotel_item_inicio, parent, false);
         return new MyViewHolder(view);
     }
 
@@ -43,8 +43,7 @@ public class Adminhotel_UsuarioAdapter extends RecyclerView.Adapter<Adminhotel_U
         UsuarioListaSuperAdmin usuario = itemList.get(position);
         holder.tvNombre.setText(usuario.getNombre());
         holder.tvCorreo.setText(usuario.getCorreo());
-        holder.tvRol.setText(usuario.getRol());
-        holder.switchActivo.setChecked(usuario.isActivo());
+        holder.tvFecha.setText(usuario.getRol());
         String nombreArchivo = usuario.getUrlFoto(); // ej. "image1.png"
         String rutaAsset = "file:///android_asset/" + nombreArchivo;
 
@@ -75,17 +74,15 @@ public class Adminhotel_UsuarioAdapter extends RecyclerView.Adapter<Adminhotel_U
 
     // ViewHolder para cada item
     public static class MyViewHolder extends RecyclerView.ViewHolder {
-        TextView tvNombre, tvCorreo, tvRol;
+        TextView tvNombre, tvCorreo, tvFecha;
         ImageView ivFoto;
-        Switch switchActivo;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
             tvNombre = itemView.findViewById(R.id.tvNombre);
             tvCorreo = itemView.findViewById(R.id.tvCorreo);
-            tvRol = itemView.findViewById(R.id.tvRol);
             ivFoto = itemView.findViewById(R.id.ivFoto);
-            switchActivo = itemView.findViewById(R.id.switchActivo);
+            tvFecha = itemView.findViewById(R.id.tvFecha);
         }
     }
 }

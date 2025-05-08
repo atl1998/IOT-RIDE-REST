@@ -17,7 +17,7 @@
 
         <!-- 📷 Foto -->
         <ImageView
-            android:id="@+id/ivFoto1"
+            android:id="@+id/ivFoto"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_marginEnd="12dp"
@@ -33,7 +33,7 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/tvNombre1"
+                android:id="@+id/tvNombre"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Nombre Apellido"
@@ -41,29 +41,22 @@
                 android:textSize="16sp"/>
 
             <TextView
-                android:id="@+id/tvCorreo1"
+                android:id="@+id/tvCorreo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="correo@ejemplo.com"
                 android:textSize="14sp"
                 android:textColor="#888888"/>
 
-            <TextView
-                android:id="@+id/tvRol1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Rol"
-                android:textSize="14sp"
-                android:textColor="#555555"/>
-        </LinearLayout>
 
-        <!-- 🟢 Switch -->
-        <Switch
-            android:id="@+id/switchActivo1"
+        </LinearLayout>
+        <TextView
+            android:id="@+id/tvFecha"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Activo"
-            android:textSize="12sp"
-            android:checked="true"/>
+            android:text="Vier 11"
+            android:textSize="14sp"
+            android:textColor="#888888"/>
+
     </LinearLayout>
 </androidx.cardview.widget.CardView>

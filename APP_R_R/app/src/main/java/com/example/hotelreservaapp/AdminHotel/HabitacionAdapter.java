@@ -1,6 +1,7 @@
 package com.example.hotelreservaapp.AdminHotel;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.hotelreservaapp.R;
 import com.example.hotelreservaapp.AdminHotel.Habitaciones;
+import com.example.hotelreservaapp.cliente.DetallesHotel;
 
 import java.io.IOException;
 import java.util.List;
@@ -71,6 +73,11 @@ public class HabitacionAdapter extends RecyclerView.Adapter<com.example.hotelres
                     .load(R.drawable.bedroom_parent_24dp_black)
                     .into(holder.tvImagen);
         }
+
+        holder.itemView.setOnClickListener(v -> {
+            Intent intent = new Intent(v.getContext(), DetalleHabitacionActivity.class);
+            v.getContext().startActivity(intent);
+        });
          /*
         if (habitacion.getSeleccionadas() > 0) {
             holder.btnSeleccionar.setVisibility(View.GONE);
