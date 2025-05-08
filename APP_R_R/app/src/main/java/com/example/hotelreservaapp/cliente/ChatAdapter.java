@@ -1,5 +1,6 @@
 package com.example.hotelreservaapp.cliente;
 
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -67,6 +68,10 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
                 holder.dobleCheck.setVisibility(View.GONE);
             }
         }
+        holder.itemView.setOnClickListener(v -> {
+            Intent intent = new Intent(v.getContext(), DetalleChat.class);
+            v.getContext().startActivity(intent);
+        });
     }
 
 

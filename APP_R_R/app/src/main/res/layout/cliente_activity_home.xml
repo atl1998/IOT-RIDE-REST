@@ -188,6 +188,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:drawableStart="@drawable/search_icon"
+                    app:drawableTint="@android:color/black"
                     android:hint=" Ingrese el destino" />
 
                 <EditText
@@ -206,6 +207,7 @@
                     android:drawableStart="@drawable/baseline_person_24"
                     android:focusable="false"
                     android:hint=" Cantidad de visitantes"
+                    app:drawableTint="@android:color/black"
                     android:inputType="none" />
 
                 <com.google.android.material.button.MaterialButton

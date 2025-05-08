@@ -32,30 +32,23 @@ public class ClienteChat extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_cliente_chat);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
 
-        BottomNavigationView bottomNavigationView = findViewById(R.id.bottonNavigationView);
-        bottomNavigationView.setSelectedItemId(R.id.chat_cliente); // Para que aparezca q esta seleccionado ese
-        bottomNavigationView.setOnItemSelectedListener(item -> {
+        BottomNavigationView bottomNav = findViewById(R.id.bottonNavigationView);
+        bottomNav.setSelectedItemId(R.id.chat_cliente);
+        bottomNav.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
+
             if (id == R.id.inicioCliente) {
                 startActivity(new Intent(this, HomeCliente.class));
-                return true;
             } else if (id == R.id.chat_cliente) {
-                //startActivity(new Intent(this, ClienteChat.class));
-                return true;
+                startActivity(new Intent(this, ClienteChat.class));
             } else if (id == R.id.historialCliente) {
                 startActivity(new Intent(this, HistorialEventos.class));
-                return true;
             } else if (id == R.id.perfilCliente) {
-                // startActivity(new Intent(this, PerfilCliente.class));
-                return true;
+                startActivity(new Intent(this, PerfilCliente.class));
             }
-            return false;
+
+            return true;
         });
 
         // Configurar RecyclerView
