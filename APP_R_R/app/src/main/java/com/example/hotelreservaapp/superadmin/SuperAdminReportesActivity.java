@@ -110,6 +110,7 @@ public class SuperAdminReportesActivity extends BaseBottomNavActivity {
         LinearLayout opcionReportes = findViewById(R.id.opcionReportes);
         LinearLayout opcionLogs = findViewById(R.id.opcionLogs);
 
+
         opcionReportes.setOnClickListener(v -> {
             opcionReportes.setBackgroundResource(R.drawable.bg_opcion_selected);
             opcionLogs.setBackgroundResource(R.drawable.bg_opcion_unselected);
@@ -124,6 +125,7 @@ public class SuperAdminReportesActivity extends BaseBottomNavActivity {
             Intent intent = new Intent(SuperAdminReportesActivity.this, SuperAdminLogsActivity.class);
             startActivity(intent);
         });
+
     }
 
     private void filtrarResultados() {

@@ -8,10 +8,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.hotelreservaapp.R;
 import com.example.hotelreservaapp.model.Reporte;
+import com.example.hotelreservaapp.superadmin.DetalleReserva;
 
 import java.util.List;
 
@@ -39,10 +41,10 @@ public class ReportesAdapter extends RecyclerView.Adapter<ReportesAdapter.Report
         holder.tvFecha.setText(r.getFecha());
         holder.tvEstado.setText(r.getEstado());
         switch (r.getEstado().toLowerCase()) {
-            case "confirmada":
+            case "Confirmada":
                 holder.tvEstado.setTextColor(holder.itemView.getContext().getColor(R.color.estado_confirmado));
                 break;
-            case "cancelada":
+            case "Cancelada":
                 holder.tvEstado.setTextColor(holder.itemView.getContext().getColor(R.color.estado_cancelado));
                 break;
             default:
@@ -50,6 +52,10 @@ public class ReportesAdapter extends RecyclerView.Adapter<ReportesAdapter.Report
                 break;
         }
         holder.ivHotel.setImageResource(r.getImagenResId());
+        holder.itemView.setOnClickListener(v -> {
+            DetalleReserva bottomSheet = new DetalleReserva(r);
+            bottomSheet.show(((AppCompatActivity)v.getContext()).getSupportFragmentManager(), "detalleReserva");
+        });
     }
 
     @Override
