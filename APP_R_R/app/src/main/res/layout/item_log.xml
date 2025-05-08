@@ -1,0 +1,59 @@
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardElevation="2dp"
+    app:cardCornerRadius="12dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="12dp">
+
+        <!-- Contenedor de textos alineado a la izquierda -->
+        <LinearLayout
+            android:id="@+id/contenidoTexto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true">
+
+            <TextView
+                android:id="@+id/tvAccion"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Reserva eliminada"
+                android:textStyle="bold"
+                android:textColor="#333"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/tvUsuario"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Por: Jorge Coronado"
+                android:textColor="#666"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/tvFechaHora"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="10/05/2025 - 10:45 AM"
+                android:textColor="#888"
+                android:textSize="13sp" />
+        </LinearLayout>
+
+        <!-- Imagen del usuario alineada a la derecha -->
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/imgUsuario"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/default_user_icon"
+            android:contentDescription="Foto usuario" />
+    </RelativeLayout>
+</androidx.cardview.widget.CardView>

@@ -10,7 +10,6 @@ import com.example.hotelreservaapp.cliente.HistorialEventos;
 import com.example.hotelreservaapp.cliente.HomeCliente;
 import com.example.hotelreservaapp.cliente.ListaHotelesCliente;
 import com.example.hotelreservaapp.loginAndRegister.InicioActivity;
-import com.example.hotelreservaapp.superadmin.SuperAdminActivity;
 import com.example.hotelreservaapp.taxista.TaxistaMain;
 import com.example.hotelreservaapp.taxista.fragments.TaxiInicioFragment;
 import com.google.android.material.button.MaterialButton;
@@ -47,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         btnSuperadmin.setOnClickListener(v -> {
-            startActivity(new Intent(this, SuperAdminActivity.class));
+            startActivity(new Intent(this, SuperAdminMainActivity.class));
         });
 
         btnInicio.setOnClickListener(v -> {

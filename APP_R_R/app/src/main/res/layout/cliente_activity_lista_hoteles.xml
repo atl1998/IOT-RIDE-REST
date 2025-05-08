@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:background="#FFC107"
+        android:background="@color/amarillo_dorado"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
@@ -82,7 +82,7 @@
             android:layout_height="wrap_content"
             android:overScrollMode="never"
             android:scrollbars="none"
-            android:background="#FFC107"
+            android:background="@color/amarillo_dorado"
             android:paddingTop="8dp"
             android:paddingBottom="8dp">
 

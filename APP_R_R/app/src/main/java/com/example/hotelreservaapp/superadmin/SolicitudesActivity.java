@@ -14,8 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.example.hotelreservaapp.R;
 import com.example.hotelreservaapp.adapter.SolicitudAdapter;
 import com.example.hotelreservaapp.adapter.UsuarioAdapter;
-import com.example.hotelreservaapp.base.BaseBottomNavActivity;
-import com.example.hotelreservaapp.databinding.ActivitySuperadminBinding;
+
 import com.example.hotelreservaapp.databinding.SuperadminSolicitudesActivityBinding;
 import com.example.hotelreservaapp.model.SolicitudTaxista;
 import com.example.hotelreservaapp.model.UsuarioListaSuperAdmin;
@@ -23,7 +22,7 @@ import com.example.hotelreservaapp.model.UsuarioListaSuperAdmin;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SolicitudesActivity extends BaseBottomNavActivity {
+public class SolicitudesActivity extends AppCompatActivity  {
 
     private SuperadminSolicitudesActivityBinding binding;
     private SolicitudAdapter adapter;

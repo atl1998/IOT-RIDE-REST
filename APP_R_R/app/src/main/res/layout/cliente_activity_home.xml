@@ -22,7 +22,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#FFC107"
+            android:background="@color/amarillo_dorado"
             android:padding="6dp">
 
             <!-- Título Ride & Rest -->
@@ -40,24 +40,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"/>
 
-            <!-- Botón de Búsqueda -->
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/buscar"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:backgroundTint="@color/transparente"
-                app:icon="@drawable/search_24dp_e3e3e3_fill0_wght400_grad0_opsz24"
-                app:iconTint="@color/marron_oscuro"
-                app:iconGravity="textStart"
-                app:iconPadding="0dp"
-                android:padding="15dp"
-                android:minWidth="0dp"
-                android:minHeight="0dp"
-                android:contentDescription="Abrir chat de soporte"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/notificaciones_cliente"
-                app:layout_constraintBottom_toBottomOf="parent"
-                android:layout_marginEnd="4dp"/>
+
 
             <!-- Botón de Notificaciones -->
             <com.google.android.material.button.MaterialButton
@@ -84,7 +67,7 @@
             android:layout_height="wrap_content"
             android:overScrollMode="never"
             android:scrollbars="none"
-            android:background="#FFC107"
+            android:background="@color/amarillo_dorado"
             android:paddingTop="8dp"
             android:paddingBottom="8dp">
 

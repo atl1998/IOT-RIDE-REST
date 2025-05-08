@@ -1,35 +1,40 @@
 package com.example.hotelreservaapp.superadmin;
 
-import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.ArrayAdapter;
-import android.widget.LinearLayout;
-import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
+
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import com.example.hotelreservaapp.R;
 import com.example.hotelreservaapp.adapter.ReportesAdapter;
-import com.example.hotelreservaapp.base.BaseBottomNavActivity;
-import com.example.hotelreservaapp.databinding.SuperadminReportesActivityBinding;
+import com.example.hotelreservaapp.databinding.SuperadminReportesFragmentBinding;
 import com.example.hotelreservaapp.model.Reporte;
 import com.google.android.material.datepicker.CalendarConstraints;
 import com.google.android.material.datepicker.DateValidatorPointBackward;
 import com.google.android.material.datepicker.MaterialDatePicker;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
-import java.util.stream.Collectors;
 
-public class SuperAdminReportesActivity extends BaseBottomNavActivity {
-    private SuperadminReportesActivityBinding binding;
+public class ReportesFragment extends Fragment {
+
+    private SuperadminReportesFragmentBinding binding;
     private ReportesAdapter adapter;
     private List<Reporte> todosLosReportes;
 
@@ -43,19 +48,37 @@ public class SuperAdminReportesActivity extends BaseBottomNavActivity {
             "Hotel Nevado Blanco",
             "Hotel Bahía Serena"
     );
+
+    public ReportesFragment() {
+        super(R.layout.superadmin_reportes_fragment);
+    }
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        binding = SuperadminReportesActivityBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        binding = SuperadminReportesFragmentBinding.inflate(inflater, container, false);
+        return binding.getRoot();
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
         ArrayAdapter<String> adapterHoteles = new ArrayAdapter<>(
-                this,
+                requireContext(),
                 android.R.layout.simple_dropdown_item_1line,
                 hoteles
         );
         binding.spinnerHotel.setAdapter(adapterHoteles);
         binding.spinnerHotel.setText("Todos", false);
+
+        ImageView iconHelp = view.findViewById(R.id.iconHelp);
+        iconHelp.setOnClickListener(v -> {
+            new MaterialAlertDialogBuilder(requireContext())
+                    .setTitle("Sección Reportes")
+                    .setMessage("Aquí puedes visualizar todos los reportes de reservas realizados mediante la app.\nUtiliza los distintos filtros y selecciona la reserva de tu interés para ver más información")
+                    .setPositiveButton("Entendido", null)
+                    .show();
+        });
 
         binding.etFecha.setOnClickListener(v -> {
             CalendarConstraints.DateValidator dateValidator =
@@ -71,7 +94,7 @@ public class SuperAdminReportesActivity extends BaseBottomNavActivity {
                     .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
                     .build();
 
-            datePicker.show(getSupportFragmentManager(), "MATERIAL_DATE_PICKER");
+            datePicker.show(getParentFragmentManager(), "MATERIAL_DATE_PICKER");
 
             datePicker.addOnPositiveButtonClickListener(selection -> {
                 SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
@@ -82,10 +105,8 @@ public class SuperAdminReportesActivity extends BaseBottomNavActivity {
             });
         });
 
-        // Filtros
-        binding.spinnerHotel.setOnItemClickListener((parent, view, position, id) -> filtrarResultados());
+        binding.spinnerHotel.setOnItemClickListener((parent, view1, position, id) -> filtrarResultados());
 
-        // Lista demo
         todosLosReportes = new ArrayList<>();
         todosLosReportes.add(new Reporte("Hotel Miraflores Palace", "Adrian Bala", "10/04/2025", "Confirmada", R.drawable.hotel1));
         todosLosReportes.add(new Reporte("Hotel Costa Azul", "Nilo Cori", "06/05/2025", "Cancelada", R.drawable.hotel2));
@@ -100,32 +121,36 @@ public class SuperAdminReportesActivity extends BaseBottomNavActivity {
         todosLosReportes.add(new Reporte("Hotel Miraflores Palace", "Matías Delgado", "29/04/2025", "Cancelada", R.drawable.hotel1));
 
         adapter = new ReportesAdapter(todosLosReportes);
-        binding.recyclerRegistros.setLayoutManager(new LinearLayoutManager(this));
+        binding.recyclerRegistros.setLayoutManager(new LinearLayoutManager(requireContext()));
         binding.recyclerRegistros.setAdapter(adapter);
 
         binding.btnLimpiarFecha.setOnClickListener(v -> {
-            binding.etFecha.setText("");  // Limpia la fecha
-            filtrarResultados();          // Refresca la lista sin filtro
+            binding.etFecha.setText("");
+            filtrarResultados();
         });
-        LinearLayout opcionReportes = findViewById(R.id.opcionReportes);
-        LinearLayout opcionLogs = findViewById(R.id.opcionLogs);
+
+        LinearLayout opcionReportes = binding.opcionReportes;
+        LinearLayout opcionLogs = binding.opcionLogs;
+
+        binding.opcionReportes.setBackgroundResource(R.drawable.bg_opcion_selected);
+        binding.opcionLogs.setBackgroundResource(R.drawable.bg_opcion_unselected);
 
 
         opcionReportes.setOnClickListener(v -> {
             opcionReportes.setBackgroundResource(R.drawable.bg_opcion_selected);
             opcionLogs.setBackgroundResource(R.drawable.bg_opcion_unselected);
-            // Opcional: lógica para mostrar solo reportes
         });
 
         opcionLogs.setOnClickListener(v -> {
             opcionLogs.setBackgroundResource(R.drawable.bg_opcion_selected);
             opcionReportes.setBackgroundResource(R.drawable.bg_opcion_unselected);
-            // Opcional: lógica para mostrar logs
-            // Ir al activity de logs
-            Intent intent = new Intent(SuperAdminReportesActivity.this, SuperAdminLogsActivity.class);
-            startActivity(intent);
+            FragmentTransaction transaction = requireActivity()
+                    .getSupportFragmentManager()
+                    .beginTransaction();
+            transaction.replace(R.id.fragmentContainer, new LogsFragment());  // Usa el ID de tu container principal
+            transaction.addToBackStack(null); // Permite regresar con el botón atrás
+            transaction.commit();
         });
-
     }
 
     private void filtrarResultados() {

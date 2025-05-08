@@ -10,11 +10,13 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.hotelreservaapp.R;
 import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class DetallesHotel extends AppCompatActivity {
@@ -22,6 +24,9 @@ public class DetallesHotel extends AppCompatActivity {
     private RecyclerView recyclerComentarios;
     private ComentarioAdapter comentarioAdapter;
     private List<Comentario> listaComentarios;
+
+
+    private ViewPager2 imageCarousel;
     MaterialButton btnBusqueda;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +54,20 @@ public class DetallesHotel extends AppCompatActivity {
 
         // Cargar datos de ejemplo (esto podría venir de una API o base de datos)
         cargarDatosEjemplo();
+
+
+
+        imageCarousel = findViewById(R.id.imageCarousel);
+
+        // Lista de imágenes del carrusel (asegúrate de que existan en drawable)
+        List<Integer> images = Arrays.asList(
+                R.drawable.hotel1_img1,
+                R.drawable.hotel1_img2,
+                R.drawable.hotel1_img3
+        );
+
+        ImageCarouselAdapter adapter = new ImageCarouselAdapter(images);
+        imageCarousel.setAdapter(adapter);
     }
 
     /**

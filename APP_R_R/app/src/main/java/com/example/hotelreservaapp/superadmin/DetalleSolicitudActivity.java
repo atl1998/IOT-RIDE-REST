@@ -18,7 +18,6 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.bumptech.glide.Glide;
 import com.example.hotelreservaapp.R;
-import com.example.hotelreservaapp.base.BaseBottomNavActivity;
 import com.example.hotelreservaapp.databinding.SuperadminDetalleSolicitudActivityBinding;
 import com.example.hotelreservaapp.model.SolicitudTaxista;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -26,7 +25,7 @@ import com.google.android.material.snackbar.Snackbar;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
-public class DetalleSolicitudActivity extends BaseBottomNavActivity {
+public class DetalleSolicitudActivity extends AppCompatActivity  {
     private SuperadminDetalleSolicitudActivityBinding binding;
 
     @Override

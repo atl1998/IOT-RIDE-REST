@@ -12,7 +12,7 @@
         android:id="@+id/headerRegistro"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/amarillo"
+        android:background="@color/amarillo_dorado"
         android:padding="12dp"
         app:layout_constraintTop_toTopOf="parent">
 
