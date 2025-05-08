@@ -61,4 +61,35 @@
 
     </LinearLayout>
 
+    <!-- Contenedor de notificaciones (ScrollView) -->
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/headerLayout"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- Layout para las notificaciones -->
+        <LinearLayout
+            android:id="@+id/layoutMensajes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="8dp"
+            android:background="@android:color/white"
+            android:layout_marginBottom="8dp">
+
+            <!-- Aquí se agregarán las notificaciones dinámicamente desde el código Java -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/listaNotificaciones"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:nestedScrollingEnabled="false"
+                android:contentDescription="Lista de habitaciones disponibles" />
+        </LinearLayout>
+    </ScrollView>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

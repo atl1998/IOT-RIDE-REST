@@ -83,9 +83,4 @@
 
 
 
-    <!-- Línea negra (separador) -->
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1.5dp"
-        android:background="#000000" />
 </LinearLayout>
