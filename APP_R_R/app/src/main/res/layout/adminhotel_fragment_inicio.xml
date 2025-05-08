@@ -11,7 +11,7 @@
     <LinearLayout
         android:id="@+id/headerLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="60dp"
         android:orientation="vertical"
         android:background="@color/amarillo_dorado"
         app:layout_constraintTop_toTopOf="parent"
@@ -20,7 +20,7 @@
         <!-- Título + Busqueda + Notificaciones -->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="60dp"
             android:padding="6dp">
 
             <TextView
@@ -40,7 +40,7 @@
 
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/notificaciones_cliente"
+                android:id="@+id/NotificacionesAdminHotel"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:backgroundTint="@color/transparente"
