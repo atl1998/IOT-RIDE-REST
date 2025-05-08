@@ -14,17 +14,14 @@
         app:layout_constraintBottom_toTopOf="@id/bottomNavigationTaxista"
         app:layout_constraintTop_toTopOf="parent" />
 
-
-
-
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigationTaxista"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:background="@color/white"
-        app:itemIconTint="@color/marron_oscuro"
-        app:itemTextColor="@color/marron_oscuro"
+        app:itemIconTint="@color/nav_icon_color_selector"
+        app:itemTextColor="@color/nav_icon_color_selector"
         app:menu="@menu/taxista_menu_navigation" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

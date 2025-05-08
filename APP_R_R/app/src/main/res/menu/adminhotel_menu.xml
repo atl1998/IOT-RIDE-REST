@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/adminhotel_menu_inicio"
+        android:icon="@drawable/home_24dp_e3e3e3_fill0_wght400_grad0_opsz24"
+        android:title="Inicio" />
+
+    <item
+        android:id="@+id/adminhotel_menu_hotel"
+        android:icon="@drawable/hotel_material"
+        android:title="Reservas" />
+
+    <item
+        android:id="@+id/adminhotel_menu_reportes"
+        android:icon="@drawable/description_material"
+        android:title="Chat" />
+
+    <item
+        android:id="@+id/adminhotel_menu_perfil"
+        android:icon="@drawable/account_circle_24dp"
+        android:title="Perfil" />
+
+</menu>

@@ -11,11 +11,6 @@
         android:id="@+id/mapaTaxista">
     </item>
     <item
-        android:title="Historial"
-        android:icon="@drawable/pending_actions_icon"
-        android:id="@+id/historialTaxista">
-    </item>
-    <item
         android:title="Perfil"
         android:icon="@drawable/account_circle_24dp"
         android:id="@+id/perfilTaxista">

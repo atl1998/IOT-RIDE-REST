@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         btnAdminHotel.setOnClickListener(v -> {
-            // startActivity(new Intent(this, AdminHotelActivity.class));
+            startActivity(new Intent(this, com.example.hotelreservaapp.AdminHotel.MainActivity.class));
         });
 
         btnSuperadmin.setOnClickListener(v -> {
