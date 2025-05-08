@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".AdminHotel.HotelFragment">
+    tools:context=".AdminHotel.NotificacionesActivity">
 
-    <!-- TODO: Update blank fragment layout -->
     <!-- Encabezado amarillo -->
     <LinearLayout
         android:id="@+id/headerLayout"
@@ -23,11 +23,30 @@
             android:layout_height="60dp"
             android:padding="6dp">
 
+            <!-- Botón de Notificaciones -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/backBottom"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginEnd="108dp"
+                android:backgroundTint="@color/transparente"
+                android:contentDescription="Abrir chat de soporte"
+                android:minWidth="0dp"
+                android:minHeight="0dp"
+                android:padding="15dp"
+                app:icon="@drawable/outline_arrow_back_24"
+                app:iconGravity="textStart"
+                app:iconPadding="0dp"
+                app:iconTint="@color/marron_oscuro"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0" />
+
             <TextView
                 android:id="@+id/titulo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Ride &amp; Rest / Asturias"
+                android:text="Mis notificaciones"
                 android:textColor="#282828"
                 android:textSize="20sp"
                 android:textStyle="bold"
@@ -38,9 +57,8 @@
                 app:layout_constraintBottom_toBottomOf="parent"/>
 
 
-
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </LinearLayout>
 
-</FrameLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

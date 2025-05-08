@@ -82,12 +82,6 @@ public class HomeCliente extends AppCompatActivity {
         setupDateRangeSelection();
         setupVisitorsSelection();
 
-        btnBusqueda = findViewById(R.id.buscar);
-        btnBusqueda.setOnClickListener(v -> {
-            //por ahora directamente al mio bala
-            startActivity(new Intent(this, ListaHotelesCliente.class));
-        });
-
 
         // Configurar botón de búsqueda
         btnBuscar.setOnClickListener(v -> realizarBusqueda());

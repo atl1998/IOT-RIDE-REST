@@ -1,6 +1,7 @@
 package com.example.hotelreservaapp.AdminHotel;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -14,8 +15,10 @@ import android.view.ViewGroup;
 import com.example.hotelreservaapp.R;
 import com.example.hotelreservaapp.adapter.Adminhotel_UsuarioAdapter;
 import com.example.hotelreservaapp.adapter.UsuarioAdapter;
+import com.example.hotelreservaapp.cliente.HomeCliente;
 import com.example.hotelreservaapp.databinding.AdminhotelFragmentInicioBinding;
 import com.example.hotelreservaapp.model.UsuarioListaSuperAdmin;
+import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,12 +31,20 @@ public class InicioFragment extends Fragment {
     private Adminhotel_UsuarioAdapter adapter;
     private List<UsuarioListaSuperAdmin> listaOriginal = new ArrayList<>();
 
+    MaterialButton btnNotificaiones;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.adminhotel_fragment_inicio, container, false);
         cargarUsuariosDeEjemplo();
 
+        //Para ir a notificaciones
+        btnNotificaiones = view.findViewById(R.id.NotificacionesAdminHotel);
+        btnNotificaiones.setOnClickListener(v -> {
+            //por ahora directamente al mio bala
+            startActivity(new Intent(getActivity(), NotificacionesActivity.class));
+        });
 
 
         // Configurar el RecyclerView

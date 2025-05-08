@@ -16,6 +16,12 @@
             android:name=".SuperAdminMainActivity"
             android:exported="false" />
         <activity
+            android:name=".cliente.DetalleChat"
+            android:exported="false" />
+        <activity
+            android:name=".AdminHotel.NotificacionesActivity"
+            android:exported="false" />
+        <activity
             android:name=".superadmin.DetalleSolicitudActivity"
             android:exported="false" />
         <activity
