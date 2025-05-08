@@ -13,6 +13,18 @@
         android:theme="@style/Theme.HotelReservaApp"
         tools:targetApi="31">
         <activity
+            android:name=".AdminHotel.HotelServicios"
+            android:exported="false" />
+        <activity
+            android:name=".AdminHotel.HotelHabitaciones"
+            android:exported="false" />
+        <activity
+            android:name=".AdminHotel.ReporteServicioActivity"
+            android:exported="false" />
+        <activity
+            android:name=".AdminHotel.ReporteUsuarioActivity"
+            android:exported="false" />
+        <activity
             android:name=".AdminHotel.NotificacionesActivity"
             android:exported="false" />
         <activity

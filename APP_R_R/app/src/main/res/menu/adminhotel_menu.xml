@@ -14,7 +14,7 @@
     <item
         android:id="@+id/adminhotel_menu_reportes"
         android:icon="@drawable/description_material"
-        android:title="Chat" />
+        android:title="Reportes" />
 
     <item
         android:id="@+id/adminhotel_menu_perfil"
