@@ -14,6 +14,7 @@
     <color name="verde_aceptar">#6FD774</color>
     <color name="estado_confirmado">#2E7D32</color>
     <color name="estado_cancelado">#C62828</color>
+    <color name="adminhotel_nombres">#807474</color>
 
     <!-- Colores principales de tu app -->
     <color name="dorado_claro">#FFD54F</color>    <!-- Dorado más claro para variaciones -->
