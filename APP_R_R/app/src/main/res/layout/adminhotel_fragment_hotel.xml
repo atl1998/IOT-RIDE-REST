@@ -23,6 +23,7 @@
             android:layout_height="60dp"
             android:padding="6dp">
 
+
             <TextView
                 android:id="@+id/titulo"
                 android:layout_width="wrap_content"

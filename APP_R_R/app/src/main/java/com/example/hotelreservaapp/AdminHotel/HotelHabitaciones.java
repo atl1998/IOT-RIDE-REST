@@ -1,5 +1,10 @@
 package com.example.hotelreservaapp.AdminHotel;
 
+import static android.app.PendingIntent.getActivity;
+
+import static androidx.core.content.ContentProviderCompat.requireContext;
+import static java.security.AccessController.getContext;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -17,6 +22,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.hotelreservaapp.R;
+import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,7 +52,8 @@ public class HotelHabitaciones extends AppCompatActivity {
                 3,
                 354.00,
                 "Grande",
-                25
+                25,
+                "adminhotel_habitacion1.jpg"
         ));
 
         listaHabitaciones.add(new Habitaciones(
@@ -55,7 +62,8 @@ public class HotelHabitaciones extends AppCompatActivity {
                 2,
                 417.00,
                 "Extra grande",
-                30
+                30,
+                "adminhotel_habitacion3.jpg"
         ));
         listaHabitaciones.add(new Habitaciones(
                 "Habitacion deluxe cama extragrande",
@@ -63,7 +71,8 @@ public class HotelHabitaciones extends AppCompatActivity {
                 2,
                 417.00,
                 "Extra grande",
-                30
+                30,
+                "adminhotel_habitacion3.jpg"
         ));
         listaHabitaciones.add(new Habitaciones(
                 "Habitacion deluxe cama extragrande",
@@ -71,7 +80,8 @@ public class HotelHabitaciones extends AppCompatActivity {
                 2,
                 417.00,
                 "Extra grande",
-                30
+                30,
+                "adminhotel_habitacion3.jpg"
         ));
         listaHabitaciones.add(new Habitaciones(
                 "Habitacion deluxe cama extragrande",
@@ -79,11 +89,12 @@ public class HotelHabitaciones extends AppCompatActivity {
                 2,
                 417.00,
                 "Extra grande",
-                30
+                30,
+                "adminhotel_habitacion3.jpg"
         ));
 
         //Inicializamos el adapter
-        adapter = new HabitacionAdapter(listaHabitaciones, new HabitacionAdapter.OnItemClickListener() {
+        adapter = new HabitacionAdapter(listaHabitaciones,this,  new HabitacionAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
                 Habitaciones habitacion = listaHabitaciones.get(position);
@@ -179,5 +190,21 @@ public class HotelHabitaciones extends AppCompatActivity {
                 verificarSeleccion(); // <-- Nueva llamada aquí
             });
         }*/
+
+        //Para ir a notificaciones
+        MaterialButton btnNotificaiones = findViewById(R.id.NotificacionesAdminHotel);
+        btnNotificaiones.setOnClickListener(v -> {
+            //por ahora directamente al mio bala
+            startActivity(new Intent(this, NotificacionesActivity.class));
+        });
+
+        // Usamos un OnClickListener estándar
+        MaterialButton backButton = findViewById(R.id.backBottom);
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed(); // Usar el método tradicional
+            }
+        });
     }
 }

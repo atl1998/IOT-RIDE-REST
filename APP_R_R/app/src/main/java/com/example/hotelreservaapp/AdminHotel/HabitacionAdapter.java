@@ -1,33 +1,38 @@
 package com.example.hotelreservaapp.AdminHotel;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.hotelreservaapp.R;
 import com.example.hotelreservaapp.AdminHotel.Habitaciones;
 
+import java.io.IOException;
 import java.util.List;
 
 public class HabitacionAdapter extends RecyclerView.Adapter<com.example.hotelreservaapp.AdminHotel.HabitacionAdapter.HabitacionViewHolder> {
 
     private List<Habitaciones> habitaciones;
     private OnItemClickListener listener;
-
+    private Context context;
     public interface OnItemClickListener {
         void onItemClick(int position);
         void onSeleccionCambio();
     }
 
-    public HabitacionAdapter(List<Habitaciones> habitaciones, com.example.hotelreservaapp.AdminHotel.HabitacionAdapter.OnItemClickListener listener) {
+    public HabitacionAdapter(List<Habitaciones> habitaciones,Context context,  com.example.hotelreservaapp.AdminHotel.HabitacionAdapter.OnItemClickListener listener) {
         this.habitaciones = habitaciones;
         this.listener = listener;
+        this.context = context;
     }
 
     @NonNull
@@ -46,6 +51,26 @@ public class HabitacionAdapter extends RecyclerView.Adapter<com.example.hotelres
         holder.tvDetalles.setText(habitacion.getDetalles());
         holder.tvDisponibles.setText("Habitaciones disponibles: " + habitacion.getDisponibles());
         holder.tvPrecio.setText(String.format("Precio para 2 noches: $%.2f", habitacion.getPrecio()));
+
+        String nombreArchivo = habitacion.getUrl(); // ej. "image1.png"
+        String rutaAsset = "file:///android_asset/" + nombreArchivo;
+
+        try {
+            // Intenta abrir la imagen para ver si existe
+            context.getAssets().open(nombreArchivo);
+
+            // Si no lanza excepción, la imagen existe
+            Glide.with(context)
+                    .load(rutaAsset)
+                    .placeholder(R.drawable.bedroom_parent_24dp_black)
+                    .into(holder.tvImagen);
+
+        } catch (IOException e) {
+            // Si falla (no existe), carga imagen por defecto
+            Glide.with(context)
+                    .load(R.drawable.bedroom_parent_24dp_black)
+                    .into(holder.tvImagen);
+        }
          /*
         if (habitacion.getSeleccionadas() > 0) {
             holder.btnSeleccionar.setVisibility(View.GONE);
@@ -72,6 +97,8 @@ public class HabitacionAdapter extends RecyclerView.Adapter<com.example.hotelres
 
     public static class HabitacionViewHolder extends RecyclerView.ViewHolder {
         TextView tvTitulo, tvDetalles, tvDisponibles, tvPrecio;
+
+        ImageView tvImagen;
         Button btnSeleccionar;
         LinearLayout layoutSeleccion;
         TextView tvSeleccionadas;
@@ -84,6 +111,7 @@ public class HabitacionAdapter extends RecyclerView.Adapter<com.example.hotelres
             tvDetalles = itemView.findViewById(R.id.tvDetalles);
             tvDisponibles = itemView.findViewById(R.id.tvDisponibles);
             tvPrecio = itemView.findViewById(R.id.tvPrecio);
+            tvImagen = itemView.findViewById(R.id.imgHotel);
 
             /*
             btnSeleccionar = itemView.findViewById(R.id.btnSeleccionar);

@@ -8,6 +8,8 @@ public class Habitaciones {
     private String tipoCama;
     private int tamano;
 
+    private String url;
+
     private int seleccionadas = 0;
 
     public int getSeleccionadas() {
@@ -18,13 +20,14 @@ public class Habitaciones {
         this.seleccionadas = seleccionadas;
     }
 
-    public Habitaciones(String titulo, String detalles, int disponibles, double precio, String tipoCama, int tamano) {
+    public Habitaciones(String titulo, String detalles, int disponibles, double precio, String tipoCama, int tamano, String url) {
         this.titulo = titulo;
         this.detalles = detalles;
         this.disponibles = disponibles;
         this.precio = precio;
         this.tipoCama = tipoCama;
         this.tamano = tamano;
+        this.setUrl(url);
     }
 
     // Getters
@@ -34,4 +37,12 @@ public class Habitaciones {
     public double getPrecio() { return precio; }
     public String getTipoCama() { return tipoCama; }
     public int getTamano() { return tamano; }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
 }
