@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.hotelreservaapp.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,6 +27,9 @@ public class ClienteChat extends AppCompatActivity {
     private ChatAdapter adapter;
     private List<Chat> mensajeList;
     private List<Chat> mensajeListFull; // Para guardar una copia de la lista completa
+
+
+    private MaterialButton btnNotificaciones;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,6 +110,15 @@ public class ClienteChat extends AppCompatActivity {
             public void afterTextChanged(Editable editable) {
                 // No se necesita implementar nada aquí
             }
+        });
+
+
+
+        btnNotificaciones = findViewById(R.id.notificaciones_cliente);
+        btnNotificaciones.setOnClickListener(v -> {
+            //por ahora directamente al mio bala
+            Intent intent = new Intent(this, ClienteNotificaciones.class);
+            startActivity(intent);
         });
     }
     // Método para filtrar los mensajes por nombre del hotel

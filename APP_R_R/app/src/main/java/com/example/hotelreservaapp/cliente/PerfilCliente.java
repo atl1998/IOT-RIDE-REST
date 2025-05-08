@@ -11,8 +11,10 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.example.hotelreservaapp.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.button.MaterialButton;
 
 public class PerfilCliente extends AppCompatActivity {
+    private MaterialButton btnNotificaciones;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +38,14 @@ public class PerfilCliente extends AppCompatActivity {
             }
 
             return true;
+        });
+
+
+        btnNotificaciones = findViewById(R.id.notificaciones_cliente);
+        btnNotificaciones.setOnClickListener(v -> {
+            //por ahora directamente al mio bala
+            Intent intent = new Intent(this, ClienteNotificaciones.class);
+            startActivity(intent);
         });
     }
 }

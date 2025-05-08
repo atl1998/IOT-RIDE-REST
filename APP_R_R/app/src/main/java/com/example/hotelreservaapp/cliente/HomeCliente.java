@@ -51,6 +51,9 @@ public class HomeCliente extends AppCompatActivity {
     private HotelCarouselManager carouselManager;
 
 
+    private MaterialButton btnNotificaciones;
+
+
     private RecyclerView ofertasRecyclerView;
     private OfertaHotelAdapter ofertasAdapter;
     private List<OfertaHotel> listaOfertas;
@@ -117,6 +120,14 @@ public class HomeCliente extends AppCompatActivity {
                     "Seleccionaste: " + oferta.getNombre(),
                     Toast.LENGTH_SHORT).show();
             // Aquí puedes navegar a detalles del hotel u otra acción
+        });
+
+
+        btnNotificaciones = findViewById(R.id.notificaciones_cliente);
+        btnNotificaciones.setOnClickListener(v -> {
+            //por ahora directamente al mio bala
+            Intent intent = new Intent(this, ClienteNotificaciones.class);
+            startActivity(intent);
         });
 
 

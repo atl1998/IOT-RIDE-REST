@@ -45,7 +45,7 @@
             <!-- Botón de Notificaciones -->
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/añadirfavoritos"
+                android:id="@+id/volverPagina"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:layout_marginEnd="56dp"
@@ -98,6 +98,7 @@
             android:layout_marginBottom="8dp">
 
             <!-- Aquí se agregarán las notificaciones dinámicamente desde el código Java -->
+            
         </LinearLayout>
     </ScrollView>
 
