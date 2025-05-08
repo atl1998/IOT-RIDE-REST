@@ -184,13 +184,14 @@
                 app:layout_constraintTop_toBottomOf="@id/ly1"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent">
-                <EditText
+                <AutoCompleteTextView
                     android:id="@+id/etDestino"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:hint=" Ingrese el destino"
                     android:drawableStart="@drawable/search_icon"
                     app:drawableTint="@android:color/black"
-                    android:hint=" Ingrese el destino" />
+                    android:completionThreshold="1" />
 
                 <EditText
                     android:id="@+id/etFecha"

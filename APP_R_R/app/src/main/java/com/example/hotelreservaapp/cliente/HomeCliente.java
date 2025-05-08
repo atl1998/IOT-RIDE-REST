@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -27,6 +29,12 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
+import android.os.Bundle;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
+import androidx.appcompat.app.AppCompatActivity;
+
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -37,7 +45,7 @@ public class HomeCliente extends AppCompatActivity {
     MaterialButton btnBusqueda;
 
 
-    private EditText etDestino, etFecha, etCantidad;
+    private EditText etFecha, etCantidad;
     private MaterialButton btnBuscar;
 
     // Variables para el rango de fechas
@@ -57,6 +65,9 @@ public class HomeCliente extends AppCompatActivity {
     private RecyclerView ofertasRecyclerView;
     private OfertaHotelAdapter ofertasAdapter;
     private List<OfertaHotel> listaOfertas;
+
+
+    private AutoCompleteTextView etDestino;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -129,6 +140,24 @@ public class HomeCliente extends AppCompatActivity {
             Intent intent = new Intent(this, ClienteNotificaciones.class);
             startActivity(intent);
         });
+
+
+
+        /*autocompletar destino*/
+        etDestino = findViewById(R.id.etDestino);
+
+        // Lista de destinos (puedes cargarla desde una API o base de datos si deseas)
+        String[] destinos = new String[] {
+                "Lima", "Cusco", "Arequipa", "Trujillo", "Piura", "Iquitos","Mancora","Huanuco","Huaraz"
+        };
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                this,
+                android.R.layout.simple_dropdown_item_1line,
+                destinos
+        );
+
+        etDestino.setAdapter(adapter);
 
 
 
