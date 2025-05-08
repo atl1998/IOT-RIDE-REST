@@ -161,7 +161,7 @@
         android:id="@+id/dividerLine"
         android:layout_width="match_parent"
         android:layout_height="2dp"
-        android:background="#2196F3"
+        android:background="#000000"
         app:layout_constraintTop_toBottomOf="@id/contactInfoLayout"/>
 
     <!-- Contenedor de mensajes (ScrollView) -->
@@ -363,7 +363,9 @@
         android:padding="8dp"
         android:background="#F5F5F5"
         app:layout_constraintTop_toBottomOf="@+id/scrollView"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf= "parent">
 
         <ImageButton
             android:id="@+id/attachmentButton"
@@ -397,7 +399,7 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:backgroundTint="#3F51B5"
-            app:fabCustomSize="48dp"
+            app:fabCustomSize="40dp"
             android:src="@drawable/ic_send"
             app:tint="#FFFFFF"
             android:contentDescription="Send message"

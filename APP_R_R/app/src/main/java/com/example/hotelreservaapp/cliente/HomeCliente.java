@@ -28,7 +28,9 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Locale;
 
 public class HomeCliente extends AppCompatActivity {
@@ -47,6 +49,11 @@ public class HomeCliente extends AppCompatActivity {
     private int cantidadAdultos = 1;
     private int cantidadNinos = 0;
     private HotelCarouselManager carouselManager;
+
+
+    private RecyclerView ofertasRecyclerView;
+    private OfertaHotelAdapter ofertasAdapter;
+    private List<OfertaHotel> listaOfertas;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,6 +92,32 @@ public class HomeCliente extends AppCompatActivity {
 
         // Configurar botón de búsqueda
         btnBuscar.setOnClickListener(v -> realizarBusqueda());
+
+
+
+        //recycler de ofertas
+        // Inicializar RecyclerView
+        ofertasRecyclerView = findViewById(R.id.ofertasRecyclerView);
+
+        // Configurar el layout manager para scroll horizontal
+        LinearLayoutManager layoutManager = new LinearLayoutManager(
+                this, LinearLayoutManager.HORIZONTAL, false);
+        ofertasRecyclerView.setLayoutManager(layoutManager);
+
+        // Cargar datos de ejemplo
+        cargarOfertasEjemplo();
+
+        // Configurar el adaptador
+        ofertasAdapter = new OfertaHotelAdapter(this, listaOfertas);
+        ofertasRecyclerView.setAdapter(ofertasAdapter);
+
+        // Configurar click listener para los items
+        ofertasAdapter.setOnItemClickListener((oferta, position) -> {
+            Toast.makeText(HomeCliente.this,
+                    "Seleccionaste: " + oferta.getNombre(),
+                    Toast.LENGTH_SHORT).show();
+            // Aquí puedes navegar a detalles del hotel u otra acción
+        });
 
 
 
@@ -254,6 +287,61 @@ public class HomeCliente extends AppCompatActivity {
         // intent.putExtra("adultos", cantidadAdultos);
         // intent.putExtra("ninos", cantidadNinos);
         startActivity(intent);
+    }
+
+
+    private void cargarOfertasEjemplo() {
+        listaOfertas = new ArrayList<>();
+
+        // Agregar datos de ejemplo (reemplaza R.drawable.ejemplo con tus propias imágenes)
+        listaOfertas.add(new OfertaHotel(
+                "Cusco Rooms",
+                "Cuzco",
+                "8.3",
+                "Muy bien",
+                "454 comentarios",
+                "2 noches:",
+                "S/ 286",
+                "S/ 158",
+                R.drawable.hotel3_example, // Reemplaza con tu imagen
+                true));
+
+        listaOfertas.add(new OfertaHotel(
+                "Hotel Maison Du Soleil",
+                "Arequipa",
+                "8.2",
+                "Muy bien",
+                "350 comentarios",
+                "2 noches:",
+                "S/ 470",
+                "S/ 320",
+                R.drawable.hotel4_example, // Reemplaza con tu imagen
+                true));
+
+        // Agrega más hoteles aquí
+        listaOfertas.add(new OfertaHotel(
+                "Lima Luxury Suites",
+                "Lima",
+                "8.5",
+                "Fantástico",
+                "210 comentarios",
+                "2 noches:",
+                "S/ 350",
+                "S/ 280",
+                R.drawable.hotel5_example, // Reemplaza con tu imagen
+                true));
+
+        listaOfertas.add(new OfertaHotel(
+                "Playa Resort",
+                "Máncora",
+                "8.7",
+                "Excelente",
+                "325 comentarios",
+                "2 noches:",
+                "S/ 520",
+                "S/ 390",
+                R.drawable.hotel3_example, // Reemplaza con tu imagen
+                true));
     }
 
 
