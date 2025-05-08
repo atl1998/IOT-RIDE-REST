@@ -343,7 +343,7 @@ public class HomeCliente extends AppCompatActivity {
                 "2 noches:",
                 "S/ 286",
                 "S/ 158",
-                R.drawable.hotel3_example, // Reemplaza con tu imagen
+                R.drawable.hotel1, // Reemplaza con tu imagen
                 true));
 
         listaOfertas.add(new OfertaHotel(
@@ -355,7 +355,7 @@ public class HomeCliente extends AppCompatActivity {
                 "2 noches:",
                 "S/ 470",
                 "S/ 320",
-                R.drawable.hotel4_example, // Reemplaza con tu imagen
+                R.drawable.hotel1, // Reemplaza con tu imagen
                 true));
 
         // Agrega más hoteles aquí
@@ -368,7 +368,7 @@ public class HomeCliente extends AppCompatActivity {
                 "2 noches:",
                 "S/ 350",
                 "S/ 280",
-                R.drawable.hotel5_example, // Reemplaza con tu imagen
+                R.drawable.hotel1, // Reemplaza con tu imagen
                 true));
 
         listaOfertas.add(new OfertaHotel(
@@ -380,7 +380,7 @@ public class HomeCliente extends AppCompatActivity {
                 "2 noches:",
                 "S/ 520",
                 "S/ 390",
-                R.drawable.hotel3_example, // Reemplaza con tu imagen
+                R.drawable.hotel1, // Reemplaza con tu imagen
                 true));
     }
 
