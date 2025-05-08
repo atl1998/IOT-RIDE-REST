@@ -1,90 +1,94 @@
 package com.example.hotelreservaapp.superadmin;
 
 import android.content.Intent;
-import android.content.res.ColorStateList;
-import android.graphics.Color;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-
-import androidx.activity.EdgeToEdge;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.fragment.NavHostFragment;
-import androidx.navigation.ui.NavigationUI;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import android.widget.ImageView;
 
 import com.example.hotelreservaapp.R;
 import com.example.hotelreservaapp.adapter.UsuarioAdapter;
-import com.example.hotelreservaapp.base.BaseBottomNavActivity;
-import com.example.hotelreservaapp.databinding.ActivitySuperadminBinding;
-import com.example.hotelreservaapp.model.Usuario;
+import com.example.hotelreservaapp.databinding.SuperadminGestionUsuariosFragmentBinding;
 import com.example.hotelreservaapp.model.UsuarioListaSuperAdmin;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.chip.Chip;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-public class SuperAdminActivity extends BaseBottomNavActivity {
 
-    private ActivitySuperadminBinding binding;
+public class GestionUsuariosFragment extends Fragment {
+
+    private SuperadminGestionUsuariosFragmentBinding binding;
     private UsuarioAdapter adapter;
     private List<UsuarioListaSuperAdmin> listaOriginal = new ArrayList<>();
     private String rolSeleccionado = "Todos";
 
+    public GestionUsuariosFragment() {
+        super(R.layout.superadmin_gestion_usuarios_fragment);
+    }
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        binding = ActivitySuperadminBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        binding = SuperadminGestionUsuariosFragmentBinding.inflate(inflater, container, false);
+        return binding.getRoot();
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
         // Inicializar RecyclerView
-        adapter = new UsuarioAdapter(this, new ArrayList<>());
-        binding.recyclerUsuarios.setLayoutManager(new LinearLayoutManager(this));
+        adapter = new UsuarioAdapter(requireContext(), new ArrayList<>());
+        binding.recyclerUsuarios.setLayoutManager(new LinearLayoutManager(requireContext()));
         binding.recyclerUsuarios.setAdapter(adapter);
+
+        ImageView iconHelp = view.findViewById(R.id.iconHelp);
+        iconHelp.setOnClickListener(v -> {
+            new MaterialAlertDialogBuilder(requireContext())
+                    .setTitle("Gestión de usuarios")
+                    .setMessage("Aquí puedes filtrar, buscar y gestionar a todos los usuarios registrados en el sistema.")
+                    .setPositiveButton("Entendido", null)
+                    .show();
+        });
 
         // Cargar roles en dropdown
         String[] roles = {"Todos", "Administradores de hotel", "Taxistas", "Clientes"};
-        ArrayAdapter<String> adapterRoles = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, roles);
+        ArrayAdapter<String> adapterRoles = new ArrayAdapter<>(requireContext(), android.R.layout.simple_list_item_1, roles);
         binding.filtroRol.setAdapter(adapterRoles);
 
-        // 👇 SELECCIONAR "Todos" POR DEFECTO
-        binding.filtroRol.setText("Todos", false); // Selecciona sin disparar el evento
-        rolSeleccionado = "Todos";                 // Asegura coherencia
+        // Seleccionar "Todos" por defecto
+        binding.filtroRol.setText("Todos", false);
+        rolSeleccionado = "Todos";
         aplicarFiltros();
 
         // Listener del filtro de rol
-        binding.filtroRol.setOnItemClickListener((parent, view, position, id) -> {
+        binding.filtroRol.setOnItemClickListener((parent, v, position, id) -> {
             rolSeleccionado = parent.getItemAtPosition(position).toString();
 
             if (rolSeleccionado.equals("Administradores de hotel")) {
                 binding.btnAccionContextual.setVisibility(View.VISIBLE);
                 binding.btnAccionContextual.setText("Registrar administrador");
                 binding.btnAccionContextual.setIconResource(R.drawable.person_add_icon);
-                binding.btnAccionContextual.setOnClickListener(v -> {
-                    startActivity(new Intent(this, RegistrarAdmHotelActivity.class));
+                binding.btnAccionContextual.setOnClickListener(vv -> {
+                    startActivity(new Intent(requireContext(), RegistrarAdmHotelActivity.class));
                 });
 
             } else if (rolSeleccionado.equals("Taxistas")) {
                 binding.btnAccionContextual.setVisibility(View.VISIBLE);
                 binding.btnAccionContextual.setText("Solicitudes de acceso");
                 binding.btnAccionContextual.setIconResource(R.drawable.pending_actions_icon);
-                binding.btnAccionContextual.setOnClickListener(v -> {
-                    startActivity(new Intent(this, SolicitudesActivity.class));
+                binding.btnAccionContextual.setOnClickListener(vv -> {
+                    startActivity(new Intent(requireContext(), SolicitudesActivity.class));
                 });
 
             } else {
@@ -105,13 +109,6 @@ public class SuperAdminActivity extends BaseBottomNavActivity {
 
         // Cargar datos de prueba
         cargarUsuariosDeEjemplo();
-
-        // Configurar bottom nav (usa lógica de BaseBottomNavActivity)
-        BottomNavigationView bottomNav = findViewById(R.id.bottomNavigationView);
-        binding.bottomNavigationView.setItemRippleColor(ColorStateList.valueOf(Color.TRANSPARENT));
-        binding.bottomNavigationView.setItemBackground(null);
-        binding.bottomNavigationView.setStateListAnimator(null);
-        configurarBottomNavigation(bottomNav);
     }
 
     private void aplicarFiltros() {

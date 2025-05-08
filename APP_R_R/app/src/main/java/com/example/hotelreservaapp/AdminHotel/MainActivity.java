@@ -16,7 +16,6 @@ import androidx.fragment.app.FragmentTransaction;
 import com.example.hotelreservaapp.R;
 import com.example.hotelreservaapp.adapter.UsuarioAdapter;
 import com.example.hotelreservaapp.cliente.Hotel;
-import com.example.hotelreservaapp.databinding.ActivitySuperadminBinding;
 import com.example.hotelreservaapp.databinding.AdminhotelMainBinding;
 import com.example.hotelreservaapp.model.UsuarioListaSuperAdmin;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
