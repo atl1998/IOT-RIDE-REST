@@ -25,6 +25,8 @@ public class DetallesHotel extends AppCompatActivity {
     private ComentarioAdapter comentarioAdapter;
     private List<Comentario> listaComentarios;
 
+    private MaterialButton btnVolver;
+
 
     private ViewPager2 imageCarousel;
     MaterialButton btnBusqueda;
@@ -68,6 +70,12 @@ public class DetallesHotel extends AppCompatActivity {
 
         ImageCarouselAdapter adapter = new ImageCarouselAdapter(images);
         imageCarousel.setAdapter(adapter);
+
+        btnVolver = findViewById(R.id.volverAnterior);
+        btnVolver.setOnClickListener(v -> {
+            //por ahora directamente al mio bala
+            startActivity(new Intent(this, ListaHotelesCliente.class));
+        });
     }
 
     /**

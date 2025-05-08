@@ -30,6 +30,8 @@ public class ListaHabitaciones extends AppCompatActivity {
     private HabitacionAdapter adapter;
     private List<Habitacion> listaHabitaciones;
 
+    private MaterialButton btnVolver;
+
     Button btnReservar;
 
     @Override
@@ -103,6 +105,13 @@ public class ListaHabitaciones extends AppCompatActivity {
         btnReservar.setOnClickListener(v -> {
                     //por ahora directamente al mio bala
             startActivity(new Intent(this, HistorialEventos.class));
+        });
+
+
+        btnVolver = findViewById(R.id.volverHotel);
+        btnVolver.setOnClickListener(v -> {
+            //por ahora directamente al mio bala
+            startActivity(new Intent(this, DetallesHotel.class));
         });
 
     }

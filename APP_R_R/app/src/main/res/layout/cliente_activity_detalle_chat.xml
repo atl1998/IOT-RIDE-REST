@@ -131,17 +131,7 @@
             app:layout_constraintStart_toEndOf="@id/profileImage"
             app:layout_constraintTop_toBottomOf="@id/contactName"/>
 
-        <ImageButton
-            android:id="@+id/videoCallButton"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:layout_marginEnd="8dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/ic_videocam"
-            android:contentDescription="Video call"
-            app:layout_constraintEnd_toStartOf="@id/voiceCallButton"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+       
 
         <ImageButton
             android:id="@+id/voiceCallButton"
@@ -160,7 +150,7 @@
     <View
         android:id="@+id/dividerLine"
         android:layout_width="match_parent"
-        android:layout_height="2dp"
+        android:layout_height="1dp"
         android:background="#000000"
         app:layout_constraintTop_toBottomOf="@id/contactInfoLayout"/>
 

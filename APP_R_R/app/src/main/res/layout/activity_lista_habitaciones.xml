@@ -29,7 +29,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="Elige tu habitacion"
+                android:text="Elegir habitacion"
                 android:textColor="#282828"
                 android:textSize="20sp"
                 android:textStyle="bold"
@@ -43,10 +43,10 @@
             <!-- Botón de Notificaciones -->
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/añadirfavoritos"
+                android:id="@+id/volverHotel"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:layout_marginEnd="76dp"
+                android:layout_marginEnd="60dp"
                 android:backgroundTint="@color/transparente"
                 android:contentDescription="Abrir chat de soporte"
                 android:minWidth="0dp"
@@ -65,18 +65,20 @@
                 android:id="@+id/notificaciones_cliente"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
+                android:layout_marginEnd="4dp"
                 android:backgroundTint="@color/transparente"
-                app:icon="@drawable/notifications_24dp_e3e3e3_fill0_wght400_grad0_opsz24"
-                app:iconTint="@color/marron_oscuro"
-                app:iconGravity="textStart"
-                app:iconPadding="0dp"
-                android:padding="15dp"
+                android:contentDescription="Ver notificaciones nuevas"
                 android:minWidth="0dp"
                 android:minHeight="0dp"
-                android:contentDescription="Ver notificaciones nuevas"
-                app:layout_constraintTop_toTopOf="parent"
+                android:padding="15dp"
+                app:icon="@drawable/notifications_24dp_e3e3e3_fill0_wght400_grad0_opsz24"
+                app:iconGravity="textStart"
+                app:iconPadding="0dp"
+                app:iconTint="@color/marron_oscuro"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"/>
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0" />
         </androidx.constraintlayout.widget.ConstraintLayout>
         <!-- Línea negra abajo -->
         <View
@@ -120,11 +122,12 @@
                 android:layout_marginHorizontal="16dp"
                 android:layout_marginTop="24dp"
                 android:padding="12dp"
-                android:text="SIguiente"
+                android:text="Siguiente"
                 android:textAllCaps="false"
                 app:layout_constraintTop_toBottomOf="@id/rvHabitaciones"
                 android:textColor="@color/white"
                 android:backgroundTint="#003366"
+                android:visibility="gone"
                 app:cornerRadius="4dp" />
         </LinearLayout>
 
