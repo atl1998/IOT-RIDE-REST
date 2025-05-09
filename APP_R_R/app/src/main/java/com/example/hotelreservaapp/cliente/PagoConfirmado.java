@@ -2,6 +2,8 @@ package com.example.hotelreservaapp.cliente;
 
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -48,6 +50,7 @@ public class PagoConfirmado extends AppCompatActivity {
         // Obtener referencias a los elementos en el diálogo
         EditText comentarioText = dialog.findViewById(R.id.comentario_valo);
         RatingBar ratingBar = dialog.findViewById(R.id.ratingBar);
+        ratingBar.setProgressTintList(ColorStateList.valueOf(Color.parseColor("#FFC107")));
         Button btnEnviarValo = dialog.findViewById(R.id.btn_enviar_valo);
 
         btnEnviarValo.setOnClickListener(v -> {
