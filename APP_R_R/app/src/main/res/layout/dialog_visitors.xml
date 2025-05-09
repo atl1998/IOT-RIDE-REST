@@ -93,7 +93,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Aceptar"
-        android:backgroundTint="#003366"
+        android:backgroundTint="@color/dorado"
         android:textColor="#FFFFFF" />
 
 </LinearLayout>

@@ -191,14 +191,29 @@
                         android:scaleType="centerCrop"
                         android:src="@drawable/hotel1_mapa1" />
 
-                    <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    <FrameLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_centerInParent="true"
-                        android:backgroundTint="#3366CC"
-                        android:contentDescription="Ubicación del hotel"
-                        android:src="@drawable/location"/>
+                        android:layout_centerInParent="true">
+
+                        <!-- Fondo círculo azul -->
+                        <View
+                            android:layout_width="37dp"
+                            android:layout_height="37dp"
+                            android:background="@drawable/circle_blue" />
+
+                        <!-- Icono encima -->
+                        <ImageView
+                            android:layout_width="23dp"
+                            android:layout_height="23dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/location_white"
+                            android:contentDescription="Ubicación del hotel"/>
+                    </FrameLayout>
+
                 </RelativeLayout>
+
+
             </com.google.android.material.card.MaterialCardView>
 
             <!-- Servicios -->

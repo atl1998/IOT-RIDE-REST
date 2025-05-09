@@ -220,7 +220,7 @@
                     android:layout_marginLeft="12dp"
                     android:layout_marginTop="16dp"
                     android:layout_marginRight="12dp"
-                    android:backgroundTint="#003366"
+                    android:backgroundTint="@color/dorado"
                     android:text="Buscar"
                     android:textColor="#FFFFFF" />
 
