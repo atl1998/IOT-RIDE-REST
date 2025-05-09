@@ -108,6 +108,9 @@ public class DetallesReserva extends AppCompatActivity {
                         }, 2, 0, true); // Configura el TimePickerDialog para empezar con las 2:00
 
                 // Mostrar el TimePickerDialog
+                if (timePickerDialog.getWindow() != null) {
+                    timePickerDialog.getWindow().setBackgroundDrawableResource(android.R.color.white);
+                }
                 timePickerDialog.show();
             }
         });
