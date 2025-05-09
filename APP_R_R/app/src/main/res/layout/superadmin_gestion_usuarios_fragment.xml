@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+    <!-- 🟨 Header -->
+    <TextView
+        android:id="@+id/tvTituloApp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="RIDE &amp; REST"
+        android:gravity="center"
+        android:textStyle="bold"
+        android:textSize="20sp"
+        android:padding="12dp"
+        android:background="@color/amarillo_dorado"
+        android:textColor="@android:color/black"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <View
+        android:id="@+id/lineaSeparadora"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:background="@android:color/black"
+        app:layout_constraintTop_toBottomOf="@id/tvTituloApp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/headerSubContainer"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@color/amarillo_dorado"
+        app:layout_constraintTop_toBottomOf="@id/lineaSeparadora"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <TextView
+            android:id="@+id/tvSubtitulo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Gestión de usuarios"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:textColor="@android:color/white"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="16dp"/>
+
+        <ImageView
+            android:id="@+id/iconHelp"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/help_icon"
+            android:contentDescription="Ayuda"
+            app:tint="@android:color/white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tvSubtitulo"
+            app:layout_constraintBottom_toBottomOf="@id/tvSubtitulo"
+            android:layout_marginEnd="16dp"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- Etiqueta Filtrar por rol: -->
+    <TextView
+        android:id="@+id/tvEtiquetaFiltroRol"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Filtrar por rol:"
+        android:textSize="14sp"
+        android:textColor="@android:color/black"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toBottomOf="@id/headerSubContainer"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <!-- 🔽 Filtro de rol -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/layoutFiltroRol"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:endIconMode="dropdown_menu"
+        app:layout_constraintTop_toBottomOf="@id/tvEtiquetaFiltroRol"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="12dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp">
+
+        <com.google.android.material.textfield.MaterialAutoCompleteTextView
+            android:id="@+id/filtroRol"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="12dp"
+            android:inputType="none"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- 🔘 Botón dinámico -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnAccionContextual"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Acción"
+        android:visibility="gone"
+        android:textColor="@color/black"
+        app:icon="@drawable/person_add_icon"
+        app:iconTint="@color/black"
+        app:iconGravity="textStart"
+        app:iconPadding="8dp"
+        android:backgroundTint="@color/white"
+        app:strokeColor="@color/amarillo"
+        app:strokeWidth="1dp"
+        app:cornerRadius="8dp"
+        app:layout_constraintTop_toBottomOf="@id/layoutFiltroRol"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="12dp"
+        android:layout_marginStart="16dp" />
+
+    <!-- 🔍 Buscador -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/layoutBuscar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/btnAccionContextual"
+        app:startIconDrawable="@drawable/search_icon"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="12dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        app:hintEnabled="false">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etBuscar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Buscar por nombre o correo"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- 📋 RecyclerView -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerUsuarios"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:clipToPadding="false"
+        android:padding="16dp"
+        app:layout_constraintTop_toBottomOf="@id/layoutBuscar"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:listitem="@layout/superadmin_item_usuario" />
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

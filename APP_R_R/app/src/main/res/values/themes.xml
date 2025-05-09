@@ -5,12 +5,29 @@
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
 
         <item name="colorPrimary">@color/dorado</item> <!-- Marrón -->
+        <item name="colorSecondary">@color/dorado</item>
         <item name="colorOnPrimary">#FFFFFF</item>
         <item name="colorPrimaryContainer">@color/marron_oscuro</item> <!-- Dorado -->
         <item name="colorOutline">#452C06</item> <!-- Borde de TextInput -->
         <item name="colorOnSurface">#452C06</item> <!-- Texto activo -->
         <item name="android:colorAccent">#452C06</item> <!-- Cursor -->
 
+    </style>
+    <style name="CustomDatePickerDialog" parent="Theme.MaterialComponents.Light.Dialog">
+        <!-- Color del encabezado -->
+        <item name="colorPrimary">@color/amarillo</item>
+        <item name="colorAccent">@color/amarillo</item>
+        <!-- Fondo -->
+        <item name="android:windowBackground">#FFFFFF</item> <!-- Fondo blanco -->
+        <!-- Texto -->
+        <item name="android:textColorPrimary">@android:color/black</item>
+        <!-- Color de los botones :D -->
+        <item name="android:buttonBarPositiveButtonStyle">@style/CustomDialogButton</item>
+        <item name="android:buttonBarNegativeButtonStyle">@style/CustomDialogButton</item>
+    </style>
+    <!-- Manejo del color de los botones :D -->
+    <style name="CustomDialogButton" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
+        <item name="android:textColor">@color/amarillo</item>
     </style>
     <style name="SpinnerPopupTheme" parent="ThemeOverlay.Material3.MaterialAlertDialog">
         <item name="android:textColor">#452C06</item>
@@ -29,7 +46,11 @@
         <item name="colorControlActivated">@color/amarillo_dorado</item>
         <item name="colorAccent">@color/amarillo_dorado</item>
         <item name="clockNumberTextColor">@color/black</item>
+        <item name="bottomNavigationStyle">@style/Widget.MyBottomNavigation</item>
 
     </style>
-
+    <style name="Widget.MyBottomNavigation" parent="Widget.MaterialComponents.BottomNavigationView">
+        <!-- Fondo blanco para todos los BottomNavigationView -->
+        <item name="android:background">@android:color/white</item>
+    </style>
 </resources>

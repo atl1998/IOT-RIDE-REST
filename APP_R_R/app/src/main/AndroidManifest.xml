@@ -13,16 +13,85 @@
         android:theme="@style/Theme.HotelReservaApp"
         tools:targetApi="31">
         <activity
+            android:name=".AdminHotel.DetalleHabitacionActivity"
+            android:exported="false" />
+        <activity
+            android:name=".SuperAdminMainActivity"
+            android:exported="false" />
+        <activity
+            android:name=".cliente.DetalleChat"
+            android:exported="false" />
+        <activity
+            android:name=".AdminHotel.HotelServicios"
+            android:exported="false" />
+        <activity
+            android:name=".AdminHotel.HotelHabitaciones"
+            android:exported="false" />
+        <activity
+            android:name=".AdminHotel.ReporteServicioActivity"
+            android:exported="false" />
+        <activity
+            android:name=".AdminHotel.ReporteUsuarioActivity"
+            android:exported="false" />
+        <activity
+            android:name=".AdminHotel.NotificacionesActivity"
+            android:exported="false" />
+        <activity
+            android:name=".superadmin.DetalleSolicitudActivity"
+            android:exported="false" />
+        <activity
+            android:name=".AdminHotel.MainActivity"
+            android:exported="false" />
+        <activity
+            android:name=".cliente.ClienteChat"
+            android:exported="false" />
+        <activity
+            android:name=".Chat"
+            android:exported="false" />
+        <activity
+            android:name=".cliente.ClienteNotificaciones"
+            android:exported="false" />
+        <activity
+            android:name=".cliente.ListaHabitaciones"
+            android:exported="false" />
+        <activity
+            android:name=".cliente.DetallesHotel"
+            android:exported="false" />
+        <activity
+            android:name=".cliente.PerfilCliente"
+            android:exported="false" />
+        <activity
+            android:name=".cliente.PagoConfirmado"
+            android:exported="false" />
+        <activity
+            android:name=".cliente.PagoConTarjeta"
+            android:exported="false" />
+        <!--
+ Sale error aquí :'v <activity
+            android:name=".MainActivity2"
+            android:exported="false" />
+        -->
+        <activity
+            android:name=".superadmin.SolicitudesActivity"
+            android:exported="false" />
+        <activity
+            android:name=".superadmin.RegistrarTaxistaActivity"
+            android:exported="false" />
+        <activity
+            android:name=".superadmin.RegistrarAdmHotelActivity"
+            android:exported="false" />
+        <activity
+            android:name=".superadmin.RegistrarClienteActivity"
+            android:exported="false" />
+        <activity
             android:name=".cliente.ProcesarPago"
             android:exported="false" />
         <activity
             android:name=".cliente.HomeCliente"
-            android:exported="false"
-            />
+            android:exported="false" />
         <activity
             android:name=".cliente.ListaHotelesCliente"
-            android:exported="false"
-            />
+            android:exported="false" />
         <activity android:name=".cliente.DetallesReserva">
 
             <!-- Puedes agregar un intent-filter si es necesario -->
@@ -30,7 +99,12 @@
         <activity android:name=".cliente.HistorialEventos">
 
             <!-- Puedes agregar un intent-filter si es necesario -->
-        </activity>
+        </activity> <!-- seccion taxistaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa -->
+        <activity android:name=".taxista.TaxistaMain" />
+        <activity android:name=".taxista.DetallesViajeActivity" />
+        <activity android:name=".taxista.MapaActividad" />
+        <activity android:name=".taxista.ViajeEnCursoActivity" />
+        <activity android:name=".taxista.QrLecturaActivity" /> <!-- seccion taxistaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa -->
         <activity
             android:name=".loginAndRegister.PostulacionTaxistaActivity"
             android:exported="false" />

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_margin="8dp"
+    app:cardElevation="4dp"
+    app:cardCornerRadius="10dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="8dp">
+
+        <TextView
+            android:id="@+id/tvTitulo"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textSize="18sp"
+            android:textColor="@color/dorado"
+            android:textStyle="bold|italic"
+            app:layout_constraintTop_toBottomOf="@id/imgHotel"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:text="Buffet - almuerzo" />
+
+        <ImageView
+            android:id="@+id/tvImagen"
+            android:layout_width="match_parent"
+            android:layout_height="160dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_launcher_background" />
+
+        <TextView
+            android:id="@+id/Detalles"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textSize="16sp"
+            android:textColor="@color/adminhotel_nombres"
+            android:textStyle=""
+            app:layout_constraintTop_toBottomOf="@id/imgHotel"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:text="Detalles:" />
+
+
+
+        <TextView
+            android:id="@+id/tvDetalles"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textSize="14sp"
+            app:layout_constraintTop_toBottomOf="@id/tvTitulo"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:text="El buffet incluye todo tipo de comida criolla; nuestra carta incluye segundos como el arroz con pollo, carapulcra, entre otros; bebidas y postras como la chicha, mazamorra, agua de maracuyá, arroz con leche, causa rellena y más" />
+
+        <TextView
+            android:id="@+id/tvPrecio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintTop_toBottomOf="@id/tvDetalles"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:text="Precio por persona: $50.00" />
+
+        <!--
+        <Button
+            android:id="@+id/btnVerDetalles"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="Ver detalles"
+            android:layout_marginTop="8dp"
+            android:backgroundTint="@color/dorado_oscurobajo"/>-->
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

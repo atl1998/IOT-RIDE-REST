@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:padding="20dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/tvTituloHotel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Hotel Miraflores Palace"
+        android:textStyle="bold"
+        android:textSize="18sp"
+        android:textColor="@android:color/black"
+        android:layout_marginBottom="8dp"/>
+    <ImageView
+        android:id="@+id/ivFotoHotel"
+        android:layout_width="match_parent"
+        android:layout_height="180dp"
+        android:scaleType="centerCrop"
+        android:layout_marginBottom="16dp"
+        android:src="@drawable/placeholder"
+        android:background="@drawable/rounded_image" />
+    <TextView
+        android:id="@+id/tvCliente"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Cliente: Juan Pérez"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/tvFechaReserva"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Fecha de reserva: 10/05/2025"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/tvCheckIn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Check-in: 12/05/2025"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/tvCheckOut"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Check-out: 14/05/2025"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/tvHabitacion"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Habitación: Doble superior"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/tvEstado"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Estado: Confirmada"
+        android:textSize="16sp"
+        android:textColor="@android:color/holo_green_dark"
+        android:layout_marginTop="8dp"/>
+</LinearLayout>

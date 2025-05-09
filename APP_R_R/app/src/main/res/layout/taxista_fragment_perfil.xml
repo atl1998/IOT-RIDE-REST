@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    android:fillViewport="true"
+    tools:context=".taxista.fragments.TaxiPerfilFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- ENCABEZADO AMARILLO SIN MÁRGENES -->
+        <LinearLayout
+            android:id="@+id/layoutEncabezado"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="#FFC107"
+            android:gravity="center_vertical"
+            android:padding="12dp">
+
+            <ImageView
+                android:id="@+id/imgPerfil"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:layout_marginEnd="12dp"
+                android:src="@drawable/default_profile"
+                android:scaleType="centerCrop"
+                android:background="@drawable/baseline_circle_24"
+                android:contentDescription="Foto de perfil"/>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvNombre"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Roberto García"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="#282828"/>
+
+                <TextView
+                    android:id="@+id/tvRol"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Taxista"
+                    android:textSize="14sp"
+                    android:textColor="#282828"/>
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/btnNotificaciones"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="Notificaciones"
+                android:src="@drawable/notifications_24dp_e3e3e3_fill0_wght400_grad0_opsz24"
+                app:tint="@color/marron_oscuro" />
+        </LinearLayout>
+
+        <!-- Datos personales -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="4dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:text="Nombre: Roberto García"
+                    android:textSize="16sp"
+                    android:textColor="@color/marron_oscuro"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:text="DNI: 12345678"
+                    android:textSize="16sp"
+                    android:textColor="@color/marron_oscuro"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:text="Correo: roberto@mail.com"
+                    android:textSize="16sp"
+                    android:textColor="@color/marron_oscuro"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:text="Teléfono: 987654321"
+                    android:textSize="16sp"
+                    android:textColor="@color/marron_oscuro"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Datos del vehículo -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="24dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="4dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:text="Datos del Vehículo"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:textColor="@color/marron_oscuro"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp" />
+
+                <ImageView
+                    android:id="@+id/fotoVehiculo"
+                    android:layout_width="match_parent"
+                    android:layout_height="180dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/foto_auto"
+                    android:layout_marginBottom="12dp" />
+
+                <TextView
+                    android:id="@+id/placaVehiculo"
+                    android:text="Placa: ABC-123"
+                    android:textSize="16sp"
+                    android:textColor="@color/marron_oscuro"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Botón Cerrar Sesión -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnCerrarSesion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="88dp"
+            android:backgroundTint="@color/amarillo_dorado"
+            android:text="Cerrar Sesión"
+            android:textColor="@android:color/holo_red_dark"
+            app:cornerRadius="30dp"
+            app:icon="@drawable/baseline_logout_24"
+            app:iconGravity="textStart"
+            app:iconPadding="8dp"
+            app:iconTint="#CA0E0E" />
+
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

@@ -2,13 +2,20 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="amarillo_dorado">#FFC107</color>
+    <!--<color name="amarillo_dorado">#FFC107</color>-->
+    <color name="amarillo_dorado">#DEA90D</color>
     <color name="marron_oscuro">#452C06</color>
     <color name="crema">#FFEFAA</color>
     <color name="dorado">#B48B0A</color>
-    <color name="dorado_oscuro">#7A5F12</color>}
+    <color name="dorado_transparente">#40B48B0A</color>
+    <color name="dorado_oscuro">#7A5F12</color>
     <color name="amarillo">#CEBE38</color>
-
+    <color name="error_red">#D32F2F</color>
+    <color name="verde_aceptar">#6FD774</color>
+    <color name="estado_confirmado">#2E7D32</color>
+    <color name="estado_cancelado">#C62828</color>
+    <color name="adminhotel_nombres">#807474</color>
+    <color name="dorado_oscurobajo">#AFADA4</color>
 
     <!-- Colores principales de tu app -->
     <color name="dorado_claro">#FFD54F</color>    <!-- Dorado más claro para variaciones -->
@@ -17,4 +24,5 @@
     <color name="gris_medio">#757575</color>      <!-- Gris medio para textos secundarios -->
     <color name="transparente">#00000000</color>  <!-- Color transparente -->
 
+    <color name="azul">#1EA7E6</color>  <!-- Color transparente -->
 </resources>

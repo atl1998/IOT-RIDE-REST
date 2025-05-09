@@ -3,6 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:background="#FFFFFF"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -83,7 +84,7 @@
             android:layout_height="wrap_content"
             android:overScrollMode="never"
             android:scrollbars="none"
-            android:background="#FFC107"
+            android:background="@color/amarillo_dorado"
             android:paddingTop="8dp"
             android:paddingBottom="8dp">
 
@@ -261,13 +262,13 @@
                             <ImageView
                                 android:layout_width="22dp"
                                 android:layout_height="22dp"
-                                android:src="@drawable/star_fill_yellow"
+                                android:src="@drawable/star_half"
                                 android:contentDescription="Estrella" />
 
                             <ImageView
                                 android:layout_width="22dp"
                                 android:layout_height="22dp"
-                                android:src="@drawable/star_fill_yellow"
+                                android:src="@drawable/star_empity"
                                 android:contentDescription="Estrella" />
 
                         </LinearLayout>
@@ -339,20 +340,22 @@
                         android:layout_height="wrap_content"
                         android:orientation="horizontal">
 
-                        <Button
-                            android:id="@+id/btnTaxista"
-                            android:layout_width="0dp"
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnCheckout"
+                            android:layout_width="match_parent"
                             android:layout_height="38dp"
-                            android:layout_weight="1.5"
-                            android:backgroundTint="#E48B14"
-                            android:text="Solicitar Taxista"
+                            android:layout_weight="1"
+                            android:backgroundTint="@color/dorado"
+                            android:text="Solicitar Checkout"
                             android:textColor="#FFFFFF"
                             android:textSize="13sp"
-                            android:paddingStart="0dp"
-                            android:paddingEnd="0dp"
                             android:gravity="center"
                             android:layout_marginStart="2dp"
-                            android:layout_marginTop="8dp"/>
+                            android:layout_marginTop="8dp"
+                            android:alpha="1"
+                            />
+
 
                     </LinearLayout>
 
@@ -360,20 +363,34 @@
 
 
                     <Button
-                        android:id="@+id/btnCheckout"
+                        android:id="@+id/btnTaxista"
                         android:layout_width="match_parent"
-                        android:layout_height="38dp"
-                        android:layout_marginTop="0dp"
+                        android:layout_height="37dp"
                         android:layout_weight="1"
-                        android:backgroundTint="#4CAF50"
-                        android:text="Solicitar Checkout"
+                        android:layout_marginTop="0dp"
+                        android:backgroundTint="@color/dorado"
+                        android:text="Solicitar Taxista"
                         android:textColor="#FFFFFF"
-                        android:textSize="13sp" />
+                        android:textSize="13sp"
+                        android:gravity="center"
+                        android:enabled="false"
+                        android:alpha="0.5"/>
 
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
-
+            <!-- Espacio para evitar superposición con el BottomNavigationView -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="60dp" />
         </LinearLayout>
     </ScrollView>
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottonNavigationView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf= "parent"
+        app:menu="@menu/cliente_menu_navigation" />
 </androidx.constraintlayout.widget.ConstraintLayout>

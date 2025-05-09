@@ -1,9 +1,11 @@
 package com.example.hotelreservaapp.cliente;
 
 import android.app.TimePickerDialog;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -15,6 +17,8 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.hotelreservaapp.R;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.button.MaterialButton;
 
 public class DetallesReserva extends AppCompatActivity {
     private TextView definirHoraLlegada;
@@ -30,6 +34,33 @@ public class DetallesReserva extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottonNavigationView);
+        bottomNavigationView.getMenu().setGroupCheckable(0, false, true); // Desactiva el estado de selección
+        bottomNavigationView.setOnItemSelectedListener(item -> {
+            int id = item.getItemId();
+            if (id == R.id.inicioCliente) {
+                startActivity(new Intent(this, HomeCliente.class));
+                return true;
+            } else if (id == R.id.chat_cliente) {
+                startActivity(new Intent(this, ClienteChat.class));
+                return true;
+            } else if (id == R.id.historialCliente) {
+                startActivity(new Intent(this, HistorialEventos.class));
+                return true;
+            } else if (id == R.id.perfilCliente) {
+                // startActivity(new Intent(this, PerfilCliente.class));
+                return true;
+            }
+            return false;
+        });
+
+        MaterialButton btnNotificaciones = findViewById(R.id.notificaciones_cliente);
+        btnNotificaciones.setOnClickListener(v -> {
+            Intent intent = new Intent(this, ClienteNotificaciones.class);
+            startActivity(intent);
+        });
+
 
         // Inicializamos el TextView y la variable para saber si la hora ya fue definida
         definirHoraLlegada = findViewById(R.id.definirHoraLlegada);
@@ -80,6 +111,11 @@ public class DetallesReserva extends AppCompatActivity {
                 timePickerDialog.show();
             }
         });
-
+        // Ahora accedemos al botón btnProcesarPago dentro del nuevo modal
+        Button btnProcesarPago = findViewById(R.id.btnProcesarPago);
+        btnProcesarPago.setOnClickListener(v -> {
+            Intent intent = new Intent(this, ProcesarPago.class);
+            startActivity(intent);
+        });
     }
 }

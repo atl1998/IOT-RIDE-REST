@@ -2,26 +2,41 @@ package com.example.hotelreservaapp.cliente;
 
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.graphics.RenderEffect;
 import android.graphics.Shader;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.hotelreservaapp.R;
 import com.example.hotelreservaapp.loginAndRegister.LoginActivity;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.button.MaterialButton;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class HistorialEventos extends AppCompatActivity {
+
+    private Button btnCheckout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +50,31 @@ public class HistorialEventos extends AppCompatActivity {
             return insets;
         });
 
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottonNavigationView);
+        bottomNavigationView.setSelectedItemId(R.id.historialCliente); // Para que aparezca q esta seleccionado ese
+        bottomNavigationView.setOnItemSelectedListener(item -> {
+            int id = item.getItemId();
+            if (id == R.id.inicioCliente) {
+                startActivity(new Intent(this, HomeCliente.class));
+                return true;
+            } else if (id == R.id.chat_cliente) {
+                startActivity(new Intent(this, ClienteChat.class));
+                return true;
+            } else if (id == R.id.historialCliente) {
+                // startActivity(new Intent(this, HistorialEventos.class));
+                return true;
+            } else if (id == R.id.perfilCliente) {
+                // startActivity(new Intent(this, PerfilCliente.class));
+                return true;
+            }
+            return false;
+        });
+
+        MaterialButton btnNotificaciones = findViewById(R.id.notificaciones_cliente);
+        btnNotificaciones.setOnClickListener(v -> {
+            Intent intent = new Intent(HistorialEventos.this, ClienteNotificaciones.class);
+            startActivity(intent);
+        });
         CardView cardView = findViewById(R.id.card_view);
         cardView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -45,7 +85,7 @@ public class HistorialEventos extends AppCompatActivity {
             }
         });
 
-        Button btnCheckout = findViewById(R.id.btnCheckout);
+        btnCheckout = findViewById(R.id.btnCheckout);
         btnCheckout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -55,6 +95,7 @@ public class HistorialEventos extends AppCompatActivity {
         });
 
     }
+
     private void mostrarDialogoCheckout() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setView(R.layout.cliente_dialog_checkout);
@@ -92,7 +133,11 @@ public class HistorialEventos extends AppCompatActivity {
         btnSolicitarCheckout.setOnClickListener(v -> {
             // Cerrar el modal
             dialog.dismiss();
-
+            // Deshabilitamos el botón original
+            if (btnCheckout != null) {
+                btnCheckout.setEnabled(false);
+                btnCheckout.setAlpha(0.5f);  // Establecer la opacidad al 50% (0.0f - completamente transparente, 1.0f - completamente opaco)
+            }
             // Aquí iría la validación real, por ahora mostramos mensaje:
             Toast.makeText(HistorialEventos.this, "¡Solicitud registrada correctamente!", Toast.LENGTH_SHORT).show();
         });

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="305dp"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@android:drawable/editbox_background_normal"
+    android:gravity="center"
+    android:padding="24dp">
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="¡Muchas gracias por\npreferirnos!"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:layout_marginTop="12dp"
+        android:textColor="#000000"
+        android:gravity="center"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Califica nuestro servicio:"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:layout_marginTop="12dp"
+        android:layout_gravity="start" />
+
+    <!-- EditText para que el usuario ingrese el texto -->
+    <EditText
+        android:id="@+id/comentario_valo"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:layout_marginTop="16dp"
+        android:background="@android:drawable/editbox_background"
+        android:hint="Porfavor escribe un comentario sobre nuestro servicio..."
+        android:padding="12dp"
+        android:textColor="#444444"
+        android:textSize="14sp"
+        android:gravity="start|top"
+        android:textAlignment="viewStart" />
+
+    <RatingBar
+        android:id="@+id/ratingBar"
+        android:layout_width="wrap_content"
+        android:layout_height="44dp"
+        android:layout_centerInParent="true"
+        android:isIndicator="false"
+        android:numStars="5"
+        android:rating="0"
+        android:stepSize="1"
+        android:layout_marginTop="8dp"
+        style="?android:attr/ratingBarStyleIndicator" />
+
+    <Button
+        android:id="@+id/btn_enviar_valo"
+        android:layout_width="140dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="0dp"
+        android:backgroundTint="@color/dorado"
+        android:textSize="15dp"
+        android:text="Enviar"
+        android:textColor="#FFFFFF" />
+</LinearLayout>

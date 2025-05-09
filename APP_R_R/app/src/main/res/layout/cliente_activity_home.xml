@@ -3,8 +3,10 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:background="#FFFFFF"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
     tools:context=".cliente.HomeCliente">
 
     <!-- Encabezado amarillo -->
@@ -21,6 +23,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@color/amarillo_dorado"
             android:padding="6dp">
 
             <!-- Título Ride & Rest -->
@@ -38,24 +41,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"/>
 
-            <!-- Botón de Búsqueda -->
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/buscar"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:backgroundTint="@color/transparente"
-                app:icon="@drawable/search_24dp_e3e3e3_fill0_wght400_grad0_opsz24"
-                app:iconTint="@color/marron_oscuro"
-                app:iconGravity="textStart"
-                app:iconPadding="0dp"
-                android:padding="15dp"
-                android:minWidth="0dp"
-                android:minHeight="0dp"
-                android:contentDescription="Abrir chat de soporte"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/notificaciones_cliente"
-                app:layout_constraintBottom_toBottomOf="parent"
-                android:layout_marginEnd="4dp"/>
+
 
             <!-- Botón de Notificaciones -->
             <com.google.android.material.button.MaterialButton
@@ -82,7 +68,7 @@
             android:layout_height="wrap_content"
             android:overScrollMode="never"
             android:scrollbars="none"
-            android:background="#FFC107"
+            android:background="@color/amarillo_dorado"
             android:paddingTop="8dp"
             android:paddingBottom="8dp">
 
@@ -177,20 +163,110 @@
         app:layout_constraintEnd_toEndOf="parent"/>
 
     <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_constraintTop_toBottomOf="@id/ly1">
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:paddingBottom="70dp"
+        app:layout_constraintTop_toBottomOf="@id/ly1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" >
-
-            <TextView
-                android:id="@+id/textView2"
+            android:orientation="vertical">
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="El mariscal" />
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:elevation="4dp"
+                android:layout_margin="8dp"
+                app:layout_constraintTop_toBottomOf="@id/ly1"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+                <AutoCompleteTextView
+                    android:id="@+id/etDestino"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint=" Ingrese el destino"
+                    android:drawableStart="@drawable/search_icon"
+                    app:drawableTint="@android:color/black"
+                    android:completionThreshold="1" />
+
+                <EditText
+                    android:id="@+id/etFecha"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableStart="@drawable/calendar_month"
+                    android:focusable="false"
+                    android:hint=" Seleccione las fechas"
+                    android:inputType="none" />
+
+                <EditText
+                    android:id="@+id/etCantidad"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableStart="@drawable/baseline_person_24"
+                    android:focusable="false"
+                    android:hint=" Cantidad de visitantes"
+                    app:drawableTint="@android:color/black"
+                    android:inputType="none" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnBuscar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="12dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginRight="12dp"
+                    android:backgroundTint="@color/dorado"
+                    android:text="Buscar"
+                    android:textColor="#FFFFFF" />
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:id="@+id/layoutOfertas"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <!-- Título de la sección de ofertas -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Ofertas para el fin de semana"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:textColor="#333333"
+                    android:layout_marginBottom="8dp"/>
+
+                <!-- Subtítulo con fechas -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Ahorra en estancias en estas fechas: 9 de mayo - 11 de mayo"
+                    android:textSize="14sp"
+                    android:textColor="#666666"
+                    android:layout_marginBottom="16dp"/>
+
+                <!-- RecyclerView horizontal para el slider -->
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/ofertasRecyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clipToPadding="false"
+                    android:orientation="horizontal"
+                    android:paddingStart="0dp"
+                    android:paddingEnd="0dp"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    tools:listitem="@layout/item_oferta_hotel"/>
+
+            </LinearLayout>
+
         </LinearLayout>
     </ScrollView>
     <com.google.android.material.bottomnavigation.BottomNavigationView

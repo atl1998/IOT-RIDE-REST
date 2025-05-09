@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:title="Inicio"
+        android:icon="@drawable/home_24dp"
+        android:id="@+id/menu_inicio">
+    </item>
+    <item
+        android:title="Reportes"
+        android:icon="@drawable/report_icon"
+        android:id="@+id/menu_reportes">
+    </item>
+    <item
+        android:title="Perfil"
+        android:icon="@drawable/account_circle_24dp"
+        android:id="@+id/menu_perfil">
+    </item>
+</menu>

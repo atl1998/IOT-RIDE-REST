@@ -7,7 +7,11 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.hotelreservaapp.cliente.DetallesReserva;
 import com.example.hotelreservaapp.cliente.HistorialEventos;
+import com.example.hotelreservaapp.cliente.HomeCliente;
+import com.example.hotelreservaapp.cliente.ListaHotelesCliente;
 import com.example.hotelreservaapp.loginAndRegister.InicioActivity;
+import com.example.hotelreservaapp.taxista.TaxistaMain;
+import com.example.hotelreservaapp.taxista.fragments.TaxiInicioFragment;
 import com.google.android.material.button.MaterialButton;
 
 public class MainActivity extends AppCompatActivity {
@@ -30,19 +34,19 @@ public class MainActivity extends AppCompatActivity {
         // Acciones por botón (por ahora sin abrir otra Activity)
         btnCliente.setOnClickListener(v -> {
             //por ahora directamente al mio bala
-            startActivity(new Intent(this, HistorialEventos.class));
+            startActivity(new Intent(this, HomeCliente.class));
         });
 
         btnTaxista.setOnClickListener(v -> {
-            // startActivity(new Intent(this, TaxistaActivity.class));
+            startActivity(new Intent(this, TaxistaMain.class));
         });
 
         btnAdminHotel.setOnClickListener(v -> {
-            // startActivity(new Intent(this, AdminHotelActivity.class));
+            startActivity(new Intent(this, com.example.hotelreservaapp.AdminHotel.MainActivity.class));
         });
 
         btnSuperadmin.setOnClickListener(v -> {
-            // startActivity(new Intent(this, SuperadminActivity.class));
+            startActivity(new Intent(this, SuperAdminMainActivity.class));
         });
 
         btnInicio.setOnClickListener(v -> {
