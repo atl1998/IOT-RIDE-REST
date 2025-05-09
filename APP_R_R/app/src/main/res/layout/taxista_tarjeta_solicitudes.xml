@@ -51,7 +51,7 @@
                 android:layout_gravity="center_vertical"
                 android:layout_marginEnd="12dp"
                 android:scaleType="centerCrop"
-                android:src="@drawable/coronado"
+                android:src="@drawable/chat_persona"
                 app:shapeAppearanceOverlay="@style/RoundedImageView" />
 
             <LinearLayout
