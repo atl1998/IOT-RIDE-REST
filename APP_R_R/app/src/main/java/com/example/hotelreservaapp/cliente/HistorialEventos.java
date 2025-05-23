@@ -1,8 +1,13 @@
 package com.example.hotelreservaapp.cliente;
 
+import static android.Manifest.permission.POST_NOTIFICATIONS;
+
 import android.app.AlertDialog;
+import android.app.PendingIntent;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
+import android.graphics.BitmapFactory;
 import android.graphics.RenderEffect;
 import android.graphics.Shader;
 import android.graphics.drawable.Drawable;
@@ -21,6 +26,9 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -35,11 +43,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HistorialEventos extends AppCompatActivity {
+    String channelId = "ChannelRideAndRest"; // En cualquier otra Activity
 
     private Button btnCheckout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
 
         EdgeToEdge.enable(this);
@@ -140,7 +150,29 @@ public class HistorialEventos extends AppCompatActivity {
             }
             // Aquí iría la validación real, por ahora mostramos mensaje:
             Toast.makeText(HistorialEventos.this, "¡Solicitud registrada correctamente!", Toast.LENGTH_SHORT).show();
+            LanzarNotificacionSolicitarCheckout();
         });
     }
+
+    public void LanzarNotificacionSolicitarCheckout() {
+        //Si se clickea en la notificacion del checkout te redirigirá a el apartado de notificaciones de la aplicacion
+        Intent intent = new Intent(HistorialEventos.this, ClienteNotificaciones.class);
+        //Pero esto no se va a lanzar hasta que se clickee en las notificaciones por eso se quedara pendiente
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, channelId)
+                .setSmallIcon(R.drawable.logo_r_r_2)
+                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.checkout_image_v2))
+                .setContentTitle("¡Se ha realizado el checkout correctamente!")
+                .setContentText("Porfavor estar pendiente a las notificaciones, ya que por este medio se le notificará cuando se haya terminado el proceso.")
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true);
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+        if (ActivityCompat.checkSelfPermission(this, POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
+            notificationManager.notify(1, builder.build());
+        }
+    }
+
+
 
 }
