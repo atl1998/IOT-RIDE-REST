@@ -12,10 +12,14 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.hotelreservaapp.Objetos.Notificaciones;
+import com.example.hotelreservaapp.Objetos.NotificacionesStorageHelper;
+import com.example.hotelreservaapp.Objetos.NotificationManager;
 import com.example.hotelreservaapp.R;
 
 public class ClienteNotificaciones extends AppCompatActivity {
-
+    private NotificationManager notificationManager; // tu clase para manejar la lista
+    private NotificacionesStorageHelper storageHelper;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,17 +32,25 @@ public class ClienteNotificaciones extends AppCompatActivity {
         });
         LinearLayout layoutMensajes = findViewById(R.id.layoutMensajes);
 
-        // Primer mensaje
-        View mensaje1 = getLayoutInflater().inflate(R.layout.item_notification, layoutMensajes, false);
-        TextView texto1 = mensaje1.findViewById(R.id.texto_mensaje);
-        texto1.setText("El checkout ha finalizado, por favor dirigirse a la opción de “Detalles” en el hotel seleccionado y buscar en la parte inferior el botón “Procesar pago.”");
-        layoutMensajes.addView(mensaje1);
 
-        // Segundo mensaje
-        View mensaje2 = getLayoutInflater().inflate(R.layout.item_notification, layoutMensajes, false);
-        TextView texto2 = mensaje2.findViewById(R.id.texto_mensaje);
-        texto2.setText("El checkout fue solicitado correctamente. Cuando este proceso termine se le notificará por este medio para que pueda realizar su pago.");
-        layoutMensajes.addView(mensaje2);
+        // Instanciamos el helper para leer el archivo
+        NotificacionesStorageHelper storageHelper = new NotificacionesStorageHelper(this);
+        Notificaciones[] notificacionesGuardadas = storageHelper.leerArchivoNotificacionesDesdeSubcarpeta();
+
+        if (notificacionesGuardadas != null && notificacionesGuardadas.length > 0) {
+            for (Notificaciones n : notificacionesGuardadas) {
+                // Inflar la vista de item_notification
+                View mensajeView = getLayoutInflater().inflate(R.layout.item_notification, layoutMensajes, false);
+                TextView title = mensajeView.findViewById(R.id.texto_title);
+                TextView texto = mensajeView.findViewById(R.id.texto_mensaje);
+
+                // Setear los textos desde el objeto Notificaciones
+                title.setText(n.getTitulo());
+                texto.setText(n.getMensaje());
+
+                layoutMensajes.addView(mensajeView);
+            }
+        }
 
 
         Button btnVolver = findViewById(R.id.volverPagina);
@@ -51,3 +63,14 @@ public class ClienteNotificaciones extends AppCompatActivity {
 
     }
 }
+
+/*
+case "02":
+                    View mensaje2 = getLayoutInflater().inflate(R.layout.item_notification, layoutMensajes, false);
+                    TextView title2 = mensaje2.findViewById(R.id.texto_title);
+                    TextView texto2 = mensaje2.findViewById(R.id.texto_mensaje);
+                    title2.setText("Checkout Finalizado");
+                    texto2.setText("El checkout ha finalizado, por favor dirigirse a la opción de “Detalles” en el hotel seleccionado y buscar en la parte inferior el botón “Procesar pago.”");
+                    layoutMensajes.addView(mensaje2);
+                    break;
+*/

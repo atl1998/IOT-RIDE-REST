@@ -34,6 +34,9 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.hotelreservaapp.Objetos.Notificaciones;
+import com.example.hotelreservaapp.Objetos.NotificacionesStorageHelper;
+import com.example.hotelreservaapp.Objetos.NotificationManager;
 import com.example.hotelreservaapp.R;
 import com.example.hotelreservaapp.loginAndRegister.LoginActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -74,7 +77,7 @@ public class HistorialEventos extends AppCompatActivity {
                 // startActivity(new Intent(this, HistorialEventos.class));
                 return true;
             } else if (id == R.id.perfilCliente) {
-                // startActivity(new Intent(this, PerfilCliente.class));
+                startActivity(new Intent(this, PerfilCliente.class));
                 return true;
             }
             return false;
@@ -155,24 +158,51 @@ public class HistorialEventos extends AppCompatActivity {
     }
 
     public void LanzarNotificacionSolicitarCheckout() {
-        //Si se clickea en la notificacion del checkout te redirigirá a el apartado de notificaciones de la aplicacion
+        String tipo = "01";
+        String titulo = "Solicitar Checkout";
+        String mensaje = "El checkout fue solicitado correctamente. Cuando este proceso termine se le notificará por este medio para que pueda realizar su pago.";
+        Long fecha = System.currentTimeMillis();
+
+        // 1. Cargar lista guardada (si existe)
+        NotificacionesStorageHelper storageHelper = new NotificacionesStorageHelper(this);
+        Notificaciones[] notificacionesGuardadas = storageHelper.leerArchivoNotificacionesDesdeSubcarpeta();
+
+        // 2. Crear o cargar NotificationManager con la lista actual
+        NotificationManager notificationManager = new NotificationManager();
+        if (notificacionesGuardadas != null && notificacionesGuardadas.length > 0) {
+            for (Notificaciones n : notificacionesGuardadas) {
+                notificationManager.getListaNotificaciones().add(n);
+            }
+        }
+
+        // 3. Agregar la nueva notificación a la lista
+        notificationManager.agregarNotificacion(tipo, titulo, mensaje, fecha);
+
+        // 4. Guardar la lista actualizada
+        Notificaciones[] arregloParaGuardar = notificationManager.getListaNotificaciones()
+                .toArray(new Notificaciones[0]);
+        storageHelper.guardarArchivoNotificacionesEnSubcarpeta(arregloParaGuardar);
+
+        // 5. Lanzar la notificación visual como haces normalmente
         Intent intent = new Intent(HistorialEventos.this, ClienteNotificaciones.class);
+        intent.putExtra("Case", "01");
+        String ContentTitle="¡Se ha realizado el checkout correctamente!";
+        String ContentText="Porfavor estar pendiente a las notificaciones, ya que por este medio se le notificará cuando se haya terminado el proceso.";
+        //intent.putExtra("ContentTitle",ContentTitle);
+        //intent.putExtra("ContentText",ContentText);
         //Pero esto no se va a lanzar hasta que se clickee en las notificaciones por eso se quedara pendiente
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, channelId)
                 .setSmallIcon(R.drawable.logo_r_r_2)
                 .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.checkout_image_v2))
-                .setContentTitle("¡Se ha realizado el checkout correctamente!")
-                .setContentText("Porfavor estar pendiente a las notificaciones, ya que por este medio se le notificará cuando se haya terminado el proceso.")
+                .setContentTitle(ContentTitle)
+                .setContentText(ContentText)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setContentIntent(pendingIntent)
                 .setAutoCancel(true);
-        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+        NotificationManagerCompat notificationManagerCompat  = NotificationManagerCompat.from(this);
         if (ActivityCompat.checkSelfPermission(this, POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
-            notificationManager.notify(1, builder.build());
+            notificationManagerCompat.notify(1, builder.build());
         }
     }
-
-
-
 }

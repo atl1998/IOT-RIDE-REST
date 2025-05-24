@@ -17,13 +17,13 @@ import com.example.hotelreservaapp.cliente.HistorialEventos;
 import com.example.hotelreservaapp.cliente.HomeCliente;
 import com.example.hotelreservaapp.cliente.ListaHotelesCliente;
 import com.example.hotelreservaapp.loginAndRegister.InicioActivity;
-<<<<<<< Updated upstream
+
 import com.example.hotelreservaapp.taxista.TaxistaMain;
 import com.example.hotelreservaapp.taxista.fragments.TaxiInicioFragment;
-=======
+
 import com.example.hotelreservaapp.loginAndRegister.SplashActivity;
-import com.example.hotelreservaapp.superadmin.SuperAdminActivity;
->>>>>>> Stashed changes
+
+
 import com.google.android.material.button.MaterialButton;
 
 public class MainActivity extends AppCompatActivity {
@@ -73,9 +73,9 @@ public class MainActivity extends AppCompatActivity {
         //android.os.Build.VERSION_CODES.O == 26
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel(channelId,
-                    "Canal de notificaciones RideAndRest HIGH",
+                    "RideAndRest",
                     NotificationManager.IMPORTANCE_HIGH);
-            channel.setDescription("Canal para notificaciones con prioridad default");
+            channel.setDescription("Canal para notificaciones con prioridad high");
             NotificationManager notificationManager = getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(channel);
             askPermission();

@@ -2,6 +2,8 @@ package com.example.hotelreservaapp.cliente;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -11,6 +13,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.hotelreservaapp.Objetos.NotificacionesStorageHelper;
 import com.example.hotelreservaapp.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.button.MaterialButton;
@@ -21,6 +24,7 @@ public class PerfilCliente extends AppCompatActivity {
 
     private ImageView btnEditar;
     private TextInputEditText etNombre, etApellido, etCorreo, etDni, etTelefono, etDireccion;
+    private Button btn_cerrar_sesion;
     private boolean enModoEdicion = false;
 
     @Override
@@ -28,6 +32,7 @@ public class PerfilCliente extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.cliente_activity_perfil);
+        NotificacionesStorageHelper helper = new NotificacionesStorageHelper(this);
 
         BottomNavigationView bottomNav = findViewById(R.id.bottonNavigationView);
         bottomNav.setSelectedItemId(R.id.perfilCliente);
@@ -41,7 +46,7 @@ public class PerfilCliente extends AppCompatActivity {
             } else if (id == R.id.historialCliente) {
                 startActivity(new Intent(this, HistorialEventos.class));
             } else if (id == R.id.perfilCliente) {
-                startActivity(new Intent(this, PerfilCliente.class));
+                //startActivity(new Intent(this, PerfilCliente.class));
             }
 
             return true;
@@ -65,6 +70,17 @@ public class PerfilCliente extends AppCompatActivity {
         etDni = findViewById(R.id.etDni);
         etTelefono = findViewById(R.id.etTelefono);
         etDireccion = findViewById(R.id.etDireccion);
+        btn_cerrar_sesion = findViewById(R.id.btn_cerrar_sesion);
+
+        btn_cerrar_sesion.setOnClickListener(v -> {
+            boolean borrado = helper.borrarArchivoNotificaciones();
+            if (borrado) {
+                Log.d("Notificaciones", "Archivo de notificaciones borrado correctamente.");
+            } else {
+                Log.d("Notificaciones", "No se encontró el archivo o no se pudo borrar.");
+            }
+        });
+
 
         // Listener para el botón de edición
         btnEditar.setOnClickListener(v -> {

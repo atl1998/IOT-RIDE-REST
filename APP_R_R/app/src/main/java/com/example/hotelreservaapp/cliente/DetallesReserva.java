@@ -49,7 +49,7 @@ public class DetallesReserva extends AppCompatActivity {
                 startActivity(new Intent(this, HistorialEventos.class));
                 return true;
             } else if (id == R.id.perfilCliente) {
-                // startActivity(new Intent(this, PerfilCliente.class));
+                startActivity(new Intent(this, PerfilCliente.class));
                 return true;
             }
             return false;
