@@ -6,18 +6,18 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class NotificationManager {
+public class NotificationManagerNoAPP {
     private ArrayList<Notificaciones> listaNotificaciones;
 
-    public NotificationManager() {
+    public NotificationManagerNoAPP() {
         listaNotificaciones = new ArrayList<>();
     }
 
-    public void agregarNotificacion(String tipo, String titulo, String mensaje, Long fecha) {
+    public void agregarNotificacion(String tipo, String titulo, String tituloAmigable, String mensaje, String mensajeExtra, Long fecha) {
         int nuevoId = listaNotificaciones.size() > 0
                 ? listaNotificaciones.get(listaNotificaciones.size() - 1).getId() + 1
                 : 1;
-        Notificaciones nueva = new Notificaciones(nuevoId, tipo, titulo, mensaje, fecha);
+        Notificaciones nueva = new Notificaciones(nuevoId, tipo, titulo, tituloAmigable, mensaje, mensajeExtra, fecha);
         listaNotificaciones.add(nueva);
     }
 
@@ -34,7 +34,9 @@ public class NotificationManager {
                 obj.put("id", n.getId());
                 obj.put("tipo", n.getTipo());
                 obj.put("titulo", n.getTitulo());
+                obj.put("tituloAmigable", n.getTituloAmigable());
                 obj.put("mensaje", n.getMensaje());
+                obj.put("mensajeExtra", n.getMensajeExtra());
                 obj.put("leido", n.isLeido());
                 obj.put("fecha", n.getFecha());
                 jsonArray.put(obj);
@@ -54,12 +56,14 @@ public class NotificationManager {
                 JSONObject obj = jsonArray.getJSONObject(i);
                 int id = obj.getInt("id");
                 String titulo = obj.getString("titulo");
+                String tituloAmigable = obj.getString("tituloAmigable");
                 String mensaje = obj.getString("mensaje");
+                String mensajeExtra = obj.getString("mensajeExtra");
                 String tipo = obj.getString("tipo");
                 Long fecha = obj.getLong("fecha");
                 boolean leido = obj.getBoolean("leido");
 
-                Notificaciones n = new Notificaciones(id, tipo, titulo, mensaje, fecha);
+                Notificaciones n = new Notificaciones(id, tipo, titulo, tituloAmigable, mensaje, mensajeExtra, fecha);
                 n.setLeido(leido);
                 listaNotificaciones.add(n);
             }

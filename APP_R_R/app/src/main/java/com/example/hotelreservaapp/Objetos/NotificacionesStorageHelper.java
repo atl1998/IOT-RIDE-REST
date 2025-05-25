@@ -2,6 +2,7 @@ package com.example.hotelreservaapp.Objetos;
 
 import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -57,14 +58,18 @@ public class NotificacionesStorageHelper {
         return null;
     }
 
-    public boolean borrarArchivoNotificaciones() {
+    public void borrarArchivoNotificaciones(Context context) {
         File folder = new File(context.getFilesDir(), FOLDER_NAME);
         File file = new File(folder, FILE_NAME);
         if (file.exists()) {
-            return file.delete();  // retorna true si se borró correctamente
+            if (file.delete()) {
+                Toast.makeText(context, "Memoria de notificaciones borrada correctamente.", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(context, "No se pudo borrar la memoria de notificaciones.", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            Toast.makeText(context, "No hay memoria de notificaciones para borrar.", Toast.LENGTH_SHORT).show();
         }
-        return false; // si no existía el archivo, no hizo nada
     }
-
 
 }

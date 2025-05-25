@@ -1,6 +1,7 @@
 package com.example.hotelreservaapp.cliente;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
@@ -73,12 +74,11 @@ public class PerfilCliente extends AppCompatActivity {
         btn_cerrar_sesion = findViewById(R.id.btn_cerrar_sesion);
 
         btn_cerrar_sesion.setOnClickListener(v -> {
-            boolean borrado = helper.borrarArchivoNotificaciones();
-            if (borrado) {
-                Log.d("Notificaciones", "Archivo de notificaciones borrado correctamente.");
-            } else {
-                Log.d("Notificaciones", "No se encontró el archivo o no se pudo borrar.");
-            }
+            helper.borrarArchivoNotificaciones(this);
+            SharedPreferences sharedPreferences = getSharedPreferences("ReservaPrefs", MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.remove("horaLlegada"); // Aquí pones la clave que quieres borrar
+            editor.apply(); // O editor.commit();
         });
 
 

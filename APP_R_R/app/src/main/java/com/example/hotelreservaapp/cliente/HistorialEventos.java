@@ -6,21 +6,11 @@ import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.res.ColorStateList;
 import android.graphics.BitmapFactory;
-import android.graphics.RenderEffect;
-import android.graphics.Shader;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -29,26 +19,29 @@ import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
-import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkManager;
+import androidx.work.WorkRequest;
 
 import com.example.hotelreservaapp.Objetos.Notificaciones;
 import com.example.hotelreservaapp.Objetos.NotificacionesStorageHelper;
-import com.example.hotelreservaapp.Objetos.NotificationManager;
+import com.example.hotelreservaapp.Objetos.NotificationManagerNoAPP;
 import com.example.hotelreservaapp.R;
-import com.example.hotelreservaapp.loginAndRegister.LoginActivity;
+import com.example.hotelreservaapp.workers.NotificacionCheckoutWorker;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.button.MaterialButton;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class HistorialEventos extends AppCompatActivity {
     String channelId = "ChannelRideAndRest"; // En cualquier otra Activity
+    private boolean solicitarCheckout = false;
 
     private Button btnCheckout;
+    private String Tipo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,14 +91,38 @@ public class HistorialEventos extends AppCompatActivity {
             }
         });
 
-        btnCheckout = findViewById(R.id.btnCheckout);
-        btnCheckout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Mostrar modal
-                mostrarDialogoCheckout();
+        //Verificacion
+
+        // 1. Cargar lista guardada (si existe)
+        NotificacionesStorageHelper storageHelper = new NotificacionesStorageHelper(this);
+        Notificaciones[] notificacionesGuardadas = storageHelper.leerArchivoNotificacionesDesdeSubcarpeta();
+
+        // 2. Crear o cargar NotificationManager con la lista actual
+        NotificationManagerNoAPP notificationManagerNoAPP = new NotificationManagerNoAPP();
+        if (notificacionesGuardadas != null && notificacionesGuardadas.length > 0) {
+            for (Notificaciones n : notificacionesGuardadas) {
+                Tipo = n.getTipo();
+                notificationManagerNoAPP.getListaNotificaciones().add(n);
+                if ("01".equals(n.getTipo().trim())) {
+                    solicitarCheckout = true;
+                }
             }
-        });
+        }
+        btnCheckout = findViewById(R.id.btnCheckout);
+
+        if (solicitarCheckout) {
+            btnCheckout.setEnabled(false);
+            btnCheckout.setAlpha(0.5f);  // Establecer la opacidad al 50% (0.0f - completamente transparente, 1.0f - completamente opaco)
+        }
+
+        if (btnCheckout.isEnabled()) {
+            btnCheckout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mostrarDialogoCheckout();
+                }
+            });
+        }
 
     }
 
@@ -158,9 +175,12 @@ public class HistorialEventos extends AppCompatActivity {
     }
 
     public void LanzarNotificacionSolicitarCheckout() {
+        // Tipo Solicitar Checkout: 01
         String tipo = "01";
         String titulo = "Solicitar Checkout";
+        String tituloAmigable = "¡Se ha realizado el checkout correctamente!";
         String mensaje = "El checkout fue solicitado correctamente. Cuando este proceso termine se le notificará por este medio para que pueda realizar su pago.";
+        String mensajeExtra = "Este proceso podría tardar alrededor de 1 hora, por favor estar pendiente a la siguiente notificación.";
         Long fecha = System.currentTimeMillis();
 
         // 1. Cargar lista guardada (si existe)
@@ -168,22 +188,22 @@ public class HistorialEventos extends AppCompatActivity {
         Notificaciones[] notificacionesGuardadas = storageHelper.leerArchivoNotificacionesDesdeSubcarpeta();
 
         // 2. Crear o cargar NotificationManager con la lista actual
-        NotificationManager notificationManager = new NotificationManager();
+        NotificationManagerNoAPP notificationManagerNoAPP = new NotificationManagerNoAPP();
         if (notificacionesGuardadas != null && notificacionesGuardadas.length > 0) {
             for (Notificaciones n : notificacionesGuardadas) {
-                notificationManager.getListaNotificaciones().add(n);
+                notificationManagerNoAPP.getListaNotificaciones().add(n);
             }
         }
 
         // 3. Agregar la nueva notificación a la lista
-        notificationManager.agregarNotificacion(tipo, titulo, mensaje, fecha);
+        notificationManagerNoAPP.agregarNotificacion(tipo, titulo, tituloAmigable, mensaje, mensajeExtra, fecha);
 
         // 4. Guardar la lista actualizada
-        Notificaciones[] arregloParaGuardar = notificationManager.getListaNotificaciones()
+        Notificaciones[] arregloParaGuardar = notificationManagerNoAPP.getListaNotificaciones()
                 .toArray(new Notificaciones[0]);
         storageHelper.guardarArchivoNotificacionesEnSubcarpeta(arregloParaGuardar);
 
-        // 5. Lanzar la notificación visual como haces normalmente
+        // 5. Lanzar la notificación visual como se hace normalmente
         Intent intent = new Intent(HistorialEventos.this, ClienteNotificaciones.class);
         intent.putExtra("Case", "01");
         String ContentTitle="¡Se ha realizado el checkout correctamente!";
@@ -204,5 +224,10 @@ public class HistorialEventos extends AppCompatActivity {
         if (ActivityCompat.checkSelfPermission(this, POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
             notificationManagerCompat.notify(1, builder.build());
         }
+
+        WorkRequest notificacionRetrasada = new OneTimeWorkRequest.Builder(NotificacionCheckoutWorker.class)
+                .setInitialDelay(15, TimeUnit.SECONDS)
+                .build();
+        WorkManager.getInstance(this).enqueue(notificacionRetrasada);
     }
 }

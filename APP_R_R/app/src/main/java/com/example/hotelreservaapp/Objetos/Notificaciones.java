@@ -6,19 +6,41 @@ public class Notificaciones implements Serializable {
     private int id; // un ID único
     private String tipo;
     private String titulo;
+    private String tituloAmigable;
     private String mensaje;
+    private String mensajeExtra;
     private long fecha;
     private boolean leido;
 
+
     // Constructor con id
-    public Notificaciones(int id, String tipo, String titulo, String mensaje, long fecha) {
+    public Notificaciones(int id, String tipo, String titulo, String tituloAmigable, String mensaje, String mensajeExtra, long fecha) {
         this.id = id;
         this.tipo = tipo;
         this.titulo = titulo;
+        this.tituloAmigable= tituloAmigable;
         this.mensaje = mensaje;
+        this.mensajeExtra = mensajeExtra;
         this.fecha = fecha;
         this.leido = false;
     }
+
+    public String getMensajeExtra() {
+        return mensajeExtra;
+    }
+
+    public void setMensajeExtra(String mensajeExtra) {
+        this.mensajeExtra = mensajeExtra;
+    }
+
+    public String getTituloAmigable() {
+        return tituloAmigable;
+    }
+
+    public void setTituloAmigable(String tituloAmigable) {
+        this.tituloAmigable = tituloAmigable;
+    }
+
 
     public int getId() {
         return id;

@@ -16,13 +16,22 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.hotelreservaapp.Objetos.Notificaciones;
+import com.example.hotelreservaapp.Objetos.NotificacionesStorageHelper;
+import com.example.hotelreservaapp.Objetos.NotificationManagerNoAPP;
 import com.example.hotelreservaapp.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.button.MaterialButton;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 public class DetallesReserva extends AppCompatActivity {
-    private TextView definirHoraLlegada;
+    private TextView definirHoraLlegada, HoraDeSalida, FechaCheckOut;
     private Boolean horaDefinida;
+    private String Tipo;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,13 +63,40 @@ public class DetallesReserva extends AppCompatActivity {
             }
             return false;
         });
+        HoraDeSalida = findViewById(R.id.HoraDeSalida);
+        FechaCheckOut = findViewById(R.id.fechaCheckOut);
+
+        // 1. Cargar lista guardada (si existe)
+        NotificacionesStorageHelper storageHelper = new NotificacionesStorageHelper(this);
+        Notificaciones[] notificacionesGuardadas = storageHelper.leerArchivoNotificacionesDesdeSubcarpeta();
+
+        // 2. Crear o cargar NotificationManager con la lista actual
+        NotificationManagerNoAPP notificationManagerNoAPP = new NotificationManagerNoAPP();
+        if (notificacionesGuardadas != null && notificacionesGuardadas.length > 0) {
+            for (Notificaciones n : notificacionesGuardadas) {
+                Tipo = n.getTipo();
+                notificationManagerNoAPP.getListaNotificaciones().add(n);
+                if ("02".equals(n.getTipo().trim())) {
+                    long timestamp = n.getFecha(); // Tu valor long de fecha
+
+                    Date date = new Date(timestamp);
+                    // Formato para "23 de mayo"
+                    SimpleDateFormat sdfDiaMes = new SimpleDateFormat("d 'de' MMMM", new Locale("es", "ES"));
+                    // Formato para "14:30"
+                    SimpleDateFormat sdfHora = new SimpleDateFormat("HH:mm", new Locale("es", "ES"));
+                    String diaMes = sdfDiaMes.format(date); // Ej: "23 de mayo"
+                    String hora = sdfHora.format(date);     // Ej: "14:30"
+                    HoraDeSalida.setText("Finalizado a las " + hora);
+                    FechaCheckOut.setText(diaMes+":");
+                }
+            }
+        }
 
         MaterialButton btnNotificaciones = findViewById(R.id.notificaciones_cliente);
         btnNotificaciones.setOnClickListener(v -> {
             Intent intent = new Intent(this, ClienteNotificaciones.class);
             startActivity(intent);
         });
-
 
         // Inicializamos el TextView y la variable para saber si la hora ya fue definida
         definirHoraLlegada = findViewById(R.id.definirHoraLlegada);

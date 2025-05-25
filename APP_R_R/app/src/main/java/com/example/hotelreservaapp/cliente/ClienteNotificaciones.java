@@ -1,5 +1,6 @@
 package com.example.hotelreservaapp.cliente;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -11,14 +12,22 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.hotelreservaapp.NotificacionDetalles;
 import com.example.hotelreservaapp.Objetos.Notificaciones;
 import com.example.hotelreservaapp.Objetos.NotificacionesStorageHelper;
-import com.example.hotelreservaapp.Objetos.NotificationManager;
+import com.example.hotelreservaapp.Objetos.NotificationManagerNoAPP;
 import com.example.hotelreservaapp.R;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class ClienteNotificaciones extends AppCompatActivity {
-    private NotificationManager notificationManager; // tu clase para manejar la lista
+    private RecyclerView recyclerNotificaciones;
+
+    private NotificationManagerNoAPP notificationManagerNoAPP; // tu clase para manejar la lista
     private NotificacionesStorageHelper storageHelper;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,26 +39,21 @@ public class ClienteNotificaciones extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        LinearLayout layoutMensajes = findViewById(R.id.layoutMensajes);
-
+        recyclerNotificaciones = findViewById(R.id.recyclerNotificaciones);
+        recyclerNotificaciones.setLayoutManager(new LinearLayoutManager(this));
 
         // Instanciamos el helper para leer el archivo
         NotificacionesStorageHelper storageHelper = new NotificacionesStorageHelper(this);
         Notificaciones[] notificacionesGuardadas = storageHelper.leerArchivoNotificacionesDesdeSubcarpeta();
 
         if (notificacionesGuardadas != null && notificacionesGuardadas.length > 0) {
-            for (Notificaciones n : notificacionesGuardadas) {
-                // Inflar la vista de item_notification
-                View mensajeView = getLayoutInflater().inflate(R.layout.item_notification, layoutMensajes, false);
-                TextView title = mensajeView.findViewById(R.id.texto_title);
-                TextView texto = mensajeView.findViewById(R.id.texto_mensaje);
-
-                // Setear los textos desde el objeto Notificaciones
-                title.setText(n.getTitulo());
-                texto.setText(n.getMensaje());
-
-                layoutMensajes.addView(mensajeView);
-            }
+            List<Notificaciones> listaNotificaciones = Arrays.asList(notificacionesGuardadas);
+            NotificacionAdapter adapter = new NotificacionAdapter(listaNotificaciones, this, notificacion -> {
+                Intent intent = new Intent(ClienteNotificaciones.this, NotificacionDetalles.class);
+                intent.putExtra("notificacion", notificacion);  // notificacion es el objeto completo
+                startActivity(intent);
+            });
+            recyclerNotificaciones.setAdapter(adapter);
         }
 
 
@@ -63,14 +67,3 @@ public class ClienteNotificaciones extends AppCompatActivity {
 
     }
 }
-
-/*
-case "02":
-                    View mensaje2 = getLayoutInflater().inflate(R.layout.item_notification, layoutMensajes, false);
-                    TextView title2 = mensaje2.findViewById(R.id.texto_title);
-                    TextView texto2 = mensaje2.findViewById(R.id.texto_mensaje);
-                    title2.setText("Checkout Finalizado");
-                    texto2.setText("El checkout ha finalizado, por favor dirigirse a la opción de “Detalles” en el hotel seleccionado y buscar en la parte inferior el botón “Procesar pago.”");
-                    layoutMensajes.addView(mensaje2);
-                    break;
-*/
