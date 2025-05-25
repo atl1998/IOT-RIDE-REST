@@ -39,6 +39,7 @@ public class PagoConfirmado extends AppCompatActivity {
                 mostrarModalCalificacion();
             });
         }
+
     }
 
     private void mostrarModalCalificacion() {

@@ -51,8 +51,8 @@ public class ProcesarPago extends AppCompatActivity {
             return false;
         });
         Button btnrealizarpago = findViewById(R.id.btn_realizar_pago);
-        btnrealizarpago.setEnabled(false);
-        btnrealizarpago.setAlpha(0.5f);
+        btnrealizarpago.setEnabled(true);
+        btnrealizarpago.setAlpha(1f);
 
 
         // Recuperar la hora guardada de SharedPreferences
@@ -60,8 +60,8 @@ public class ProcesarPago extends AppCompatActivity {
         Boolean ServicioTaxi = sharedPreferences.getBoolean("ServicioTaxi", false);
 
         if(ServicioTaxi){
-            btnrealizarpago.setEnabled(true);
-            btnrealizarpago.setAlpha(1f);
+            btnrealizarpago.setEnabled(false);
+            btnrealizarpago.setAlpha(0.5f);
         }
 
         MaterialButton btnNotificaciones = findViewById(R.id.notificaciones_cliente);

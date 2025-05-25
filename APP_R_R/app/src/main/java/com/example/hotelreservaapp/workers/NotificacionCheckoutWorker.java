@@ -4,6 +4,7 @@ import com.example.hotelreservaapp.Objetos.NotificationManagerNoAPP;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.BitmapFactory;
 import android.os.Build;
@@ -58,6 +59,11 @@ public class NotificacionCheckoutWorker extends Worker {
         Notificaciones[] arregloParaGuardar = notificationManagerNoAPP.getListaNotificaciones()
                 .toArray(new Notificaciones[0]);
         storageHelper.guardarArchivoNotificacionesEnSubcarpeta(arregloParaGuardar);
+
+        SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("ReservaPrefs", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean("SolicitarCheckout", true);
+        editor.apply();
 
         // Crear intent hacia ClienteNotificaciones
         Intent intent = new Intent(getApplicationContext(), ClienteNotificaciones.class);

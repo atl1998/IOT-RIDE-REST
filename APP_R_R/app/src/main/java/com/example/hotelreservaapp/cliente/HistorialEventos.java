@@ -252,11 +252,6 @@ public class HistorialEventos extends AppCompatActivity {
                 .toArray(new Notificaciones[0]);
         storageHelper.guardarArchivoNotificacionesEnSubcarpeta(arregloParaGuardar);
 
-        SharedPreferences sharedPreferences = getSharedPreferences("ReservaPrefs", MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putBoolean("SolicitarCheckout", true);
-        editor.apply();
-
         // 5. Lanzar la notificación visual como se hace normalmente
         Intent intent = new Intent(HistorialEventos.this, ClienteNotificaciones.class);
         intent.putExtra("Case", "01");
