@@ -30,6 +30,7 @@ import java.util.Locale;
 public class DetallesReserva extends AppCompatActivity {
     private TextView definirHoraLlegada, HoraDeSalida, FechaCheckOut;
     private Boolean horaDefinida;
+    private Button btnServicio;
     private String Tipo;
 
 
@@ -65,6 +66,11 @@ public class DetallesReserva extends AppCompatActivity {
         });
         HoraDeSalida = findViewById(R.id.HoraDeSalida);
         FechaCheckOut = findViewById(R.id.fechaCheckOut);
+        btnServicio = findViewById(R.id.btnProcesarPago);
+
+        btnServicio.setEnabled(false);
+        btnServicio.setAlpha(0.5f);
+
 
         // 1. Cargar lista guardada (si existe)
         NotificacionesStorageHelper storageHelper = new NotificacionesStorageHelper(this);
@@ -105,6 +111,12 @@ public class DetallesReserva extends AppCompatActivity {
         // Recuperar la hora guardada de SharedPreferences
         SharedPreferences sharedPreferences = getSharedPreferences("ReservaPrefs", MODE_PRIVATE);
         String horaGuardada = sharedPreferences.getString("horaLlegada", null);
+        Boolean SolicitarCheckout = sharedPreferences.getBoolean("SolicitarCheckout", false);
+
+        if(SolicitarCheckout){
+            btnServicio.setEnabled(true);
+            btnServicio.setAlpha(1f);
+        }
 
         if (horaGuardada != null) {
             // Si hay una hora guardada, mostrarla y deshabilitar el TextView
@@ -150,9 +162,7 @@ public class DetallesReserva extends AppCompatActivity {
                 timePickerDialog.show();
             }
         });
-        // Ahora accedemos al botón btnProcesarPago dentro del nuevo modal
-        Button btnProcesarPago = findViewById(R.id.btnProcesarPago);
-        btnProcesarPago.setOnClickListener(v -> {
+        btnServicio.setOnClickListener(v -> {
             Intent intent = new Intent(this, ProcesarPago.class);
             startActivity(intent);
         });

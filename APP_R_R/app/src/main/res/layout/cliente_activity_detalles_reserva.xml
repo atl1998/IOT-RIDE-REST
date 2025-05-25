@@ -873,7 +873,7 @@
                 android:layout_marginTop="0dp"
                 android:layout_weight="1"
                 android:backgroundTint="@color/dorado"
-                android:text="Procesar el Pago"
+                android:text="Revisar el Pago Realizado"
                 android:textColor="#FFFFFF"
                 android:textSize="16sp" />
 

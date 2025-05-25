@@ -2,6 +2,7 @@ package com.example.hotelreservaapp.cliente;
 
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Build;
@@ -69,9 +70,7 @@ public class PagoConfirmado extends AppCompatActivity {
 
             // Mostrar mensaje de confirmación
             Toast.makeText(this, "¡Gracias por tu calificación!", Toast.LENGTH_SHORT).show();
-            // Redirigir a otro Activity después
-            Intent intent = new Intent(PagoConfirmado.this, HistorialEventos.class);
-            startActivity(intent);
+
             // Cerrar el diálogo
             dialog.dismiss();
         });

@@ -78,6 +78,8 @@ public class PerfilCliente extends AppCompatActivity {
             SharedPreferences sharedPreferences = getSharedPreferences("ReservaPrefs", MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.remove("horaLlegada"); // Aquí pones la clave que quieres borrar
+            editor.remove("SolicitarCheckout");
+            editor.remove("ServicioTaxi");
             editor.apply(); // O editor.commit();
         });
 

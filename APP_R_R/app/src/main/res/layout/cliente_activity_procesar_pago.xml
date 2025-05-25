@@ -586,7 +586,7 @@
                         android:id="@+id/btn_realizar_pago"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Realizar Pago"
+                        android:text="Solicitar Servicio de Taxi"
                         android:layout_marginTop="16dp"
                         android:backgroundTint="@color/dorado"
                         android:textColor="#FFFFFF" />

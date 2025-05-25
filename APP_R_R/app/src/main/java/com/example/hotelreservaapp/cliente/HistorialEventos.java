@@ -5,12 +5,17 @@ import static android.Manifest.permission.POST_NOTIFICATIONS;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.ColorStateList;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.RatingBar;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -40,7 +45,7 @@ public class HistorialEventos extends AppCompatActivity {
     String channelId = "ChannelRideAndRest"; // En cualquier otra Activity
     private boolean solicitarCheckout = false;
 
-    private Button btnCheckout;
+    private Button btnCheckout, btnTaxista;
     private String Tipo;
 
     @Override
@@ -76,6 +81,10 @@ public class HistorialEventos extends AppCompatActivity {
             return false;
         });
 
+        // Recuperar la hora guardada de SharedPreferences
+        SharedPreferences sharedPreferences = getSharedPreferences("ReservaPrefs", MODE_PRIVATE);
+        Boolean ServicioTaxi = sharedPreferences.getBoolean("ServicioTaxi", false);
+
         MaterialButton btnNotificaciones = findViewById(R.id.notificaciones_cliente);
         btnNotificaciones.setOnClickListener(v -> {
             Intent intent = new Intent(HistorialEventos.this, ClienteNotificaciones.class);
@@ -109,6 +118,12 @@ public class HistorialEventos extends AppCompatActivity {
             }
         }
         btnCheckout = findViewById(R.id.btnCheckout);
+        btnTaxista = findViewById(R.id.btnTaxista);
+
+        if(ServicioTaxi){
+            btnTaxista.setEnabled(true);
+            btnTaxista.setAlpha(1f);
+        }
 
         if (solicitarCheckout) {
             btnCheckout.setEnabled(false);
@@ -129,7 +144,6 @@ public class HistorialEventos extends AppCompatActivity {
     private void mostrarDialogoCheckout() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setView(R.layout.cliente_dialog_checkout);
-        builder.setCancelable(false);
         AlertDialog dialog = builder.create();
         dialog.show();
 
@@ -155,7 +169,6 @@ public class HistorialEventos extends AppCompatActivity {
     private void mostrarClienteConsumoExtras() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setView(R.layout.cliente_consumosextras);
-        builder.setCancelable(false);
         AlertDialog dialog = builder.create();
         dialog.show();
         // Ahora accedemos al botón btn_solicitar_checkout dentro del nuevo modal
@@ -171,6 +184,42 @@ public class HistorialEventos extends AppCompatActivity {
             // Aquí iría la validación real, por ahora mostramos mensaje:
             Toast.makeText(HistorialEventos.this, "¡Solicitud registrada correctamente!", Toast.LENGTH_SHORT).show();
             LanzarNotificacionSolicitarCheckout();
+            LanzarValoracion();
+        });
+    }
+
+    public void LanzarValoracion(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setView(R.layout.cliente_valoracion);
+        builder.setCancelable(false);
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
+        // Obtener referencias a los elementos en el diálogo
+        EditText comentarioText = dialog.findViewById(R.id.comentario_valo);
+        RatingBar ratingBar = dialog.findViewById(R.id.ratingBar);
+        ratingBar.setProgressTintList(ColorStateList.valueOf(Color.parseColor("#FFC107")));
+        Button btnEnviarValo = dialog.findViewById(R.id.btn_enviar_valo);
+
+        btnEnviarValo.setOnClickListener(v -> {
+            // Obtener el valor de la calificación
+            float calificacion = ratingBar.getRating();
+            String comentario = comentarioText.getText().toString().trim();
+
+            // Validar que haya dado una calificación
+            if (calificacion == 0) {
+                Toast.makeText(this, "Por favor, califica nuestro servicio", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // Aquí puedes guardar la calificación y el comentario
+            // Por ejemplo, enviarlos a tu servidor o guardarlos localmente
+
+            // Mostrar mensaje de confirmación
+            Toast.makeText(this, "¡Gracias por tu calificación!", Toast.LENGTH_SHORT).show();
+
+            // Cerrar el diálogo
+            dialog.dismiss();
         });
     }
 
@@ -202,6 +251,11 @@ public class HistorialEventos extends AppCompatActivity {
         Notificaciones[] arregloParaGuardar = notificationManagerNoAPP.getListaNotificaciones()
                 .toArray(new Notificaciones[0]);
         storageHelper.guardarArchivoNotificacionesEnSubcarpeta(arregloParaGuardar);
+
+        SharedPreferences sharedPreferences = getSharedPreferences("ReservaPrefs", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean("SolicitarCheckout", true);
+        editor.apply();
 
         // 5. Lanzar la notificación visual como se hace normalmente
         Intent intent = new Intent(HistorialEventos.this, ClienteNotificaciones.class);
