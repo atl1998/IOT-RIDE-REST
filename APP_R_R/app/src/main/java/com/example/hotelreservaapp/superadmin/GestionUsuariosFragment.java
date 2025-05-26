@@ -1,13 +1,17 @@
 package com.example.hotelreservaapp.superadmin;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.google.android.material.badge.BadgeDrawable;
+import com.google.android.material.badge.BadgeUtils;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -16,6 +20,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 
+import com.example.hotelreservaapp.AdminHotel.NotificacionesActivity;
 import com.example.hotelreservaapp.R;
 import com.example.hotelreservaapp.adapter.UsuarioAdapter;
 import com.example.hotelreservaapp.databinding.SuperadminGestionUsuariosFragmentBinding;
@@ -59,6 +64,13 @@ public class GestionUsuariosFragment extends Fragment {
                     .setMessage("Aquí puedes filtrar, buscar y gestionar a todos los usuarios registrados en el sistema.")
                     .setPositiveButton("Entendido", null)
                     .show();
+        });
+        //Notificaciones :D
+        ImageView campana = binding.iconNotificaciones;  // o view.findViewById(...)
+
+        campana.setOnClickListener(v -> {
+            Intent intent = new Intent(requireContext(), NotificacionesActivity.class);
+            startActivity(intent);
         });
 
         // Cargar roles en dropdown
