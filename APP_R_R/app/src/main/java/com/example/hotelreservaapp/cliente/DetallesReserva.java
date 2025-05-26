@@ -83,17 +83,10 @@ public class DetallesReserva extends AppCompatActivity {
                 Tipo = n.getTipo();
                 notificationManagerNoAPP.getListaNotificaciones().add(n);
                 if ("02".equals(n.getTipo().trim())) {
-                    long timestamp = n.getFecha(); // Tu valor long de fecha
-
-                    Date date = new Date(timestamp);
-                    // Formato para "23 de mayo"
-                    SimpleDateFormat sdfDiaMes = new SimpleDateFormat("d 'de' MMMM", new Locale("es", "ES"));
-                    // Formato para "14:30"
-                    SimpleDateFormat sdfHora = new SimpleDateFormat("HH:mm", new Locale("es", "ES"));
-                    String diaMes = sdfDiaMes.format(date); // Ej: "23 de mayo"
-                    String hora = sdfHora.format(date);     // Ej: "14:30"
+                    String fechaBonita = n.getFechaBonita(); // Tu valor long de fecha
+                    String hora = n.getHoraBonita();     // Ej: "14:30"
                     HoraDeSalida.setText("Finalizado a las " + hora);
-                    FechaCheckOut.setText(diaMes+":");
+                    FechaCheckOut.setText(fechaBonita+":");
                 }
             }
         }

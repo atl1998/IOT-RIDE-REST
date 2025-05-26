@@ -36,9 +36,17 @@ public class NotificacionCheckoutWorker extends Worker {
         String tipo = "02";
         String titulo = "Checkout Finalizado";
         String tituloAmigable = "¡Checkout finalizado correctamente!";
-        String mensaje = "El checkout ha finalizado, por favor dirigirse a la opción de “Detalles” en el hotel seleccionado y buscar en la parte inferior el botón “Procesar pago.”";
-        String mensajeExtra = "";
+        String mensaje = "El checkout ha finalizado, por favor dirigirse a la opción de “Detalles” en el hotel seleccionado y buscar en la parte inferior el botón “Revisar el pago realizado”.";
+        String mensajeExtra = "En dicho apartado se encuentra un resumen del pago realizado antes de la reserva, además también se le indica los cobros extras que se ha realizado y también si se cuenta con Servicio de Taxi o no.";
         long fecha = System.currentTimeMillis();
+
+        // 2 notificacion
+        String tipo2 = "03";
+        String titulo2 = "Servicio de Taxi";
+        String tituloAmigable2 = "¡Tu hotel cuenta con servicio de Taxi!";
+        String mensaje2 = "Su hotel cuenta con servicio de taxi, si desea solicitar dicho servicio por favor dirigirse a “Revisar el pago realizado” en detalles de tu hotel reservado, y presionar el botón “Solicitar Servicio de Taxi”.";
+        String mensajeExtra2 = "";
+        long fecha2 = System.currentTimeMillis();
 
         Context context = getApplicationContext();
 
@@ -55,6 +63,8 @@ public class NotificacionCheckoutWorker extends Worker {
         }
 
         notificationManagerNoAPP.agregarNotificacion(tipo, titulo, tituloAmigable, mensaje, mensajeExtra, fecha);
+        notificationManagerNoAPP.agregarNotificacion(tipo2, titulo2, tituloAmigable2, mensaje2, mensajeExtra2, fecha2);
+
 
         Notificaciones[] arregloParaGuardar = notificationManagerNoAPP.getListaNotificaciones()
                 .toArray(new Notificaciones[0]);
@@ -88,6 +98,18 @@ public class NotificacionCheckoutWorker extends Worker {
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getApplicationContext());
         notificationManager.notify(2, builder.build());
+
+        // Segunda notificación (por ejemplo, resumen del pago)
+        NotificationCompat.Builder secondBuilder = new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID)
+                .setSmallIcon(R.drawable.logo_r_r_2)
+                .setLargeIcon(BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.taxi))
+                .setContentTitle("¡Tu hotel cuenta con servicio de Taxi!")
+                .setContentText("Su hotel cuenta con servicio de taxi, si desea solicitar dicho servicio por favor dirigirse a “Revisar el pago realizado” en detalles de tu hotel reservado, y presionar el botón “Solicitar Servicio de Taxi”.")
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setAutoCancel(true);
+
+        // Mostrar la segunda notificación con otro ID (por ejemplo, 3)
+        notificationManager.notify(3, secondBuilder.build());
         return Result.success();
     }
 }

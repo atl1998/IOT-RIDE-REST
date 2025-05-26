@@ -31,6 +31,7 @@ import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
 import androidx.work.WorkRequest;
 
+import com.example.hotelreservaapp.ClienteServicioTaxi;
 import com.example.hotelreservaapp.Objetos.Notificaciones;
 import com.example.hotelreservaapp.Objetos.NotificacionesStorageHelper;
 import com.example.hotelreservaapp.Objetos.NotificationManagerNoAPP;
@@ -138,7 +139,12 @@ public class HistorialEventos extends AppCompatActivity {
                 }
             });
         }
-
+        if(btnTaxista.isEnabled()){
+            btnTaxista.setOnClickListener(v -> {
+                Intent intent = new Intent(this, ClienteServicioTaxi.class);
+                startActivity(intent);
+            });
+        }
     }
 
     private void mostrarDialogoCheckout() {

@@ -13,6 +13,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.hotelreservaapp.Objetos.Notificaciones;
 import com.example.hotelreservaapp.R;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class NotificacionAdapter extends RecyclerView.Adapter<NotificacionAdapter.NotificacionViewHolder> {
@@ -26,6 +28,13 @@ public class NotificacionAdapter extends RecyclerView.Adapter<NotificacionAdapte
     }
 
     public NotificacionAdapter(List<Notificaciones> lista, Context context, OnItemClickListener listener) {
+        //Ordena las fechas mas recientes arriba antes de pasar el adapter
+        Collections.sort(lista, new Comparator<Notificaciones>() {
+            @Override
+            public int compare(Notificaciones n1, Notificaciones n2) {
+                return Long.compare(n2.getFecha(), n1.getFecha()); // más reciente arriba
+            }
+        });
         this.listaNotificaciones = lista;
         this.context = context;
         this.listener = listener;

@@ -1,6 +1,9 @@
 package com.example.hotelreservaapp.Objetos;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 public class Notificaciones implements Serializable {
     private int id; // un ID único
@@ -23,6 +26,27 @@ public class Notificaciones implements Serializable {
         this.mensajeExtra = mensajeExtra;
         this.fecha = fecha;
         this.leido = false;
+    }
+
+
+    public String getFechaBonita() {
+        Date date = new Date(this.fecha);
+        // Formato para "23 de mayo"
+        SimpleDateFormat sdf = new SimpleDateFormat("d 'de' MMMM", new Locale("es", "ES"));
+        return sdf.format(date);
+    }
+
+    public String getHoraBonita() {
+        Date date = new Date(this.fecha);
+        // Formato para "14:30"
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", new Locale("es", "ES"));
+        return sdf.format(date);
+    }
+
+    public String getFechaFormatoCorto() {
+        Date date = new Date(this.fecha);
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        return sdf.format(date);
     }
 
     public String getMensajeExtra() {
