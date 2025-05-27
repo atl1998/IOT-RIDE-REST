@@ -273,6 +273,41 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="#808080" />
+            <!-- Modo Oscuro -->
+            <LinearLayout
+                android:id="@+id/ll_modo_oscuro"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingTop="16dp"
+                android:paddingBottom="16dp"
+                android:gravity="center_vertical">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/moon_icon" /> <!-- Usa un ícono de luna que tengas -->
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_weight="1"
+                    android:text="Modo oscuro"
+                    android:textColor="@color/black"
+                    android:textSize="16sp" />
+
+                <com.google.android.material.materialswitch.MaterialSwitch
+                    android:id="@+id/switch_modo_oscuro"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="false"/>
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#808080" />
         </LinearLayout>
 
         <!-- Botón de cerrar sesión -->
@@ -286,7 +321,7 @@
             android:backgroundTint="#CA0E0E"
             android:text="Cerrar sesión"
             android:textAllCaps="false"
-            android:textColor="@color/dorado"
+            android:textColor="@color/white"
             app:cornerRadius="30dp"
             app:icon="@drawable/baseline_logout_24"
             app:iconGravity="textStart"

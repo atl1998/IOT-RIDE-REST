@@ -1,9 +1,12 @@
 package com.example.hotelreservaapp.superadmin;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -21,6 +24,7 @@ import com.google.android.material.datepicker.CalendarConstraints;
 import com.google.android.material.datepicker.DateValidatorPointBackward;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.materialswitch.MaterialSwitch;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.text.SimpleDateFormat;
@@ -83,6 +87,38 @@ public class PerfilFragment extends Fragment {
                 String direccion = etDireccion.getText().toString().trim();
 
                 Toast.makeText(requireContext(), "Datos actualizados", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        //Modo Oscuro :D
+
+        //C busca en el layout el switch
+        MaterialSwitch switchModoOscuro = view.findViewById(R.id.switch_modo_oscuro);
+
+        // Obtener SharedPreferences a partir del archivo user_prefs
+        //MODE_PRIVATE: Solo la app puede leer los datos
+        SharedPreferences prefs = requireActivity().getSharedPreferences("user_prefs", Context.MODE_PRIVATE);
+        //Lee la preferencia modo_oscuro y le pone valor default false si no existía
+        boolean modoOscuroActivo = prefs.getBoolean("modo_oscuro", false);
+
+        // Establece que el switch este marcado si es que está activo el modo oscuro
+        switchModoOscuro.setChecked(modoOscuroActivo);
+
+        // Listener para cambios
+        switchModoOscuro.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            // Guardar preferencia
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putBoolean("modo_oscuro", isChecked);
+            editor.apply();
+
+            // Aplicar tema
+            //AppCompatDelegate cambia el modo de tema global de la app
+            if (isChecked) {
+                //FUERZA MODO OSCURO :D
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+            } else {
+                //Modo claro: POR DEFECTO
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
             }
         });
     }
