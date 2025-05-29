@@ -2,22 +2,12 @@ package com.example.hotelreservaapp.AdminHotel;
 
 import static android.app.PendingIntent.getActivity;
 
-import static androidx.core.content.ContentProviderCompat.requireContext;
-import static java.security.AccessController.getContext;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -38,7 +28,7 @@ public class HotelHabitaciones extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.adminhote_activity_hotel_habitaciones);
+        setContentView(R.layout.adminhotel_activity_hotel_habitaciones);
 
         rvHabitaciones = findViewById(R.id.listaHabitaciones);
         rvHabitaciones.setLayoutManager(new LinearLayoutManager(this));

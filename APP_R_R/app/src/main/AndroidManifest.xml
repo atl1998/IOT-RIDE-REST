@@ -25,6 +25,9 @@
                 android:resource="@xml/paths" />
         </provider>
         <activity
+            android:name=".AdminHotel.RegistroHotelActivity"
+            android:exported="false" />
+        <activity
             android:name=".NotificacionDetalles"
             android:exported="false" />
         <activity
