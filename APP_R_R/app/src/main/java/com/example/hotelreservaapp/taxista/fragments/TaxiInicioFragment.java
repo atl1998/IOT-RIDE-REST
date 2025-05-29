@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -14,11 +15,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.hotelreservaapp.R;
 import com.example.hotelreservaapp.taxista.adapter.TarjetaTaxistaAdapter;
 import com.example.hotelreservaapp.taxista.model.TarjetaModel;
+import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class TaxiInicioFragment extends Fragment {
+public class TaxiInicioFragment extends Fragment implements TarjetaTaxistaAdapter.OnNotificacionListener {
 
     private RecyclerView recyclerView;
     private TarjetaTaxistaAdapter adapter;
@@ -41,7 +43,7 @@ public class TaxiInicioFragment extends Fragment {
         btnSolicitudes = view.findViewById(R.id.btnSolicitudes);
         btnHistorial = view.findViewById(R.id.btnHistorial);
 
-        // Lista completa de tarjetas
+        // Inicializar datos de ejemplo
         datos = new ArrayList<>();
         datos.add(new TarjetaModel("Roberto Carlos", "rcarlos@mail.com", "987654321", "28 de abril", "6:30 PM", "Hotel Inkaterra", "Aeropuerto Jorge Chávez", "En progreso"));
         datos.add(new TarjetaModel("Lucía Fernández", "luciaf@mail.com", "912345678", "29 de abril", "7:00 PM", "Hotel Costa del Sol", "Terminal Plaza Norte", "Solicitado"));
@@ -50,12 +52,14 @@ public class TaxiInicioFragment extends Fragment {
         datos.add(new TarjetaModel("Esteban Soto", "esoto@mail.com", "976543210", "2 de mayo", "6:00 PM", "Hotel Los Portales", "Terminal Terrestre Cusco", "Cancelado"));
         datos.add(new TarjetaModel("Natalia Medina", "nmedina@mail.com", "923456789", "3 de mayo", "7:30 PM", "Hotel San Agustín", "Aeropuerto Alejandro Velasco Astete", "Finalizado"));
 
-        // Mostrar por defecto solicitudes activas
         filtrarSolicitudesActivas();
 
-        // Listeners de botones
         btnSolicitudes.setOnClickListener(v -> filtrarSolicitudesActivas());
         btnHistorial.setOnClickListener(v -> filtrarHistorial());
+
+        // Configuración del botón de notificaciones
+        MaterialButton btnNotificaciones = view.findViewById(R.id.notificaciones_cliente);
+        btnNotificaciones.setOnClickListener(v -> abrirFragmentoNotificaciones());
     }
 
     private void filtrarSolicitudesActivas() {
@@ -65,7 +69,7 @@ public class TaxiInicioFragment extends Fragment {
                 activas.add(item);
             }
         }
-        adapter = new TarjetaTaxistaAdapter(activas, getContext());
+        adapter = new TarjetaTaxistaAdapter(activas, getContext(), this);
         recyclerView.setAdapter(adapter);
 
         btnSolicitudes.setBackgroundColor(getResources().getColor(R.color.crema));
@@ -79,10 +83,58 @@ public class TaxiInicioFragment extends Fragment {
                 historial.add(item);
             }
         }
-        adapter = new TarjetaTaxistaAdapter(historial, getContext());
+        adapter = new TarjetaTaxistaAdapter(historial, getContext(), this);
         recyclerView.setAdapter(adapter);
 
         btnSolicitudes.setBackgroundColor(getResources().getColor(R.color.transparente));
         btnHistorial.setBackgroundColor(getResources().getColor(R.color.crema));
+    }
+
+    @Override
+    public void onViajeAceptado(TarjetaModel tarjeta) {
+        // Aquí debes obtener la referencia al fragmento de notificaciones y agregar notificación
+        TaxistaNotificacionesFragment fragNoti = (TaxistaNotificacionesFragment) getParentFragmentManager()
+                .findFragmentByTag("FRAG_NOTIFICACIONES");
+
+        if (fragNoti != null) {
+            fragNoti.agregarNotificacionEvento(
+                    "pedido",
+                    "Solicitud aceptada",
+                    "Solicitud aceptada",
+                    "Has aceptado el pedido de " + tarjeta.getNombreUsuario(),
+                    "Recoger en: " + tarjeta.getUbicacion(),
+                    System.currentTimeMillis()
+            );
+        }
+    }
+
+    @Override
+    public void onViajeCancelado(TarjetaModel tarjeta) {
+        TaxistaNotificacionesFragment fragNoti = (TaxistaNotificacionesFragment) getParentFragmentManager()
+                .findFragmentByTag("FRAG_NOTIFICACIONES");
+
+        if (fragNoti != null) {
+            fragNoti.agregarNotificacionEvento(
+                    "pedido",
+                    "Viaje cancelado",
+                    "Viaje cancelado",
+                    "Has cancelado el viaje con " + tarjeta.getNombreUsuario(),
+                    "Origen: " + tarjeta.getUbicacion(),
+                    System.currentTimeMillis()
+            );
+        }
+    }
+
+    // Metodo para abrir el fragmento de notificaciones
+    private void abrirFragmentoNotificaciones() {
+        TaxistaNotificacionesFragment fragmentNotificaciones = new TaxistaNotificacionesFragment();
+
+        // Se reemplaza el fragmento actual (TaxiInicioFragment) por el fragmento notificaciones
+        // y se añade a backstack para poder regresar
+        getParentFragmentManager()
+                .beginTransaction()
+                .replace(((ViewGroup)getView().getParent()).getId(), fragmentNotificaciones, "FRAG_NOTIFICACIONES")
+                .addToBackStack(null)
+                .commit();
     }
 }
