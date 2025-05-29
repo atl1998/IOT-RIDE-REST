@@ -12,7 +12,6 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <!-- Encabezado -->
         <!-- Encabezado amarillo -->
         <LinearLayout
             android:id="@+id/headerLayout"
@@ -75,19 +74,34 @@
             android:orientation="horizontal"
             android:padding="16dp"
             android:gravity="center_vertical">
-
-            <androidx.cardview.widget.CardView
+            <FrameLayout
                 android:layout_width="60dp"
-                android:layout_height="60dp"
-                app:cardCornerRadius="30dp">
+                android:layout_height="60dp">
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    app:cardCornerRadius="30dp">
+
+                    <ImageView
+                        android:id="@+id/iv_profile_image"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/person" />
+                </androidx.cardview.widget.CardView>
 
                 <ImageView
-                    android:id="@+id/iv_profile_image"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/person" />
-            </androidx.cardview.widget.CardView>
+                    android:id="@+id/iv_change_photo"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="bottom|end"
+                    android:layout_margin="2dp"
+                    android:src="@drawable/edit_profile_icon"
+                    android:background="@drawable/circle_background"
+                    android:padding="2dp"
+                    android:elevation="4dp" />
+            </FrameLayout>
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -178,6 +192,13 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_marginTop="12dp">
 
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etCorreo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="adrianbala@pucp.edu.pe"
+                    android:inputType="textEmailAddress"
+                    android:enabled="false" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <!-- DNI -->
@@ -306,6 +327,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="#808080" />
+
         </LinearLayout>
 
         <!-- Botón de cerrar sesión -->

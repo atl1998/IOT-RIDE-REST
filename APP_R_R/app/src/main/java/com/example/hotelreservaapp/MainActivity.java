@@ -13,6 +13,7 @@ import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
+import com.example.hotelreservaapp.AdminHotel.RegistroHotelActivity;
 import com.example.hotelreservaapp.cliente.DetallesReserva;
 import com.example.hotelreservaapp.cliente.HistorialEventos;
 import com.example.hotelreservaapp.cliente.HomeCliente;
@@ -61,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         btnAdminHotel.setOnClickListener(v -> {
-            startActivity(new Intent(this, com.example.hotelreservaapp.AdminHotel.MainActivity.class));
+            startActivity(new Intent(this, RegistroHotelActivity.class));
         });
 
         btnSuperadmin.setOnClickListener(v -> {
