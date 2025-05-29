@@ -44,7 +44,7 @@ public class NotificacionesAdapter extends RecyclerView.Adapter<NotificacionesAd
             if (!n.isLeido()) {
                 n.setLeido(true);
                 notifyItemChanged(position);
-                // Opcional: persistir cambio estado leído
+                // Aquí puedes guardar el cambio en almacenamiento si quieres persistir estado leído
             }
         });
     }

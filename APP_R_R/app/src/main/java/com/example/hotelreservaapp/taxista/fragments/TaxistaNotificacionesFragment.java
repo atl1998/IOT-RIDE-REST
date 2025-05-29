@@ -12,20 +12,18 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.hotelreservaapp.Objetos.Notificaciones;
-import com.example.hotelreservaapp.Objetos.NotificacionesStorageHelper;
+import com.example.hotelreservaapp.taxista.TaxistaMain;
 import com.example.hotelreservaapp.taxista.adapter.NotificacionesAdapter;
 import com.example.hotelreservaapp.R;
 import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class TaxistaNotificacionesFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private NotificacionesAdapter adapter;
     private ArrayList<Notificaciones> listaNotificaciones;
-    private NotificacionesStorageHelper storageHelper;
 
     public TaxistaNotificacionesFragment() {
         // Constructor vacío obligatorio
@@ -41,13 +39,11 @@ public class TaxistaNotificacionesFragment extends Fragment {
         recyclerView = root.findViewById(R.id.recyclerNotificaciones);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        storageHelper = new NotificacionesStorageHelper(requireContext());
-        cargarNotificacionesDesdeArchivo();
+        cargarListaGlobal();
 
         adapter = new NotificacionesAdapter(getContext(), listaNotificaciones);
         recyclerView.setAdapter(adapter);
 
-        // Manejo del botón back
         MaterialButton backButton = root.findViewById(R.id.backButton);
         backButton.setOnClickListener(v -> {
             if (getActivity() != null) {
@@ -58,38 +54,51 @@ public class TaxistaNotificacionesFragment extends Fragment {
         return root;
     }
 
-    private void cargarNotificacionesDesdeArchivo() {
-        Notificaciones[] arrayNotificaciones = storageHelper.leerArchivoNotificacionesDesdeSubcarpeta();
-        if (arrayNotificaciones != null) {
-            listaNotificaciones = new ArrayList<>(Arrays.asList(arrayNotificaciones));
+    private void cargarListaGlobal() {
+        if (getActivity() instanceof TaxistaMain) {
+            listaNotificaciones = ((TaxistaMain) getActivity()).getListaGlobalNotificaciones();
         } else {
             listaNotificaciones = new ArrayList<>();
         }
     }
 
-    private void guardarNotificacionesEnArchivo() {
-        Notificaciones[] array = listaNotificaciones.toArray(new Notificaciones[0]);
-        storageHelper.guardarArchivoNotificacionesEnSubcarpeta(array);
+    public void refrescarListaNotificaciones() {
+        cargarListaGlobal();
+        if (adapter != null) {
+            adapter.notifyDataSetChanged();
+        }
     }
 
-    /**
-     * Metodo público para agregar notificaciones desde otras clases
-     */
     public void agregarNotificacionEvento(String tipo, String titulo, String tituloAmigable,
                                           String mensaje, String mensajeExtra, long fecha) {
-        int nuevoId = listaNotificaciones.size() > 0
-                ? listaNotificaciones.get(listaNotificaciones.size() - 1).getId() + 1
-                : 1;
+        if (getActivity() instanceof TaxistaMain) {
+            TaxistaMain main = (TaxistaMain) getActivity();
 
-        Notificaciones nueva = new Notificaciones(nuevoId, tipo, titulo, tituloAmigable, mensaje, mensajeExtra, fecha);
-        listaNotificaciones.add(0, nueva);  // Agregamos al inicio para mayor visibilidad
-        guardarNotificacionesEnArchivo();
-        adapter.notifyDataSetChanged();
+            int nuevoId = main.getListaGlobalNotificaciones().size() > 0
+                    ? main.getListaGlobalNotificaciones().get(main.getListaGlobalNotificaciones().size() - 1).getId() + 1
+                    : 1;
+
+            Notificaciones nueva = new Notificaciones(nuevoId, tipo, titulo, tituloAmigable, mensaje, mensajeExtra, fecha);
+            main.agregarNotificacionGlobal(nueva);
+
+            refrescarListaNotificaciones();
+        }
     }
+
 
     @Override
     public void onResume() {
         super.onResume();
-        adapter.notifyDataSetChanged();  // Refrescar lista si hubo cambios
+
+        if (getActivity() instanceof TaxistaMain) {
+            TaxistaMain main = (TaxistaMain) getActivity();
+            main.marcarNotificacionesComoLeidas();
+
+            // Refrescar lista y UI
+            refrescarListaNotificaciones();
+
+            // También podrías avisar al fragmento inicio para que actualice badge si quieres
+        }
     }
+
 }

@@ -4,8 +4,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
+import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.hotelreservaapp.R;
+import com.example.hotelreservaapp.taxista.TaxistaMain;
 import com.example.hotelreservaapp.taxista.adapter.TarjetaTaxistaAdapter;
 import com.example.hotelreservaapp.taxista.model.TarjetaModel;
 import com.google.android.material.button.MaterialButton;
@@ -26,6 +27,7 @@ public class TaxiInicioFragment extends Fragment implements TarjetaTaxistaAdapte
     private TarjetaTaxistaAdapter adapter;
     private List<TarjetaModel> datos;
     private View btnSolicitudes, btnHistorial;
+    private TextView badgeNotificaciones;
 
     public TaxiInicioFragment() {}
 
@@ -43,7 +45,8 @@ public class TaxiInicioFragment extends Fragment implements TarjetaTaxistaAdapte
         btnSolicitudes = view.findViewById(R.id.btnSolicitudes);
         btnHistorial = view.findViewById(R.id.btnHistorial);
 
-        // Inicializar datos de ejemplo
+        badgeNotificaciones = view.findViewById(R.id.badgeNotificaciones);
+
         datos = new ArrayList<>();
         datos.add(new TarjetaModel("Roberto Carlos", "rcarlos@mail.com", "987654321", "28 de abril", "6:30 PM", "Hotel Inkaterra", "Aeropuerto Jorge Chávez", "En progreso"));
         datos.add(new TarjetaModel("Lucía Fernández", "luciaf@mail.com", "912345678", "29 de abril", "7:00 PM", "Hotel Costa del Sol", "Terminal Plaza Norte", "Solicitado"));
@@ -57,9 +60,29 @@ public class TaxiInicioFragment extends Fragment implements TarjetaTaxistaAdapte
         btnSolicitudes.setOnClickListener(v -> filtrarSolicitudesActivas());
         btnHistorial.setOnClickListener(v -> filtrarHistorial());
 
-        // Configuración del botón de notificaciones
+        actualizarBadge();
+
         MaterialButton btnNotificaciones = view.findViewById(R.id.notificaciones_cliente);
-        btnNotificaciones.setOnClickListener(v -> abrirFragmentoNotificaciones());
+        btnNotificaciones.setOnClickListener(v -> {
+            if (getActivity() instanceof TaxistaMain) {
+                TaxistaMain main = (TaxistaMain) getActivity();
+                main.marcarNotificacionesComoLeidas();
+                actualizarBadge();
+                main.abrirFragmentoNotificaciones();
+            }
+        });
+    }
+
+    private void actualizarBadge() {
+        if (getActivity() instanceof TaxistaMain) {
+            int count = ((TaxistaMain) getActivity()).getContadorNotificacionesNoLeidas();
+            if (count > 0) {
+                badgeNotificaciones.setText(String.valueOf(count));
+                badgeNotificaciones.setVisibility(View.VISIBLE);
+            } else {
+                badgeNotificaciones.setVisibility(View.GONE);
+            }
+        }
     }
 
     private void filtrarSolicitudesActivas() {
@@ -92,49 +115,52 @@ public class TaxiInicioFragment extends Fragment implements TarjetaTaxistaAdapte
 
     @Override
     public void onViajeAceptado(TarjetaModel tarjeta) {
-        // Aquí debes obtener la referencia al fragmento de notificaciones y agregar notificación
-        TaxistaNotificacionesFragment fragNoti = (TaxistaNotificacionesFragment) getParentFragmentManager()
-                .findFragmentByTag("FRAG_NOTIFICACIONES");
-
-        if (fragNoti != null) {
-            fragNoti.agregarNotificacionEvento(
+        if (getActivity() instanceof TaxistaMain) {
+            TaxistaMain main = (TaxistaMain) getActivity();
+            main.agregarNotificacionGlobal(new com.example.hotelreservaapp.Objetos.Notificaciones(
+                    main.getListaGlobalNotificaciones().size() + 1,
                     "pedido",
                     "Solicitud aceptada",
                     "Solicitud aceptada",
                     "Has aceptado el pedido de " + tarjeta.getNombreUsuario(),
                     "Recoger en: " + tarjeta.getUbicacion(),
                     System.currentTimeMillis()
-            );
+            ));
+            actualizarBadge();
         }
     }
 
     @Override
     public void onViajeCancelado(TarjetaModel tarjeta) {
-        TaxistaNotificacionesFragment fragNoti = (TaxistaNotificacionesFragment) getParentFragmentManager()
-                .findFragmentByTag("FRAG_NOTIFICACIONES");
-
-        if (fragNoti != null) {
-            fragNoti.agregarNotificacionEvento(
+        if (getActivity() instanceof TaxistaMain) {
+            TaxistaMain main = (TaxistaMain) getActivity();
+            main.agregarNotificacionGlobal(new com.example.hotelreservaapp.Objetos.Notificaciones(
+                    main.getListaGlobalNotificaciones().size() + 1,
                     "pedido",
                     "Viaje cancelado",
                     "Viaje cancelado",
                     "Has cancelado el viaje con " + tarjeta.getNombreUsuario(),
                     "Origen: " + tarjeta.getUbicacion(),
                     System.currentTimeMillis()
-            );
+            ));
+            actualizarBadge();
         }
     }
 
-    // Metodo para abrir el fragmento de notificaciones
-    private void abrirFragmentoNotificaciones() {
-        TaxistaNotificacionesFragment fragmentNotificaciones = new TaxistaNotificacionesFragment();
-
-        // Se reemplaza el fragmento actual (TaxiInicioFragment) por el fragmento notificaciones
-        // y se añade a backstack para poder regresar
-        getParentFragmentManager()
-                .beginTransaction()
-                .replace(((ViewGroup)getView().getParent()).getId(), fragmentNotificaciones, "FRAG_NOTIFICACIONES")
-                .addToBackStack(null)
-                .commit();
+    // Ejemplo: llamada para agregar notificación de viaje concluido después de leer QR
+    public void onViajeConcluido(String nombreUsuario, String ubicacion) {
+        if (getActivity() instanceof TaxistaMain) {
+            TaxistaMain main = (TaxistaMain) getActivity();
+            main.agregarNotificacionGlobal(new com.example.hotelreservaapp.Objetos.Notificaciones(
+                    main.getListaGlobalNotificaciones().size() + 1,
+                    "pedido",
+                    "Viaje concluido",
+                    "Viaje concluido",
+                    "Has concluido el viaje con " + nombreUsuario,
+                    "Lugar: " + ubicacion,
+                    System.currentTimeMillis()
+            ));
+            actualizarBadge();
+        }
     }
 }

@@ -1,8 +1,13 @@
 package com.example.hotelreservaapp.taxista.adapter;
 
+import android.annotation.SuppressLint;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,11 +16,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.cardview.widget.CardView;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.hotelreservaapp.R;
 import com.example.hotelreservaapp.taxista.MapaActividad;
 import com.example.hotelreservaapp.taxista.DetallesViajeActivity;
+import com.example.hotelreservaapp.taxista.TaxistaMain;
 import com.example.hotelreservaapp.taxista.model.TarjetaModel;
 
 import java.util.ArrayList;
@@ -33,10 +41,13 @@ public class TarjetaTaxistaAdapter extends RecyclerView.Adapter<TarjetaTaxistaAd
     private Context context;
     private OnNotificacionListener notificacionListener;
 
+    private static final String CHANNEL_ID = "ride_and_rest_channel";
+
     public TarjetaTaxistaAdapter(List<TarjetaModel> todas, Context context, OnNotificacionListener listener) {
         this.context = context;
         this.notificacionListener = listener;
         listaCompartida = ordenarPorPrioridad(todas);
+        createNotificationChannel();
     }
 
     private List<TarjetaModel> ordenarPorPrioridad(List<TarjetaModel> listaOriginal) {
@@ -57,6 +68,50 @@ public class TarjetaTaxistaAdapter extends RecyclerView.Adapter<TarjetaTaxistaAd
         resultado.addAll(solicitados);
         return resultado;
     }
+
+    private void createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = "Ride and Rest Notifications";
+            String description = "Canal para notificaciones Ride and Rest";
+            int importance = NotificationManager.IMPORTANCE_HIGH;
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
+            channel.setDescription(description);
+
+            NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
+            if (notificationManager != null) {
+                notificationManager.createNotificationChannel(channel);
+            }
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    private void sendNotification(String title, String message) {
+        Intent intent = new Intent(context, TaxistaMain.class);
+        // Esto asegurará que no se creen múltiples instancias y que se abra la actividad desde cero
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+        PendingIntent pendingIntent = PendingIntent.getActivity(
+                context,
+                0,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+        );
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_launcher_round)  // Tu icono
+                .setContentTitle(title)
+                .setContentText(message)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setAutoCancel(true)
+                .setDefaults(NotificationCompat.DEFAULT_ALL)
+                .setContentIntent(pendingIntent); // Asigna el PendingIntent aquí
+
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+
+        int notificationId = (int) (System.currentTimeMillis() % Integer.MAX_VALUE);
+        notificationManager.notify(notificationId, builder.build());
+    }
+
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -117,6 +172,8 @@ public class TarjetaTaxistaAdapter extends RecyclerView.Adapter<TarjetaTaxistaAd
                     notificacionListener.onViajeAceptado(item);
                 }
 
+                sendNotification("Solicitud aceptada", "Has aceptado el pedido de " + item.getNombreUsuario());
+
                 Intent intent = new Intent(context, MapaActividad.class);
                 intent.putExtra("nombre", item.getNombreUsuario());
                 intent.putExtra("telefono", item.getTelefono());
@@ -132,6 +189,8 @@ public class TarjetaTaxistaAdapter extends RecyclerView.Adapter<TarjetaTaxistaAd
             if (notificacionListener != null) {
                 notificacionListener.onViajeCancelado(item);
             }
+
+            sendNotification("Viaje cancelado", "Has cancelado el viaje con " + item.getNombreUsuario());
         });
 
         holder.btnVerMapa.setOnClickListener(v -> {
