@@ -28,18 +28,15 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         //Uso de shared preferences pal modo Oscuro :D
         SharedPreferences prefs = getSharedPreferences("user_prefs", MODE_PRIVATE);
-        boolean modoOscuro = prefs.getBoolean("modo_oscuro", false);
-        if (modoOscuro) {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-        }
+        boolean logueado = prefs.getBoolean("logueado", false);
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        if (prefs.getBoolean("logueado", false)) {
+        //Comprueba si estas logueao
+        if (logueado) {
             startActivity(new Intent(this, SuperAdminMainActivity.class));
             finish();
-            return;
         }
 
         // Referencias
@@ -87,8 +84,6 @@ public class LoginActivity extends AppCompatActivity {
                 Toast.makeText(this, "Credenciales incorrectas", Toast.LENGTH_SHORT).show();
             }
 
-            // Aquí iría la validación real, por ahora mostramos mensaje:
-            Toast.makeText(LoginActivity.this, "¡Inicio de sesión exitoso!", Toast.LENGTH_SHORT).show();
 
             // Ejemplo: ir al menú de cliente tras login
             // startActivity(new Intent(this, MenuClienteActivity.class));

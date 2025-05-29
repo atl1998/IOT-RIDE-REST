@@ -10,9 +10,6 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import com.example.hotelreservaapp.Objetos.NotificacionesStorageHelper;
 import com.example.hotelreservaapp.R;
@@ -22,17 +19,19 @@ import com.google.android.material.textfield.TextInputEditText;
 
 public class PerfilCliente extends AppCompatActivity {
     private MaterialButton btnNotificaciones;
-
     private ImageView btnEditar;
     private TextInputEditText etNombre, etApellido, etCorreo, etDni, etTelefono, etDireccion;
     private Button btn_cerrar_sesion;
     private boolean enModoEdicion = false;
+
+    private static final String PREFS_NAME = "PerfilClientePrefs";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.cliente_activity_perfil);
+
         NotificacionesStorageHelper helper = new NotificacionesStorageHelper(this);
 
         BottomNavigationView bottomNav = findViewById(R.id.bottonNavigationView);
@@ -46,24 +45,13 @@ public class PerfilCliente extends AppCompatActivity {
                 startActivity(new Intent(this, ClienteChat.class));
             } else if (id == R.id.historialCliente) {
                 startActivity(new Intent(this, HistorialEventos.class));
-            } else if (id == R.id.perfilCliente) {
-                //startActivity(new Intent(this, PerfilCliente.class));
             }
 
             return true;
         });
 
-
+        // Inicializar vistas
         btnNotificaciones = findViewById(R.id.notificaciones_cliente);
-        btnNotificaciones.setOnClickListener(v -> {
-            //por ahora directamente al mio bala
-            Intent intent = new Intent(this, ClienteNotificaciones.class);
-            startActivity(intent);
-        });
-
-
-
-        // Enlazar vistas
         btnEditar = findViewById(R.id.iv_edit_profile);
         etNombre = findViewById(R.id.etNombre);
         etApellido = findViewById(R.id.etApellido);
@@ -73,18 +61,27 @@ public class PerfilCliente extends AppCompatActivity {
         etDireccion = findViewById(R.id.etDireccion);
         btn_cerrar_sesion = findViewById(R.id.btn_cerrar_sesion);
 
+        // Cargar datos guardados
+        cargarDatos();
+
+        // Cerrar sesión
         btn_cerrar_sesion.setOnClickListener(v -> {
             helper.borrarArchivoNotificaciones(this);
             SharedPreferences sharedPreferences = getSharedPreferences("ReservaPrefs", MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.remove("horaLlegada"); // Aquí pones la clave que quieres borrar
+            editor.remove("horaLlegada");
             editor.remove("SolicitarCheckout");
             editor.remove("ServicioTaxi");
-            editor.apply(); // O editor.commit();
+            editor.apply();
         });
 
+        // Notificaciones
+        btnNotificaciones.setOnClickListener(v -> {
+            Intent intent = new Intent(this, ClienteNotificaciones.class);
+            startActivity(intent);
+        });
 
-        // Listener para el botón de edición
+        // Botón Editar / Guardar
         btnEditar.setOnClickListener(v -> {
             enModoEdicion = !enModoEdicion;
 
@@ -93,24 +90,44 @@ public class PerfilCliente extends AppCompatActivity {
             etDni.setEnabled(enModoEdicion);
             etTelefono.setEnabled(enModoEdicion);
             etDireccion.setEnabled(enModoEdicion);
-            etCorreo.setEnabled(false); // El correo no se edita
+            etCorreo.setEnabled(false); // El correo es fijo
 
             if (enModoEdicion) {
-                btnEditar.setImageResource(R.drawable.save_icon);
+                btnEditar.setImageResource(R.drawable.save_icon); // Cambiar a ícono de guardar
             } else {
-                btnEditar.setImageResource(R.drawable.edit_square_24dp_black);
-
-                // Obtener datos
-                String nombre = etNombre.getText().toString().trim();
-                String apellido = etApellido.getText().toString().trim();
-                String dni = etDni.getText().toString().trim();
-                String telefono = etTelefono.getText().toString().trim();
-                String direccion = etDireccion.getText().toString().trim();
-
-                // Aquí puedes hacer el update real en la base de datos o con ViewModel
-
+                btnEditar.setImageResource(R.drawable.edit_square_24dp_black); // Cambiar a ícono de editar
+                guardarDatos(); // Guardar al salir del modo edición
                 Toast.makeText(this, "Datos actualizados", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void guardarDatos() {
+        SharedPreferences preferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString("nombre", etNombre.getText().toString().trim());
+        editor.putString("apellido", etApellido.getText().toString().trim());
+        editor.putString("dni", etDni.getText().toString().trim());
+        editor.putString("telefono", etTelefono.getText().toString().trim());
+        editor.putString("direccion", etDireccion.getText().toString().trim());
+        editor.apply();
+    }
+
+    private void cargarDatos() {
+        SharedPreferences preferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        etNombre.setText(preferences.getString("nombre", ""));
+        etApellido.setText(preferences.getString("apellido", ""));
+        etCorreo.setText(preferences.getString("correo", "adrianbala@pucp.edu.pe")); // correo predeterminado
+        etDni.setText(preferences.getString("dni", ""));
+        etTelefono.setText(preferences.getString("telefono", ""));
+        etDireccion.setText(preferences.getString("direccion", ""));
+
+        // Campos desactivados al inicio
+        etNombre.setEnabled(false);
+        etApellido.setEnabled(false);
+        etCorreo.setEnabled(false);
+        etDni.setEnabled(false);
+        etTelefono.setEnabled(false);
+        etDireccion.setEnabled(false);
     }
 }

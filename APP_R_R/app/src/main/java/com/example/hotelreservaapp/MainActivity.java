@@ -5,6 +5,7 @@ import static android.Manifest.permission.POST_NOTIFICATIONS;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -18,6 +19,8 @@ import com.example.hotelreservaapp.cliente.HomeCliente;
 import com.example.hotelreservaapp.cliente.ListaHotelesCliente;
 import com.example.hotelreservaapp.loginAndRegister.InicioActivity;
 
+import com.example.hotelreservaapp.model.Notificacion;
+import com.example.hotelreservaapp.room.AppDatabase;
 import com.example.hotelreservaapp.taxista.TaxistaMain;
 import com.example.hotelreservaapp.taxista.fragments.TaxiInicioFragment;
 
@@ -45,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
         btnInicio = findViewById(R.id.btnInicio);
 
         createNotificationChannel();
+        insertarNotificacionesEstaticas();
 
         // Acciones por botón (por ahora sin abrir otra Activity)
         btnCliente.setOnClickListener(v -> {
@@ -90,6 +94,37 @@ public class MainActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(MainActivity.this,
                     new String[]{POST_NOTIFICATIONS},
                     101);
+        }
+    }
+
+    private void insertarNotificacionesEstaticas() {
+        SharedPreferences prefs = getSharedPreferences("notis_prefs", MODE_PRIVATE);
+        boolean yaInsertadas = prefs.getBoolean("notis_insertadas", false);
+
+        if (!yaInsertadas) {
+            AppDatabase db = AppDatabase.getInstance(this);
+            db.notificacionDao().insertar(new Notificacion(
+                    "Bienvenido SuperAdmin!",
+                    "Puedes revisar y gestionar las solicitudes de nuevos usuarios.",
+                    System.currentTimeMillis(),
+                    false
+            ));
+
+            db.notificacionDao().insertar(new Notificacion(
+                    "Revisión de reportes semanales",
+                    "Existen nuevos reportes para analizar esta semana.",
+                    System.currentTimeMillis(),
+                    false
+            ));
+
+            db.notificacionDao().insertar(new Notificacion(
+                    "Nuevas funciones",
+                    "Se han añadido nuevas funciones disponibles para el rol SuperAdmin.",
+                    System.currentTimeMillis(),
+                    false
+            ));
+
+            prefs.edit().putBoolean("notis_insertadas", true).apply(); // 👈 Marcar como insertado
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.example.hotelreservaapp.superadmin;
 
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.app.DatePickerDialog;
 import android.content.Intent;
@@ -14,11 +15,16 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 
 
 import com.example.hotelreservaapp.R;
 import com.example.hotelreservaapp.databinding.SuperadminRegistrarAdmHotelActivityBinding;
 import com.example.hotelreservaapp.databinding.SuperadminRegistrarTaxistaActivityBinding;
+import com.example.hotelreservaapp.model.Notificacion;
+import com.example.hotelreservaapp.room.AppDatabase;
 import com.google.android.material.datepicker.CalendarConstraints;
 import com.google.android.material.datepicker.DateValidatorPointBackward;
 import com.google.android.material.datepicker.MaterialDatePicker;
@@ -91,7 +97,26 @@ public class RegistrarAdmHotelActivity extends AppCompatActivity {
         binding.btnRegistrar.setOnClickListener(v ->{
                 // Validar campos
                 if (!validarFormulario()) return;
+            if (validarFormulario()) {
+                Notificacion nueva = new Notificacion("Nuevo admin de hotel registrado",
+                        "Se ha registrado correctamente un nuevo administrador de hotel.",
+                        System.currentTimeMillis(), false);
+                AppDatabase.getInstance(this).notificacionDao().insertar(nueva); //C guarda nueva en room
 
+                // Mostrar notificación visual también
+                NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "ChannelRideAndRest")
+                        .setSmallIcon(R.drawable.burbuja_ride_rest) // reemplaza con tu ícono real
+                        .setContentTitle(nueva.titulo)
+                        .setContentText(nueva.mensaje)
+                        .setPriority(NotificationCompat.PRIORITY_HIGH);
+
+                NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+
+                if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS)
+                        == PackageManager.PERMISSION_GRANTED) {
+                    notificationManager.notify(1, builder.build());
+                }
+            }
                 // Aquí iría lógica de registro (guardar en base de datos o backend)
                 Toast.makeText(this, "Formulario válido. Registrando...", Toast.LENGTH_SHORT).show();
                 finish();

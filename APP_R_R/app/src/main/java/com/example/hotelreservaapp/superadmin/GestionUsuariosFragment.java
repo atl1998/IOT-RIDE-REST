@@ -69,7 +69,7 @@ public class GestionUsuariosFragment extends Fragment {
         ImageView campana = binding.iconNotificaciones;  // o view.findViewById(...)
 
         campana.setOnClickListener(v -> {
-            Intent intent = new Intent(requireContext(), NotificacionesActivity.class);
+            Intent intent = new Intent(requireContext(), NotificacionesSAActivity.class);
             startActivity(intent);
         });
 

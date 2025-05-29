@@ -1,15 +1,22 @@
 package com.example.hotelreservaapp.superadmin;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +27,8 @@ import android.widget.Toast;
 import com.example.hotelreservaapp.R;
 import com.example.hotelreservaapp.adapter.LogsAdapter;
 import com.example.hotelreservaapp.databinding.SuperadminPerfilFragmentBinding;
+import com.example.hotelreservaapp.loginAndRegister.LoginActivity;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.datepicker.CalendarConstraints;
 import com.google.android.material.datepicker.DateValidatorPointBackward;
 import com.google.android.material.datepicker.MaterialDatePicker;
@@ -27,6 +36,9 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.materialswitch.MaterialSwitch;
 import com.google.android.material.textfield.TextInputEditText;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -40,6 +52,20 @@ public class PerfilFragment extends Fragment {
     public PerfilFragment() {
         // Constructor vacío requerido
     }
+
+    private static final int REQUEST_CAMERA = 1;
+    private ActivityResultLauncher<Intent> pickImageLauncher;
+    private Uri cameraImageUri;
+    private final ActivityResultLauncher<Intent> takePhotoLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == Activity.RESULT_OK) {
+                    File file = new File(requireContext().getFilesDir(), "foto_perfil.jpg");
+                    binding.ivProfileImage.setImageURI(null);
+                    binding.ivProfileImage.setImageURI(Uri.fromFile(file));
+                }
+            }
+    );
 
     @Nullable
     @Override
@@ -90,38 +116,107 @@ public class PerfilFragment extends Fragment {
             }
         });
 
-        //Modo Oscuro :D
+        // Mostrar imagen si ya está guardada
+        File file = new File(requireContext().getFilesDir(), "foto_perfil.jpg");
+        if (file.exists()) {
+            binding.ivProfileImage.setImageURI(Uri.fromFile(file));
+        }
 
-        //C busca en el layout el switch
-        MaterialSwitch switchModoOscuro = view.findViewById(R.id.switch_modo_oscuro);
-
-        // Obtener SharedPreferences a partir del archivo user_prefs
-        //MODE_PRIVATE: Solo la app puede leer los datos
-        SharedPreferences prefs = requireActivity().getSharedPreferences("user_prefs", Context.MODE_PRIVATE);
-        //Lee la preferencia modo_oscuro y le pone valor default false si no existía
-        boolean modoOscuroActivo = prefs.getBoolean("modo_oscuro", false);
-
-        // Establece que el switch este marcado si es que está activo el modo oscuro
-        switchModoOscuro.setChecked(modoOscuroActivo);
-
-        // Listener para cambios
-        switchModoOscuro.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            // Guardar preferencia
-            SharedPreferences.Editor editor = prefs.edit();
-            editor.putBoolean("modo_oscuro", isChecked);
-            editor.apply();
-
-            // Aplicar tema
-            //AppCompatDelegate cambia el modo de tema global de la app
-            if (isChecked) {
-                //FUERZA MODO OSCURO :D
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-            } else {
-                //Modo claro: POR DEFECTO
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        // Inicializar pickImageLauncher
+        pickImageLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+            if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
+                Uri imageUri = result.getData().getData();
+                guardarImagenEnArchivosInternos(imageUri);
             }
         });
+
+        // Inicializar botón para cambiar foto
+        binding.ivChangePhoto.setOnClickListener(v -> mostrarDialogoFoto());
+
+        binding.btnCerrarSesion.setOnClickListener(v -> {
+            SharedPreferences prefs = requireActivity().getSharedPreferences("user_prefs", Context.MODE_PRIVATE);
+            //requireActivity().finish();
+            SharedPreferences.Editor editor = prefs.edit();
+            //Borramos la sesión owo
+            editor.clear();
+            //C aplican los cambios
+            editor.apply();
+            //Toad
+            Toast.makeText(requireContext(), "Sesión cerrada correctamente", Toast.LENGTH_SHORT).show();
+            // Volver al login
+            Intent intent = new Intent(requireActivity(), LoginActivity.class);
+            //Evitamos que el usuario pueda volver dando atrás limpiando las actividades de la pila
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            requireActivity().finish();
+        });
+
+
+    }
+    private void mostrarDialogoFoto() {
+        View view = LayoutInflater.from(requireContext()).inflate(R.layout.superadmin_bottomsheet_foto, null);
+
+        final BottomSheetDialog dialog = new BottomSheetDialog(requireContext());
+        dialog.setContentView(view);
+
+        view.findViewById(R.id.opcionGaleria).setOnClickListener(v -> {
+            Intent intent = new Intent(Intent.ACTION_PICK);
+            intent.setType("image/*");
+            pickImageLauncher.launch(intent);
+            dialog.dismiss();
+        });
+
+        view.findViewById(R.id.opcionCamara).setOnClickListener(v -> {
+            File imageFile = new File(requireContext().getFilesDir(), "foto_perfil.jpg");
+            cameraImageUri = FileProvider.getUriForFile(requireContext(), requireContext().getPackageName() + ".provider", imageFile);
+            Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, cameraImageUri);
+            takePhotoLauncher.launch(cameraIntent);
+            dialog.dismiss();
+        });
+
+        dialog.show();
     }
 
+    private void guardarImagenEnArchivosInternos(Uri uri) {
+        try {
+            InputStream inputStream = requireContext().getContentResolver().openInputStream(uri);
+            File file = new File(requireContext().getFilesDir(), "foto_perfil.jpg");
+            FileOutputStream outputStream = new FileOutputStream(file);
 
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = inputStream.read(buffer)) > 0) {
+                outputStream.write(buffer, 0, length);
+            }
+
+            inputStream.close();
+            outputStream.close();
+
+            binding.ivProfileImage.setImageURI(null); // Forzar reinicialización
+            binding.ivProfileImage.setImageURI(Uri.fromFile(file));        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(requireContext(), "Error al guardar imagen", Toast.LENGTH_SHORT).show();
+        }
+    }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == REQUEST_CAMERA && resultCode == Activity.RESULT_OK) {
+            // Ya está guardada en cameraImageUri, solo mostrarla
+            File file = new File(requireContext().getFilesDir(), "foto_perfil.jpg");
+            binding.ivProfileImage.setImageURI(null);
+            binding.ivProfileImage.setImageURI(Uri.fromFile(file));        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        File file = new File(requireContext().getFilesDir(), "foto_perfil.jpg");
+        if (file.exists()) {
+            binding.ivProfileImage.setImageURI(null); // Forzar recarga
+            binding.ivProfileImage.setImageURI(Uri.fromFile(file));
+        }
+    }
 }

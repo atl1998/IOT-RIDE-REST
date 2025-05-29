@@ -14,6 +14,16 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.HotelReservaApp"
         tools:targetApi="31">
+        <!-- Intermediario pa prender la cámara owo -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/paths" />
+        </provider>
         <activity
             android:name=".AdminHotel.RegistroHotelActivity"
             android:exported="false" />
@@ -90,6 +100,9 @@
             android:exported="false" />
         <activity
             android:name=".superadmin.RegistrarClienteActivity"
+            android:exported="false" />
+        <activity
+            android:name=".superadmin.NotificacionesSAActivity"
             android:exported="false" />
         <activity
             android:name=".cliente.ProcesarPago"
