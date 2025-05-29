@@ -7,6 +7,7 @@ import android.app.NotificationManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -80,6 +81,8 @@ public class MainActivity extends AppCompatActivity {
                     "RideAndRest",
                     NotificationManager.IMPORTANCE_HIGH);
             channel.setDescription("Canal para notificaciones con prioridad high");
+            channel.setShowBadge(true);
+
             NotificationManager notificationManager = getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(channel);
             askPermission();

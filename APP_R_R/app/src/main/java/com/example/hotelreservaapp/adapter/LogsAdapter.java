@@ -43,6 +43,9 @@ public class LogsAdapter extends RecyclerView.Adapter<LogsAdapter.LogViewHolder>
     public int getItemCount() {
         return listaLogs.size();
     }
+    public List<LogItem> getListaActual() {
+        return listaLogs; // o la lista que estás usando internamente
+    }
 
     public void actualizarLista(List<LogItem> nuevaLista) {
         this.listaLogs = nuevaLista;

@@ -1,6 +1,8 @@
 package com.example.hotelreservaapp.superadmin;
 
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.app.DatePickerDialog;
 import android.content.Intent;
@@ -103,9 +105,11 @@ public class RegistrarAdmHotelActivity extends AppCompatActivity {
                         System.currentTimeMillis(), false);
                 AppDatabase.getInstance(this).notificacionDao().insertar(nueva); //C guarda nueva en room
 
+
+
                 // Mostrar notificación visual también
                 NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "ChannelRideAndRest")
-                        .setSmallIcon(R.drawable.burbuja_ride_rest) // reemplaza con tu ícono real
+                        .setSmallIcon(R.drawable.icon_notification)
                         .setContentTitle(nueva.titulo)
                         .setContentText(nueva.mensaje)
                         .setPriority(NotificationCompat.PRIORITY_HIGH);

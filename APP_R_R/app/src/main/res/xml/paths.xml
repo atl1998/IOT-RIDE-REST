@@ -2,4 +2,6 @@
 <paths xmlns:android="http://schemas.android.com/apk/res/android">
     <!-- Permitir acceso al directorio interno de archivos -->
     <files-path name="internal_files" path="." />
+    <!-- Permitir acceso al directorio externo de archivos :D (Usado para el pdf de logs) -->
+    <external-files-path name="external_files" path="." />
 </paths>
