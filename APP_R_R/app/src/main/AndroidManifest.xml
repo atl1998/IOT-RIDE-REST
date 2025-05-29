@@ -15,6 +15,9 @@
         android:theme="@style/Theme.HotelReservaApp"
         tools:targetApi="31">
         <activity
+            android:name=".AdminHotel.RegistroHotelActivity"
+            android:exported="false" />
+        <activity
             android:name=".NotificacionDetalles"
             android:exported="false" />
         <activity
