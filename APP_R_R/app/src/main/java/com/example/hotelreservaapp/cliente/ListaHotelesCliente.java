@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RadioGroup;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AlertDialog;
@@ -32,6 +33,27 @@ public class ListaHotelesCliente extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.cliente_activity_lista_hoteles); // tu layout principal
+
+        // Obtener extras enviados desde HomeCliente
+        Intent intent = getIntent();
+        String destino = intent.getStringExtra("destino");
+        long fechaInicioMillis = intent.getLongExtra("fechaInicio", -1);
+        long fechaFinMillis = intent.getLongExtra("fechaFin", -1);
+        int adultos = intent.getIntExtra("adultos", 0);
+        int ninos = intent.getIntExtra("ninos", 0);
+
+        String fechas = (fechaInicioMillis != -1 && fechaFinMillis != -1) ?
+                "Del " + android.text.format.DateFormat.format("dd/MM/yyyy", fechaInicioMillis) +
+                        " al " + android.text.format.DateFormat.format("dd/MM/yyyy", fechaFinMillis)
+                : "Fechas no seleccionadas";
+
+        String visitantes = adultos + " adultos, " + ninos + " niños";
+
+        // Mostrar los datos recibidos
+        Toast.makeText(this, "Buscando: " + destino + "\nFechas: " + fechas + "\nVisitantes: " + visitantes,
+                Toast.LENGTH_LONG).show();
+
+
 
         recyclerView = findViewById(R.id.recyclerView); // asegúrate que exista en tu XML
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
