@@ -4,6 +4,7 @@ import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import androidx.core.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -23,13 +24,19 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.hotelreservaapp.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.datepicker.CalendarConstraints;
+import com.google.android.material.datepicker.DateValidatorPointForward;
+import com.google.android.material.datepicker.MaterialDatePicker;
+import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.TimeZone;
 
 public class HomeCliente extends AppCompatActivity {
     MaterialButton btnBusqueda;
@@ -74,7 +81,7 @@ public class HomeCliente extends AppCompatActivity {
         etCantidad = findViewById(R.id.etCantidad);
         btnBuscar = findViewById(R.id.btnBuscar);
 
-        setupDateRangeSelection();
+        etFecha.setOnClickListener(view -> showDateRangePicker());
         setupVisitorsSelection();
 
         // Cargar búsqueda previa
@@ -120,6 +127,44 @@ public class HomeCliente extends AppCompatActivity {
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, destinos);
         etDestino.setAdapter(adapter);
     }
+
+    private void showDateRangePicker() {
+        // Obtener la fecha mínima permitida (hoy)
+        Calendar calendar = Calendar.getInstance();
+        long hoy = calendar.getTimeInMillis();
+
+        // Crear restricciones
+        CalendarConstraints.Builder constraintsBuilder = new CalendarConstraints.Builder()
+                .setStart(hoy) // Fecha mínima: hoy
+                .setValidator(DateValidatorPointForward.now()); // Solo fechas desde hoy
+
+        // Crear el picker con restricciones
+        MaterialDatePicker.Builder<Pair<Long, Long>> builder = MaterialDatePicker.Builder.dateRangePicker();
+        builder.setTitleText("Selecciona un rango de fechas");
+        builder.setCalendarConstraints(constraintsBuilder.build()); // Aplicar restricciones
+
+        MaterialDatePicker<Pair<Long, Long>> picker = builder.build();
+        picker.show(getSupportFragmentManager(), picker.toString());
+
+        picker.addOnPositiveButtonClickListener(selection -> {
+            Long startDate = selection.first;
+            Long endDate = selection.second;
+
+            // Guardar en tus Calendars
+            calendarInicio.setTimeInMillis(startDate);
+            calendarFin.setTimeInMillis(endDate);
+
+            // Formatear para mostrar
+            SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+            formatter.setTimeZone(TimeZone.getTimeZone("America/Lima"));
+
+            String fechaInicioStr = formatter.format(new Date(startDate));
+            String fechaFinStr = formatter.format(new Date(endDate));
+
+            etFecha.setText(fechaInicioStr + " - " + fechaFinStr);
+        });
+    }
+
 
     private void setupDateRangeSelection() {
         etFecha.setOnClickListener(v -> {
