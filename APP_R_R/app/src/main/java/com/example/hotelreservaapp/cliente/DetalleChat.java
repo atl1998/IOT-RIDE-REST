@@ -19,12 +19,22 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
+
+import android.content.Context;
+import android.content.SharedPreferences;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+
 public class DetalleChat extends AppCompatActivity {
 
     private MaterialButton btnVolver;
     private EditText messageEditText;
     private FloatingActionButton sendButton;
     private LinearLayout messagesContainer;
+
+    private static final String PREF_NAME = "chat_prefs";
+    private static final String KEY_MESSAGES = "mensajes_chat";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,21 +46,23 @@ public class DetalleChat extends AppCompatActivity {
         sendButton = findViewById(R.id.sendButton);
         messagesContainer = findViewById(R.id.messagesContainer);
 
-        btnVolver.setOnClickListener(v -> {
-            startActivity(new Intent(this, ClienteChat.class));
-        });
+        btnVolver.setOnClickListener(v -> startActivity(new Intent(this, ClienteChat.class)));
 
         sendButton.setOnClickListener(v -> {
             String message = messageEditText.getText().toString().trim();
             if (!message.isEmpty()) {
                 addSentMessage(message);
+                saveMessageToLocalStorage(message);
                 messageEditText.setText(""); // limpiar campo
             }
         });
+
+        loadMessagesFromLocalStorage(); // 🔄 cargar al iniciar
     }
 
     private void addSentMessage(String message) {
-        View sentMessageView = LayoutInflater.from(this).inflate(R.layout.item_cliente_message_sent, messagesContainer, false);
+        View sentMessageView = LayoutInflater.from(this)
+                .inflate(R.layout.item_cliente_message_sent, messagesContainer, false);
 
         TextView messageText = sentMessageView.findViewById(R.id.text_message);
         TextView messageTime = sentMessageView.findViewById(R.id.text_time);
@@ -65,5 +77,33 @@ public class DetalleChat extends AppCompatActivity {
         SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a", Locale.getDefault());
         sdf.setTimeZone(TimeZone.getTimeZone("America/Lima"));
         return sdf.format(new Date());
+    }
+
+    private void saveMessageToLocalStorage(String message) {
+        SharedPreferences prefs = getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        String oldMessages = prefs.getString(KEY_MESSAGES, "[]");
+
+        try {
+            JSONArray jsonArray = new JSONArray(oldMessages);
+            jsonArray.put(message); // Agregar nuevo mensaje
+            prefs.edit().putString(KEY_MESSAGES, jsonArray.toString()).apply();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void loadMessagesFromLocalStorage() {
+        SharedPreferences prefs = getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        String savedMessages = prefs.getString(KEY_MESSAGES, "[]");
+
+        try {
+            JSONArray jsonArray = new JSONArray(savedMessages);
+            for (int i = 0; i < jsonArray.length(); i++) {
+                String mensaje = jsonArray.getString(i);
+                addSentMessage(mensaje);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 }
