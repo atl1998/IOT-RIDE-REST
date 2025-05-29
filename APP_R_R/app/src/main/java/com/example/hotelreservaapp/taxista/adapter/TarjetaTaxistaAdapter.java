@@ -14,8 +14,8 @@ import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.hotelreservaapp.R;
-import com.example.hotelreservaapp.taxista.DetallesViajeActivity;
 import com.example.hotelreservaapp.taxista.MapaActividad;
+import com.example.hotelreservaapp.taxista.DetallesViajeActivity;
 import com.example.hotelreservaapp.taxista.model.TarjetaModel;
 
 import java.util.ArrayList;
@@ -24,11 +24,18 @@ import java.util.List;
 
 public class TarjetaTaxistaAdapter extends RecyclerView.Adapter<TarjetaTaxistaAdapter.ViewHolder> {
 
+    public interface OnNotificacionListener {
+        void onViajeAceptado(TarjetaModel tarjeta);
+        void onViajeCancelado(TarjetaModel tarjeta);
+    }
+
     public static List<TarjetaModel> listaCompartida = new ArrayList<>();
     private Context context;
+    private OnNotificacionListener notificacionListener;
 
-    public TarjetaTaxistaAdapter(List<TarjetaModel> todas, Context context) {
+    public TarjetaTaxistaAdapter(List<TarjetaModel> todas, Context context, OnNotificacionListener listener) {
         this.context = context;
+        this.notificacionListener = listener;
         listaCompartida = ordenarPorPrioridad(todas);
     }
 
@@ -106,6 +113,10 @@ public class TarjetaTaxistaAdapter extends RecyclerView.Adapter<TarjetaTaxistaAd
                 listaCompartida = ordenarPorPrioridad(listaCompartida);
                 notifyDataSetChanged();
 
+                if (notificacionListener != null) {
+                    notificacionListener.onViajeAceptado(item);
+                }
+
                 Intent intent = new Intent(context, MapaActividad.class);
                 intent.putExtra("nombre", item.getNombreUsuario());
                 intent.putExtra("telefono", item.getTelefono());
@@ -117,6 +128,10 @@ public class TarjetaTaxistaAdapter extends RecyclerView.Adapter<TarjetaTaxistaAd
             item.setEstado("Cancelado");
             listaCompartida.remove(position);
             notifyDataSetChanged();
+
+            if (notificacionListener != null) {
+                notificacionListener.onViajeCancelado(item);
+            }
         });
 
         holder.btnVerMapa.setOnClickListener(v -> {
@@ -151,7 +166,7 @@ public class TarjetaTaxistaAdapter extends RecyclerView.Adapter<TarjetaTaxistaAd
         TextView nombreUsuario, fecha, hora, ubicacion, estado;
         Button btnAceptar, btnCancelar;
         View btnVerMapa;
-        CardView cardView;
+        androidx.cardview.widget.CardView cardView;
 
         public ViewHolder(View itemView) {
             super(itemView);
