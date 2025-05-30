@@ -47,10 +47,8 @@ public class Registro3Habitaciones_fragment extends Fragment {
         // Inflate the layout for this fragment
         binding = AdminhotelRegsitro3FragmentBinding.inflate(inflater, container, false);
         registroViewModel = new ViewModelProvider(requireActivity()).get(RegistroViewModel.class);
-        if(registroViewModel.getListHabitaciones().getValue() == null || registroViewModel.getListHabitaciones().getValue().isEmpty()) {
-            registroViewModel.setNuevaListaHabitaciones(cargarData());
-        }
-        listaHabitaciones = registroViewModel.getListHabitaciones().getValue();
+
+        listaHabitaciones = new ArrayList<>(); // inicial vac
 
         // Configurar el RecyclerView
         rvHabitaciones = binding.listaHabitaciones;
@@ -69,6 +67,20 @@ public class Registro3Habitaciones_fragment extends Fragment {
             }
         });
         rvHabitaciones.setAdapter(adapter);
+
+        // Observa LiveData para actualizar lista y adaptador
+        registroViewModel.getListHabitaciones().observe(getViewLifecycleOwner(), habitaciones -> {
+            if (habitaciones != null) {
+                listaHabitaciones.clear();
+                listaHabitaciones.addAll(habitaciones);
+                adapter.notifyDataSetChanged();
+            }
+        });
+
+        // Si está vacío, carga datos iniciales (solo una vez)
+        if (registroViewModel.getListHabitaciones().getValue() == null || registroViewModel.getListHabitaciones().getValue().isEmpty()) {
+            registroViewModel.setNuevaListaHabitaciones(cargarData());
+        }
 
         //logica para pasar a otro fragmento
         btnContinuar3 = binding.btnContinuar3;
@@ -107,42 +119,7 @@ public class Registro3Habitaciones_fragment extends Fragment {
                 "adminhotel_habitacion1.jpg"
         ));
 
-        listaHa.add(new Habitaciones(
-                "Habitacion deluxe cama extragrande",
-                "- Precio para 2 adultos\n- 1 cama doble extra grande\n- Turneño 30 m2\n- WiFi de alto velocidad\n- Desayuno incluido",
-                2,
-                417.00,
-                "Extra grande",
-                30,
-                "adminhotel_habitacion3.jpg"
-        ));
-        listaHa.add(new Habitaciones(
-                "Habitacion deluxe cama extragrande",
-                "- Precio para 2 adultos\n- 1 cama doble extra grande\n- Turneño 30 m2\n- WiFi de alto velocidad\n- Desayuno incluido",
-                2,
-                417.00,
-                "Extra grande",
-                30,
-                "adminhotel_habitacion3.jpg"
-        ));
-        listaHa.add(new Habitaciones(
-                "Habitacion deluxe cama extragrande",
-                "- Precio para 2 adultos\n- 1 cama doble extra grande\n- Turneño 30 m2\n- WiFi de alto velocidad\n- Desayuno incluido",
-                2,
-                417.00,
-                "Extra grande",
-                30,
-                "adminhotel_habitacion3.jpg"
-        ));
-        listaHa.add(new Habitaciones(
-                "Habitacion deluxe cama extragrande",
-                "- Precio para 2 adultos\n- 1 cama doble extra grande\n- Turneño 30 m2\n- WiFi de alto velocidad\n- Desayuno incluido",
-                2,
-                417.00,
-                "Extra grande",
-                30,
-                "adminhotel_habitacion3.jpg"
-        ));
+
         return listaHa;
     }
 

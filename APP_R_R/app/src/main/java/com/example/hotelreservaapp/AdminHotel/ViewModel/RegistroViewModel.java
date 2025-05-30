@@ -20,11 +20,12 @@ public class RegistroViewModel extends ViewModel {
 
     // Método para agregar un usuario a la lista
     public void agregarHabitacion(Habitaciones habitacion) {
-        List<Habitaciones> listaActual = listaHabitaciones.getValue();
-        if (listaActual != null) {
-            listaActual.add(habitacion);
-            listaHabitaciones.setValue(listaActual); // Actualiza el LiveData para notificar cambios
+        List<Habitaciones> currentList = listaHabitaciones.getValue();
+        if(currentList == null) {
+            currentList = new ArrayList<>();
         }
+        currentList.add(habitacion);
+        listaHabitaciones.setValue(currentList);
     }
 
     // Método para reemplazar toda la lista
