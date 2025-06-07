@@ -21,13 +21,17 @@ public class Habitaciones {
     }
 
     public Habitaciones(String titulo, String detalles, int disponibles, double precio, String tipoCama, int tamano, String url) {
-        this.titulo = titulo;
-        this.detalles = detalles;
-        this.disponibles = disponibles;
-        this.precio = precio;
-        this.tipoCama = tipoCama;
-        this.tamano = tamano;
+        this.setTitulo(titulo);
+        this.setDetalles(detalles);
+        this.setDisponibles(disponibles);
+        this.setPrecio(precio);
+        this.setTipoCama(tipoCama);
+        this.setTamano(tamano);
         this.setUrl(url);
+    }
+
+    public Habitaciones() {
+
     }
 
     // Getters
@@ -44,5 +48,29 @@ public class Habitaciones {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public void setTitulo(String titulo) {
+        this.titulo = titulo;
+    }
+
+    public void setDetalles(String detalles) {
+        this.detalles = detalles;
+    }
+
+    public void setDisponibles(int disponibles) {
+        this.disponibles = disponibles;
+    }
+
+    public void setPrecio(double precio) {
+        this.precio = precio;
+    }
+
+    public void setTipoCama(String tipoCama) {
+        this.tipoCama = tipoCama;
+    }
+
+    public void setTamano(int tamano) {
+        this.tamano = tamano;
     }
 }

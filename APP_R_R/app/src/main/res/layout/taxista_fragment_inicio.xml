@@ -3,20 +3,21 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="#FFFFFF"
     android:id="@+id/taxi_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#FFFFFF"
     tools:context=".taxista.fragments.TaxiInicioFragment">
 
     <!-- Encabezado amarillo -->
     <LinearLayout
         android:id="@+id/headerLayout"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:background="@color/dorado"
+        android:background="@color/amarillo_dorado"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -26,7 +27,7 @@
 
             <TextView
                 android:id="@+id/titulo"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="Ride &amp; Rest"
                 android:textColor="#282828"
@@ -36,7 +37,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"/>
+                app:layout_constraintBottom_toBottomOf="parent" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/buscar"
@@ -47,31 +48,49 @@
                 app:iconTint="@color/marron_oscuro"
                 app:iconGravity="textStart"
                 app:iconPadding="0dp"
-                android:padding="15dp"
                 android:minWidth="0dp"
                 android:minHeight="0dp"
                 android:contentDescription="Abrir chat de soporte"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/notificaciones_cliente"
                 app:layout_constraintBottom_toBottomOf="parent"
-                android:layout_marginEnd="4dp"/>
+                app:layout_constraintEnd_toStartOf="@+id/btnNotificacionesContainer"
+                android:layout_marginEnd="4dp" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/notificaciones_cliente"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:backgroundTint="@color/transparente"
-                app:icon="@drawable/notifications_24dp_e3e3e3_fill0_wght400_grad0_opsz24"
-                app:iconTint="@color/marron_oscuro"
-                app:iconGravity="textStart"
-                app:iconPadding="0dp"
-                android:padding="15dp"
-                android:minWidth="0dp"
-                android:minHeight="0dp"
-                android:contentDescription="Ver notificaciones nuevas"
+            <FrameLayout
+                android:id="@+id/btnNotificacionesContainer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"/>
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/notificaciones_cliente"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:backgroundTint="@color/transparente"
+                    app:icon="@drawable/notifications_24dp_e3e3e3_fill0_wght400_grad0_opsz24"
+                    app:iconTint="@color/marron_oscuro"
+                    app:iconGravity="textStart"
+                    app:iconPadding="0dp"
+                    android:minWidth="0dp"
+                    android:minHeight="0dp"
+                    android:contentDescription="Ver notificaciones nuevas" />
+
+                <TextView
+                    android:id="@+id/badgeNotificaciones"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_gravity="end|top"
+                    android:background="@drawable/circle_background"
+                    android:textColor="#000000"
+                    android:textSize="10sp"
+                    android:gravity="center"
+                    android:visibility="gone"
+                    android:text="0"
+                    android:fontFamily="sans-serif-medium" />
+            </FrameLayout>
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <HorizontalScrollView
@@ -79,7 +98,7 @@
             android:layout_height="wrap_content"
             android:overScrollMode="never"
             android:scrollbars="none"
-            android:background="@color/dorado"
+            android:background="@color/amarillo_dorado"
             android:paddingTop="8dp"
             android:paddingBottom="8dp">
 
@@ -106,7 +125,7 @@
                     app:strokeColor="@color/marron_oscuro"
                     app:strokeWidth="1dp"
                     app:cornerRadius="30dp"
-                    android:layout_marginEnd="8dp"/>
+                    android:layout_marginEnd="8dp" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnHistorial"
@@ -128,7 +147,7 @@
     </LinearLayout>
 
     <View
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="1dp"
         android:background="#000000"
         app:layout_constraintTop_toBottomOf="@id/headerLayout"

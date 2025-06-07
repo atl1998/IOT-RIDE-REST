@@ -38,7 +38,14 @@ public class QrLecturaActivity extends AppCompatActivity {
 
         btnVolverInicio.setOnClickListener(v -> {
             dialog.dismiss();
-            volverAlInicio();
+
+            // Prepara Intent con extra para indicar viaje concluido
+            Intent intent = new Intent(this, TaxistaMain.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            intent.putExtra("notificacion_viaje_concluido", true);
+            intent.putExtra("nombre_usuario", "Nombre Cliente");   // reemplaza con real si tienes
+            intent.putExtra("ubicacion", "Ubicación Destino");     // reemplaza con real si tienes
+            startActivity(intent);
         });
 
         dialog.setCancelable(false);
@@ -50,4 +57,5 @@ public class QrLecturaActivity extends AppCompatActivity {
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
     }
+
 }
