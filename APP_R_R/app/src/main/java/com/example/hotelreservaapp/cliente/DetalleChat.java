@@ -71,6 +71,7 @@ public class DetalleChat extends AppCompatActivity {
         messageTime.setText(obtenerHoraActual());
 
         messagesContainer.addView(sentMessageView);
+        scrollToBottom();
     }
 
     private String obtenerHoraActual() {
@@ -105,5 +106,9 @@ public class DetalleChat extends AppCompatActivity {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+    private void scrollToBottom() {
+        final View scrollView = findViewById(R.id.scrollView); // Asegúrate de que este ID sea correcto
+        scrollView.post(() -> scrollView.scrollTo(0, messagesContainer.getBottom()));
     }
 }
