@@ -13,9 +13,11 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.hotelreservaapp.Objetos.NotificacionesStorageHelper;
 import com.example.hotelreservaapp.R;
+import com.example.hotelreservaapp.loginAndRegister.LoginActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class PerfilCliente extends AppCompatActivity {
     private MaterialButton btnNotificaciones;
@@ -66,13 +68,13 @@ public class PerfilCliente extends AppCompatActivity {
 
         // Cerrar sesión
         btn_cerrar_sesion.setOnClickListener(v -> {
-            helper.borrarArchivoNotificaciones(this);
-            SharedPreferences sharedPreferences = getSharedPreferences("ReservaPrefs", MODE_PRIVATE);
-            SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.remove("horaLlegada");
-            editor.remove("SolicitarCheckout");
-            editor.remove("ServicioTaxi");
-            editor.apply();
+            FirebaseAuth.getInstance().signOut(); // 🔐 Cierra sesión
+            Toast.makeText(PerfilCliente.this, "Sesión cerrada", Toast.LENGTH_SHORT).show();
+
+            //  Redirige a LoginActivity
+            Intent intent = new Intent(PerfilCliente.this, LoginActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
         });
 
         // Notificaciones

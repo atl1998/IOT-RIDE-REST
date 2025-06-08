@@ -20,10 +20,15 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.hotelreservaapp.R;
+import com.example.hotelreservaapp.model.Usuario;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Calendar;
+import java.util.UUID;
 
 public class RegistroActivity extends AppCompatActivity {
 
@@ -38,11 +43,19 @@ public class RegistroActivity extends AppCompatActivity {
     ImageView imgSeleccionada;
     MaterialButton btnCamara, btnRegistrarFinal;
 
+    //Firebase
+    private FirebaseAuth mAuth;
+    private FirebaseFirestore firestore;
+    //temp
+    String nombres, apellidos, tipoDocumento, documento, fechaNacimiento, correo, telefono, direccion, contrasena;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         cargarVistaFormulario();
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+        mAuth = FirebaseAuth.getInstance();
+        firestore = FirebaseFirestore.getInstance();
     }
 
     private void cargarVistaFormulario() {
@@ -103,6 +116,17 @@ public class RegistroActivity extends AppCompatActivity {
 
         btnContinuar.setOnClickListener(v -> {
             if (formularioEsValido()) {
+                // Guardar temporalmente los datos
+                nombres = etNombres.getText().toString().trim();
+                apellidos = etApellidos.getText().toString().trim();
+                tipoDocumento = spinnerDocumento.getSelectedItem().toString();
+                documento = etDocumento.getText().toString().trim();
+                fechaNacimiento = etFechaNacimiento.getText().toString().trim();
+                correo = etCorreo.getText().toString().trim();
+                telefono = etTelefono.getText().toString().trim();
+                direccion = etDomicilio.getText().toString().trim();
+                contrasena = etContrasena.getText().toString().trim();
+
                 cargarVistaSubirFoto();
             } else {
                 mostrarErroresFormulario();
@@ -123,7 +147,33 @@ public class RegistroActivity extends AppCompatActivity {
         btnCamara.setOnClickListener(v ->
                 Toast.makeText(this, "Abrir cámara (a implementar)", Toast.LENGTH_SHORT).show());
 
-        btnRegistrarFinal.setOnClickListener(v -> mostrarDialogoRegistroExitoso());
+        btnRegistrarFinal.setOnClickListener(v -> {
+            mAuth.createUserWithEmailAndPassword(correo, contrasena)
+                    .addOnSuccessListener(authResult -> {
+                        FirebaseUser firebaseUser = mAuth.getCurrentUser();
+                        if (firebaseUser != null) {
+                            Usuario usuario = new Usuario(
+                                    nombres,
+                                    apellidos,
+                                    "cliente", // rol por defecto
+                                    tipoDocumento,
+                                    documento,
+                                    fechaNacimiento,
+                                    correo,
+                                    telefono,
+                                    direccion,
+                                    "" // urlFotoPerfil se agregará luego
+                            );
+
+                            firestore.collection("usuarios")
+                                    .document(firebaseUser.getUid())
+                                    .set(usuario)
+                                    .addOnSuccessListener(unused -> mostrarDialogoRegistroExitoso())
+                                    .addOnFailureListener(e -> Toast.makeText(this, "Error al guardar usuario", Toast.LENGTH_SHORT).show());
+                        }
+                    })
+                    .addOnFailureListener(e -> Toast.makeText(this, "Error en el registro: " + e.getMessage(), Toast.LENGTH_LONG).show());
+        });
     }
 
     private void mostrarDialogoRegistroExitoso() {
