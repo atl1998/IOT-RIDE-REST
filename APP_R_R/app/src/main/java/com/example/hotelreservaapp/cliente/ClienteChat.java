@@ -28,8 +28,9 @@ public class ClienteChat extends AppCompatActivity {
     private List<Chat> mensajeList;
     private List<Chat> mensajeListFull; // Para guardar una copia de la lista completa
 
-
     private MaterialButton btnNotificaciones;
+
+    BottomNavigationView bottomNav;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,23 +38,8 @@ public class ClienteChat extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_cliente_chat);
 
-        BottomNavigationView bottomNav = findViewById(R.id.bottonNavigationView);
-        bottomNav.setSelectedItemId(R.id.chat_cliente);
-        bottomNav.setOnItemSelectedListener(item -> {
-            int id = item.getItemId();
-
-            if (id == R.id.inicioCliente) {
-                startActivity(new Intent(this, HomeCliente.class));
-            } else if (id == R.id.chat_cliente) {
-                startActivity(new Intent(this, ClienteChat.class));
-            } else if (id == R.id.historialCliente) {
-                startActivity(new Intent(this, HistorialEventos.class));
-            } else if (id == R.id.perfilCliente) {
-                startActivity(new Intent(this, PerfilCliente.class));
-            }
-
-            return true;
-        });
+        bottomNav = findViewById(R.id.bottonNavigationView);
+        configurarBottomNav();
 
         // Configurar RecyclerView
         recyclerView = findViewById(R.id.recyclerViewChat);
@@ -121,6 +107,29 @@ public class ClienteChat extends AppCompatActivity {
             startActivity(intent);
         });
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        bottomNav.setSelectedItemId(R.id.chat_cliente);
+    }
+    private void configurarBottomNav() {
+        bottomNav.setOnItemSelectedListener(item -> {
+            int id = item.getItemId();
+            if (id == R.id.chat_cliente) {
+                return true; // Ya estás en esta pantalla
+            } else if (id == R.id.inicioCliente) {
+                startActivity(new Intent(this, HomeCliente.class));
+            } else if (id == R.id.historialCliente) {
+                startActivity(new Intent(this, HistorialEventos.class));
+            } else if (id == R.id.perfilCliente) {
+                startActivity(new Intent(this, PerfilCliente.class));
+            }
+            return true;
+        });
+    }
+
+
     // Método para filtrar los mensajes por nombre del hotel
     private void filterMessages(String query) {
         List<Chat> filteredList = new ArrayList<>();

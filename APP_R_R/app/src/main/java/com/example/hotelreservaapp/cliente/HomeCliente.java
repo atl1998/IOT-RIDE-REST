@@ -40,6 +40,8 @@ import java.util.TimeZone;
 
 public class HomeCliente extends AppCompatActivity {
     MaterialButton btnBusqueda;
+
+    BottomNavigationView bottomNav;
     private EditText etFecha, etCantidad;
     private MaterialButton btnBuscar;
     private Calendar calendarInicio = Calendar.getInstance();
@@ -60,21 +62,8 @@ public class HomeCliente extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.cliente_activity_home);
 
-        BottomNavigationView bottomNav = findViewById(R.id.bottonNavigationView);
-        bottomNav.setSelectedItemId(R.id.inicioCliente);
-        bottomNav.setOnItemSelectedListener(item -> {
-            int id = item.getItemId();
-            if (id == R.id.inicioCliente) {
-                startActivity(new Intent(this, HomeCliente.class));
-            } else if (id == R.id.chat_cliente) {
-                startActivity(new Intent(this, ClienteChat.class));
-            } else if (id == R.id.historialCliente) {
-                startActivity(new Intent(this, HistorialEventos.class));
-            } else if (id == R.id.perfilCliente) {
-                startActivity(new Intent(this, PerfilCliente.class));
-            }
-            return true;
-        });
+        bottomNav = findViewById(R.id.bottonNavigationView);
+        configurarBottomNav();
 
         etDestino = findViewById(R.id.etDestino);
         etFecha = findViewById(R.id.etFecha);
@@ -126,6 +115,27 @@ public class HomeCliente extends AppCompatActivity {
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, destinos);
         etDestino.setAdapter(adapter);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        bottomNav.setSelectedItemId(R.id.inicioCliente);
+    }
+    private void configurarBottomNav() {
+        bottomNav.setOnItemSelectedListener(item -> {
+            int id = item.getItemId();
+            if (id == R.id.inicioCliente) {
+                return true; // Ya estás en esta pantalla
+            } else if (id == R.id.chat_cliente) {
+                startActivity(new Intent(this, ClienteChat.class));
+            } else if (id == R.id.historialCliente) {
+                startActivity(new Intent(this, HistorialEventos.class));
+            } else if (id == R.id.perfilCliente) {
+                startActivity(new Intent(this, PerfilCliente.class));
+            }
+            return true;
+        });
     }
 
     private void showDateRangePicker() {

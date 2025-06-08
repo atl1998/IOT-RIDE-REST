@@ -43,6 +43,8 @@ import com.google.android.material.button.MaterialButton;
 import java.util.concurrent.TimeUnit;
 
 public class HistorialEventos extends AppCompatActivity {
+
+    BottomNavigationView bottomNav;
     String channelId = "ChannelRideAndRest"; // En cualquier otra Activity
     private boolean solicitarCheckout = false;
 
@@ -56,31 +58,9 @@ public class HistorialEventos extends AppCompatActivity {
 
         EdgeToEdge.enable(this);
         setContentView(R.layout.cliente_activity_historial_eventos);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
 
-        BottomNavigationView bottomNavigationView = findViewById(R.id.bottonNavigationView);
-        bottomNavigationView.setSelectedItemId(R.id.historialCliente); // Para que aparezca q esta seleccionado ese
-        bottomNavigationView.setOnItemSelectedListener(item -> {
-            int id = item.getItemId();
-            if (id == R.id.inicioCliente) {
-                startActivity(new Intent(this, HomeCliente.class));
-                return true;
-            } else if (id == R.id.chat_cliente) {
-                startActivity(new Intent(this, ClienteChat.class));
-                return true;
-            } else if (id == R.id.historialCliente) {
-                // startActivity(new Intent(this, HistorialEventos.class));
-                return true;
-            } else if (id == R.id.perfilCliente) {
-                startActivity(new Intent(this, PerfilCliente.class));
-                return true;
-            }
-            return false;
-        });
+        bottomNav = findViewById(R.id.bottonNavigationView);
+        configurarBottomNav();
 
         // Recuperar la hora guardada de SharedPreferences
         SharedPreferences sharedPreferences = getSharedPreferences("ReservaPrefs", MODE_PRIVATE);
@@ -145,6 +125,27 @@ public class HistorialEventos extends AppCompatActivity {
                 startActivity(intent);
             });
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        bottomNav.setSelectedItemId(R.id.historialCliente);
+    }
+    private void configurarBottomNav() {
+        bottomNav.setOnItemSelectedListener(item -> {
+            int id = item.getItemId();
+            if (id == R.id.historialCliente) {
+                return true; // Ya estás en esta pantalla
+            } else if (id == R.id.chat_cliente) {
+                startActivity(new Intent(this, ClienteChat.class));
+            } else if (id == R.id.historialCliente) {
+                startActivity(new Intent(this, HistorialEventos.class));
+            } else if (id == R.id.perfilCliente) {
+                startActivity(new Intent(this, PerfilCliente.class));
+            }
+            return true;
+        });
     }
 
     private void mostrarDialogoCheckout() {
