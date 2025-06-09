@@ -12,6 +12,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -37,19 +38,40 @@ import com.example.hotelreservaapp.Objetos.NotificacionesStorageHelper;
 import com.example.hotelreservaapp.Objetos.NotificationManagerNoAPP;
 import com.example.hotelreservaapp.R;
 import com.example.hotelreservaapp.workers.NotificacionCheckoutWorker;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.button.MaterialButton;
+import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-public class HistorialEventos extends AppCompatActivity {
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+
+public class HistorialEventos extends AppCompatActivity implements HistorialItemListener{
 
     BottomNavigationView bottomNav;
     String channelId = "ChannelRideAndRest"; // En cualquier otra Activity
     private boolean solicitarCheckout = false;
+    private HistorialAdapter adapter;
 
-    private Button btnCheckout, btnTaxista;
     private String Tipo;
+    private RecyclerView recyclerView;
+    private List<HistorialItem> historialItems;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,18 +81,32 @@ public class HistorialEventos extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.cliente_activity_historial_eventos);
 
+        recyclerView = findViewById(R.id.recyclerHistorial);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        // Inicializar lista vacía antes
+        historialItems = new ArrayList<>();
+
+        // Crear adapter con lista vacía
+        adapter = new HistorialAdapter(this, historialItems, this);
+        recyclerView.setAdapter(adapter);
+
+        cargarHistorial();
+
         bottomNav = findViewById(R.id.bottonNavigationView);
         configurarBottomNav();
 
         // Recuperar la hora guardada de SharedPreferences
         SharedPreferences sharedPreferences = getSharedPreferences("ReservaPrefs", MODE_PRIVATE);
-        Boolean ServicioTaxi = sharedPreferences.getBoolean("ServicioTaxi", false);
+        // Boolean ServicioTaxi = sharedPreferences.getBoolean("ServicioTaxi", false);
 
         MaterialButton btnNotificaciones = findViewById(R.id.notificaciones_cliente);
         btnNotificaciones.setOnClickListener(v -> {
             Intent intent = new Intent(HistorialEventos.this, ClienteNotificaciones.class);
             startActivity(intent);
         });
+
+        /*
         CardView cardView = findViewById(R.id.card_view);
         cardView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -80,6 +116,7 @@ public class HistorialEventos extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        */
 
         //Verificacion
 
@@ -98,9 +135,7 @@ public class HistorialEventos extends AppCompatActivity {
                 }
             }
         }
-        btnCheckout = findViewById(R.id.btnCheckout);
-        btnTaxista = findViewById(R.id.btnTaxista);
-
+        /*
         if(ServicioTaxi){
             btnTaxista.setEnabled(true);
             btnTaxista.setAlpha(1f);
@@ -110,7 +145,9 @@ public class HistorialEventos extends AppCompatActivity {
             btnCheckout.setEnabled(false);
             btnCheckout.setAlpha(0.5f);  // Establecer la opacidad al 50% (0.0f - completamente transparente, 1.0f - completamente opaco)
         }
+        */
 
+        /*
         if (btnCheckout.isEnabled()) {
             btnCheckout.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -125,6 +162,138 @@ public class HistorialEventos extends AppCompatActivity {
                 startActivity(intent);
             });
         }
+        */
+
+    }
+/*
+    private void cargarHistorial(){
+        historialItems.clear();  // Limpia la lista antes de volver a llenarla
+
+        // Firestore
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        String userId = "o60eTvckH0OpIkS29izDulVrsdC2";
+
+        db.collection("usuarios")
+                .document(userId)
+                .collection("Reservas")
+                .orderBy("fechaIni", Query.Direction.DESCENDING)
+                .get()
+                .addOnSuccessListener(reservasSnapshot -> {
+                    if (!reservasSnapshot.isEmpty()) {
+                        for (QueryDocumentSnapshot reservaDoc : reservasSnapshot) {
+                            String idReserva = reservaDoc.getId();
+                            String hotelId = reservaDoc.getString("hotelId");
+                            Timestamp fechaInicioTS = reservaDoc.getTimestamp("fechaIni");
+                            Timestamp fechaFinTS = reservaDoc.getTimestamp("fechaFin");
+                            String fechaInicio = getFechaBonitaDesdeTimestamp(fechaInicioTS);
+                            String fechaFin = getFechaBonitaDesdeTimestamp(fechaFinTS);
+                            Boolean checkoutSolicitado = reservaDoc.getBoolean("checkoutSolicitado");
+                            String solicitarTaxista = reservaDoc.getString("solicitarTaxista");
+                            String estado = reservaDoc.getString("estado");
+
+                            // Buscar datos del hotel
+                            db.collection("Hoteles").document(hotelId)
+                                    .get()
+                                    .addOnSuccessListener(hotelDoc -> {
+                                        if (hotelDoc.exists()) {
+                                            String nombreHotel = hotelDoc.getString("nombre");
+                                            String ubicacion = hotelDoc.getString("ubicacion");
+                                            Boolean servicioTaxi = hotelDoc.getBoolean("servicioTaxi");
+                                            Boolean checkoutEnable = !(checkoutSolicitado);
+
+                                            String fechas = "Desde el " + fechaInicio + " al " + fechaFin;
+
+                                            // Imagen según el hotel
+                                            int imagen = R.drawable.hotel1;
+                                            if ("hotel2".equals(hotelId)) {
+                                                imagen = R.drawable.hotel2;
+                                            }
+
+                                            // Agregar item y notificar cambios
+                                            historialItems.add(new HistorialItem(idReserva, estado, nombreHotel, fechas, "📍 " + ubicacion, imagen, solicitarTaxista, checkoutEnable, servicioTaxi, fechaInicioTS, fechaFinTS));
+                                            adapter.notifyDataSetChanged();
+                                        }
+                                    });
+                        }
+                    }
+                })
+                .addOnFailureListener(e -> Log.e("Firestore", "Error al cargar reservas", e));
+
+    }
+*/
+
+    private void cargarHistorial() {
+        historialItems.clear();
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        String userId = "o60eTvckH0OpIkS29izDulVrsdC2";
+
+        db.collection("usuarios")
+                .document(userId)
+                .collection("Reservas")
+                .orderBy("fechaIni", Query.Direction.DESCENDING)
+                .get()
+                .addOnSuccessListener(reservasSnapshot -> {
+                    if (!reservasSnapshot.isEmpty()) {
+
+                        // Aquí acumulamos las tareas de obtener hoteles
+                        List<Task<DocumentSnapshot>> hotelTasks = new ArrayList<>();
+
+                        // Mapa temporal para guardar datos de cada reserva junto con su hotelId
+                        Map<String, QueryDocumentSnapshot> reservasMap = new HashMap<>();
+
+                        for (QueryDocumentSnapshot reservaDoc : reservasSnapshot) {
+                            String hotelId = reservaDoc.getString("hotelId");
+                            reservasMap.put(reservaDoc.getId(), reservaDoc);
+
+                            // Agregar tarea para obtener hotel
+                            hotelTasks.add(db.collection("Hoteles").document(hotelId).get());
+                        }
+
+                        Tasks.whenAllSuccess(hotelTasks).addOnSuccessListener(results -> {
+                            for (int i = 0; i < results.size(); i++) {
+                                DocumentSnapshot hotelDoc = (DocumentSnapshot) results.get(i);
+                                // Aquí obtenemos la reserva correspondiente
+                                DocumentSnapshot reservaDoc = reservasSnapshot.getDocuments().get(i);
+                                String idReserva = reservaDoc.getId();
+                                String estado = reservaDoc.getString("estado");
+                                Timestamp fechaInicioTS = reservaDoc.getTimestamp("fechaIni");
+                                Timestamp fechaFinTS = reservaDoc.getTimestamp("fechaFin");
+                                String fechaInicio = getFechaBonitaDesdeTimestamp(fechaInicioTS);
+                                String fechaFin = getFechaBonitaDesdeTimestamp(fechaFinTS);
+                                Boolean checkoutSolicitado = reservaDoc.getBoolean("checkoutSolicitado");
+                                String solicitarTaxista = reservaDoc.getString("solicitarTaxista");
+
+                                if (hotelDoc.exists()) {
+                                    String nombreHotel = hotelDoc.getString("nombre");
+                                    String ubicacion = hotelDoc.getString("ubicacion");
+                                    Boolean servicioTaxi = hotelDoc.getBoolean("servicioTaxi");
+                                    Boolean checkoutEnable = !(checkoutSolicitado);
+
+                                    String fechas = "Desde el " + fechaInicio + " al " + fechaFin;
+
+                                    int imagen = R.drawable.hotel1;
+                                    if ("hotel2".equals(hotelDoc.getId())) {
+                                        imagen = R.drawable.hotel2;
+                                    }
+
+                                    historialItems.add(new HistorialItem(idReserva, estado, nombreHotel, fechas, "📍 " + ubicacion, imagen, solicitarTaxista, checkoutEnable, servicioTaxi, fechaInicioTS, fechaFinTS));
+                                }
+                            }
+
+                            adapter.notifyDataSetChanged();
+                        });
+
+                    }
+                })
+                .addOnFailureListener(e -> Log.e("Firestore", "Error al cargar reservas", e));
+    }
+
+    @Override
+    public void onItemClicked(HistorialItem item) {
+        Intent intent = new Intent(this, DetallesReserva.class);
+        intent.putExtra("idReserva", item.getIdReserva());
+        startActivity(intent);
     }
 
     @Override
@@ -147,8 +316,23 @@ public class HistorialEventos extends AppCompatActivity {
             return true;
         });
     }
+    @Override
+    public void onCheckoutClicked(HistorialItem item) {
+        mostrarDialogoCheckout(item.getIdReserva()); // ya lo tienes implementado
+    }
 
-    private void mostrarDialogoCheckout() {
+    @Override
+    public void onTaxiClicked(HistorialItem item) {
+        Intent intent = new Intent(this, ClienteServicioTaxi.class);
+        startActivity(intent);
+    }
+    public String getFechaBonitaDesdeTimestamp(Timestamp timestamp) {
+        if (timestamp == null) return ""; // seguridad por si viene nulo
+        Date date = timestamp.toDate();
+        SimpleDateFormat sdf = new SimpleDateFormat("d 'de' MMMM", new Locale("es", "ES"));
+        return sdf.format(date);
+    }
+    private void mostrarDialogoCheckout(String IdReserva) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setView(R.layout.cliente_dialog_checkout);
         AlertDialog dialog = builder.create();
@@ -169,11 +353,11 @@ public class HistorialEventos extends AppCompatActivity {
             }
 
             // Llamar al método para abrir el nuevo modal "cliente_consumosextras"
-            mostrarClienteConsumoExtras();
+            mostrarClienteConsumoExtras(IdReserva);
         });
     }
     // Método para mostrar el nuevo modal
-    private void mostrarClienteConsumoExtras() {
+    private void mostrarClienteConsumoExtras(String IdReserva) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setView(R.layout.cliente_consumosextras);
         AlertDialog dialog = builder.create();
@@ -184,10 +368,21 @@ public class HistorialEventos extends AppCompatActivity {
             // Cerrar el modal
             dialog.dismiss();
             // Deshabilitamos el botón original
-            if (btnCheckout != null) {
-                btnCheckout.setEnabled(false);
-                btnCheckout.setAlpha(0.5f);  // Establecer la opacidad al 50% (0.0f - completamente transparente, 1.0f - completamente opaco)
+            if (IdReserva != null) {
+
+                // Firestore
+                FirebaseFirestore db = FirebaseFirestore.getInstance();
+                String userId = "o60eTvckH0OpIkS29izDulVrsdC2";
+
+                db.collection("usuarios")
+                        .document(userId)
+                        .collection("Reservas")
+                        .document(IdReserva)
+                        .update("checkoutSolicitado", true)
+                        .addOnSuccessListener(aVoid -> Log.d("Firestore", "Reserva actualizada correctamente"))
+                        .addOnFailureListener(e -> Log.e("Firestore", "Error al actualizar reserva", e));
             }
+
             // Aquí iría la validación real, por ahora mostramos mensaje:
             Toast.makeText(HistorialEventos.this, "¡Solicitud registrada correctamente!", Toast.LENGTH_SHORT).show();
             LanzarNotificacionSolicitarCheckout();
@@ -221,6 +416,8 @@ public class HistorialEventos extends AppCompatActivity {
 
             // Aquí puedes guardar la calificación y el comentario
             // Por ejemplo, enviarlos a tu servidor o guardarlos localmente
+
+            cargarHistorial();
 
             // Mostrar mensaje de confirmación
             Toast.makeText(this, "¡Gracias por tu calificación!", Toast.LENGTH_SHORT).show();
