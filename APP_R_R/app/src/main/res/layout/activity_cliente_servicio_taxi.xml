@@ -64,7 +64,7 @@
                 app:layout_constraintVertical_bias="0.0" />
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/servicio_taxi"
+                android:id="@+id/notificaciones_cliente"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:backgroundTint="@color/transparente"

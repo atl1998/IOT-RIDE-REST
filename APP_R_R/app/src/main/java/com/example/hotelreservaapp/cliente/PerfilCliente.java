@@ -25,8 +25,9 @@ public class PerfilCliente extends AppCompatActivity {
     private TextInputEditText etNombre, etApellido, etCorreo, etDni, etTelefono, etDireccion;
     private Button btn_cerrar_sesion;
     private boolean enModoEdicion = false;
-
     private static final String PREFS_NAME = "PerfilClientePrefs";
+
+    BottomNavigationView bottomNav;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,21 +37,8 @@ public class PerfilCliente extends AppCompatActivity {
 
         NotificacionesStorageHelper helper = new NotificacionesStorageHelper(this);
 
-        BottomNavigationView bottomNav = findViewById(R.id.bottonNavigationView);
-        bottomNav.setSelectedItemId(R.id.perfilCliente);
-        bottomNav.setOnItemSelectedListener(item -> {
-            int id = item.getItemId();
-
-            if (id == R.id.inicioCliente) {
-                startActivity(new Intent(this, HomeCliente.class));
-            } else if (id == R.id.chat_cliente) {
-                startActivity(new Intent(this, ClienteChat.class));
-            } else if (id == R.id.historialCliente) {
-                startActivity(new Intent(this, HistorialEventos.class));
-            }
-
-            return true;
-        });
+        bottomNav = findViewById(R.id.bottonNavigationView);
+        configurarBottomNav();
 
         // Inicializar vistas
         btnNotificaciones = findViewById(R.id.notificaciones_cliente);
@@ -103,6 +91,28 @@ public class PerfilCliente extends AppCompatActivity {
             }
         });
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        bottomNav.setSelectedItemId(R.id.perfilCliente);
+    }
+    private void configurarBottomNav() {
+        bottomNav.setOnItemSelectedListener(item -> {
+            int id = item.getItemId();
+            if (id == R.id.perfilCliente) {
+                return true; // Ya estás en esta pantalla
+            } else if (id == R.id.inicioCliente) {
+                startActivity(new Intent(this, HomeCliente.class));
+            } else if (id == R.id.historialCliente) {
+                startActivity(new Intent(this, HistorialEventos.class));
+            } else if (id == R.id.chat_cliente) {
+                startActivity(new Intent(this, ClienteChat.class));
+            }
+            return true;
+        });
+    }
+
 
     private void guardarDatos() {
         SharedPreferences preferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);

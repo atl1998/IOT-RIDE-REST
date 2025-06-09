@@ -15,6 +15,9 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.example.hotelreservaapp.R;
 import com.google.android.material.button.MaterialButton;
 
+import org.imaginativeworld.whynotimagecarousel.ImageCarousel;
+import org.imaginativeworld.whynotimagecarousel.model.CarouselItem;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -28,7 +31,6 @@ public class DetallesHotel extends AppCompatActivity {
     private MaterialButton btnVolver;
 
 
-    private ViewPager2 imageCarousel;
     MaterialButton btnBusqueda;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,47 +38,43 @@ public class DetallesHotel extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.cliente_activity_detalles_hotel);
 
+        // Botón para elegir habitación
         btnBusqueda = findViewById(R.id.btnChooseRoom);
         btnBusqueda.setOnClickListener(v -> {
-            //por ahora directamente al mio bala
             startActivity(new Intent(this, ListaHabitaciones.class));
         });
 
+        // Botón para volver
+        btnVolver = findViewById(R.id.volverAnterior);
+        btnVolver.setOnClickListener(v -> {
+            startActivity(new Intent(this, ListaHotelesCliente.class));
+        });
 
-
-        // Configurar el RecyclerView
-        recyclerComentarios = findViewById(R.id.recyclerView);
+        // --- CONFIGURAR COMENTARIOS ---
+        recyclerComentarios = findViewById(R.id.recyclerViewComentarios);
         recyclerComentarios.setLayoutManager(new LinearLayoutManager(this));
 
-        // Inicializar la lista de comentarios
         listaComentarios = new ArrayList<>();
-        // Crear el adaptador y asignarlo al RecyclerView
         comentarioAdapter = new ComentarioAdapter(this, listaComentarios);
         recyclerComentarios.setAdapter(comentarioAdapter);
-
-        // Cargar datos de ejemplo (esto podría venir de una API o base de datos)
         cargarDatosEjemplo();
 
 
 
-        imageCarousel = findViewById(R.id.imageCarousel);
 
-        // Lista de imágenes del carrusel (asegúrate de que existan en drawable)
-        List<Integer> images = Arrays.asList(
-                R.drawable.hotel1_img1,
-                R.drawable.hotel1_img2,
-                R.drawable.hotel1_img3
-        );
+        // --- CONFIGURAR CARRUSEL DE IMÁGENES ---
+        ImageCarousel carousel = findViewById(R.id.carousel);
+        carousel.registerLifecycle(getLifecycle());
 
-        ImageCarouselAdapter adapter = new ImageCarouselAdapter(images);
-        imageCarousel.setAdapter(adapter);
 
-        btnVolver = findViewById(R.id.volverAnterior);
-        btnVolver.setOnClickListener(v -> {
-            //por ahora directamente al mio bala
-            startActivity(new Intent(this, ListaHotelesCliente.class));
-        });
+        List<CarouselItem> images = new ArrayList<>();
+        images.add(new CarouselItem(R.drawable.hotel1_img1));
+        images.add(new CarouselItem(R.drawable.hotel1_img2));
+        images.add(new CarouselItem(R.drawable.hotel1_img3));
+        carousel.setData(images);
+
     }
+
 
     /**
      * Método para cargar datos de ejemplo en la lista de comentarios
