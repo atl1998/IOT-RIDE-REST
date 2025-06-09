@@ -7,6 +7,7 @@ public class UsuarioListaSuperAdmin {
     private boolean activo;
     private String urlFoto;
 
+
     public UsuarioListaSuperAdmin(String nombre, String correo, String rol, String urlFoto, boolean activo) {
         this.nombre = nombre;
         this.correo = correo;
@@ -20,4 +21,7 @@ public class UsuarioListaSuperAdmin {
     public String getRol() { return rol; }
     public boolean isActivo() { return activo; }
     public String getUrlFoto() { return urlFoto; }
+    public void setActivo(boolean activo) {
+        this.activo = activo;
+    }
 }

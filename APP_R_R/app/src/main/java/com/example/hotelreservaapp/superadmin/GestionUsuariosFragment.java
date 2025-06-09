@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.example.hotelreservaapp.AdminHotel.NotificacionesActivity;
 import com.example.hotelreservaapp.R;
@@ -26,6 +27,8 @@ import com.example.hotelreservaapp.adapter.UsuarioAdapter;
 import com.example.hotelreservaapp.databinding.SuperadminGestionUsuariosFragmentBinding;
 import com.example.hotelreservaapp.model.UsuarioListaSuperAdmin;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -120,7 +123,7 @@ public class GestionUsuariosFragment extends Fragment {
         });
 
         // Cargar datos de prueba
-        cargarUsuariosDeEjemplo();
+        cargarUsuarios();
     }
 
     private void aplicarFiltros() {
@@ -128,17 +131,39 @@ public class GestionUsuariosFragment extends Fragment {
         adapter.filtrar(texto, rolSeleccionado);
     }
 
-    private void cargarUsuariosDeEjemplo() {
-        listaOriginal.add(new UsuarioListaSuperAdmin("Jorge Coronado", "maxwell@pucp.edu.pe", "Administrador de hotel","coronado.png" , true));
-        listaOriginal.add(new UsuarioListaSuperAdmin("Lucía Quispe", "lucia@email.com", "Taxista", "", true));
-        listaOriginal.add(new UsuarioListaSuperAdmin("Ana Pérez", "ana@email.com", "Cliente", "", true));
-        listaOriginal.add(new UsuarioListaSuperAdmin("Giorgio Maxwell", "gmaxwell@gmail.com", "Taxista", "coronado.png", true));
-        listaOriginal.add(new UsuarioListaSuperAdmin("Nilo Cori", "nilocori@pucp.edu.pe", "Administrador de hotel", "", true));
-        listaOriginal.add(new UsuarioListaSuperAdmin("Juan Pérez", "juanexample@hotmail.com", "Administrador de hotel", "", true));
-        listaOriginal.add(new UsuarioListaSuperAdmin("Adrian Tipo", "adriantipo@pucp.edu.pe", "Administrador de hotel", "", true));
-        listaOriginal.add(new UsuarioListaSuperAdmin("Adrian López", "adrianlopez@pucp.edu.pe", "Administrador de hotel", "", true));
-        listaOriginal.add(new UsuarioListaSuperAdmin("Pedro BM", "pedro@pucp.edu.pe", "Administrador de hotel", "pedro.png", true));
-        adapter.setListaCompleta(listaOriginal);
-        aplicarFiltros();
+    private void cargarUsuarios() {
+        FirebaseFirestore.getInstance().collection("usuarios")
+                .whereNotEqualTo("rol", "superadmin")
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    listaOriginal.clear();  // Limpia la lista antes de llenarla
+
+                    for (DocumentSnapshot doc : querySnapshot.getDocuments()) {
+                        String nombre = doc.getString("nombre") != null ? doc.getString("nombre") : "";
+                        String apellido = doc.getString("apellido") != null ? doc.getString("apellido") : "";
+                        String correo = doc.getString("correo");
+                        String rol = doc.getString("rol");
+                        if (rol != null && !rol.isEmpty()) {
+                            rol = rol.substring(0, 1).toUpperCase() + rol.substring(1).toLowerCase();
+                        }
+                        String imagen = doc.contains("urlFotoPerfil") ? doc.getString("urlFotoPerfil") : "";
+                        boolean estado = Boolean.TRUE.equals(doc.getBoolean("estado"));
+
+                        UsuarioListaSuperAdmin usuario = new UsuarioListaSuperAdmin(
+                                nombre + " " + apellido,
+                                correo,
+                                rol,
+                                imagen,
+                                estado
+                        );
+                        listaOriginal.add(usuario);
+                    }
+
+                    adapter.setListaCompleta(listaOriginal);
+                    aplicarFiltros();
+                })
+                .addOnFailureListener(e ->
+                        Toast.makeText(requireContext(), "Error al cargar usuarios", Toast.LENGTH_SHORT).show()
+                );
     }
 }

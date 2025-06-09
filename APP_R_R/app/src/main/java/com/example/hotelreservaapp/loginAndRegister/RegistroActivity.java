@@ -148,6 +148,7 @@ public class RegistroActivity extends AppCompatActivity {
                 Toast.makeText(this, "Abrir cámara (a implementar)", Toast.LENGTH_SHORT).show());
 
         btnRegistrarFinal.setOnClickListener(v -> {
+            btnRegistrarFinal.setEnabled(false);
             mAuth.createUserWithEmailAndPassword(correo, contrasena)
                     .addOnSuccessListener(authResult -> {
                         FirebaseUser firebaseUser = mAuth.getCurrentUser();
@@ -162,17 +163,33 @@ public class RegistroActivity extends AppCompatActivity {
                                     correo,
                                     telefono,
                                     direccion,
-                                    "" // urlFotoPerfil se agregará luego
+                                    "", // urlFotoPerfil se agregará luego
+                                    true
                             );
 
                             firestore.collection("usuarios")
                                     .document(firebaseUser.getUid())
                                     .set(usuario)
-                                    .addOnSuccessListener(unused -> mostrarDialogoRegistroExitoso())
-                                    .addOnFailureListener(e -> Toast.makeText(this, "Error al guardar usuario", Toast.LENGTH_SHORT).show());
+                                    .addOnSuccessListener(unused -> {
+                                        mostrarDialogoRegistroExitoso();
+                                        mAuth.signOut();
+                                        btnRegistrarFinal.setEnabled(true);
+                                    })
+                                    .addOnFailureListener(e -> {
+                                        Toast.makeText(this, "Error al guardar usuario", Toast.LENGTH_SHORT).show();
+                                        btnRegistrarFinal.setEnabled(true);
+                                    });
                         }
+
                     })
-                    .addOnFailureListener(e -> Toast.makeText(this, "Error en el registro: " + e.getMessage(), Toast.LENGTH_LONG).show());
+                    .addOnFailureListener(e -> {
+                        if (e.getMessage() != null && e.getMessage().contains("email address is already in use")) {
+                            Toast.makeText(this, "El correo ya está registrado", Toast.LENGTH_LONG).show();
+                        } else {
+                            Toast.makeText(this, "Error en el registro: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                        btnRegistrarFinal.setEnabled(true);
+                    });
         });
     }
 

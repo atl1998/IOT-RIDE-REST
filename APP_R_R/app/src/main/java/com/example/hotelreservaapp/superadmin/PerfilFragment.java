@@ -106,7 +106,7 @@ public class PerfilFragment extends Fragment {
                     .addOnSuccessListener(document -> {
                         if (document.exists()) {
                             etNombre.setText(document.getString("nombre"));
-                            user_name.setText(document.getString("nombre"));
+                            user_name.setText(document.getString("nombre")+ " " + document.getString("apellido"));
                             etApellido.setText(document.getString("apellido"));
                             etCorreo.setText(usuarioActual.getEmail());
                             correu.setText(usuarioActual.getEmail());
@@ -122,42 +122,31 @@ public class PerfilFragment extends Fragment {
 
         btnEditar.setOnClickListener(v -> {
             if (!enModoEdicion) {
+                // Activar modo edición
                 enModoEdicion = true;
+                btnEditar.setImageResource(R.drawable.save_icon);
+
                 etNombre.setEnabled(true);
                 etApellido.setEnabled(true);
                 etDni.setEnabled(true);
                 etTelefono.setEnabled(true);
                 etDireccion.setEnabled(true);
             } else {
-                enModoEdicion = false;
+                // Obtener valores actualizados
+                String nombre = etNombre.getText().toString().trim();
+                String apellido = etApellido.getText().toString().trim();
+                String dni = etDni.getText().toString().trim();
+                String telefono = etTelefono.getText().toString().trim();
+                String direccion = etDireccion.getText().toString().trim();
 
-                String nombre = etNombre.getText().toString();
-                String apellido = etApellido.getText().toString();
-                String dni = etDni.getText().toString();
-                String telefono = etTelefono.getText().toString();
-                String direccion = etDireccion.getText().toString();
-
-                // VALIDACIONES
+                // Validaciones
                 if (nombre.isEmpty() || apellido.isEmpty() || dni.isEmpty() ||
                         telefono.isEmpty() || direccion.isEmpty()) {
                     Toast.makeText(getContext(), "Completa todos los campos antes de guardar", Toast.LENGTH_SHORT).show();
-
-                    // Volver a activar edición porque hubo error
-                    enModoEdicion = true;
-                    etNombre.setEnabled(true);
-                    etApellido.setEnabled(true);
-                    etDni.setEnabled(true);
-                    etTelefono.setEnabled(true);
-                    etDireccion.setEnabled(true);
                     return;
                 }
 
-                etNombre.setEnabled(false);
-                etApellido.setEnabled(false);
-                etDni.setEnabled(false);
-                etTelefono.setEnabled(false);
-                etDireccion.setEnabled(false);
-
+                // Guardar en Firestore
                 if (usuarioActual != null) {
                     db.collection("usuarios").document(usuarioActual.getUid())
                             .update(
@@ -167,10 +156,22 @@ public class PerfilFragment extends Fragment {
                                     "telefono", telefono,
                                     "direccion", direccion
                             )
-                            .addOnSuccessListener(unused ->
-                                    Toast.makeText(getContext(), "Perfil actualizado", Toast.LENGTH_SHORT).show())
-                            .addOnFailureListener(e ->
-                                    Toast.makeText(getContext(), "Error al actualizar", Toast.LENGTH_SHORT).show());
+                            .addOnSuccessListener(unused -> {
+                                Toast.makeText(getContext(), "Perfil actualizado", Toast.LENGTH_SHORT).show();
+
+                                // Desactivar modo edición
+                                enModoEdicion = false;
+                                btnEditar.setImageResource(R.drawable.edit_icon);
+
+                                etNombre.setEnabled(false);
+                                etApellido.setEnabled(false);
+                                etDni.setEnabled(false);
+                                etTelefono.setEnabled(false);
+                                etDireccion.setEnabled(false);
+                            })
+                            .addOnFailureListener(e -> {
+                                Toast.makeText(getContext(), "Error al actualizar perfil", Toast.LENGTH_SHORT).show();
+                            });
                 }
             }
         });

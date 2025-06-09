@@ -1,5 +1,6 @@
 package com.example.hotelreservaapp.loginAndRegister;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -39,6 +40,7 @@ public class LoginActivity extends AppCompatActivity {
     MaterialButton btnLogin;
     CheckBox checkRecordar;
     TextView tvOlvidoContrasena, tvRegistrate;
+    private ProgressDialog progressDialog;
     private FirebaseAuth firebaseAuth;
     private SharedPreferences prefs;
     private static final int RC_SIGN_IN = 1001;
@@ -48,6 +50,10 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Iniciando sesión...");
+        progressDialog.setCancelable(false);
 
         firebaseAuth = FirebaseAuth.getInstance();
         prefs = getSharedPreferences("user_prefs", MODE_PRIVATE);
@@ -110,7 +116,7 @@ public class LoginActivity extends AppCompatActivity {
             etContrasena.setError("Ingresa tu contraseña");
             return;
         }
-
+        progressDialog.show();
         firebaseAuth.signInWithEmailAndPassword(correo, contrasena)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
@@ -126,14 +132,17 @@ public class LoginActivity extends AppCompatActivity {
                             db.collection("usuarios").document(user.getUid())
                                     .get()
                                     .addOnSuccessListener(document -> {
+                                        progressDialog.dismiss();
                                         if (document.exists()) {
                                             redirigirSegunRol(document.getString("rol"));
                                         } else {
                                             Toast.makeText(this, "No se encontró el perfil del usuario", Toast.LENGTH_SHORT).show();
                                         }
-                                    });
+                                    })
+                                    .addOnFailureListener(e -> progressDialog.dismiss());
                         }
                     } else {
+                        progressDialog.dismiss();
                         Toast.makeText(this, "Correo o contraseña incorrectos", Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -160,6 +169,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void autenticarConFirebase(String idToken, String displayName, String email) {
         AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
+        progressDialog.show();
         firebaseAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
@@ -195,22 +205,33 @@ public class LoginActivity extends AppCompatActivity {
                                                 email,
                                                 "",
                                                 "",
-                                                ""
+                                                "",
+                                                true
                                         );
                                         db.collection("usuarios").document(user.getUid()).set(nuevoUsuario)
-                                                .addOnSuccessListener(aVoid -> redirigirSegunRol("cliente"));
+                                                .addOnSuccessListener(aVoid -> {
+                                                    progressDialog.dismiss();
+                                                    redirigirSegunRol("cliente");
+                                                });
                                     } else {
-                                        redirigirSegunRol(document.getString("rol"));
-                                    }
+                                        Boolean activo = document.getBoolean("estado");
+                                        if (activo != null && activo) {
+                                            progressDialog.dismiss();
+                                            redirigirSegunRol(document.getString("rol"));
+                                        } else {
+                                            progressDialog.dismiss();
+                                            Toast.makeText(this, "Tu cuenta está inactiva. Contacta al administrador.", Toast.LENGTH_SHORT).show();
+                                            firebaseAuth.signOut(); // Opcional: desloguear al usuario si no está activo
+                                        }                                    }
                                 });
                     } else {
+                        progressDialog.dismiss();
                         Toast.makeText(this, "Falló la autenticación con Google", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
 
     private void redirigirSegunRol(String rol) {
-        Toast.makeText(this, "¡Inicio de sesión exitoso!", Toast.LENGTH_SHORT).show();
         Intent intent;
         switch (rol) {
             case "superadmin":
@@ -226,7 +247,6 @@ public class LoginActivity extends AppCompatActivity {
                 intent = new Intent(this, HomeCliente.class);
                 break;
             default:
-                Toast.makeText(this, "Rol no reconocido", Toast.LENGTH_SHORT).show();
                 return;
         }
         startActivity(intent);

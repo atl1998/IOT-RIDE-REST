@@ -1,6 +1,7 @@
 package com.example.hotelreservaapp.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.hotelreservaapp.R;
 import com.example.hotelreservaapp.model.UsuarioListaSuperAdmin;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -67,9 +69,16 @@ public class UsuarioAdapter extends RecyclerView.Adapter<UsuarioAdapter.UsuarioV
         holder.tvNombre.setText(usuario.getNombre());
         holder.tvCorreo.setText(usuario.getCorreo());
         holder.tvRol.setText(usuario.getRol());
+
+        holder.switchActivo.setOnCheckedChangeListener(null);
         holder.switchActivo.setChecked(usuario.isActivo());
+        holder.switchActivo.setText(usuario.isActivo() ? "Activo" : "Inactivo");
+
         String nombreArchivo = usuario.getUrlFoto(); // ej. "image1.png"
         String rutaAsset = "file:///android_asset/" + nombreArchivo;
+
+        Log.d("DEBUG", "Estado: " + usuario.isActivo());
+
 
         try {
             // Intenta abrir la imagen para ver si existe
@@ -89,6 +98,35 @@ public class UsuarioAdapter extends RecyclerView.Adapter<UsuarioAdapter.UsuarioV
                     .circleCrop()
                     .into(holder.ivFoto);
         }
+
+        // Lógica del switch con diálogo de confirmación
+        holder.switchActivo.setOnClickListener(v -> {
+            boolean nuevoEstado = !usuario.isActivo();
+
+            new MaterialAlertDialogBuilder(context)
+                    .setTitle(nuevoEstado ? "Activar usuario" : "Desactivar usuario")
+                    .setMessage("¿Estás seguro de que deseas " + (nuevoEstado ? "activar" : "desactivar") + " este usuario?")
+                    .setPositiveButton("Sí", (dialog, which) -> {
+                        // Buscar por correo y actualizar en Firestore
+                        com.google.firebase.firestore.FirebaseFirestore.getInstance()
+                                .collection("usuarios")
+                                .whereEqualTo("correo", usuario.getCorreo()) // ⚠️ Usa UID si lo tienes
+                                .get()
+                                .addOnSuccessListener(query -> {
+                                    for (com.google.firebase.firestore.DocumentSnapshot doc : query) {
+                                        doc.getReference().update("estado", nuevoEstado);
+                                    }
+                                    // Actualizar modelo y vista
+                                    usuario.setActivo(nuevoEstado);
+                                    holder.switchActivo.setChecked(nuevoEstado);
+                                    holder.switchActivo.setText(nuevoEstado ? "Activo" : "Inactivo");
+                                });
+                    })
+                    .setNegativeButton("Cancelar", (dialog, which) -> {
+                        holder.switchActivo.setChecked(usuario.isActivo()); // Revertir visual
+                    })
+                    .show();
+        });
     }
 
     @Override

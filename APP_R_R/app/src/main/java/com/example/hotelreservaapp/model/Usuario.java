@@ -11,8 +11,9 @@ public class Usuario {
     private String telefono;
     private String direccion;
     private String urlFotoPerfil; // URL de la imagen o nombre del recurso local
+    private boolean activo;
     public Usuario(String nombre, String apellido, String rol, String tipoDocumento, String numeroDocumento,
-                   String fechaNacimiento, String correo, String telefono, String direccion, String urlFotoPerfil) {
+                   String fechaNacimiento, String correo, String telefono, String direccion, String urlFotoPerfil, boolean activo) {
         this.nombre = nombre;
         this.apellido = apellido;
         this.rol = rol;
@@ -23,6 +24,7 @@ public class Usuario {
         this.telefono = telefono;
         this.direccion = direccion;
         this.urlFotoPerfil = urlFotoPerfil;
+        this.activo = activo;
     }
     public Usuario() {}
     // Constructor, getters y setters
@@ -104,5 +106,12 @@ public class Usuario {
 
     public void setUrlFotoPerfil(String urlFotoPerfil) {
         this.urlFotoPerfil = urlFotoPerfil;
+    }
+    public boolean isActivo() {
+        return activo;
+    }
+
+    public void setActivo(boolean activo) {
+        this.activo = activo;
     }
 }
