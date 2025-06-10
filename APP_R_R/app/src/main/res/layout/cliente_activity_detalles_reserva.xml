@@ -265,6 +265,7 @@
 
                             <!-- Texto del puntaje -->
                             <TextView
+                                android:id="@+id/valoracion"
                                 android:text="3.5/5"
                                 android:textSize="16sp"
                                 android:layout_width="wrap_content"
@@ -272,6 +273,7 @@
                         </LinearLayout>
 
                         <TextView
+                            android:id="@+id/ubicacion"
                             android:layout_marginTop="3dp"
                             android:text="   📍 España, Ibiza"
                             android:textSize="16sp"

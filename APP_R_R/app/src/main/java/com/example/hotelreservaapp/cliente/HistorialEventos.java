@@ -270,14 +270,12 @@ public class HistorialEventos extends AppCompatActivity implements HistorialItem
                                     Boolean servicioTaxi = hotelDoc.getBoolean("servicioTaxi");
                                     Boolean checkoutEnable = !(checkoutSolicitado);
 
-                                    String fechas = "Desde el " + fechaInicio + " al " + fechaFin;
-
                                     int imagen = R.drawable.hotel1;
                                     if ("hotel2".equals(hotelDoc.getId())) {
                                         imagen = R.drawable.hotel2;
                                     }
 
-                                    historialItems.add(new HistorialItem(idReserva, estado, nombreHotel, fechas, "📍 " + ubicacion, imagen, solicitarTaxista, checkoutEnable, servicioTaxi, fechaInicioTS, fechaFinTS));
+                                    historialItems.add(new HistorialItem(idReserva, estado, nombreHotel, "📍 " + ubicacion, imagen, solicitarTaxista, checkoutEnable, servicioTaxi, fechaInicioTS, fechaFinTS));
                                 }
                             }
 
@@ -421,7 +419,6 @@ public class HistorialEventos extends AppCompatActivity implements HistorialItem
 
             // Mostrar mensaje de confirmación
             Toast.makeText(this, "¡Gracias por tu calificación!", Toast.LENGTH_SHORT).show();
-
             // Cerrar el diálogo
             dialog.dismiss();
         });
