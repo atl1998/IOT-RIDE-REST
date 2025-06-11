@@ -5,7 +5,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -20,17 +22,36 @@ import com.example.hotelreservaapp.Objetos.Notificaciones;
 import com.example.hotelreservaapp.Objetos.NotificacionesStorageHelper;
 import com.example.hotelreservaapp.Objetos.NotificationManagerNoAPP;
 import com.example.hotelreservaapp.R;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.button.MaterialButton;
+import com.google.firebase.Timestamp;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class DetallesReserva extends AppCompatActivity {
-    private TextView definirHoraLlegada, HoraDeSalida, FechaCheckOut;
+    private TextView definirHoraLlegada, HoraDeSalida, nombreHotel, status, valoracion,
+            ubicacion, valorFecha, valorPersonas, valorHabitacion, valorContacto, fechaCheckIn, fechaCheckOut;
     private Boolean horaDefinida;
     private Button btnServicio;
+    private HistorialItem historialItem;
+    ImageView imageHotel;
+    private String idReserva;
+    private String userId;
+
     private String Tipo;
 
 
@@ -44,6 +65,28 @@ public class DetallesReserva extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        // Inicialización de vistas
+        valorFecha = findViewById(R.id.valorFecha);
+        valorPersonas = findViewById(R.id.valorPersonas);
+        nombreHotel = findViewById(R.id.nombreHotel);
+        status = findViewById(R.id.status);
+        valoracion = findViewById(R.id.valoracion);
+        ubicacion = findViewById(R.id.ubicacion);
+        valorHabitacion = findViewById(R.id.valorHabitacion);
+        valorContacto = findViewById(R.id.valorContacto);
+        fechaCheckIn = findViewById(R.id.fechaCheckIn);
+        fechaCheckOut = findViewById(R.id.fechaCheckOut);
+        imageHotel = findViewById(R.id.imageHotel);
+        HoraDeSalida = findViewById(R.id.HoraDeSalida);
+
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser != null){
+            userId = currentUser.getUid();
+        }
+
+        idReserva = getIntent().getStringExtra("idReserva");
+        cargarReserva(idReserva);
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottonNavigationView);
         bottomNavigationView.getMenu().setGroupCheckable(0, false, true); // Desactiva el estado de selección
@@ -64,8 +107,6 @@ public class DetallesReserva extends AppCompatActivity {
             }
             return false;
         });
-        HoraDeSalida = findViewById(R.id.HoraDeSalida);
-        FechaCheckOut = findViewById(R.id.fechaCheckOut);
         btnServicio = findViewById(R.id.btnProcesarPago);
 
         btnServicio.setEnabled(false);
@@ -82,12 +123,13 @@ public class DetallesReserva extends AppCompatActivity {
             for (Notificaciones n : notificacionesGuardadas) {
                 Tipo = n.getTipo();
                 notificationManagerNoAPP.getListaNotificaciones().add(n);
+                /*
                 if ("02".equals(n.getTipo().trim())) {
                     String fechaBonita = n.getFechaBonita(); // Tu valor long de fecha
                     String hora = n.getHoraBonita();     // Ej: "14:30"
                     HoraDeSalida.setText("Finalizado a las " + hora);
-                    FechaCheckOut.setText(fechaBonita+":");
                 }
+                */
             }
         }
 
@@ -102,15 +144,20 @@ public class DetallesReserva extends AppCompatActivity {
         horaDefinida = false;
 
         // Recuperar la hora guardada de SharedPreferences
+
+        /*
         SharedPreferences sharedPreferences = getSharedPreferences("ReservaPrefs", MODE_PRIVATE);
-        String horaGuardada = sharedPreferences.getString("horaLlegada", null);
+        //String horaGuardada = sharedPreferences.getString("horaLlegada", null);
         Boolean SolicitarCheckout = sharedPreferences.getBoolean("SolicitarCheckout", false);
 
         if(SolicitarCheckout){
             btnServicio.setEnabled(true);
             btnServicio.setAlpha(1f);
         }
+        */
 
+
+        /*
         if (horaGuardada != null) {
             // Si hay una hora guardada, mostrarla y deshabilitar el TextView
             definirHoraLlegada.setText("Hora de llegada: " + horaGuardada);
@@ -118,6 +165,7 @@ public class DetallesReserva extends AppCompatActivity {
             definirHoraLlegada.setClickable(false);
             definirHoraLlegada.setTextColor(Color.parseColor("#646464"));
         }
+         */
 
         definirHoraLlegada.setOnClickListener(v -> {
             if (!horaDefinida) {
@@ -131,11 +179,22 @@ public class DetallesReserva extends AppCompatActivity {
                                     // Mostrar la hora seleccionada
                                     String horaSeleccionada = String.format("%02d:%02d", hourOfDay, minute);
                                     definirHoraLlegada.setText("Hora de llegada: " + horaSeleccionada);
-
+                                    /*
                                     SharedPreferences.Editor editor = sharedPreferences.edit();
                                     editor.putString("horaLlegada", horaSeleccionada); // Guardamos la hora en SharedPreferences
                                     editor.apply();
+                                    */
+                                    // Guardar en Firebase
+                                    FirebaseFirestore db = FirebaseFirestore.getInstance();
 
+                                    // Guardar la hora en el documento de la reserva
+                                    db.collection("usuarios")
+                                            .document(userId)
+                                            .collection("Reservas")
+                                            .document(idReserva)
+                                            .update("CheckInHora", horaSeleccionada)
+                                            .addOnSuccessListener(aVoid -> Log.d("Firebase", "Hora guardada correctamente"))
+                                            .addOnFailureListener(e -> Log.e("Firebase", "Error al guardar la hora", e));
                                     // Cambiar el estado a "hora definida"
                                     horaDefinida = true;
                                     // Deshabilitar el TextView para evitar más cambios
@@ -157,7 +216,89 @@ public class DetallesReserva extends AppCompatActivity {
         });
         btnServicio.setOnClickListener(v -> {
             Intent intent = new Intent(this, ProcesarPago.class);
+            historialItem.setFechaFin(null);
+            historialItem.setFechaIni(null);
+            intent.putExtra("HistorialItem", historialItem); // usuario es un objeto de tu clase
             startActivity(intent);
         });
+    }
+
+
+    private void cargarReserva(String idReserva) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        db.collection("usuarios")
+                .document(userId)
+                .collection("Reservas")
+                .document(idReserva)
+                .get()
+                .addOnSuccessListener(reservaDoc -> {
+                    if (reservaDoc.exists()) {
+                        String hotelId = reservaDoc.getString("hotelId");
+                        String estado = reservaDoc.getString("estado");
+                        Timestamp fechaInicioTS = reservaDoc.getTimestamp("fechaIni");
+                        Timestamp fechaFinTS = reservaDoc.getTimestamp("fechaFin");
+                        String checkInHora = reservaDoc.getString("CheckInHora");
+                        String checkOutHora = reservaDoc.getString("CheckOutHora");
+                        String solicitarTaxista = reservaDoc.getString("solicitarTaxista");
+                        Boolean checkoutSolicitado = reservaDoc.getBoolean("checkoutSolicitado");
+                        Boolean checkoutEnable = !(checkoutSolicitado);
+                        Double personasDouble = reservaDoc.getDouble("personas");
+                        int personas = personasDouble != null ? personasDouble.intValue() : 0;
+                        String tipoHabitacion = reservaDoc.getString("tipoHab");
+
+                        // Ahora puedes obtener datos del hotel
+                        db.collection("Hoteles")
+                                .document(hotelId)
+                                .get()
+                                .addOnSuccessListener(hotelDoc -> {
+                                    if (hotelDoc.exists()) {
+                                        String nombreHotelDoc = hotelDoc.getString("nombre");
+                                        String ubicacionDoc = hotelDoc.getString("ubicacion");
+                                        Boolean servicioTaxi = hotelDoc.getBoolean("servicioTaxi");
+                                        Double valoracionDoc = hotelDoc.getDouble("valoracion");
+                                        String contacto = hotelDoc.getString("contacto");
+                                        int imagen = R.drawable.hotel1;
+                                        if ("hotel2".equals(hotelDoc.getId())) {
+                                            imagen = R.drawable.hotel2;
+                                        }
+                                        historialItem = new HistorialItem(idReserva, estado, nombreHotelDoc, "📍 " + ubicacionDoc, imagen, solicitarTaxista, checkoutEnable, servicioTaxi, fechaInicioTS, fechaFinTS);
+                                        historialItem.setPersonas(personas);
+                                        historialItem.setValoracion(valoracionDoc);
+                                        historialItem.setContacto(contacto);
+                                        historialItem.setTipoHab(tipoHabitacion);
+                                        // Validación para CheckInHora
+                                        if (checkInHora != null && !checkInHora.trim().isEmpty()) {
+                                            historialItem.setCheckInHora(checkInHora);
+                                            definirHoraLlegada.setText("Hora de llegada: " + checkInHora);
+                                            horaDefinida = true;
+                                            definirHoraLlegada.setClickable(false);
+                                            definirHoraLlegada.setTextColor(Color.parseColor("#646464"));
+                                        }
+
+                                        // Validación para CheckOutHora
+                                        if (checkOutHora != null && !checkOutHora.trim().isEmpty() && checkoutSolicitado) {
+                                            historialItem.setCheckOutHora(checkOutHora);
+                                            HoraDeSalida.setText("Finalizado a las " + checkOutHora);
+                                            btnServicio.setEnabled(true);
+                                            btnServicio.setAlpha(1f);
+                                        }
+
+                                        valorFecha.setText(historialItem.getRangoFechasBonito());
+                                        valorPersonas.setText(String.valueOf(historialItem.getPersonas()));
+                                        nombreHotel.setText(historialItem.getNombreHotel());
+                                        status.setText(historialItem.getEstado());
+                                        valoracion.setText(String.valueOf(historialItem.getValoracion()));
+                                        ubicacion.setText(historialItem.getUbicacion());
+                                        valorHabitacion.setText(historialItem.getTipoHab());
+                                        valorContacto.setText(historialItem.getContacto());
+                                        fechaCheckIn.setText(historialItem.getFechaIniBonito());
+                                        fechaCheckOut.setText(historialItem.getFechaFinBonito());
+                                        imageHotel.setImageResource(imagen);
+                                    }
+                                });
+                    }
+                })
+                .addOnFailureListener(e -> Log.e("Firestore", "Error al cargar reservas", e));
     }
 }

@@ -1,32 +1,60 @@
 package com.example.hotelreservaapp.cliente;
 
-import java.io.Serializable;
+public class Hotel {
 
-public class Hotel implements Serializable {
     private String nombre;
-    private float rating;
-    private String puntuacion;
+    private float valoracion;
+    private String contacto;
     private String ubicacion;
-    private String fechas;
-    private String precio;
-    private int imagen;
+    private boolean servicioTaxi;
 
-    public Hotel(String nombre, float rating, String puntuacion, String ubicacion, String fechas, String precio, int imagen) {
+    // Constructor
+    public Hotel(String nombre, float valoracion, String contacto, String ubicacion, boolean servicioTaxi) {
         this.nombre = nombre;
-        this.rating = rating;
-        this.puntuacion = puntuacion;
+        this.valoracion = valoracion;
+        this.contacto = contacto;
         this.ubicacion = ubicacion;
-        this.fechas = fechas;
-        this.precio = precio;
-        this.imagen = imagen;
+        this.servicioTaxi = servicioTaxi;
     }
 
-    // Getters
-    public String getNombre() { return nombre; }
-    public float getRating() { return rating; }
-    public String getPuntuacion() { return puntuacion; }
-    public String getUbicacion() { return ubicacion; }
-    public String getFechas() { return fechas; }
-    public String getPrecio() { return precio; }
-    public int getImagen() { return imagen; }
+    // Métodos getters y setters
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public float getValoracion() {
+        return valoracion;
+    }
+
+    public void setValoracion(float valoracion) {
+        this.valoracion = valoracion;
+    }
+
+    public String getContacto() {
+        return contacto;
+    }
+
+    public void setContacto(String contacto) {
+        this.contacto = contacto;
+    }
+
+    public String getUbicacion() {
+        return ubicacion;
+    }
+
+    public void setUbicacion(String ubicacion) {
+        this.ubicacion = ubicacion;
+    }
+
+    public boolean isServicioTaxi() {
+        return servicioTaxi;
+    }
+
+    public void setServicioTaxi(boolean servicioTaxi) {
+        this.servicioTaxi = servicioTaxi;
+    }
 }

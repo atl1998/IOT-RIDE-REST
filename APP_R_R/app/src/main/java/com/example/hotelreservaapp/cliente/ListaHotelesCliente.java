@@ -3,6 +3,7 @@ package com.example.hotelreservaapp.cliente;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -21,6 +22,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.hotelreservaapp.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +31,8 @@ import java.util.List;
 public class ListaHotelesCliente extends AppCompatActivity {
     private RecyclerView recyclerView;
     private List<Hotel> listaHoteles;
+
+    private FirebaseFirestore db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,13 +58,14 @@ public class ListaHotelesCliente extends AppCompatActivity {
         Toast.makeText(this, "Buscando: " + destino + "\nFechas: " + fechas + "\nVisitantes: " + visitantes,
                 Toast.LENGTH_LONG).show();
 
-
+        //Inicializar Firebase Firestore
+        db= FirebaseFirestore.getInstance();
 
         recyclerView = findViewById(R.id.recyclerView); // asegúrate que exista en tu XML
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         listaHoteles = new ArrayList<>();
-        llenarListaHoteles(); // método que crea datos de ejemplo
+        obtenerDatosDeFirebase(); //metodo que obtiene los datos del firestore
 
         HotelAdapter adapter = new HotelAdapter(this, listaHoteles);
         recyclerView.setAdapter(adapter);
@@ -97,13 +103,40 @@ public class ListaHotelesCliente extends AppCompatActivity {
 
     }
 
+    private void obtenerDatosDeFirebase() {
+        // Obtener los hoteles de la colección "Hoteles" en Firestore
+        db.collection("Hoteles")
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            String nombre = document.getString("nombre");
+                            String ubicacion = document.getString("ubicacion");
+                            String contacto = document.getString("contacto");
+                            boolean servicioTaxi = document.getBoolean("servicioTaxi") != null && document.getBoolean("servicioTaxi");
+                            Double valoracion = document.getDouble("valoracion");
+
+                            Hotel hotel = new Hotel(nombre, valoracion.floatValue(), contacto, ubicacion, servicioTaxi);
+                            listaHoteles.add(hotel);
+                        }
+                        HotelAdapter adapter = new HotelAdapter(this, listaHoteles);
+                        recyclerView.setAdapter(adapter);
+                    } else {
+                        Log.w("Firebase", "Error al obtener los documentos.", task.getException());
+                        Toast.makeText(ListaHotelesCliente.this, "Error al cargar los hoteles", Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+
+/*
     private void llenarListaHoteles() {
         listaHoteles.add(new Hotel("Hotel Lima", 4.5f, "9.1 Excelente - 200 opiniones", "Centro de Lima", "28 abr al 2 may", "S/350", R.drawable.hotel1));
         listaHoteles.add(new Hotel("Hotel Cusco", 4.0f, "8.8 Fabuloso - 150 opiniones", "Cusco Histórico", "1 may al 5 may", "S/290", R.drawable.hotel2));
         listaHoteles.add(new Hotel("Hotel Piura", 4.5f, "9.1 Excelente - 200 opiniones", "Centro de Lima", "28 abr al 2 may", "S/350", R.drawable.hotel1));
         listaHoteles.add(new Hotel("Hotel Loreto", 4.0f, "8.8 Fabuloso - 150 opiniones", "Cusco Histórico", "1 may al 5 may", "S/290", R.drawable.hotel2));
         // agrega más hoteles
-    }
+    }*/
 
 
     private void mostrarDialogoOrdenamiento() {

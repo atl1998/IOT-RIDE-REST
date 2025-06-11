@@ -177,19 +177,211 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerHistorial"
+
+
+    <ScrollView
+        android:id="@+id/scrollArea"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:clipToPadding="false"
-        android:padding="16dp"
+        android:fillViewport="true"
         app:layout_constraintTop_toBottomOf="@id/headerLayout"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/card_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:layout_marginHorizontal="4dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="6dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?android:attr/selectableItemBackground" >
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="12dp">
+
+                    <!-- TEXTO DE ESTADO ARRIBA DE LA IMAGEN -->
+
+                    <!-- CONTENIDO EN HORIZONTAL: IMAGEN + DETALLES -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:paddingBottom="4dp"
+                        android:gravity="center_vertical">
+
+                        <TextView
+                            android:id="@+id/status"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text=" En progreso"
+                            android:textColor="#4CAF50"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:layout_marginBottom="4dp"/>
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_marginEnd="12dp">
+
+                            <!-- 5 estrellas -->
+                            <ImageView
+                                android:layout_width="22dp"
+                                android:layout_height="22dp"
+                                android:src="@drawable/star_fill_yellow"
+                                android:contentDescription="Estrella" />
+
+                            <ImageView
+                                android:layout_width="22dp"
+                                android:layout_height="22dp"
+                                android:src="@drawable/star_fill_yellow"
+                                android:contentDescription="Estrella" />
+
+                            <ImageView
+                                android:layout_width="22dp"
+                                android:layout_height="22dp"
+                                android:src="@drawable/star_fill_yellow"
+                                android:contentDescription="Estrella" />
+
+                            <ImageView
+                                android:layout_width="22dp"
+                                android:layout_height="22dp"
+                                android:src="@drawable/star_half"
+                                android:contentDescription="Estrella" />
+
+                            <ImageView
+                                android:layout_width="22dp"
+                                android:layout_height="22dp"
+                                android:src="@drawable/star_empity"
+                                android:contentDescription="Estrella" />
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <!-- Imagen del hotel -->
+
+                        <!-- Contenedor de los detalles del hotel -->
+                        <com.google.android.material.imageview.ShapeableImageView
+                            android:id="@+id/imageHotel"
+                            android:layout_width="99dp"
+                            android:layout_height="91dp"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginEnd="12dp"
+                            android:contentDescription="Imagen del hotel"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/hotel1"
+                            app:shapeAppearanceOverlay="@style/RoundedImageView" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:layout_marginTop="5dp"
+                            android:layout_marginStart="6dp">
+
+                            <TextView
+                                android:id="@+id/nombreHotel"
+                                android:text="Hotel MiM Ibiza"
+                                android:textStyle="bold"
+                                android:textSize="20sp"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp" />
+
+                            <TextView
+                                android:id="@+id/fechas"
+                                android:text="Desde el 28 abr al 2 mar"
+                                android:textSize="16sp"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp" />
+
+                            <TextView
+                                android:id="@+id/ubicacion"
+                                android:text="📍 España, Ibiza"
+                                android:textSize="16sp"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp" />
 
 
 
+
+                        </LinearLayout>
+
+
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnCheckout"
+                            android:layout_width="match_parent"
+                            android:layout_height="38dp"
+                            android:layout_weight="1"
+                            android:backgroundTint="@color/dorado"
+                            android:text="Solicitar Checkout"
+                            android:textColor="#FFFFFF"
+                            android:textSize="13sp"
+                            android:gravity="center"
+                            android:layout_marginStart="2dp"
+                            android:layout_marginTop="8dp"
+                            android:alpha="1"
+                            />
+
+
+                    </LinearLayout>
+
+
+
+
+                    <Button
+                        android:id="@+id/btnTaxista"
+                        android:layout_width="match_parent"
+                        android:layout_height="37dp"
+                        android:layout_weight="1"
+                        android:layout_marginTop="0dp"
+                        android:backgroundTint="@color/dorado"
+                        android:text="Solicitar Taxista"
+                        android:textColor="#FFFFFF"
+                        android:textSize="13sp"
+                        android:gravity="center"
+                        android:enabled="false"
+                        android:alpha="0.5"/>
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Espacio para evitar superposición con el BottomNavigationView -->
+        </LinearLayout>
+    </ScrollView>
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottonNavigationView"
         android:layout_width="match_parent"

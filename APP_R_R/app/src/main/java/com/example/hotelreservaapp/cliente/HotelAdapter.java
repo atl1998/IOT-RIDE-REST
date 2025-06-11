@@ -42,17 +42,18 @@ public class HotelAdapter extends RecyclerView.Adapter<HotelAdapter.HotelViewHol
         Hotel hotel = listaHoteles.get(position);
 
         holder.txtNombre.setText(hotel.getNombre());
-        holder.ratingBar.setRating(hotel.getRating());
-        holder.txtPuntuacion.setText(hotel.getPuntuacion());
         holder.txtUbicacion.setText(hotel.getUbicacion());
-        holder.txtFechas.setText(hotel.getFechas());
-        holder.txtPrecio.setText(hotel.getPrecio());
-        holder.imgHotel.setImageResource(hotel.getImagen());
+        holder.ratingBar.setRating(hotel.getValoracion());
 
-        // Puedes agregar un listener al botón si lo necesitas
+        // ⚠️ Estáticos por ahora
+        holder.txtPuntuacion.setText("8.8 Fabuloso - 1434 comentarios"); // estático
+        holder.txtFechas.setText("Desde el 28 abr al 2 mar"); // estático
+        holder.txtPrecio.setText("Desde S/345.00"); // estático
+        holder.imgHotel.setImageResource(R.drawable.hotel1_img1); // imagen por defecto
+
+        // Aquí añades el nuevo campo 'contacto' o 'servicioTaxi'
         holder.btnVerDetalles.setOnClickListener(v -> {
             Toast.makeText(context, "Detalles de " + hotel.getNombre(), Toast.LENGTH_SHORT).show();
-            // Aquí puedes abrir otra actividad o mostrar un dialog
             context.startActivity(new Intent(context, DetallesHotel.class));
         });
     }
@@ -63,22 +64,22 @@ public class HotelAdapter extends RecyclerView.Adapter<HotelAdapter.HotelViewHol
     }
 
     public static class HotelViewHolder extends RecyclerView.ViewHolder {
-        ImageView imgHotel, imgFavorito;
-        TextView txtNombre, txtPuntuacion, txtUbicacion, txtFechas, txtPrecio;
+        TextView txtNombre, txtUbicacion, txtPuntuacion, txtFechas, txtPrecio;
         RatingBar ratingBar;
         Button btnVerDetalles;
+        ImageView imgHotel;
 
         public HotelViewHolder(@NonNull View itemView) {
             super(itemView);
-            imgHotel = itemView.findViewById(R.id.imgHotel);
-            imgFavorito = itemView.findViewById(R.id.imgFavorito);
             txtNombre = itemView.findViewById(R.id.txtNombre);
-            txtPuntuacion = itemView.findViewById(R.id.txtPuntuacion);
             txtUbicacion = itemView.findViewById(R.id.txtUbicacion);
+            txtPuntuacion = itemView.findViewById(R.id.txtPuntuacion);
             txtFechas = itemView.findViewById(R.id.txtFechas);
             txtPrecio = itemView.findViewById(R.id.txtPrecio);
             ratingBar = itemView.findViewById(R.id.ratingBar);
+            imgHotel = itemView.findViewById(R.id.imgHotel);
             btnVerDetalles = itemView.findViewById(R.id.btnVerDetalles);
         }
     }
 }
+
