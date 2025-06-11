@@ -5,8 +5,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -18,9 +20,16 @@ import androidx.core.view.WindowInsetsCompat;
 import com.example.hotelreservaapp.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.button.MaterialButton;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class ProcesarPago extends AppCompatActivity {
-
+    private TextView nombreHotel, status, valoracion, ubicacion, valorFecha, valorPersonas, valorHabitacion,
+            valorPrecioHabitacion, valorServiciosExtras, valorCargoDanhos, valorServicioTaxi, valorPrecioTotal;
+    private String userId;
+    HistorialItem historialItem;
+    // ES RESUMEN DE PAGO XD NO REALIZAR PAGOOO, SE AUTOCOBRA
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,6 +40,85 @@ public class ProcesarPago extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser != null){
+            userId = currentUser.getUid();
+        }
+
+        // Inicialización de vistas
+        valorFecha = findViewById(R.id.valorFecha);
+        valorPersonas = findViewById(R.id.valorPersonas);
+        nombreHotel = findViewById(R.id.nombreHotel);
+        status = findViewById(R.id.status);
+        valoracion = findViewById(R.id.valoracion);
+        ubicacion = findViewById(R.id.ubicacion);
+        valorHabitacion = findViewById(R.id.valorHabitacion);
+        valorPrecioHabitacion = findViewById(R.id.valorPrecioHabitacion);
+        valorServiciosExtras = findViewById(R.id.valorServiciosExtras);
+        valorCargoDanhos = findViewById(R.id.valorCargoDanhos);
+        valorServicioTaxi = findViewById(R.id.valorServicioTaxi);
+        valorPrecioTotal = findViewById(R.id.valorPrecioTotal);
+
+        historialItem = (HistorialItem) getIntent().getSerializableExtra("HistorialItem");
+
+        nombreHotel.setText(historialItem.getNombreHotel());
+        status.setText(historialItem.getEstado());
+        valoracion.setText(String.valueOf(historialItem.getValoracion()));
+        ubicacion.setText(historialItem.getUbicacion());
+        valorFecha.setText(historialItem.getRangoFechasBonito());
+        valorPersonas.setText(historialItem.getPersonas() + " Personas");
+        valorHabitacion.setText(historialItem.getTipoHab());
+
+        if ("No disponible".equalsIgnoreCase(historialItem.getTaxistaEnabled())) {
+            valorServicioTaxi.setText("No Disponible");
+        } else {
+            valorServicioTaxi.setText("Gratis");
+        }
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        db.collection("usuarios")
+                .document(userId)
+                .collection("Reservas")
+                .document(historialItem.getIdReserva())
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        // Obtener los valores numéricos desde Firestore
+                        Double precioHabitacion = documentSnapshot.getDouble("PrecioHabitacion");
+                        Double serviciosExtras = documentSnapshot.getDouble("ServiciosExtras");
+                        Double cargoDanhos = documentSnapshot.getDouble("CargoPorDanhos");
+
+                        // Precio de habitación (siempre mostrar el número)
+                        if (precioHabitacion != null) {
+                            valorPrecioHabitacion.setText("S/. " + precioHabitacion);
+                        }
+                        // Servicios extras
+                        if (serviciosExtras != null) {
+                            if (serviciosExtras == 0.0) {
+                                valorServiciosExtras.setText("S/. - - -");
+                            } else {
+                                valorServiciosExtras.setText("S/. " + serviciosExtras);
+                            }
+                        }
+                        // Cargo por daños
+                        if (cargoDanhos != null) {
+                            if (cargoDanhos == 0.0) {
+                                valorCargoDanhos.setText("S/. - - -");
+                            } else {
+                                valorCargoDanhos.setText("S/. " + cargoDanhos);
+                            }
+                        }
+                        // Precio total (suma, considerando nulos como 0.0)
+                        double total = (precioHabitacion != null ? precioHabitacion : 0.0)
+                                + (serviciosExtras != null ? serviciosExtras : 0.0)
+                                + (cargoDanhos != null ? cargoDanhos : 0.0);
+                        valorPrecioTotal.setText("S/. " + total);
+                    }
+                })
+                .addOnFailureListener(e -> Log.e("Firestore", "Error al obtener datos", e));
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottonNavigationView);
         bottomNavigationView.setOnItemSelectedListener(item -> {
@@ -50,18 +138,19 @@ public class ProcesarPago extends AppCompatActivity {
             }
             return false;
         });
+        //es solicitar taxi xd
         Button btnrealizarpago = findViewById(R.id.btn_realizar_pago);
-        btnrealizarpago.setEnabled(true);
-        btnrealizarpago.setAlpha(1f);
+        btnrealizarpago.setEnabled(false);
+        btnrealizarpago.setAlpha(0.5f);
 
-
-        // Recuperar la hora guardada de SharedPreferences
+        /*
         SharedPreferences sharedPreferences = getSharedPreferences("ReservaPrefs", MODE_PRIVATE);
         Boolean ServicioTaxi = sharedPreferences.getBoolean("ServicioTaxi", false);
+        */
 
-        if(ServicioTaxi){
-            btnrealizarpago.setEnabled(false);
-            btnrealizarpago.setAlpha(0.5f);
+        if("No solicitado".equals(historialItem.getTaxistaEnabled())){
+            btnrealizarpago.setEnabled(true);
+            btnrealizarpago.setAlpha(1f);
         }
 
         MaterialButton btnNotificaciones = findViewById(R.id.notificaciones_cliente);
@@ -94,10 +183,22 @@ public class ProcesarPago extends AppCompatActivity {
             }
 
             // Guardar en SharedPreferences que se solicitó el taxi
+            /*
             SharedPreferences sharedPreferences = getSharedPreferences("ReservaPrefs", MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.putBoolean("ServicioTaxi", true);
             editor.apply();
+            */
+
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+            db.collection("usuarios")
+                    .document(userId)
+                    .collection("Reservas")
+                    .document(historialItem.getIdReserva())
+                    .update("solicitarTaxista", "Solicitado")
+                    .addOnSuccessListener(aVoid -> Log.d("Firestore", "Campo actualizado a 'Solicitado'"))
+                    .addOnFailureListener(e -> Log.e("Firestore", "Error al actualizar el campo", e));
 
             // Lanzar la siguiente actividad
             Intent intent = new Intent(ProcesarPago.this, HistorialEventos.class);

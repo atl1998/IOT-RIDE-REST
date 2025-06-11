@@ -2,11 +2,12 @@ package com.example.hotelreservaapp.cliente;
 
 import com.google.firebase.Timestamp;
 
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-public class HistorialItem {
+public class HistorialItem implements Serializable {
     private String idReserva;
     private String estado;
     private String nombreHotel;
@@ -41,6 +42,14 @@ public class HistorialItem {
         this.fechaIni=fechaIni;
         this.fechas=getRangoFechasBonito();
 
+    }
+
+    public void setFechaIni(Timestamp fechaIni) {
+        this.fechaIni = fechaIni;
+    }
+
+    public void setFechaFin(Timestamp fechaFin) {
+        this.fechaFin = fechaFin;
     }
 
     public String getCheckOutHora() {

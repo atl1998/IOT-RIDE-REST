@@ -27,6 +27,8 @@ import com.google.android.gms.tasks.Tasks;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.Timestamp;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
@@ -48,8 +50,7 @@ public class DetallesReserva extends AppCompatActivity {
     private HistorialItem historialItem;
     ImageView imageHotel;
     private String idReserva;
-    private String userId = "o60eTvckH0OpIkS29izDulVrsdC2";
-
+    private String userId;
 
     private String Tipo;
 
@@ -77,6 +78,12 @@ public class DetallesReserva extends AppCompatActivity {
         fechaCheckOut = findViewById(R.id.fechaCheckOut);
         imageHotel = findViewById(R.id.imageHotel);
         HoraDeSalida = findViewById(R.id.HoraDeSalida);
+
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser != null){
+            userId = currentUser.getUid();
+        }
 
         idReserva = getIntent().getStringExtra("idReserva");
         cargarReserva(idReserva);
@@ -138,6 +145,7 @@ public class DetallesReserva extends AppCompatActivity {
 
         // Recuperar la hora guardada de SharedPreferences
 
+        /*
         SharedPreferences sharedPreferences = getSharedPreferences("ReservaPrefs", MODE_PRIVATE);
         //String horaGuardada = sharedPreferences.getString("horaLlegada", null);
         Boolean SolicitarCheckout = sharedPreferences.getBoolean("SolicitarCheckout", false);
@@ -146,6 +154,8 @@ public class DetallesReserva extends AppCompatActivity {
             btnServicio.setEnabled(true);
             btnServicio.setAlpha(1f);
         }
+        */
+
 
         /*
         if (horaGuardada != null) {
@@ -206,6 +216,9 @@ public class DetallesReserva extends AppCompatActivity {
         });
         btnServicio.setOnClickListener(v -> {
             Intent intent = new Intent(this, ProcesarPago.class);
+            historialItem.setFechaFin(null);
+            historialItem.setFechaIni(null);
+            intent.putExtra("HistorialItem", historialItem); // usuario es un objeto de tu clase
             startActivity(intent);
         });
     }
@@ -264,9 +277,11 @@ public class DetallesReserva extends AppCompatActivity {
                                         }
 
                                         // Validación para CheckOutHora
-                                        if (checkOutHora != null && !checkOutHora.trim().isEmpty()) {
+                                        if (checkOutHora != null && !checkOutHora.trim().isEmpty() && checkoutSolicitado) {
                                             historialItem.setCheckOutHora(checkOutHora);
                                             HoraDeSalida.setText("Finalizado a las " + checkOutHora);
+                                            btnServicio.setEnabled(true);
+                                            btnServicio.setAlpha(1f);
                                         }
 
                                         valorFecha.setText(historialItem.getRangoFechasBonito());

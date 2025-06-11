@@ -43,6 +43,8 @@ import com.google.android.gms.tasks.Tasks;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.Timestamp;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -72,6 +74,7 @@ public class HistorialEventos extends AppCompatActivity implements HistorialItem
     private String Tipo;
     private RecyclerView recyclerView;
     private List<HistorialItem> historialItems;
+    private String userId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,6 +93,12 @@ public class HistorialEventos extends AppCompatActivity implements HistorialItem
         // Crear adapter con lista vacía
         adapter = new HistorialAdapter(this, historialItems, this);
         recyclerView.setAdapter(adapter);
+
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser != null){
+            userId = currentUser.getUid();
+        }
 
         cargarHistorial();
 
@@ -226,7 +235,6 @@ public class HistorialEventos extends AppCompatActivity implements HistorialItem
         historialItems.clear();
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        String userId = "o60eTvckH0OpIkS29izDulVrsdC2";
 
         db.collection("usuarios")
                 .document(userId)
@@ -370,13 +378,20 @@ public class HistorialEventos extends AppCompatActivity implements HistorialItem
 
                 // Firestore
                 FirebaseFirestore db = FirebaseFirestore.getInstance();
-                String userId = "o60eTvckH0OpIkS29izDulVrsdC2";
+
+                // Obtener la hora actual en formato "HH:mm"
+                String horaActual = new SimpleDateFormat("HH:mm", Locale.getDefault()).format(new Date());
+
+                // Crear mapa con los campos a actualizar
+                Map<String, Object> updates = new HashMap<>();
+                updates.put("checkoutSolicitado", true);
+                updates.put("CheckOutHora", horaActual);  // <-- esto será tipo String
 
                 db.collection("usuarios")
                         .document(userId)
                         .collection("Reservas")
                         .document(IdReserva)
-                        .update("checkoutSolicitado", true)
+                        .update(updates)
                         .addOnSuccessListener(aVoid -> Log.d("Firestore", "Reserva actualizada correctamente"))
                         .addOnFailureListener(e -> Log.e("Firestore", "Error al actualizar reserva", e));
             }
