@@ -42,7 +42,7 @@ public class UsuarioAdapter extends RecyclerView.Adapter<UsuarioAdapter.UsuarioV
         listaFiltrada.clear();
         for (UsuarioListaSuperAdmin u : listaCompleta) {
             boolean coincideRol = rolFiltro.equals("Todos")
-                    || (rolFiltro.equals("Administradores de hotel") && u.getRol().equalsIgnoreCase("Administrador de hotel"))
+                    || (rolFiltro.equals("Administradores de hotel") && u.getRol().equalsIgnoreCase("Administrador de Hotel"))
                     || (rolFiltro.equals("Taxistas") && u.getRol().equalsIgnoreCase("Taxista"))
                     || (rolFiltro.equals("Clientes") && u.getRol().equalsIgnoreCase("Cliente"));
 

@@ -134,6 +134,21 @@ public class LoginActivity extends AppCompatActivity {
                                     .addOnSuccessListener(document -> {
                                         progressDialog.dismiss();
                                         if (document.exists()) {
+                                            Boolean activo = document.getBoolean("estado");
+                                            Boolean requiereCambio = document.getBoolean("requiereCambioContrasena");
+
+                                            if (activo != null && !activo) {
+                                                Toast.makeText(this, "Tu cuenta está inactiva. Contacta al administrador.", Toast.LENGTH_SHORT).show();
+                                                firebaseAuth.signOut();
+                                                return;
+                                            }
+
+                                            if (requiereCambio != null && requiereCambio) {
+                                                Intent intent = new Intent(this, NuevaContrasenaActivity.class);
+                                                startActivity(intent);
+                                                finish();
+                                                return;
+                                            }
                                             redirigirSegunRol(document.getString("rol"));
                                         } else {
                                             Toast.makeText(this, "No se encontró el perfil del usuario", Toast.LENGTH_SHORT).show();
@@ -206,7 +221,8 @@ public class LoginActivity extends AppCompatActivity {
                                                 "",
                                                 "",
                                                 "",
-                                                true
+                                                true,
+                                                false
                                         );
                                         db.collection("usuarios").document(user.getUid()).set(nuevoUsuario)
                                                 .addOnSuccessListener(aVoid -> {

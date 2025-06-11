@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_login2">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="24dp">
+
+        <!-- Flecha de retroceso -->
+        <ImageButton
+            android:id="@+id/btnBack"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="4dp"
+            android:backgroundTint="@android:color/white"
+            android:contentDescription="Volver"
+            android:src="@drawable/outline_arrow_back_24"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/dorado_oscuro" />
+
+        <!-- Título -->
+        <TextView
+            android:id="@+id/tvTitulo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="200dp"
+            android:text="Nueva Contraseña"
+            android:textColor="@color/dorado_oscuro"
+            android:textSize="26sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tvInstruccion"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Crea una nueva contraseña segura para proteger tu cuenta"
+            android:textAlignment="center"
+            android:textColor="#2C2A2A"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvTitulo" />
+
+        <!-- Nueva Contraseña -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilNuevaContrasena"
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+            app:boxStrokeColor="#452C06"
+            app:hintTextColor="@color/black"
+            app:boxStrokeWidthFocused="2dp"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            app:startIconDrawable="@drawable/baseline_lock_outline_24"
+            app:endIconMode="password_toggle"
+            app:helperText="Mínimo 8 caracteres"
+            app:helperTextTextColor="#757575"
+            app:layout_constraintTop_toBottomOf="@id/tvInstruccion"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etNuevaContrasena"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textCursorDrawable="@null"
+                android:hint="Nueva contraseña"
+                android:textColorHint="#452C06"
+                android:textColor="#452C06"
+                android:inputType="textPassword" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Confirmar Contraseña -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilConfirmarContrasena"
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+            app:boxStrokeColor="#452C06"
+            app:hintTextColor="@color/black"
+            app:boxStrokeWidthFocused="2dp"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:startIconDrawable="@drawable/baseline_lock_outline_24"
+            app:endIconMode="password_toggle"
+            app:layout_constraintTop_toBottomOf="@id/tilNuevaContrasena"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etConfirmarContrasena"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textCursorDrawable="@null"
+                android:hint="Confirmar contraseña"
+                android:textColorHint="#452C06"
+                android:textColor="#452C06"
+                android:inputType="textPassword" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Indicadores de seguridad de contraseña -->
+        <LinearLayout
+            android:id="@+id/layoutIndicadores"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:background="#F5F5F5"
+            app:layout_constraintTop_toBottomOf="@id/tilConfirmarContrasena"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tu contraseña debe contener:"
+                android:textColor="#452C06"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp" />
+
+            <TextView
+                android:id="@+id/tvIndicador1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="• Al menos 8 caracteres"
+                android:textColor="#757575"
+                android:textSize="12sp"
+                android:layout_marginBottom="4dp" />
+
+            <TextView
+                android:id="@+id/tvIndicador2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="• Una letra mayúscula"
+                android:textColor="#757575"
+                android:textSize="12sp"
+                android:layout_marginBottom="4dp" />
+
+            <TextView
+                android:id="@+id/tvIndicador3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="• Un número"
+                android:textColor="#757575"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <!-- Botón Cambiar Contraseña -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnCambiarContrasena"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Cambiar Contraseña"
+            android:backgroundTint="@color/dorado"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginTop="24dp"
+            app:cornerRadius="50dp"
+            android:paddingVertical="14dp"
+            app:layout_constraintTop_toBottomOf="@id/layoutIndicadores"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- Texto informativo adicional -->
+        <TextView
+            android:id="@+id/tvInfoAdicional"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Una vez cambiada tu contraseña, se cerrará sesión en todos tus dispositivos por seguridad"
+            android:textAlignment="center"
+            android:textColor="#757575"
+            android:textSize="12sp"
+            android:layout_marginBottom="24dp"
+            app:layout_constraintTop_toBottomOf="@id/btnCambiarContrasena"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>
