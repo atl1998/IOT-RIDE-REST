@@ -26,20 +26,25 @@ import com.example.hotelreservaapp.R;
 import com.example.hotelreservaapp.databinding.SuperadminRegistrarAdmHotelActivityBinding;
 import com.example.hotelreservaapp.databinding.SuperadminRegistrarTaxistaActivityBinding;
 import com.example.hotelreservaapp.model.Notificacion;
+import com.example.hotelreservaapp.model.Usuario;
 import com.example.hotelreservaapp.room.AppDatabase;
 import com.google.android.material.datepicker.CalendarConstraints;
 import com.google.android.material.datepicker.DateValidatorPointBackward;
 import com.google.android.material.datepicker.MaterialDatePicker;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
+import java.util.UUID;
 
 
 public class RegistrarAdmHotelActivity extends AppCompatActivity {
     private SuperadminRegistrarAdmHotelActivityBinding binding;
-
+    private FirebaseAuth mAuth;
+    private FirebaseFirestore firestore;
     // 👉 Declaramos el launcher moderno para abrir galería
     private final ActivityResultLauncher<Intent> pickImageLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
@@ -60,6 +65,9 @@ public class RegistrarAdmHotelActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = SuperadminRegistrarAdmHotelActivityBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        mAuth = FirebaseAuth.getInstance();
+        firestore = FirebaseFirestore.getInstance();
 
         configurarBotonBack();
         configurarCampoFechaNacimiento();
@@ -96,36 +104,105 @@ public class RegistrarAdmHotelActivity extends AppCompatActivity {
 
     //Change soon
     private void configurarBotonRegistro() {
-        binding.btnRegistrar.setOnClickListener(v ->{
-                // Validar campos
-                if (!validarFormulario()) return;
-            if (validarFormulario()) {
-                Notificacion nueva = new Notificacion("Nuevo admin de hotel registrado",
-                        "Se ha registrado correctamente un nuevo administrador de hotel.",
-                        System.currentTimeMillis(), false);
-                AppDatabase.getInstance(this).notificacionDao().insertar(nueva); //C guarda nueva en room
+        binding.btnRegistrar.setOnClickListener(v -> {
+            if (!validarFormulario()) return;
 
+            // 1. Obtener datos del formulario
+            String nombres = binding.etNombres.getText().toString().trim();
+            String apellidos = binding.etApellidos.getText().toString().trim();
+            String correo = binding.etCorreo.getText().toString().trim();
+            String telefono = binding.etTelefono.getText().toString().trim();
+            String documento = binding.etNumDoc.getText().toString().trim();
+            String direccion = binding.etDomicilio.getText().toString().trim();
+            String fechaNacimiento = binding.etFechaNacimiento.getText().toString().trim();
 
+            String tipoDocumento;
+            int checkedId = binding.chipGroupTipoDoc.getCheckedChipId();
+            if (checkedId == R.id.chipDni) tipoDocumento = "DNI";
+            else if (checkedId == R.id.chipCarnet) tipoDocumento = "Carné de Extranjería";
+            else tipoDocumento = "Pasaporte";
 
-                // Mostrar notificación visual también
-                NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "ChannelRideAndRest")
-                        .setSmallIcon(R.drawable.icon_notification)
-                        .setContentTitle(nueva.titulo)
-                        .setContentText(nueva.mensaje)
-                        .setPriority(NotificationCompat.PRIORITY_HIGH);
+            // 2. Contraseña temporal aleatoria
+            String contrasenaTemporal = UUID.randomUUID().toString().substring(0, 10);
 
-                NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+            // 3. Firebase
+            FirebaseAuth mAuth = FirebaseAuth.getInstance();
+            FirebaseFirestore firestore = FirebaseFirestore.getInstance();
 
-                if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS)
-                        == PackageManager.PERMISSION_GRANTED) {
-                    notificationManager.notify(1, builder.build());
-                }
-            }
-                // Aquí iría lógica de registro (guardar en base de datos o backend)
-                Toast.makeText(this, "Formulario válido. Registrando...", Toast.LENGTH_SHORT).show();
-                finish();
+            mAuth.createUserWithEmailAndPassword(correo, contrasenaTemporal)
+                    .addOnSuccessListener(authResult -> {
+                        String uid = authResult.getUser().getUid();
+
+                        Usuario usuario = new Usuario(
+                                nombres,
+                                apellidos,
+                                "adminHotel",
+                                tipoDocumento,
+                                documento,
+                                fechaNacimiento,
+                                correo,
+                                telefono,
+                                direccion,
+                                "", // urlFotoPerfil
+                                true
+                        );
+
+                        firestore.collection("usuarios").document(uid)
+                                .set(usuario)
+                                .addOnSuccessListener(unused -> {
+                                    // Marcar que debe cambiar contraseña
+                                    firestore.collection("usuarios").document(uid)
+                                            .update("requiereCambioContrasena", true);
+
+                                    // 4. Notificación local
+                                    Notificacion nueva = new Notificacion("Nuevo admin de hotel registrado",
+                                            "Se ha registrado correctamente un nuevo administrador de hotel.",
+                                            System.currentTimeMillis(), false);
+                                    AppDatabase.getInstance(this).notificacionDao().insertar(nueva);
+
+                                    NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "ChannelRideAndRest")
+                                            .setSmallIcon(R.drawable.icon_notification)
+                                            .setContentTitle(nueva.titulo)
+                                            .setContentText(nueva.mensaje)
+                                            .setPriority(NotificationCompat.PRIORITY_HIGH);
+
+                                    NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+                                    if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS)
+                                            == PackageManager.PERMISSION_GRANTED) {
+                                        notificationManager.notify(1, builder.build());
+                                    }
+
+                                    // 5. Abrir cliente de correo para enviar acceso
+                                    Intent intent = new Intent(Intent.ACTION_SEND);
+                                    intent.setType("message/rfc822");
+                                    intent.putExtra(Intent.EXTRA_EMAIL, new String[]{correo});
+                                    intent.putExtra(Intent.EXTRA_SUBJECT, "Acceso a la plataforma HotelReservaApp");
+                                    intent.putExtra(Intent.EXTRA_TEXT,
+                                            "Hola " + nombres + ",\n\n" +
+                                                    "Has sido registrado como administrador de hotel.\n\n" +
+                                                    "📧 Correo: " + correo + "\n" +
+                                                    "🔐 Contraseña temporal: " + contrasenaTemporal + "\n\n" +
+                                                    "Por favor, inicia sesión en la app y cambia tu contraseña.");
+
+                                    try {
+                                        startActivity(Intent.createChooser(intent, "Enviar correo con..."));
+                                    } catch (android.content.ActivityNotFoundException ex) {
+                                        Toast.makeText(this, "No se encontró una app de correo.", Toast.LENGTH_SHORT).show();
+                                    }
+
+                                    Toast.makeText(this, "Administrador registrado correctamente", Toast.LENGTH_SHORT).show();
+                                    finish();
+                                })
+                                .addOnFailureListener(e -> {
+                                    Toast.makeText(this, "Error al guardar en Firestore: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                                });
+                    })
+                    .addOnFailureListener(e -> {
+                        Toast.makeText(this, "Error al registrar usuario: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    });
         });
     }
+
 
     private boolean validarFormulario() {
         boolean valido = true;
