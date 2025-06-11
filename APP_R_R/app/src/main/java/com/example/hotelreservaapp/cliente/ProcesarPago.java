@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,6 +28,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 public class ProcesarPago extends AppCompatActivity {
     private TextView nombreHotel, status, valoracion, ubicacion, valorFecha, valorPersonas, valorHabitacion,
             valorPrecioHabitacion, valorServiciosExtras, valorCargoDanhos, valorServicioTaxi, valorPrecioTotal;
+    ImageView imageHotel;
     private String userId;
     HistorialItem historialItem;
     // ES RESUMEN DE PAGO XD NO REALIZAR PAGOOO, SE AUTOCOBRA
@@ -60,6 +62,7 @@ public class ProcesarPago extends AppCompatActivity {
         valorCargoDanhos = findViewById(R.id.valorCargoDanhos);
         valorServicioTaxi = findViewById(R.id.valorServicioTaxi);
         valorPrecioTotal = findViewById(R.id.valorPrecioTotal);
+        imageHotel = findViewById(R.id.imageHotel);
 
         historialItem = (HistorialItem) getIntent().getSerializableExtra("HistorialItem");
 
@@ -67,9 +70,10 @@ public class ProcesarPago extends AppCompatActivity {
         status.setText(historialItem.getEstado());
         valoracion.setText(String.valueOf(historialItem.getValoracion()));
         ubicacion.setText(historialItem.getUbicacion());
-        valorFecha.setText(historialItem.getRangoFechasBonito());
+        valorFecha.setText(historialItem.getFechas());
         valorPersonas.setText(historialItem.getPersonas() + " Personas");
         valorHabitacion.setText(historialItem.getTipoHab());
+        imageHotel.setImageResource(historialItem.getImagenResId());
 
         if ("No disponible".equalsIgnoreCase(historialItem.getTaxistaEnabled())) {
             valorServicioTaxi.setText("No Disponible");
@@ -83,6 +87,8 @@ public class ProcesarPago extends AppCompatActivity {
                 .document(userId)
                 .collection("Reservas")
                 .document(historialItem.getIdReserva())
+                .collection("PagosRealizados")
+                .document("Pago")
                 .get()
                 .addOnSuccessListener(documentSnapshot -> {
                     if (documentSnapshot.exists()) {
@@ -94,6 +100,8 @@ public class ProcesarPago extends AppCompatActivity {
                         // Precio de habitación (siempre mostrar el número)
                         if (precioHabitacion != null) {
                             valorPrecioHabitacion.setText("S/. " + precioHabitacion);
+                        } else {
+                            valorPrecioHabitacion.setText("S/. - - -");
                         }
                         // Servicios extras
                         if (serviciosExtras != null) {
@@ -102,6 +110,8 @@ public class ProcesarPago extends AppCompatActivity {
                             } else {
                                 valorServiciosExtras.setText("S/. " + serviciosExtras);
                             }
+                        } else {
+                            valorServiciosExtras.setText("S/. - - -");
                         }
                         // Cargo por daños
                         if (cargoDanhos != null) {
@@ -110,12 +120,23 @@ public class ProcesarPago extends AppCompatActivity {
                             } else {
                                 valorCargoDanhos.setText("S/. " + cargoDanhos);
                             }
+                        } else {
+                            valorCargoDanhos.setText("S/. - - -");
                         }
-                        // Precio total (suma, considerando nulos como 0.0)
-                        double total = (precioHabitacion != null ? precioHabitacion : 0.0)
-                                + (serviciosExtras != null ? serviciosExtras : 0.0)
-                                + (cargoDanhos != null ? cargoDanhos : 0.0);
-                        valorPrecioTotal.setText("S/. " + total);
+                        // Solo calcular y mostrar total si precioHabitacion no es null
+                        if (precioHabitacion != null) {
+                            double total = (precioHabitacion != null ? precioHabitacion : 0.0)
+                                    + (serviciosExtras != null ? serviciosExtras : 0.0)
+                                    + (cargoDanhos != null ? cargoDanhos : 0.0);
+                            valorPrecioTotal.setText("S/. " + total);
+                        } else {
+                            valorPrecioTotal.setText("S/. - - -");
+                        }
+                    } else {
+                        valorPrecioHabitacion.setText("S/. - - -");
+                        valorServiciosExtras.setText("S/. - - -");
+                        valorCargoDanhos.setText("S/. - - -");
+                        valorPrecioTotal.setText("S/. - - -");
                     }
                 })
                 .addOnFailureListener(e -> Log.e("Firestore", "Error al obtener datos", e));

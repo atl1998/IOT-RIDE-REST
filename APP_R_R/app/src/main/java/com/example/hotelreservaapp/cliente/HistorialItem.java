@@ -12,6 +12,7 @@ public class HistorialItem implements Serializable {
     private String estado;
     private String nombreHotel;
     private String fechas;
+    private String rangoFechaBonito;
     private String ubicacion;
     private String tipoHab;
     private Timestamp fechaIni;

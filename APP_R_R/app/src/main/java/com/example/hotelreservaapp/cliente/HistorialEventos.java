@@ -84,6 +84,13 @@ public class HistorialEventos extends AppCompatActivity implements HistorialItem
         EdgeToEdge.enable(this);
         setContentView(R.layout.cliente_activity_historial_eventos);
 
+        View mainView = findViewById(R.id.main);
+        ViewCompat.setOnApplyWindowInsetsListener(mainView, (v, insets) -> {
+            Insets statusBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(0, statusBars.top, 0, 0);
+            return insets;
+        });
+
         recyclerView = findViewById(R.id.recyclerHistorial);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -165,14 +172,7 @@ public class HistorialEventos extends AppCompatActivity implements HistorialItem
                 }
             });
         }
-        if(btnTaxista.isEnabled()){
-            btnTaxista.setOnClickListener(v -> {
-                Intent intent = new Intent(this, ClienteServicioTaxi.class);
-                startActivity(intent);
-            });
-        }
         */
-
     }
 /*
     private void cargarHistorial(){
@@ -301,7 +301,11 @@ public class HistorialEventos extends AppCompatActivity implements HistorialItem
         intent.putExtra("idReserva", item.getIdReserva());
         startActivity(intent);
     }
-
+    @Override
+    public void onTaxiClicked(HistorialItem item) {
+        Intent intent = new Intent(this, ClienteServicioTaxi.class);
+        startActivity(intent);
+    }
     @Override
     protected void onResume() {
         super.onResume();
@@ -314,8 +318,8 @@ public class HistorialEventos extends AppCompatActivity implements HistorialItem
                 return true; // Ya estás en esta pantalla
             } else if (id == R.id.chat_cliente) {
                 startActivity(new Intent(this, ClienteChat.class));
-            } else if (id == R.id.historialCliente) {
-                startActivity(new Intent(this, HistorialEventos.class));
+            } else if (id == R.id.inicioCliente) {
+                startActivity(new Intent(this, HomeCliente.class));
             } else if (id == R.id.perfilCliente) {
                 startActivity(new Intent(this, PerfilCliente.class));
             }
@@ -327,11 +331,6 @@ public class HistorialEventos extends AppCompatActivity implements HistorialItem
         mostrarDialogoCheckout(item.getIdReserva()); // ya lo tienes implementado
     }
 
-    @Override
-    public void onTaxiClicked(HistorialItem item) {
-        Intent intent = new Intent(this, ClienteServicioTaxi.class);
-        startActivity(intent);
-    }
     public String getFechaBonitaDesdeTimestamp(Timestamp timestamp) {
         if (timestamp == null) return ""; // seguridad por si viene nulo
         Date date = timestamp.toDate();

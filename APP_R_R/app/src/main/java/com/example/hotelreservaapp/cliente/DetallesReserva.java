@@ -285,8 +285,7 @@ public class DetallesReserva extends AppCompatActivity {
                                         }
 
                                         valorFecha.setText(historialItem.getRangoFechasBonito());
-                                        valorPersonas.setText(String.valueOf(historialItem.getPersonas()));
-                                        nombreHotel.setText(historialItem.getNombreHotel());
+                                        valorPersonas.setText(historialItem.getPersonas() + " Personas");                                        nombreHotel.setText(historialItem.getNombreHotel());
                                         status.setText(historialItem.getEstado());
                                         valoracion.setText(String.valueOf(historialItem.getValoracion()));
                                         ubicacion.setText(historialItem.getUbicacion());
