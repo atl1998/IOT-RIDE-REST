@@ -144,16 +144,13 @@ public class RegistrarAdmHotelActivity extends AppCompatActivity {
                                 telefono,
                                 direccion,
                                 "", // urlFotoPerfil
+                                true,
                                 true
                         );
 
                         firestore.collection("usuarios").document(uid)
                                 .set(usuario)
                                 .addOnSuccessListener(unused -> {
-                                    // Marcar que debe cambiar contraseña
-                                    firestore.collection("usuarios").document(uid)
-                                            .update("requiereCambioContrasena", true);
-
                                     // 4. Notificación local
                                     Notificacion nueva = new Notificacion("Nuevo admin de hotel registrado",
                                             "Se ha registrado correctamente un nuevo administrador de hotel.",
@@ -173,23 +170,24 @@ public class RegistrarAdmHotelActivity extends AppCompatActivity {
                                     }
 
                                     // 5. Abrir cliente de correo para enviar acceso
-                                    Intent intent = new Intent(Intent.ACTION_SEND);
-                                    intent.setType("message/rfc822");
-                                    intent.putExtra(Intent.EXTRA_EMAIL, new String[]{correo});
-                                    intent.putExtra(Intent.EXTRA_SUBJECT, "Acceso a la plataforma HotelReservaApp");
-                                    intent.putExtra(Intent.EXTRA_TEXT,
-                                            "Hola " + nombres + ",\n\n" +
-                                                    "Has sido registrado como administrador de hotel.\n\n" +
-                                                    "📧 Correo: " + correo + "\n" +
-                                                    "🔐 Contraseña temporal: " + contrasenaTemporal + "\n\n" +
-                                                    "Por favor, inicia sesión en la app y cambia tu contraseña.");
-
                                     try {
+                                        String uriText = "mailto:" + Uri.encode(correo) +
+                                                "?subject=" + Uri.encode("Acceso a la plataforma HotelReservaApp") +
+                                                "&body=" + Uri.encode(
+                                                "Hola " + nombres + apellidos +",\n\n" +
+                                                        "Has sido registrado como administrador de hotel.\n\n" +
+                                                        "📧 Correo: " + correo + "\n" +
+                                                        "🔐 Contraseña temporal: " + contrasenaTemporal + "\n\n" +
+                                                        "Por favor, inicia sesión en la app y cambia tu contraseña.\n\n" +
+                                                        "Atentamente,\nEquipo de Ride&Rest");
+
+                                        Intent intent = new Intent(Intent.ACTION_SENDTO);
+                                        intent.setData(Uri.parse(uriText));
                                         startActivity(Intent.createChooser(intent, "Enviar correo con..."));
                                     } catch (android.content.ActivityNotFoundException ex) {
                                         Toast.makeText(this, "No se encontró una app de correo.", Toast.LENGTH_SHORT).show();
                                     }
-
+                                    FirebaseAuth.getInstance().signOut();
                                     Toast.makeText(this, "Administrador registrado correctamente", Toast.LENGTH_SHORT).show();
                                     finish();
                                 })

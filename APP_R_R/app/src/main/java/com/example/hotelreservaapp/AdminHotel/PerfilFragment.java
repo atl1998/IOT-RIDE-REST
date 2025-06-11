@@ -32,6 +32,7 @@ import com.example.hotelreservaapp.loginAndRegister.LoginActivity;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -117,7 +118,15 @@ public class PerfilFragment extends Fragment {
         if (file.exists()) {
             binding.ivProfileImage.setImageURI(Uri.fromFile(file));
         }
+        binding.btnCerrarSesion.setOnClickListener(v -> {
+            FirebaseAuth.getInstance().signOut(); // 🔐 Cierra sesión
+            Toast.makeText(getContext(), "Sesión cerrada", Toast.LENGTH_SHORT).show();
 
+            //  Redirige a LoginActivity
+            Intent intent = new Intent(getContext(), LoginActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+        });
         // Inicializar pickImageLauncher
         pickImageLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
             if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {

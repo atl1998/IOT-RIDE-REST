@@ -144,7 +144,11 @@ public class GestionUsuariosFragment extends Fragment {
                         String correo = doc.getString("correo");
                         String rol = doc.getString("rol");
                         if (rol != null && !rol.isEmpty()) {
-                            rol = rol.substring(0, 1).toUpperCase() + rol.substring(1).toLowerCase();
+                            if (rol.equals("adminHotel")){
+                                rol = "Administrador de Hotel";
+                            }else {
+                                rol = rol.substring(0, 1).toUpperCase() + rol.substring(1).toLowerCase();
+                            }
                         }
                         String imagen = doc.contains("urlFotoPerfil") ? doc.getString("urlFotoPerfil") : "";
                         boolean estado = Boolean.TRUE.equals(doc.getBoolean("estado"));

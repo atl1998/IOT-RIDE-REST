@@ -164,7 +164,8 @@ public class RegistroActivity extends AppCompatActivity {
                                     telefono,
                                     direccion,
                                     "", // urlFotoPerfil se agregará luego
-                                    true
+                                    true,
+                                    false
                             );
 
                             firestore.collection("usuarios")
