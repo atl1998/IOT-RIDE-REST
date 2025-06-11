@@ -380,11 +380,13 @@ public class HistorialEventos extends AppCompatActivity implements HistorialItem
 
                 // Obtener la hora actual en formato "HH:mm"
                 String horaActual = new SimpleDateFormat("HH:mm", Locale.getDefault()).format(new Date());
+                String checkin = "No especificado";
 
                 // Crear mapa con los campos a actualizar
                 Map<String, Object> updates = new HashMap<>();
                 updates.put("checkoutSolicitado", true);
                 updates.put("CheckOutHora", horaActual);  // <-- esto será tipo String
+                updates.put("CheckInHora", checkin);
 
                 db.collection("usuarios")
                         .document(userId)

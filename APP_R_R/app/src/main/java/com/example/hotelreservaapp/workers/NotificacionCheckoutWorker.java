@@ -70,6 +70,7 @@ public class NotificacionCheckoutWorker extends Worker {
                 .toArray(new Notificaciones[0]);
         storageHelper.guardarArchivoNotificacionesEnSubcarpeta(arregloParaGuardar);
 
+        // CREO QUE INNECESARIO
         SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("ReservaPrefs", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putBoolean("SolicitarCheckout", true);
@@ -99,6 +100,8 @@ public class NotificacionCheckoutWorker extends Worker {
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getApplicationContext());
         notificationManager.notify(2, builder.build());
 
+        PendingIntent secondPendingIntent = PendingIntent.getActivity(getApplicationContext(), 2, intent, PendingIntent.FLAG_IMMUTABLE);
+
         // Segunda notificación (por ejemplo, resumen del pago)
         NotificationCompat.Builder secondBuilder = new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID)
                 .setSmallIcon(R.drawable.logo_r_r_2)
@@ -106,6 +109,7 @@ public class NotificacionCheckoutWorker extends Worker {
                 .setContentTitle("¡Tu hotel cuenta con servicio de Taxi!")
                 .setContentText("Su hotel cuenta con servicio de taxi, si desea solicitar dicho servicio por favor dirigirse a “Revisar el pago realizado” en detalles de tu hotel reservado, y presionar el botón “Solicitar Servicio de Taxi”.")
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setContentIntent(secondPendingIntent)
                 .setAutoCancel(true);
 
         // Mostrar la segunda notificación con otro ID (por ejemplo, 3)

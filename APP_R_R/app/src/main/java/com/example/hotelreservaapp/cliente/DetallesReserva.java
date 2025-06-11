@@ -41,6 +41,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 
 public class DetallesReserva extends AppCompatActivity {
     private TextView definirHoraLlegada, HoraDeSalida, nombreHotel, status, valoracion,
@@ -268,9 +269,15 @@ public class DetallesReserva extends AppCompatActivity {
                                         historialItem.setContacto(contacto);
                                         historialItem.setTipoHab(tipoHabitacion);
                                         // Validación para CheckInHora
-                                        if (checkInHora != null && !checkInHora.trim().isEmpty()) {
+                                        if (checkInHora != null && !checkInHora.trim().isEmpty() && !checkInHora.equals("No especificado")) {
                                             historialItem.setCheckInHora(checkInHora);
                                             definirHoraLlegada.setText("Hora de llegada: " + checkInHora);
+                                            horaDefinida = true;
+                                            definirHoraLlegada.setClickable(false);
+                                            definirHoraLlegada.setTextColor(Color.parseColor("#646464"));
+                                        } else if (Objects.equals(checkInHora, "No especificado")) {
+                                            historialItem.setCheckInHora(checkInHora);
+                                            definirHoraLlegada.setText(checkInHora);
                                             horaDefinida = true;
                                             definirHoraLlegada.setClickable(false);
                                             definirHoraLlegada.setTextColor(Color.parseColor("#646464"));

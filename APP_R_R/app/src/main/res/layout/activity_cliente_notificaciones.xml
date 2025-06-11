@@ -80,7 +80,7 @@
                 app:icon="@drawable/clear_notification"
                 app:iconGravity="textStart"
                 app:iconPadding="0dp"
-                app:iconSize="30dp"
+                app:iconSize="27dp"
                 app:iconTint="@color/marron_oscuro"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
