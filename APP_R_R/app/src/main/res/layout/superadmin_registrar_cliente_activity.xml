@@ -290,7 +290,7 @@
                     android:id="@+id/btnRegistrar"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Registrar admin de hotel"
+                    android:text="Registrar Cliente"
                     android:textColor="@android:color/black"
                     android:backgroundTint="@color/amarillo"
                     app:cornerRadius="8dp"
