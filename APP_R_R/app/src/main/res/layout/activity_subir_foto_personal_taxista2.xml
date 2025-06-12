@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -6,8 +7,7 @@
     android:layout_height="match_parent"
     android:background="#FFFFFF"
     android:fillViewport="true"
-    android:padding="24dp"
-    tools:context=".loginAndRegister.SubirFotoResgistroTaxistaActivity">
+    android:padding="24dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -32,7 +32,7 @@
             android:id="@+id/tvTitulo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Registrar Datos del Vehículo"
+            android:text="Sube Una Foto Tuya"
             android:textSize="22sp"
             android:textStyle="bold"
             android:textColor="@color/dorado_oscuro"
@@ -42,7 +42,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Por favor, sube una foto clara de tu vehículo y registra la placa."
+            android:text="Por seguridad, es necesario que subas una foto clara de tu rostro. Será visible para los usuarios y usada solo para verificación."
             android:textColor="#0B0606"
             android:textSize="14sp"
             android:gravity="center"
@@ -59,45 +59,29 @@
             android:layout_marginTop="24dp"
             android:contentDescription="Vista previa de imagen" />
 
-
-        <!-- Botón de galería -->
+        <!-- Botón de cámara -->
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnSeleccionarGaleria"
+            android:id="@+id/btnAbrirGaleria"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Seleccionar imagen de la galería"
+            android:text="Abrir galería y subir una foto"
             android:textColor="#452C06"
-            android:icon="@android:drawable/ic_menu_gallery"
+            android:icon="@android:drawable/ic_menu_camera"
             android:iconTint="#452C06"
             android:backgroundTint="@color/crema"
-            android:layout_marginTop="16dp" />
-
-        <!-- Placa del vehículo -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/tilPlaca"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:startIconDrawable="@drawable/directions_car_icon"
-            android:hint="Placa del auto"
-            android:layout_marginTop="24dp">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etPlaca"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-        </com.google.android.material.textfield.TextInputLayout>
+            android:layout_marginTop="24dp" />
 
         <!-- Botón registrarse -->
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnRegistrarVehiculo"
+            android:id="@+id/btnRegistrarFinal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Finalizar Solicitud"
+            android:text="Continuar"
             android:textColor="@android:color/white"
             android:backgroundTint="@color/dorado"
             android:layout_marginTop="16dp" />
 
-        <!-- Texto informativo sobre términos y validación de solicitud -->
+        <!-- Texto con enlace a términos -->
         <LinearLayout
             android:id="@+id/layoutTerminos"
             android:layout_width="wrap_content"
@@ -110,10 +94,20 @@
                 android:id="@+id/tvInfoTerminos"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Al postularte como taxista, debes esperar que el superadministrador acepte tu solicitud. Te notificará al correo registrado."
+                android:text="Al continuar aceptas nuestros "
                 android:textColor="#757575"
-                android:textSize="12sp"
-                android:textAlignment="center" />
+                android:textSize="12sp" />
+
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvTerminosLink"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Términos y Condiciones de Uso"
+            android:textColor="@color/dorado"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+
     </LinearLayout>
 </ScrollView>

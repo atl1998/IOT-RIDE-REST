@@ -6,10 +6,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.hotelreservaapp.R;
 import com.example.hotelreservaapp.model.PostulacionTaxista;
-import com.example.hotelreservaapp.model.Taxista;
-import com.example.hotelreservaapp.taxista.TaxistaMain;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 

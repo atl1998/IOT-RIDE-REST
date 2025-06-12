@@ -108,7 +108,7 @@ public class SubirFotoResgistroTaxistaActivity extends AppCompatActivity {
         PostulacionTaxista postulacion = new PostulacionTaxista(
                 nombres, apellidos, tipoDocumento, numeroDocumento, fechaNacimiento,
                 correo, telefono, direccion, numeroPlaca, fotoPlacaURL,
-                "pendiente_revision" // Estado inicial de la postulación
+                "pendiente" // Estado inicial de la postulación
         );
 
         // Guardar la postulación en la colección "postulacionesTaxistas"
