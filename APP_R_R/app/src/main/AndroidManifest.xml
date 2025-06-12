@@ -17,6 +17,12 @@
         android:theme="@style/Theme.HotelReservaApp"
         tools:targetApi="31">
         <activity
+            android:name=".loginAndRegister.CrearContrasenaActivity"
+            android:exported="false" />
+        <activity
+            android:name=".loginAndRegister.SubirFotoResgistroTaxistaActivity"
+            android:exported="false" />
+        <activity
             android:name=".loginAndRegister.NuevaContrasenaActivity"
             android:exported="false" />
         <activity
@@ -131,7 +137,6 @@
         <activity android:name=".ClienteServicioTaxi" />
         <activity android:name=".cliente.HistorialEventos">
 
-
             <!-- Puedes agregar un intent-filter si es necesario -->
         </activity> <!-- seccion taxistaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa -->
         <activity android:name=".taxista.TaxistaMain" />
@@ -158,6 +163,7 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

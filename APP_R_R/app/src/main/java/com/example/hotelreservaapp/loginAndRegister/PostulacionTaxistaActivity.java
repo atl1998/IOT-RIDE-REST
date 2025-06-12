@@ -1,26 +1,37 @@
 package com.example.hotelreservaapp.loginAndRegister;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
-import com.example.hotelreservaapp.R;
+import com.example.hotelreservaapp.databinding.ActivityPostulacionTaxistaBinding;
 
 public class PostulacionTaxistaActivity extends AppCompatActivity {
+
+    private ActivityPostulacionTaxistaBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_postulacion_taxista);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
+        binding = ActivityPostulacionTaxistaBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+
+        // Acción para el botón de regresar
+        binding.btnBack.setOnClickListener(v -> onBackPressed());
+
+        // Acción para el botón de continuar
+        binding.btnContinuar.setOnClickListener(v -> {
+            // Solo pasar a la siguiente vista sin validaciones ni registro
+            cargarVistaSubirFoto();
         });
+    }
+
+    // Metodo para cargar la siguiente vista (SubirFotoResgistroTaxistaActivity)
+    private void cargarVistaSubirFoto() {
+        // Cambiar a la actividad o vista de subir foto
+        Intent intent = new Intent(PostulacionTaxistaActivity.this, SubirFotoResgistroTaxistaActivity.class);
+        startActivity(intent);
     }
 }

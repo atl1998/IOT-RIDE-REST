@@ -1,0 +1,133 @@
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    android:fillViewport="true"
+    android:padding="24dp"
+    tools:context=".loginAndRegister.SubirFotoResgistroTaxistaActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        tools:ignore="ExtraText">
+
+        <!-- Botón regresar -->
+        <ImageButton
+            android:id="@+id/btnBack"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="?attr/homeAsUpIndicator"
+            android:contentDescription="Volver"
+            android:layout_gravity="start"
+            app:tint="@color/marron_oscuro" />
+
+        <!-- Título -->
+        <TextView
+            android:id="@+id/tvTitulo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Registrar Datos del Vehículo"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="@color/dorado_oscuro"
+            android:layout_marginTop="16dp" />
+
+        <!-- Subtítulo -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Por favor, sube una foto clara de tu vehículo y registra la placa."
+            android:textColor="#0B0606"
+            android:textSize="14sp"
+            android:gravity="center"
+            android:layout_marginTop="8dp"
+            android:paddingHorizontal="12dp" />
+
+        <!-- Selector de imagen -->
+        <ImageView
+            android:id="@+id/imagenSeleccionada"
+            android:layout_width="260dp"
+            android:layout_height="180dp"
+            android:src="@android:drawable/ic_menu_gallery"
+            android:scaleType="fitXY"
+            android:layout_marginTop="24dp"
+            android:contentDescription="Vista previa de imagen" />
+
+        <!-- Botón de cámara -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnAbrirCamara"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Abrir cámara y tomar foto"
+            android:textColor="#452C06"
+            android:icon="@android:drawable/ic_menu_camera"
+            android:iconTint="#452C06"
+            android:backgroundTint="@color/crema"
+            android:layout_marginTop="24dp" />
+
+        <!-- Botón de galería -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSeleccionarGaleria"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Seleccionar imagen de la galería"
+            android:textColor="#452C06"
+            android:icon="@android:drawable/ic_menu_gallery"
+            android:iconTint="#452C06"
+            android:backgroundTint="@color/crema"
+            android:layout_marginTop="16dp" />
+
+        <!-- Placa del vehículo -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilPlaca"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:startIconDrawable="@drawable/directions_car_icon"
+            android:hint="Placa del auto"
+            android:layout_marginTop="24dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etPlaca"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Botón registrarse -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnRegistrarVehiculo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Registrar Vehículo"
+            android:textColor="@android:color/white"
+            android:backgroundTint="@color/dorado"
+            android:layout_marginTop="16dp" />
+
+        <!-- Texto con autorización -->
+        <LinearLayout
+            android:id="@+id/layoutTerminos"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="16dp"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/tvInfoTerminos"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Al registrarte autorizas que esta información se muestre a todos los usuarios de la app"
+                android:textColor="#757575"
+                android:textSize="12sp"
+                android:gravity="center"
+                android:layout_marginEnd="8dp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>

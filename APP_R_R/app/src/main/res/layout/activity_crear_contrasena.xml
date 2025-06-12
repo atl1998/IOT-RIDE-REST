@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    android:fillViewport="true"
+    android:padding="24dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        tools:ignore="ExtraText">
+
+        <!-- Botón regresar -->
+        <ImageButton
+            android:id="@+id/btnBack"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="?attr/homeAsUpIndicator"
+            android:contentDescription="Volver"
+            android:layout_gravity="start"
+            app:tint="@color/marron_oscuro" />
+
+        <!-- Título -->
+        <TextView
+            android:id="@+id/tvTitulo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Crea una contraseña segura"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="@color/dorado_oscuro"
+            android:layout_marginTop="16dp" />
+
+        <!-- Subtítulo -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Por favor, crea una contraseña segura para completar el proceso de registro."
+            android:textColor="#0B0606"
+            android:textSize="14sp"
+            android:gravity="center"
+            android:layout_marginTop="8dp"
+            android:paddingHorizontal="12dp" />
+
+        <!-- Nueva Contraseña -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilNuevaContrasena"
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+            app:boxStrokeColor="#452C06"
+            app:hintTextColor="@color/black"
+            app:boxStrokeWidthFocused="2dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            app:startIconDrawable="@drawable/baseline_lock_outline_24"
+            app:endIconMode="password_toggle"
+            app:helperText="Mínimo 8 caracteres"
+            app:helperTextTextColor="#757575">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etNuevaContrasena"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textCursorDrawable="@null"
+                android:hint="Nueva contraseña"
+                android:textColorHint="#452C06"
+                android:textColor="#452C06"
+                android:inputType="textPassword" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Confirmar Contraseña -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilConfirmarContrasena"
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+            app:boxStrokeColor="#452C06"
+            app:hintTextColor="@color/black"
+            app:boxStrokeWidthFocused="2dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:startIconDrawable="@drawable/baseline_lock_outline_24"
+            app:endIconMode="password_toggle">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etConfirmarContrasena"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textCursorDrawable="@null"
+                android:hint="Confirmar contraseña"
+                android:textColorHint="#452C06"
+                android:textColor="#452C06"
+                android:inputType="textPassword" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Indicadores de seguridad de contraseña -->
+        <LinearLayout
+            android:id="@+id/layoutIndicadores"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:background="#F5F5F5">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tu contraseña debe contener:"
+                android:textColor="#452C06"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp" />
+
+            <TextView
+                android:id="@+id/tvIndicador1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="• Al menos 8 caracteres"
+                android:textColor="#757575"
+                android:textSize="12sp"
+                android:layout_marginBottom="4dp" />
+
+            <TextView
+                android:id="@+id/tvIndicador2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="• Una letra mayúscula"
+                android:textColor="#757575"
+                android:textSize="12sp"
+                android:layout_marginBottom="4dp" />
+
+            <TextView
+                android:id="@+id/tvIndicador3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="• Un número"
+                android:textColor="#757575"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+
+        <!-- Botón finalizar registro -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnFinalizarRegistro"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Finalizar Registro"
+            android:textColor="@android:color/white"
+            android:backgroundTint="@color/dorado"
+            android:layout_marginTop="24dp" />
+
+        <!-- Texto con enlace a términos -->
+        <LinearLayout
+            android:id="@+id/layoutTerminos"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="16dp"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/tvInfoTerminos"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Al registrarte aceptas nuestros "
+                android:textColor="#757575"
+                android:textSize="12sp" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvTerminosLink"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Términos y Condiciones de Uso"
+            android:textColor="@color/dorado"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+</ScrollView>
