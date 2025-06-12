@@ -19,7 +19,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="¡Registro Exitoso como Taxista!"
+        android:text="¡Solicitud enviada con éxito!"
         android:textSize="18sp"
         android:textStyle="bold"
         android:layout_marginTop="12dp"
@@ -30,7 +30,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Tu solicitud está en revisión por el superadministrador. \nPronto recibirás una notificación sobre el acceso a la aplicación."
+        android:text="Tu solicitud está en revisión por el superadministrador. \nPronto recibirás un correo sobre el acceso a la aplicación."
         android:textSize="14sp"
         android:textColor="#757575"
         android:gravity="center"

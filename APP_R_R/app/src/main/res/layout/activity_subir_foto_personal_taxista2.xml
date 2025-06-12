@@ -71,9 +71,9 @@
             android:backgroundTint="@color/crema"
             android:layout_marginTop="24dp" />
 
-        <!-- Botón registrarse -->
+        <!-- Botón subir foto -->
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnRegistrarFinal"
+            android:id="@+id/btnSubirFotoTaxista"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Continuar"
