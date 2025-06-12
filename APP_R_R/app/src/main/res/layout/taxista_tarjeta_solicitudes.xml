@@ -122,42 +122,54 @@
             </LinearLayout>
         </LinearLayout>
 
-        <!-- Boton para ver en el mapa -->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnVerEnELMapa"
+        <!-- Botones en la misma fila -->
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="38dp"
-            android:backgroundTint="@color/dorado"
-            android:text="Ver En el Mapa"
-            android:textColor="#FFFFFF"
-            android:textSize="13sp"
-            android:gravity="center"
-            android:layout_marginTop="8dp" />
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="8dp"
+            android:gravity="center">
 
-        <!-- Boton de acción dinámica -->
-        <Button
-            android:id="@+id/btnAccionSolicitud"
-            android:layout_width="match_parent"
-            android:layout_height="37dp"
-            android:layout_marginTop="2dp"
-            android:backgroundTint="#4CAF50"
-            android:text="Aceptar"
-            android:textColor="#FFFFFF"
-            android:textSize="13sp"
-            android:gravity="center"
-            android:visibility="gone" />
+            <!-- Botón Ver en el Mapa -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnVerEnELMapa"
+                android:layout_width="0dp"
+                android:layout_height="38dp"
+                android:layout_weight="1"
+                android:layout_marginEnd="6dp"
+                android:backgroundTint="@color/crema"
+                android:text="Ver en el Mapa"
+                android:textColor="@color/black"
+                android:textSize="13sp"
+                android:gravity="center" />
 
-        <Button
-            android:id="@+id/btnCancelarSolicitud"
-            android:layout_width="match_parent"
-            android:layout_height="37dp"
-            android:layout_marginTop="2dp"
-            android:backgroundTint="#AF4917"
-            android:text="Cancelar"
-            android:textColor="#FFFFFF"
-            android:textSize="13sp"
-            android:gravity="center"
-            android:visibility="gone" />
+            <!-- Botón Aceptar -->
+            <Button
+                android:id="@+id/btnAccionSolicitud"
+                android:layout_width="0dp"
+                android:layout_height="38dp"
+                android:layout_weight="1"
+                android:backgroundTint="@color/dorado"
+                android:text="Aceptar"
+                android:textColor="@color/white"
+                android:textSize="13sp"
+                android:gravity="center"
+                android:visibility="gone" />
+
+            <!-- Botón Cancelar -->
+            <Button
+                android:id="@+id/btnCancelarSolicitud"
+                android:layout_width="0dp"
+                android:layout_height="38dp"
+                android:layout_weight="1"
+                android:backgroundTint="@android:color/black"
+                android:text="Cancelar"
+                android:textColor="@android:color/white"
+                android:textSize="13sp"
+                android:gravity="center"
+                android:visibility="gone" />
+        </LinearLayout>
+
 
     </LinearLayout>
 </androidx.cardview.widget.CardView>

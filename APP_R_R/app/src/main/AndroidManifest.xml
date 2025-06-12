@@ -17,6 +17,9 @@
         android:theme="@style/Theme.HotelReservaApp"
         tools:targetApi="31">
         <activity
+            android:name=".taxista.VerDatosVehiculoTaxistaActivity"
+            android:exported="false" />
+        <activity
             android:name=".loginAndRegister.CrearContrasenaTaxistaActivity"
             android:exported="false" />
         <activity
@@ -24,8 +27,7 @@
             android:exported="false" />
         <activity
             android:name=".loginAndRegister.NuevaContrasenaActivity"
-            android:exported="false" />
-        <!-- Declarar RegistroTaxistaActivity -->
+            android:exported="false" /> <!-- Declarar RegistroTaxistaActivity -->
         <activity android:name=".loginAndRegister.RegistroTaxistaActivity" />
         <activity
             android:name=".loginAndRegister.CambiarContrasenaActivity"
