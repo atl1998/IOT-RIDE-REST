@@ -12,17 +12,29 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.example.hotelreservaapp.R;
 import com.google.android.material.button.MaterialButton;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 public class ListaHabitaciones extends AppCompatActivity {
 
@@ -31,6 +43,7 @@ public class ListaHabitaciones extends AppCompatActivity {
     private List<Habitacion> listaHabitaciones;
 
     private MaterialButton btnVolver;
+    private FirebaseFirestore db;
 
     Button btnReservar;
 
@@ -43,49 +56,20 @@ public class ListaHabitaciones extends AppCompatActivity {
         rvHabitaciones.setLayoutManager(new LinearLayoutManager(this));
         rvHabitaciones.setHasFixedSize(true);
 
+        String hotelId=getIntent().getStringExtra("hotelId");
+        long fechaInicioMillis = getIntent().getLongExtra("fechaInicio", -1);
+        long fechaFinMillis = getIntent().getLongExtra("fechaFin", -1);
+        int adultos = getIntent().getIntExtra("adultos", 0);
+        int ninos = getIntent().getIntExtra("ninos", 0);
+
         // Inicializar lista de habitaciones
         listaHabitaciones = new ArrayList<>();
-        listaHabitaciones.add(new Habitacion(
-                "Habitacion superior - 1 cama grande",
-                "- Precio para 2 adultos\n- 1 cama doble grande\n- Turneño 25 m2\n- WiFi de alto velocidad\n- Desayuno incluido",
-                3,
-                354.00,
-                "Grande",
-                25
-        ));
+        db= FirebaseFirestore.getInstance();
 
-        listaHabitaciones.add(new Habitacion(
-                "Habitacion deluxe cama extragrande",
-                "- Precio para 2 adultos\n- 1 cama doble extra grande\n- Turneño 30 m2\n- WiFi de alto velocidad\n- Desayuno incluido",
-                2,
-                417.00,
-                "Extra grande",
-                30
-        ));
-        listaHabitaciones.add(new Habitacion(
-                "Habitacion deluxe cama extragrande",
-                "- Precio para 2 adultos\n- 1 cama doble extra grande\n- Turneño 30 m2\n- WiFi de alto velocidad\n- Desayuno incluido",
-                2,
-                417.00,
-                "Extra grande",
-                30
-        ));
-        listaHabitaciones.add(new Habitacion(
-                "Habitacion deluxe cama extragrande",
-                "- Precio para 2 adultos\n- 1 cama doble extra grande\n- Turneño 30 m2\n- WiFi de alto velocidad\n- Desayuno incluido",
-                2,
-                417.00,
-                "Extra grande",
-                30
-        ));
-        listaHabitaciones.add(new Habitacion(
-                "Habitacion deluxe cama extragrande",
-                "- Precio para 2 adultos\n- 1 cama doble extra grande\n- Turneño 30 m2\n- WiFi de alto velocidad\n- Desayuno incluido",
-                2,
-                417.00,
-                "Extra grande",
-                30
-        ));
+        // Obtener los productos del usuario desde Firestore
+        obtenerHabitaciones(hotelId);
+
+        // Configurar el adaptador
 
         adapter = new HabitacionAdapter(listaHabitaciones, new HabitacionAdapter.OnItemClickListener() {
             @Override
@@ -103,9 +87,62 @@ public class ListaHabitaciones extends AppCompatActivity {
         rvHabitaciones.setAdapter(adapter);
         btnReservar = findViewById(R.id.btnReservarAhora);
         btnReservar.setOnClickListener(v -> {
-                    //por ahora directamente al mio bala
-            startActivity(new Intent(this, HistorialEventos.class));
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            if (user == null) {
+                Toast.makeText(this, "Debes iniciar sesión para reservar", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            String userId = user.getUid();
+            List<Map<String, Object>> habitacionesReservadas = new ArrayList<>();
+
+            for (Habitacion habitacion : listaHabitaciones) {
+                if (habitacion.getSeleccionadas() > 0) {
+                    // 1. Actualizar stock en Firestore
+                    int nuevaCantidad = habitacion.getCantDisponible() - habitacion.getSeleccionadas();
+
+                    db.collection("Hoteles")
+                            .document(hotelId)
+                            .collection("habitaciones")
+                            .document(habitacion.getIdDocumento())
+                            .update("cantidadDisponible", nuevaCantidad);
+
+                    // 2. Preparar habitación para la reserva
+                    Map<String, Object> hab = new HashMap<>();
+                    hab.put("habitacionId", habitacion.getIdDocumento());
+                    hab.put("nombreHabitacion", habitacion.getNombre());
+                    hab.put("cantidad", habitacion.getSeleccionadas());
+                    hab.put("precioUnidad", habitacion.getPrecio());
+                    habitacionesReservadas.add(hab);
+                }
+            }
+
+            // 3. Crear la reserva principal
+            Map<String, Object> reserva = new HashMap<>();
+            reserva.put("fechaIni", new com.google.firebase.Timestamp(new Date(fechaInicioMillis)));
+            reserva.put("fechaFin", new com.google.firebase.Timestamp(new Date(fechaFinMillis)));
+            reserva.put("hotelId", hotelId);
+            reserva.put("personas", adultos + ninos); // Puedes permitir seleccionar cantidad
+            reserva.put("checkoutSolicitado", false);
+            reserva.put("estado", "En Progreso");
+            reserva.put("habitaciones", habitacionesReservadas);
+            reserva.put("fechaReserva", FieldValue.serverTimestamp());
+
+            db.collection("usuarios")
+                    .document(userId)
+                    .collection("Reservas")
+                    .add(reserva)
+                    .addOnSuccessListener(docRef -> {
+                        Toast.makeText(this, "Reserva confirmada", Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(this, HistorialEventos.class));
+                    })
+                    .addOnFailureListener(e -> {
+                        Log.e("Firebase", "Error al guardar la reserva", e);
+                        Toast.makeText(this, "Error al registrar la reserva", Toast.LENGTH_SHORT).show();
+                    });
         });
+
+
 
 
         btnVolver = findViewById(R.id.volverHotel);
@@ -126,7 +163,7 @@ public class ListaHabitaciones extends AppCompatActivity {
         TextView precioTotal = view.findViewById(R.id.precio_total_textview);
         Button confirmar = view.findViewById(R.id.confirmar_button);
 
-        titulo.setText(habitacion.getTitulo());
+        titulo.setText(habitacion.getNombre());
 
         final int[] cantidad = {1}; // Cantidad por defecto
         double precioPorUnidad = habitacion.getPrecio();
@@ -134,7 +171,7 @@ public class ListaHabitaciones extends AppCompatActivity {
         precioTotal.setText("Precio total: S/" + String.format("%.2f", precioPorUnidad));
 
         incrementar.setOnClickListener(v -> {
-            if (cantidad[0] < habitacion.getDisponibles()) {
+            if (cantidad[0] < habitacion.getCantDisponible()) {
                 cantidad[0]++;
                 cantidadText.setText(String.valueOf(cantidad[0]));
                 precioTotal.setText("Precio total: S/" + String.format("%.2f", cantidad[0] * precioPorUnidad));
@@ -171,5 +208,36 @@ public class ListaHabitaciones extends AppCompatActivity {
         }
         btnReservar.setVisibility(haySeleccion ? View.VISIBLE : View.GONE);
     }
+
+    private void obtenerHabitaciones(String hotelId) {
+        db.collection("Hoteles")
+                .document(hotelId)
+                .collection("habitaciones")
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        listaHabitaciones.clear();
+
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            String id = document.getId();  // ID del documento
+                            String nombreHab = document.getString("nombreHabitacion");
+                            Double precioHab = document.getDouble("precioPorNoche");
+                            Long cantHabLong = document.getLong("cantidadDisponible");
+
+                            int cantHab = cantHabLong != null ? cantHabLong.intValue() : 0;
+
+                            Habitacion habitacion = new Habitacion(id, nombreHab, cantHab, precioHab != null ? precioHab : 0.0);
+                            listaHabitaciones.add(habitacion);
+                        }
+
+                        adapter.notifyDataSetChanged();
+                    } else {
+                        Log.w("Firebase", "Error al obtener habitaciones", task.getException());
+                        Toast.makeText(ListaHabitaciones.this, "Error al cargar las habitaciones", Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+
 
 }

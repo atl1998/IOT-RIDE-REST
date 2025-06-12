@@ -1,14 +1,35 @@
 package com.example.hotelreservaapp.cliente;
 
 public class Habitacion {
-    private String titulo;
-    private String detalles;
-    private int disponibles;
+    private String nombre;
+    private int cantDisponible;
     private double precio;
-    private String tipoCama;
-    private int tamano;
-
     private int seleccionadas = 0;
+
+    private String idDocumento;  // <--- Nuevo campo
+
+    public Habitacion(String nombre, int cantDisponible, double precio) {
+        this.nombre = nombre;
+        this.cantDisponible = cantDisponible;
+        this.precio = precio;
+    }
+
+    public Habitacion(String idDocumento, String nombre, int cantDisponible, double precio) {
+        this.idDocumento = idDocumento;
+        this.nombre = nombre;
+        this.cantDisponible = cantDisponible;
+        this.precio = precio;
+    }
+
+    // Getters y setters
+
+    public String getIdDocumento() {
+        return idDocumento;
+    }
+
+    public void setIdDocumento(String idDocumento) {
+        this.idDocumento = idDocumento;
+    }
 
     public int getSeleccionadas() {
         return seleccionadas;
@@ -18,20 +39,28 @@ public class Habitacion {
         this.seleccionadas = seleccionadas;
     }
 
-    public Habitacion(String titulo, String detalles, int disponibles, double precio, String tipoCama, int tamano) {
-        this.titulo = titulo;
-        this.detalles = detalles;
-        this.disponibles = disponibles;
-        this.precio = precio;
-        this.tipoCama = tipoCama;
-        this.tamano = tamano;
+    public String getNombre() {
+        return nombre;
     }
 
-    // Getters
-    public String getTitulo() { return titulo; }
-    public String getDetalles() { return detalles; }
-    public int getDisponibles() { return disponibles; }
-    public double getPrecio() { return precio; }
-    public String getTipoCama() { return tipoCama; }
-    public int getTamano() { return tamano; }
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public int getCantDisponible() {
+        return cantDisponible;
+    }
+
+    public void setCantDisponible(int cantDisponible) {
+        this.cantDisponible = cantDisponible;
+    }
+
+    public double getPrecio() {
+        return precio;
+    }
+
+    public void setPrecio(double precio) {
+        this.precio = precio;
+    }
 }
+

@@ -41,10 +41,10 @@ public class HabitacionAdapter extends RecyclerView.Adapter<HabitacionAdapter.Ha
     public void onBindViewHolder(@NonNull HabitacionViewHolder holder, int position) {
         Habitacion habitacion = habitaciones.get(position);
 
-        holder.tvTitulo.setText(habitacion.getTitulo());
-        holder.tvDetalles.setText(habitacion.getDetalles());
-        holder.tvDisponibles.setText("Habitaciones disponibles: " + habitacion.getDisponibles());
-        holder.tvPrecio.setText(String.format("Precio para 2 noches: $%.2f", habitacion.getPrecio()));
+        holder.tvTitulo.setText(habitacion.getNombre());
+        holder.tvDetalles.setText("- Precio para 2 adultos\n- 1 cama doble extra grande\n- Turneño 30 m2\n- WiFi de alto velocidad\n- Desayuno incluido");
+        holder.tvDisponibles.setText("Habitaciones disponibles: " + habitacion.getCantDisponible());
+        holder.tvPrecio.setText(String.format("Precio por noches: $%.2f", habitacion.getPrecio()));
 
         if (habitacion.getSeleccionadas() > 0) {
             holder.btnSeleccionar.setVisibility(View.GONE);

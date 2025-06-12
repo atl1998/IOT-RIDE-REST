@@ -2,6 +2,8 @@ package com.example.hotelreservaapp.cliente;
 
 public class Hotel {
 
+    private String hotelId;
+
     private String nombre;
     private float valoracion;
     private String contacto;
@@ -9,7 +11,9 @@ public class Hotel {
     private boolean servicioTaxi;
 
     // Constructor
-    public Hotel(String nombre, float valoracion, String contacto, String ubicacion, boolean servicioTaxi) {
+
+    public Hotel(String hotelId, String nombre, float valoracion, String contacto, String ubicacion, boolean servicioTaxi) {
+        this.hotelId = hotelId;
         this.nombre = nombre;
         this.valoracion = valoracion;
         this.contacto = contacto;
@@ -17,7 +21,14 @@ public class Hotel {
         this.servicioTaxi = servicioTaxi;
     }
 
-    // Métodos getters y setters
+    public String getHotelId() {
+        return hotelId;
+    }
+
+    public void setHotelId(String hotelId) {
+        this.hotelId = hotelId;
+    }
+
     public String getNombre() {
         return nombre;
     }
