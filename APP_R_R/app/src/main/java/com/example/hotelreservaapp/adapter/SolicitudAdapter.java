@@ -71,34 +71,19 @@ public class SolicitudAdapter extends RecyclerView.Adapter<SolicitudAdapter.Soli
         holder.tvPlaca.setText("Placa: " + s.getNumeroPlaca());
 
         // Imagen de usuario
-        String rutaFotoUsuario = "file:///android_asset/" + s.getUrlFotoPerfil();
-        try {
-            context.getAssets().open(s.getUrlFotoPerfil());
-            Glide.with(context)
-                    .load(rutaFotoUsuario)
-                    .placeholder(R.drawable.default_user_icon)
-                    .circleCrop()
-                    .into(holder.ivFoto);
-        } catch (IOException e) {
-            Glide.with(context)
-                    .load(R.drawable.default_user_icon)
-                    .circleCrop()
-                    .into(holder.ivFoto);
-        }
+        Glide.with(context)
+                .load(s.getUrlFotoPerfil()) // Carga la URL directamente (de Firebase Storage, web, o URI local)
+                .placeholder(R.drawable.default_user_icon) // Imagen que se muestra mientras carga
+                .error(R.drawable.default_user_icon)     // ¡Esta es la clave! Imagen si la URL es null/inválida/falla
+                .circleCrop()
+                .into(holder.ivFoto);
 
         // Imagen de placa
-        String rutaFotoPlaca = "file:///android_asset/" + s.getFotoPlacaURL();
-        try {
-            context.getAssets().open(s.getFotoPlacaURL());
-            Glide.with(context)
-                    .load(rutaFotoPlaca)
-                    .placeholder(R.drawable.placa_demo)
-                    .into(holder.ivPlaca);
-        } catch (IOException e) {
-            Glide.with(context)
-                    .load(R.drawable.placa_demo)
-                    .into(holder.ivPlaca);
-        }
+        Glide.with(context)
+                .load(s.getFotoPlacaURL()) // Carga la URL directamente
+                .placeholder(R.drawable.placa_demo) // Imagen mientras carga
+                .error(R.drawable.placa_demo)     // ¡Esta es la clave! Imagen si la URL es null/inválida/falla
+                .into(holder.ivPlaca);
 
         // 👉 Evento clic: abrir nueva actividad
         holder.itemView.setOnClickListener(v -> {

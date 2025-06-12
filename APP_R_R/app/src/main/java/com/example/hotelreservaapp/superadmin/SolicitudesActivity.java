@@ -3,6 +3,7 @@ package com.example.hotelreservaapp.superadmin;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -91,6 +92,7 @@ public class SolicitudesActivity extends AppCompatActivity  {
                             Toast.makeText(this, "No hay solicitudes pendientes.", Toast.LENGTH_SHORT).show();
                         }
                     } else {
+                        Log.e("FirestoreError", "Error al cargar solicitudes: " + task.getException());
                         Toast.makeText(this, "Error al cargar solicitudes.", Toast.LENGTH_SHORT).show();
                     }
                 });
