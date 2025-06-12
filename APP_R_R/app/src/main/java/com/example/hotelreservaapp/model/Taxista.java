@@ -1,33 +1,18 @@
 package com.example.hotelreservaapp.model;
 
 public class Taxista extends Usuario {
-    private String placaVehiculo;  // Placa del vehículo (solo para taxistas)
-    private String imagenVehiculo; // URL de la imagen del vehículo (solo para taxistas)
-
-    // Constructor
-    public Taxista(String nombre, String apellido, String tipoDocumento, String numeroDocumento,
+    public Taxista(String nombre, String apellido, String rol, String tipoDocumento, String numeroDocumento,
                    String fechaNacimiento, String correo, String telefono, String direccion, String urlFotoPerfil,
-                   boolean estado, boolean requiereCambioContrasena, String placaVehiculo, String imagenVehiculo) {
-        // Llamada al constructor de la clase base (Usuario)
-        super(nombre, apellido, "taxista", tipoDocumento, numeroDocumento, fechaNacimiento, correo, telefono, direccion, urlFotoPerfil, estado, requiereCambioContrasena);
-        this.placaVehiculo = placaVehiculo;
-        this.imagenVehiculo = imagenVehiculo;
+                   boolean estado, boolean requiereCambioContrasena, DetallesTaxista driverDetails) {
+        super(nombre, apellido, rol, tipoDocumento, numeroDocumento, fechaNacimiento, correo, telefono,
+                direccion, urlFotoPerfil, estado, requiereCambioContrasena, driverDetails);
+        // Asegúrate de que el rol sea "taxista" al crear una instancia de Taxista
+        this.setRol("taxista");
     }
 
-    // Métodos Getters y Setters
-    public String getPlacaVehiculo() {
-        return placaVehiculo;
-    }
-
-    public void setPlacaVehiculo(String placaVehiculo) {
-        this.placaVehiculo = placaVehiculo;
-    }
-
-    public String getImagenVehiculo() {
-        return imagenVehiculo;
-    }
-
-    public void setImagenVehiculo(String imagenVehiculo) {
-        this.imagenVehiculo = imagenVehiculo;
+    public Taxista() {
+        // Constructor vacío requerido, también llama al de la clase padre
+        super();
+        this.setRol("taxista"); // Asegura el rol por defecto si se crea sin argumentos
     }
 }

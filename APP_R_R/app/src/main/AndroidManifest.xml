@@ -31,9 +31,7 @@
             android:name=".loginAndRegister.NuevaContrasenaActivity"
             android:exported="false" /> <!-- Declarar RegistroTaxistaActivity -->
         <activity android:name=".loginAndRegister.RegistroTaxistaActivity" />
-        <activity
-            android:name=".loginAndRegister.CambiarContrasenaActivity"
-            android:exported="false" />
+
         <activity
             android:name=".loginAndRegister.VerificarCorreoActivity"
             android:exported="false" /> <!-- Intermediario pa prender la cámara owo -->
@@ -115,15 +113,11 @@
         <activity
             android:name=".superadmin.SolicitudesActivity"
             android:exported="false" />
-        <activity
-            android:name=".superadmin.RegistrarTaxistaActivity"
-            android:exported="false" />
+
         <activity
             android:name=".superadmin.RegistrarAdmHotelActivity"
             android:exported="false" />
-        <activity
-            android:name=".superadmin.RegistrarClienteActivity"
-            android:exported="false" />
+
         <activity
             android:name=".superadmin.NotificacionesSAActivity"
             android:exported="false" />

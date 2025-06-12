@@ -7,6 +7,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.hotelreservaapp.R;
+import com.example.hotelreservaapp.model.PostulacionTaxista;
 import com.example.hotelreservaapp.model.Taxista;
 import com.example.hotelreservaapp.taxista.TaxistaMain;
 import com.google.firebase.auth.FirebaseAuth;
@@ -37,45 +38,39 @@ public class RegistroTaxistaActivity extends AppCompatActivity {
         String direccion = intent.getStringExtra("direccion");
         String placa = intent.getStringExtra("placa");
         String fotoVehiculo = intent.getStringExtra("fotoVehiculo");
-        String nuevaContrasena = intent.getStringExtra("nuevaContrasena");
 
         // Registrar el taxista en Firebase
-        registrarTaxistaEnFirebase(nombres, apellidos, tipoDocumento, numeroDocumento, fechaNacimiento, correo, telefono, direccion, placa, fotoVehiculo, nuevaContrasena);
-    }
+        enviarPostulacionTaxista(nombres, apellidos, tipoDocumento, numeroDocumento, fechaNacimiento,
+                correo, telefono, direccion, placa, fotoVehiculo);    }
 
-    // Metodo para registrar el taxista en Firebase
-    private void registrarTaxistaEnFirebase(String nombres, String apellidos, String tipoDocumento, String numeroDocumento,
-                                            String fechaNacimiento, String correo, String telefono, String direccion,
-                                            String placa, String fotoVehiculo, String nuevaContrasena) {
+    // Metodo para postulación en Firebase
+    private void enviarPostulacionTaxista(String nombres, String apellidos, String tipoDocumento,
+                                          String numeroDocumento, String fechaNacimiento, String correo,
+                                          String telefono, String direccion, String numeroPlaca, String fotoPlacaURL) {
 
-        // Creamos un objeto Taxista con los datos del taxista
-        Taxista taxista = new Taxista(nombres, apellidos, tipoDocumento, numeroDocumento, fechaNacimiento,
-                correo, telefono, direccion, null, true, false, placa, fotoVehiculo);
+        // Objeto PostulacionTaxista con los datos recibidos
+        PostulacionTaxista postulacion = new PostulacionTaxista(
+                nombres, apellidos, tipoDocumento, numeroDocumento, fechaNacimiento,
+                correo, telefono, direccion, numeroPlaca, fotoPlacaURL,
+                "pendiente" // Estado inicial de la postulación
+        );
 
-        // Registrar el taxista en Firebase Authentication y Firestore
-        mAuth.createUserWithEmailAndPassword(correo, nuevaContrasena)
-                .addOnSuccessListener(authResult -> {
-                    // Si el registro es exitoso en Firebase Auth, guardamos los datos en Firestore
-                    String userId = mAuth.getCurrentUser().getUid();
+        // Guardar la postulación en la colección "postulacionesTaxistas"
+        firestore.collection("postulacionesTaxistas")
+                .add(postulacion) // Usamos .add() para que Firestore genere un ID de documento único
+                .addOnSuccessListener(documentReference -> {
+                    // Postulación guardada exitosamente
+                    Toast.makeText(this, "¡Postulación enviada con éxito! Espera la revisión.", Toast.LENGTH_LONG).show();
 
-                    firestore.collection("taxistas")
-                            .document(userId)
-                            .set(taxista)
-                            .addOnSuccessListener(aVoid -> {
-                                // Registro exitoso en Firestore
-                                Toast.makeText(this, "Registro exitoso como taxista!", Toast.LENGTH_SHORT).show();
-                                // Redirigir al inicio o a la pantalla de login
-                                startActivity(new Intent(RegistroTaxistaActivity.this, LoginActivity.class)); // Redirigir a la pantalla principal
-                                finish();
-                            })
-                            .addOnFailureListener(e -> {
-                                // Si ocurre un error al guardar en Firestore
-                                Toast.makeText(this, "Error al guardar los datos: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                            });
+
+                    // Redirigir a una pantalla de confirmación o al login general (si aplica)
+                    // No se redirige a TaxistaMain directamente porque aún no es un taxista aprobado
+                    startActivity(new Intent(RegistroTaxistaActivity.this, LoginActivity.class));
+                    finish(); // Finaliza esta actividad para que el usuario no pueda volver atrás
                 })
                 .addOnFailureListener(e -> {
-                    // Si ocurre un error al registrar en Firebase Auth
-                    Toast.makeText(this, "Error al registrar el taxista: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    // Si ocurre un error al guardar en Firestore
+                    Toast.makeText(this, "Error al enviar la postulación: " + e.getMessage(), Toast.LENGTH_LONG).show();
                 });
     }
 }

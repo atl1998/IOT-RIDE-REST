@@ -3,6 +3,7 @@ package com.example.hotelreservaapp.superadmin;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,8 +17,11 @@ import com.example.hotelreservaapp.adapter.SolicitudAdapter;
 import com.example.hotelreservaapp.adapter.UsuarioAdapter;
 
 import com.example.hotelreservaapp.databinding.SuperadminSolicitudesActivityBinding;
+import com.example.hotelreservaapp.model.PostulacionTaxista;
 import com.example.hotelreservaapp.model.SolicitudTaxista;
 import com.example.hotelreservaapp.model.UsuarioListaSuperAdmin;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,13 +30,16 @@ public class SolicitudesActivity extends AppCompatActivity  {
 
     private SuperadminSolicitudesActivityBinding binding;
     private SolicitudAdapter adapter;
-    private List<SolicitudTaxista> listaSolicitudes = new ArrayList<>();
+    private List<PostulacionTaxista> listaSolicitudes = new ArrayList<>();
 
+    private FirebaseFirestore firestore;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = SuperadminSolicitudesActivityBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        firestore = FirebaseFirestore.getInstance();
 
         // Botón de regreso
         binding.btnBack.setOnClickListener(v -> finish());
@@ -52,23 +59,40 @@ public class SolicitudesActivity extends AppCompatActivity  {
         });
 
         // Cargar data
-        cargarSolicitudesDeEjemplo();
+        cargarSolicitudesDesdeFirestore();
     }
 
-    private void cargarSolicitudesDeEjemplo() {
-        listaSolicitudes.add(new SolicitudTaxista("Jorge", "Coronado", "DNI", "12345678", "1990-01-01", "987654321", "Av. Lima 123", "maxwell@pucp.edu.pe", "A1A-000", "coronado.png", "placa1.jpg"));
-        listaSolicitudes.add(new SolicitudTaxista("Pedro", "Paredes", "DNI", "87654321", "1988-06-15", "912345678", "Jr. Amazonas 456", "pedro@correo.com", "A1A-000", "pedro.jpg", "placa2.jpg"));
-        listaSolicitudes.add(new SolicitudTaxista("Mario", "Casas", "DNI", "45678912", "1992-03-10", "922334455", "Calle Los Pinos 789", "mario@demo.com", "A1A-000", "mario.jpg", "placa3.jpg"));
-        listaSolicitudes.add(new SolicitudTaxista("Jorge", "Coronado", "DNI", "12345679", "1991-02-01", "987654320", "Av. La Marina 123", "coronadomaxwell@pucp.edu.pe", "A1A-000", "coronado.png", "placa1.jpg"));
-        listaSolicitudes.add(new SolicitudTaxista("Jorge", "Coronado 2", "DNI", "12345680", "1991-05-20", "987654322", "Av. Arequipa 321", "gcoronado2@pucp.edu.pe", "A1A-000", "coronado.png", "placa1b.jpg"));
-        listaSolicitudes.add(new SolicitudTaxista("Jorge", "Coronado 3", "DNI", "12345681", "1991-07-15", "987654323", "Av. Brasil 555", "gcoronado3@pucp.edu.pe", "A1A-000", "coronado.png", "placa1c.jpg"));
-        listaSolicitudes.add(new SolicitudTaxista("Jorge", "Coronado 4", "DNI", "12345682", "1991-08-01", "987654324", "Av. Javier Prado 999", "gcoronado4@pucp.edu.pe", "A1A-000", "coronado.png", "placa1d.jpg"));
-        listaSolicitudes.add(new SolicitudTaxista("Pedro", "Paredes", "DNI", "87654322", "1988-08-20", "912345679", "Jr. Ayacucho 202", "pparedes@pucp.edu.pe", "A1A-000", "paredes.png", "placa2.jpg"));
-        listaSolicitudes.add(new SolicitudTaxista("Mario", "Casas", "DNI", "45678913", "1992-09-10", "922334456", "Calle Las Gardenias 707", "mcasas@demo.com", "A1A-000", "casas.png", "placa3.jpg"));
-        listaSolicitudes.add(new SolicitudTaxista("Lucía", "Herrera", "DNI", "40203344", "1995-10-11", "933445566", "Av. Perú 456", "lherrera@correo.com", "A1A-000", "lucia.png", "placa4.jpg"));
-        listaSolicitudes.add(new SolicitudTaxista("Luis", "Fernández", "DNI", "33445566", "1987-04-18", "944556677", "Av. Abancay 101", "lfernandez@correo.com", "A1A-000", "luis.png", "placa5.jpg"));
-        listaSolicitudes.add(new SolicitudTaxista("Carlos", "Ramírez", "DNI", "99887766", "1989-12-05", "955667788", "Jr. Cusco 305", "cramirez@correo.com", "A1A-000", "carlos.png", "placa6.jpg"));
-        listaSolicitudes.add(new SolicitudTaxista("Ana", "Torres", "DNI", "11223344", "1993-11-23", "966778899", "Av. Grau 222", "atorres@correo.com", "A1A-000", "ana.png", "placa7.jpg"));
-        adapter.setListaCompleta(listaSolicitudes);
+    private void cargarSolicitudesDesdeFirestore() {
+        // Limpiamos la lista actual antes de cargar nuevos datos
+        listaSolicitudes.clear();
+
+        // Consulta a la colección "postulacionesTaxistas"
+        // Filtramos por estadoSolicitud == "pendiente_revision"
+        firestore.collection("postulacionesTaxistas")
+                .whereEqualTo("estadoSolicitud", "pendiente")
+                // Opcional: ordenar por fecha de postulación para ver las más antiguas primero
+                .orderBy("fechaPostulacion", Query.Direction.ASCENDING)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        for (com.google.firebase.firestore.DocumentSnapshot document : task.getResult()) {
+                            // Convertimos el documento a un objeto PostulacionTaxista
+                            PostulacionTaxista postulacion = document.toObject(PostulacionTaxista.class);
+                            if (postulacion != null) {
+                                // Puedes establecer el ID del documento si lo necesitas en el adaptador
+                                // postulacion.setId(document.getId());
+                                listaSolicitudes.add(postulacion);
+                            }
+                        }
+                        // Actualizar el adaptador con la lista cargada
+                        adapter.setListaCompleta(listaSolicitudes);
+                        adapter.notifyDataSetChanged(); // Notificar cambios al RecyclerView
+                        if (listaSolicitudes.isEmpty()) {
+                            Toast.makeText(this, "No hay solicitudes pendientes.", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Toast.makeText(this, "Error al cargar solicitudes.", Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 }

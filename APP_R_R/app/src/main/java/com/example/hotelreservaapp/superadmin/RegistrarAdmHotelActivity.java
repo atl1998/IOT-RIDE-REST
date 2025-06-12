@@ -24,7 +24,6 @@ import androidx.core.app.NotificationManagerCompat;
 
 import com.example.hotelreservaapp.R;
 import com.example.hotelreservaapp.databinding.SuperadminRegistrarAdmHotelActivityBinding;
-import com.example.hotelreservaapp.databinding.SuperadminRegistrarTaxistaActivityBinding;
 import com.example.hotelreservaapp.model.Notificacion;
 import com.example.hotelreservaapp.model.Usuario;
 import com.example.hotelreservaapp.room.AppDatabase;

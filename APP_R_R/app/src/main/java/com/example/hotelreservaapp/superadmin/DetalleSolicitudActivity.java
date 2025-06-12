@@ -19,6 +19,7 @@ import androidx.core.view.WindowInsetsCompat;
 import com.bumptech.glide.Glide;
 import com.example.hotelreservaapp.R;
 import com.example.hotelreservaapp.databinding.SuperadminDetalleSolicitudActivityBinding;
+import com.example.hotelreservaapp.model.PostulacionTaxista;
 import com.example.hotelreservaapp.model.SolicitudTaxista;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
@@ -38,30 +39,30 @@ public class DetalleSolicitudActivity extends AppCompatActivity  {
         binding.btnBack.setOnClickListener(v -> finish());
 
         // Obtener la solicitud enviada desde el intent
-        SolicitudTaxista solicitud = (SolicitudTaxista) getIntent().getSerializableExtra("solicitud");
+        PostulacionTaxista solicitud = (PostulacionTaxista) getIntent().getSerializableExtra("solicitud");
 
         if (solicitud != null) {
             // Setear campos visibles en pantalla
-            binding.etNombre.setText(solicitud.getNombre());
-            binding.etApellido.setText(solicitud.getApellido());
-            binding.etTipoDoc.setText(solicitud.getTipoDoc());
-            binding.etNumDoc.setText(solicitud.getNumDoc());
+            binding.etNombre.setText(solicitud.getNombres());
+            binding.etApellido.setText(solicitud.getApellidos());
+            binding.etTipoDoc.setText(solicitud.getTipoDocumento());
+            binding.etNumDoc.setText(solicitud.getNumeroDocumento());
             binding.etFechaNacimiento.setText(solicitud.getFechaNacimiento());
             binding.etTelefono.setText(solicitud.getTelefono());
-            binding.etDomicilio.setText(solicitud.getDomicilio());
+            binding.etDomicilio.setText(solicitud.getDireccion());
             binding.etCorreo.setText(solicitud.getCorreo());
-            binding.etPlaca.setText(solicitud.getPlaca());
+            binding.etPlaca.setText(solicitud.getNumeroPlaca());
 
             // Foto usuario
             Glide.with(this)
-                    .load("file:///android_asset/" + solicitud.getFotoUsuario())
+                    .load("file:///android_asset/" + solicitud.getUrlFotoPerfil())
                     .placeholder(R.drawable.default_user_icon)
                     .circleCrop()
                     .into(binding.imageFotoUsuario);
 
             // Foto placa
             Glide.with(this)
-                    .load("file:///android_asset/" + solicitud.getFotoPlaca())
+                    .load("file:///android_asset/" + solicitud.getFotoPlacaURL())
                     .placeholder(R.drawable.placa_demo)
                     .into(binding.imageFotoPlaca);
         }else{

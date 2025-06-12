@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -12,7 +13,9 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.hotelreservaapp.databinding.ActivitySubirFotoResgistroTaxistaBinding;
+import com.example.hotelreservaapp.model.PostulacionTaxista;
 import com.google.android.material.button.MaterialButton;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.io.IOException;
 
@@ -26,11 +29,16 @@ public class SubirFotoResgistroTaxistaActivity extends AppCompatActivity {
     private String nombres, apellidos, tipoDocumento, numeroDocumento, fechaNacimiento, correo, telefono, direccion;
     private ActivitySubirFotoResgistroTaxistaBinding binding;
 
+    private FirebaseFirestore firestore;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivitySubirFotoResgistroTaxistaBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        // Inicializar Firebase
+        firestore = FirebaseFirestore.getInstance();
 
         // Recuperar los datos generales del taxista
         Intent intent = getIntent();
@@ -58,16 +66,9 @@ public class SubirFotoResgistroTaxistaActivity extends AppCompatActivity {
         // Acción para registrar el vehículo y pasar a la siguiente vista (CrearContraseñaActivity)
         btnRegistrarVehiculo.setOnClickListener(v -> {
             if (validarFormulario()) {
-                // Obtener el nombre del usuario
-                String nombreUsuario = nombres.trim(); // Usar el nombre ya recuperado
-
-                // Mostrar el Toast de validación
-                Toast.makeText(SubirFotoResgistroTaxistaActivity.this,
-                        nombreUsuario + ", Crea una contraseña para finalizar el registro",
-                        Toast.LENGTH_SHORT).show();
-
-                // Cargar la siguiente vista (CrearContraseñaActivity)
-                cargarVistaCrearContraseña();
+                enviarPostulacionTaxista(nombres, apellidos, tipoDocumento, numeroDocumento, fechaNacimiento,
+                        correo, telefono, direccion, binding.etPlaca.getText().toString(),
+                        imageUri != null ? imageUri.toString() : null);
             }
         });
     }
@@ -95,25 +96,33 @@ public class SubirFotoResgistroTaxistaActivity extends AppCompatActivity {
         }
     }
 
-    // Metodo para cargar la vista de creación de contraseña (pasar a la siguiente actividad)
-    private void cargarVistaCrearContraseña() {
-        // Cambiar a la actividad de creación de contraseña
-        Intent intent = new Intent(SubirFotoResgistroTaxistaActivity.this, CrearContrasenaTaxistaActivity.class);
+    // Método para enviar la postulación a Firestore
+    private void enviarPostulacionTaxista(String nombres, String apellidos, String tipoDocumento,
+                                          String numeroDocumento, String fechaNacimiento, String correo,
+                                          String telefono, String direccion, String numeroPlaca, String fotoPlacaURL) {
 
-        // Recuperar los datos del vehículo (como placa y foto) y pasar a la siguiente actividad
-        intent.putExtra("placa", binding.etPlaca.getText().toString());
+        // Mostrar un Toast de carga
+        Toast.makeText(this, "Enviando postulación...", Toast.LENGTH_LONG).show();
 
-        // Pasar también los datos generales para mantener el flujo
-        intent.putExtra("nombres", nombres);
-        intent.putExtra("apellidos", apellidos);
-        intent.putExtra("tipoDocumento", tipoDocumento);
-        intent.putExtra("numeroDocumento", numeroDocumento);
-        intent.putExtra("fechaNacimiento", fechaNacimiento);
-        intent.putExtra("correo", correo);
-        intent.putExtra("telefono", telefono);
-        intent.putExtra("direccion", direccion);
-        intent.putExtra("fotoVehiculo", imageUri.toString()); // Guardamos la URI de la foto
-        startActivity(intent);
+        // Objeto PostulacionTaxista con todos los datos
+        PostulacionTaxista postulacion = new PostulacionTaxista(
+                nombres, apellidos, tipoDocumento, numeroDocumento, fechaNacimiento,
+                correo, telefono, direccion, numeroPlaca, fotoPlacaURL,
+                "pendiente_revision" // Estado inicial de la postulación
+        );
+
+        // Guardar la postulación en la colección "postulacionesTaxistas"
+        firestore.collection("postulacionesTaxistas")
+                .add(postulacion) // Usamos .add() para que Firestore genere un ID de documento único
+                .addOnSuccessListener(documentReference -> {
+                    Toast.makeText(this, "¡Postulación enviada con éxito! Espera la revisión.", Toast.LENGTH_LONG).show();
+                    // Redirigir al LoginActivity ya que la postulación ha finalizado aquí
+                    startActivity(new Intent(SubirFotoResgistroTaxistaActivity.this, LoginActivity.class));
+                    finish(); // Finaliza esta actividad
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "Error al enviar la postulación: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                });
     }
 
     private boolean validarFormulario() {

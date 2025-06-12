@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.hotelreservaapp.R;
-import com.example.hotelreservaapp.model.SolicitudTaxista;
+import com.example.hotelreservaapp.model.PostulacionTaxista;
 import com.example.hotelreservaapp.superadmin.DetalleSolicitudActivity;
 
 import java.io.IOException;
@@ -27,27 +27,28 @@ public class SolicitudAdapter extends RecyclerView.Adapter<SolicitudAdapter.Soli
     private Context context;
     private Activity activity;
 
-    private List<SolicitudTaxista> listaCompleta;
-    private List<SolicitudTaxista> listaFiltrada;
+    private List<PostulacionTaxista> listaCompleta;
+    private List<PostulacionTaxista> listaFiltrada;
 
-    public SolicitudAdapter(Activity activity, List<SolicitudTaxista> lista) {
+    public SolicitudAdapter(Activity activity, List<PostulacionTaxista> lista) {
         this.activity = activity;
         this.context = activity;
         this.listaCompleta = new ArrayList<>(lista);
         this.listaFiltrada = new ArrayList<>(lista);
     }
 
-    public void setListaCompleta(List<SolicitudTaxista> nuevaLista) {
+    public void setListaCompleta(List<PostulacionTaxista> nuevaLista) {
         this.listaCompleta = new ArrayList<>(nuevaLista);
         this.listaFiltrada = new ArrayList<>(nuevaLista);
         notifyDataSetChanged();
     }
 
+
     public void filtrar(String texto) {
         listaFiltrada.clear();
         texto = texto.toLowerCase().trim();
-        for (SolicitudTaxista s : listaCompleta) {
-            if (s.getNombre().toLowerCase().contains(texto) || s.getCorreo().toLowerCase().contains(texto)) {
+        for (PostulacionTaxista s : listaCompleta) {
+            if (s.getNombres().toLowerCase().contains(texto) || s.getCorreo().toLowerCase().contains(texto)) {
                 listaFiltrada.add(s);
             }
         }
@@ -63,16 +64,16 @@ public class SolicitudAdapter extends RecyclerView.Adapter<SolicitudAdapter.Soli
 
     @Override
     public void onBindViewHolder(@NonNull SolicitudViewHolder holder, int position) {
-        SolicitudTaxista s = listaFiltrada.get(position);
+        PostulacionTaxista s = listaFiltrada.get(position);
 
-        holder.tvNombre.setText(s.getNombre() + " " + s.getApellido());
+        holder.tvNombre.setText(s.getNombres() + " " + s.getApellidos());
         holder.tvCorreo.setText(s.getCorreo());
-        holder.tvPlaca.setText("Placa: " + s.getPlaca());
+        holder.tvPlaca.setText("Placa: " + s.getNumeroPlaca());
 
         // Imagen de usuario
-        String rutaFotoUsuario = "file:///android_asset/" + s.getFotoUsuario();
+        String rutaFotoUsuario = "file:///android_asset/" + s.getUrlFotoPerfil();
         try {
-            context.getAssets().open(s.getFotoUsuario());
+            context.getAssets().open(s.getUrlFotoPerfil());
             Glide.with(context)
                     .load(rutaFotoUsuario)
                     .placeholder(R.drawable.default_user_icon)
@@ -86,9 +87,9 @@ public class SolicitudAdapter extends RecyclerView.Adapter<SolicitudAdapter.Soli
         }
 
         // Imagen de placa
-        String rutaFotoPlaca = "file:///android_asset/" + s.getFotoPlaca();
+        String rutaFotoPlaca = "file:///android_asset/" + s.getFotoPlacaURL();
         try {
-            context.getAssets().open(s.getFotoPlaca());
+            context.getAssets().open(s.getFotoPlacaURL());
             Glide.with(context)
                     .load(rutaFotoPlaca)
                     .placeholder(R.drawable.placa_demo)
@@ -101,7 +102,7 @@ public class SolicitudAdapter extends RecyclerView.Adapter<SolicitudAdapter.Soli
 
         // 👉 Evento clic: abrir nueva actividad
         holder.itemView.setOnClickListener(v -> {
-            Log.d("SolicitudAdapter", "Card clickeado: " + s.getNombre());
+            Log.d("SolicitudAdapter", "Card clickeado: " + s.getNombres());
             Intent intent = new Intent(activity, DetalleSolicitudActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.putExtra("solicitud", s);
