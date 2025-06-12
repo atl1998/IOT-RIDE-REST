@@ -1,5 +1,9 @@
 package com.example.hotelreservaapp.model;
 
+import com.google.firebase.firestore.ServerTimestamp;
+
+import java.util.Date;
+
 public class Usuario {
     private String nombre;
     private String apellido;
@@ -13,6 +17,9 @@ public class Usuario {
     private String urlFotoPerfil; // URL de la imagen o nombre del recurso local
     private boolean estado;
     public boolean requiereCambioContrasena;
+    @ServerTimestamp
+    private Date fechaCreacion;
+    private DetallesTaxista driverDetails;
     public Usuario(String nombre, String apellido, String rol, String tipoDocumento, String numeroDocumento,
                    String fechaNacimiento, String correo, String telefono, String direccion, String urlFotoPerfil, boolean estado, boolean requiereCambioContrasena) {
         this.nombre = nombre;
@@ -27,6 +34,8 @@ public class Usuario {
         this.urlFotoPerfil = urlFotoPerfil;
         this.estado = estado;
         this.requiereCambioContrasena = requiereCambioContrasena;
+        // driverDetails será null por defecto
+
     }
     public Usuario() {}
     // Constructor, getters y setters
@@ -123,4 +132,6 @@ public class Usuario {
     public void setRequiereCambioContrasena(boolean requiereCambioContrasena) {
         this.requiereCambioContrasena = requiereCambioContrasena;
     }
+    public DetallesTaxista getDriverDetails() { return driverDetails; }
+    public void setDriverDetails(DetallesTaxista driverDetails) { this.driverDetails = driverDetails; }
 }

@@ -18,6 +18,7 @@ import com.example.hotelreservaapp.MainActivity;
 import com.example.hotelreservaapp.R;
 import com.example.hotelreservaapp.SuperAdminMainActivity;
 import com.example.hotelreservaapp.cliente.HomeCliente;
+import com.example.hotelreservaapp.model.DetallesTaxista;
 import com.example.hotelreservaapp.model.Usuario;
 import com.example.hotelreservaapp.taxista.TaxistaMain;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
