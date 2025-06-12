@@ -96,7 +96,7 @@ public class SubirFotoResgistroTaxistaActivity extends AppCompatActivity {
         }
     }
 
-    // Método para enviar la postulación a Firestore
+    // Metodo para enviar la postulación a Firestore
     private void enviarPostulacionTaxista(String nombres, String apellidos, String tipoDocumento,
                                           String numeroDocumento, String fechaNacimiento, String correo,
                                           String telefono, String direccion, String numeroPlaca, String fotoPlacaURL) {
