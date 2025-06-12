@@ -25,9 +25,18 @@ public class HotelAdapter extends RecyclerView.Adapter<HotelAdapter.HotelViewHol
     private List<Hotel> listaHoteles;
     private Context context;
 
-    public HotelAdapter(Context context, List<Hotel> listaHoteles) {
+    private long fechaInicioMillis;
+    private long fechaFinMillis;
+    private int adultos;
+    private int ninos;
+
+    public HotelAdapter(Context context, List<Hotel> listaHoteles, long fechaInicioMillis, long fechaFinMillis, int adultos, int ninos) {
         this.context = context;
         this.listaHoteles = listaHoteles;
+        this.fechaInicioMillis = fechaInicioMillis;
+        this.fechaFinMillis = fechaFinMillis;
+        this.adultos = adultos;
+        this.ninos = ninos;
     }
 
     @NonNull
@@ -41,7 +50,9 @@ public class HotelAdapter extends RecyclerView.Adapter<HotelAdapter.HotelViewHol
     public void onBindViewHolder(@NonNull HotelViewHolder holder, int position) {
         Hotel hotel = listaHoteles.get(position);
 
-        holder.txtNombre.setText(hotel.getNombre());
+        String nombreCompleto=hotel.getNombre()+' '+hotel.getHotelId();
+
+        holder.txtNombre.setText(nombreCompleto);
         holder.txtUbicacion.setText(hotel.getUbicacion());
         holder.ratingBar.setRating(hotel.getValoracion());
 
@@ -54,7 +65,15 @@ public class HotelAdapter extends RecyclerView.Adapter<HotelAdapter.HotelViewHol
         // Aquí añades el nuevo campo 'contacto' o 'servicioTaxi'
         holder.btnVerDetalles.setOnClickListener(v -> {
             Toast.makeText(context, "Detalles de " + hotel.getNombre(), Toast.LENGTH_SHORT).show();
-            context.startActivity(new Intent(context, DetallesHotel.class));
+
+            Intent intent=new Intent(context, DetallesHotel.class);
+            intent.putExtra("hotelId",hotel.getHotelId());
+            intent.putExtra("fechaInicio", fechaInicioMillis);
+            intent.putExtra("fechaFin", fechaFinMillis);
+            intent.putExtra("adultos", adultos);
+            intent.putExtra("ninos", ninos);
+
+            context.startActivity(intent);
         });
     }
 

@@ -34,6 +34,11 @@ public class ListaHotelesCliente extends AppCompatActivity {
 
     private FirebaseFirestore db;
 
+    private long fechaInicioMillis, fechaFinMillis;
+    private int adultos, ninos;
+
+    private HotelAdapter adapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,7 +72,8 @@ public class ListaHotelesCliente extends AppCompatActivity {
         listaHoteles = new ArrayList<>();
         obtenerDatosDeFirebase(); //metodo que obtiene los datos del firestore
 
-        HotelAdapter adapter = new HotelAdapter(this, listaHoteles);
+        listaHoteles = new ArrayList<>();
+        adapter = new HotelAdapter(this, listaHoteles, fechaInicioMillis, fechaFinMillis, adultos, ninos);
         recyclerView.setAdapter(adapter);
 
 
@@ -104,29 +110,29 @@ public class ListaHotelesCliente extends AppCompatActivity {
     }
 
     private void obtenerDatosDeFirebase() {
-        // Obtener los hoteles de la colección "Hoteles" en Firestore
         db.collection("Hoteles")
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
+                        listaHoteles.clear(); // Limpiar lista antes de llenarla
                         for (QueryDocumentSnapshot document : task.getResult()) {
+                            String hotelId = document.getId();
                             String nombre = document.getString("nombre");
                             String ubicacion = document.getString("ubicacion");
                             String contacto = document.getString("contacto");
                             boolean servicioTaxi = document.getBoolean("servicioTaxi") != null && document.getBoolean("servicioTaxi");
                             Double valoracion = document.getDouble("valoracion");
 
-                            Hotel hotel = new Hotel(nombre, valoracion.floatValue(), contacto, ubicacion, servicioTaxi);
+                            Hotel hotel = new Hotel(hotelId, nombre, valoracion.floatValue(), contacto, ubicacion, servicioTaxi);
                             listaHoteles.add(hotel);
                         }
-                        HotelAdapter adapter = new HotelAdapter(this, listaHoteles);
-                        recyclerView.setAdapter(adapter);
+                        adapter.notifyDataSetChanged(); // Refrescar
                     } else {
-                        Log.w("Firebase", "Error al obtener los documentos.", task.getException());
                         Toast.makeText(ListaHotelesCliente.this, "Error al cargar los hoteles", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
+
 
 
 /*
