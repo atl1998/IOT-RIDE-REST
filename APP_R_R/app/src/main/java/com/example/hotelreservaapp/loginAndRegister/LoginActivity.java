@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 
 import com.example.hotelreservaapp.AdminHotel.InicioFragment;
+import com.example.hotelreservaapp.AdminHotel.RegistroHotelActivity;
 import com.example.hotelreservaapp.MainActivity;
 import com.example.hotelreservaapp.R;
 import com.example.hotelreservaapp.SuperAdminMainActivity;
@@ -255,7 +256,7 @@ public class LoginActivity extends AppCompatActivity {
                 intent = new Intent(this, SuperAdminMainActivity.class);
                 break;
             case "adminHotel":
-                intent = new Intent(this, MainActivity.class);
+                intent = new Intent(this, RegistroHotelActivity.class);
                 break;
             case "taxista":
                 intent = new Intent(this, TaxistaMain.class);

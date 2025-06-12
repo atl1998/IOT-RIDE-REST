@@ -1,6 +1,6 @@
-package com.example.hotelreservaapp.AdminHotel;
+package com.example.hotelreservaapp.AdminHotel.Model;
 
-public class Habitaciones {
+public class Habitacion {
     private String titulo;
     private String detalles;
     private int disponibles;
@@ -20,7 +20,7 @@ public class Habitaciones {
         this.seleccionadas = seleccionadas;
     }
 
-    public Habitaciones(String titulo, String detalles, int disponibles, double precio, String tipoCama, int tamano, String url) {
+    public Habitacion(String titulo, String detalles, int disponibles, double precio, String tipoCama, int tamano, String url) {
         this.setTitulo(titulo);
         this.setDetalles(detalles);
         this.setDisponibles(disponibles);
@@ -30,7 +30,7 @@ public class Habitaciones {
         this.setUrl(url);
     }
 
-    public Habitaciones() {
+    public Habitacion() {
 
     }
 
