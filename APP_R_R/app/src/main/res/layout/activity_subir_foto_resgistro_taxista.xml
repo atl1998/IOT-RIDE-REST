@@ -59,17 +59,6 @@
             android:layout_marginTop="24dp"
             android:contentDescription="Vista previa de imagen" />
 
-        <!-- Botón de cámara -->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnAbrirCamara"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Abrir cámara y tomar foto"
-            android:textColor="#452C06"
-            android:icon="@android:drawable/ic_menu_camera"
-            android:iconTint="#452C06"
-            android:backgroundTint="@color/crema"
-            android:layout_marginTop="24dp" />
 
         <!-- Botón de galería -->
         <com.google.android.material.button.MaterialButton

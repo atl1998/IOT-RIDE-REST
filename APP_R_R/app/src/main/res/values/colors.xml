@@ -25,4 +25,8 @@
     <color name="transparente">#00000000</color>  <!-- Color transparente -->
 
     <color name="azul">#1EA7E6</color>  <!-- Color transparente -->
+
+    <color name="green">#4CAF50</color>
+    <color name="grey">#757575</color>
+
 </resources>
