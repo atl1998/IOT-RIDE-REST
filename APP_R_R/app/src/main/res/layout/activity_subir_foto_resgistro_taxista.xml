@@ -92,12 +92,12 @@
             android:id="@+id/btnRegistrarVehiculo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Registrar Vehículo"
+            android:text="Finalizar Registro"
             android:textColor="@android:color/white"
             android:backgroundTint="@color/dorado"
             android:layout_marginTop="16dp" />
 
-        <!-- Texto con autorización -->
+        <!-- Texto informativo sobre términos y validación de solicitud -->
         <LinearLayout
             android:id="@+id/layoutTerminos"
             android:layout_width="wrap_content"
@@ -110,13 +110,20 @@
                 android:id="@+id/tvInfoTerminos"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Al registrarte autorizas que esta información se muestre a todos los usuarios de la app"
+                android:text="Al postularte como taxista, debes esperar que el superadministrador acepte tu solicitud. Te notificará al correo registrado. Al registrarte aceptas nuestros"
                 android:textColor="#757575"
                 android:textSize="12sp"
-                android:gravity="center"
-                android:layout_marginEnd="8dp" />
-
+                android:textAlignment="center" />
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvTerminosLink"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Términos y Condiciones de Uso"
+            android:textColor="@color/dorado"
+            android:textSize="12sp"
+            android:textStyle="bold" />
 
     </LinearLayout>
 </ScrollView>
