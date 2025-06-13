@@ -1,0 +1,100 @@
+package com.example.hotelreservaapp.loginAndRegister;
+
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
+import android.os.Bundle;
+import android.provider.MediaStore;
+import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.hotelreservaapp.databinding.ActivityUsuarioSubirFotoBinding;
+
+import java.io.IOException;
+
+public class UsuarioSubirFoto extends AppCompatActivity {
+
+    private ActivityUsuarioSubirFotoBinding binding;
+    private Uri imageUri;
+    private static final int PICK_IMAGE_REQUEST = 1;
+
+    // Datos recibidos
+    private String nombres, apellidos, tipoDocumento, numeroDocumento;
+    private String fechaNacimiento, correo, telefono, direccion;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        binding = ActivityUsuarioSubirFotoBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+
+        // Recuperar datos del intent
+        Intent intent = getIntent();
+        nombres = intent.getStringExtra("nombres");
+        apellidos = intent.getStringExtra("apellidos");
+        tipoDocumento = intent.getStringExtra("tipoDocumento");
+        numeroDocumento = intent.getStringExtra("numeroDocumento");
+        fechaNacimiento = intent.getStringExtra("fechaNacimiento");
+        correo = intent.getStringExtra("correo");
+        telefono = intent.getStringExtra("telefono");
+        direccion = intent.getStringExtra("direccion");
+
+        // Botón atrás
+        binding.btnBack.setOnClickListener(v -> onBackPressed());
+
+        // Botón para abrir galería
+        binding.btnAbrirGaleria.setOnClickListener(v -> openGallery());
+
+        // Botón continuar
+        binding.btnSubirFotoCliente.setOnClickListener(v -> {
+            if (validarFormulario()) {
+                Toast.makeText(this, nombres + ", ahora crea tu contraseña", Toast.LENGTH_SHORT).show();
+                irACrearContrasena();
+            }
+        });
+    }
+
+    private void openGallery() {
+        Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(galleryIntent, PICK_IMAGE_REQUEST);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
+            imageUri = data.getData();
+            try {
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
+                binding.imagenSeleccionada.setImageBitmap(bitmap);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private boolean validarFormulario() {
+        if (imageUri == null) {
+            Toast.makeText(this, "Por favor, sube una foto tuya", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        return true;
+    }
+
+    private void irACrearContrasena() {
+        Intent intent = new Intent(UsuarioSubirFoto.this,UsuarioCrearContasena.class);
+        intent.putExtra("nombres", nombres);
+        intent.putExtra("apellidos", apellidos);
+        intent.putExtra("tipoDocumento", tipoDocumento);
+        intent.putExtra("numeroDocumento", numeroDocumento);
+        intent.putExtra("fechaNacimiento", fechaNacimiento);
+        intent.putExtra("correo", correo);
+        intent.putExtra("telefono", telefono);
+        intent.putExtra("direccion", direccion);
+        intent.putExtra("fotoPerfilUri", imageUri.toString());
+
+        startActivity(intent);
+    }
+}
