@@ -7,33 +7,29 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.hotelreservaapp.databinding.ActivitySubirFotoPersonalTaxista2Binding;
+import com.example.hotelreservaapp.databinding.ActivityUsuarioSubirFotoBinding;
 
 import java.io.IOException;
 
-public class SubirFotoPersonalTaxista extends AppCompatActivity {
+public class UsuarioSubirFoto extends AppCompatActivity {
 
-    private ActivitySubirFotoPersonalTaxista2Binding binding;
+    private ActivityUsuarioSubirFotoBinding binding;
     private Uri imageUri;
     private static final int PICK_IMAGE_REQUEST = 1;
 
-    // Datos recibidos de la vista anterior
+    // Datos recibidos
     private String nombres, apellidos, tipoDocumento, numeroDocumento;
     private String fechaNacimiento, correo, telefono, direccion;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
-
-        // Inicializar binding
-        binding = ActivitySubirFotoPersonalTaxista2Binding.inflate(getLayoutInflater());
+        binding = ActivityUsuarioSubirFotoBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        // Recuperar datos del intent anterior
+        // Recuperar datos del intent
         Intent intent = getIntent();
         nombres = intent.getStringExtra("nombres");
         apellidos = intent.getStringExtra("apellidos");
@@ -44,36 +40,26 @@ public class SubirFotoPersonalTaxista extends AppCompatActivity {
         telefono = intent.getStringExtra("telefono");
         direccion = intent.getStringExtra("direccion");
 
-        // Botón para regresar
+        // Botón atrás
         binding.btnBack.setOnClickListener(v -> onBackPressed());
 
         // Botón para abrir galería
         binding.btnAbrirGaleria.setOnClickListener(v -> openGallery());
 
-        // Botón para continuar al registro del vehículo
-        binding.btnSubirFotoTaxista.setOnClickListener(v -> {
+        // Botón continuar
+        binding.btnSubirFotoCliente.setOnClickListener(v -> {
             if (validarFormulario()) {
-
-                // Obtener el nombre del usuario
-                String nombreUsuario = nombres;
-
-                // Mostrar el Toast de validación
-                Toast.makeText(SubirFotoPersonalTaxista.this,
-                        nombreUsuario + "Ya casi, sube los datos de tu vehículo",
-                        Toast.LENGTH_SHORT).show();
-
-                irARegistroVehiculo();
+                Toast.makeText(this, nombres + ", ahora crea tu contraseña", Toast.LENGTH_SHORT).show();
+                irACrearContrasena();
             }
         });
     }
 
-    // Metodo para abrir la galería
     private void openGallery() {
         Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(galleryIntent, PICK_IMAGE_REQUEST);
     }
 
-    // Manejo del resultado de la galería
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -89,7 +75,6 @@ public class SubirFotoPersonalTaxista extends AppCompatActivity {
         }
     }
 
-    // Validación del formulario
     private boolean validarFormulario() {
         if (imageUri == null) {
             Toast.makeText(this, "Por favor, sube una foto tuya", Toast.LENGTH_SHORT).show();
@@ -98,11 +83,8 @@ public class SubirFotoPersonalTaxista extends AppCompatActivity {
         return true;
     }
 
-    // Ir a la vista de registro del vehículo
-    private void irARegistroVehiculo() {
-        Intent intent = new Intent(SubirFotoPersonalTaxista.this, SubirFotoResgistroTaxistaActivity.class);
-
-        // Pasar todos los datos
+    private void irACrearContrasena() {
+        Intent intent = new Intent(UsuarioSubirFoto.this,UsuarioCrearContasena.class);
         intent.putExtra("nombres", nombres);
         intent.putExtra("apellidos", apellidos);
         intent.putExtra("tipoDocumento", tipoDocumento);

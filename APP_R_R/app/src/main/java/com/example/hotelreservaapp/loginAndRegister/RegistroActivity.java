@@ -1,321 +1,200 @@
 package com.example.hotelreservaapp.loginAndRegister;
 
-import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.Patterns;
-import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.Spinner;
-import android.widget.TextView;
+import android.text.InputFilter;
+import android.text.InputType;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.hotelreservaapp.R;
-import com.example.hotelreservaapp.model.Usuario;
-import com.google.android.material.button.MaterialButton;
-import com.google.android.material.textfield.TextInputEditText;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.FirebaseFirestore;
+import com.example.hotelreservaapp.databinding.ActivityRegistroBinding;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.UUID;
+import java.util.Date;
+import java.util.Locale;
 
 public class RegistroActivity extends AppCompatActivity {
 
-    TextInputEditText etNombres, etApellidos, etDocumento, etFechaNacimiento,
-            etCorreo, etTelefono, etDomicilio, etContrasena;
-    Spinner spinnerDocumento;
-    MaterialButton btnContinuar;
-    ProgressBar pbSeguridad;
-    TextView tvNivelSeguridad, tvEjemploDocumento;
-
-    // Subir foto
-    ImageView imgSeleccionada;
-    MaterialButton btnCamara, btnRegistrarFinal;
-
-    //Firebase
-    private FirebaseAuth mAuth;
-    private FirebaseFirestore firestore;
-    //temp
-    String nombres, apellidos, tipoDocumento, documento, fechaNacimiento, correo, telefono, direccion, contrasena;
+    private ActivityRegistroBinding binding;
+    private final Calendar calendar = Calendar.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        cargarVistaFormulario();
-        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
-        mAuth = FirebaseAuth.getInstance();
-        firestore = FirebaseFirestore.getInstance();
+        binding = ActivityRegistroBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+
+        // Botón atrás
+        binding.btnBack.setOnClickListener(v -> finish());
+
+        // Acción continuar
+        binding.btnContinuar.setOnClickListener(v -> {
+            if (validarFormulario()) {
+                String nombreUsuario = binding.etNombres.getText().toString().trim();
+                Toast.makeText(RegistroActivity.this,
+                        nombreUsuario + ", sube una foto tuya",
+                        Toast.LENGTH_SHORT).show();
+                cargarVistaSubirFoto();
+            }
+        });
+
+        configurarCampoDocumento(InputType.TYPE_CLASS_NUMBER, 8, "Número de DNI");
+        binding.chipGroupTipoDoc.setOnCheckedChangeListener((group, checkedId) -> {
+            if (checkedId == R.id.chipDni) {
+                configurarCampoDocumento(InputType.TYPE_CLASS_NUMBER, 8, "Número de DNI");
+            } else if (checkedId == R.id.chipCarnet) {
+                configurarCampoDocumento(InputType.TYPE_CLASS_NUMBER, 12, "Número de carnet");
+            } else if (checkedId == R.id.chipPasaporte) {
+                configurarCampoDocumento(InputType.TYPE_CLASS_TEXT, 12, "Número de pasaporte");
+            }
+        });
+
+        configurarCampoFechaNacimiento();
     }
 
-    private void cargarVistaFormulario() {
-        setContentView(R.layout.activity_registro);
-
-        ImageButton btnBack = findViewById(R.id.btnBack);
-        etNombres = findViewById(R.id.etNombres);
-        etApellidos = findViewById(R.id.etApellidos);
-        etDocumento = findViewById(R.id.etDocumento);
-        etFechaNacimiento = findViewById(R.id.etFechaNacimiento);
-        etCorreo = findViewById(R.id.etCorreo);
-        etTelefono = findViewById(R.id.etTelefono);
-        etDomicilio = findViewById(R.id.etDomicilio);
-        etContrasena = findViewById(R.id.etContrasena);
-        spinnerDocumento = findViewById(R.id.spinnerDocumento);
-        btnContinuar = findViewById(R.id.btnContinuar);
-        pbSeguridad = findViewById(R.id.pbSeguridad);
-        tvNivelSeguridad = findViewById(R.id.tvNivelSeguridad);
-        tvEjemploDocumento = findViewById(R.id.tvEjemploDocumento);
-
-        btnBack.setOnClickListener(v -> finish());
-
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
-                this,
-                R.array.tipos_documento,
-                R.layout.spinner_item);
-        adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
-        spinnerDocumento.setAdapter(adapter);
-
-        // Actualizar ejemplo de documento
-        spinnerDocumento.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
-            @Override public void onItemSelected(android.widget.AdapterView<?> parent, View view, int pos, long id) {
-                String tipo = spinnerDocumento.getSelectedItem().toString();
-                switch (tipo) {
-                    case "DNI":
-                        tvEjemploDocumento.setText("Ejemplo: 12345678");
-                        break;
-                    case "Carné de Extranjería":
-                        tvEjemploDocumento.setText("Ejemplo: 001234567");
-                        break;
-                    case "Pasaporte peruano":
-                        tvEjemploDocumento.setText("Ejemplo: AB123456");
-                        break;
-                }
-            }
-            @Override public void onNothingSelected(android.widget.AdapterView<?> parent) {}
-        });
-
-        etFechaNacimiento.setOnClickListener(v -> mostrarCalendario());
-
-        etContrasena.addTextChangedListener(new TextWatcher() {
-            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
-                evaluarSeguridadContrasena(s.toString());
-            }
-            @Override public void afterTextChanged(Editable s) {}
-        });
-
-        btnContinuar.setOnClickListener(v -> {
-            if (formularioEsValido()) {
-                // Guardar temporalmente los datos
-                nombres = etNombres.getText().toString().trim();
-                apellidos = etApellidos.getText().toString().trim();
-                tipoDocumento = spinnerDocumento.getSelectedItem().toString();
-                documento = etDocumento.getText().toString().trim();
-                fechaNacimiento = etFechaNacimiento.getText().toString().trim();
-                correo = etCorreo.getText().toString().trim();
-                telefono = etTelefono.getText().toString().trim();
-                direccion = etDomicilio.getText().toString().trim();
-                contrasena = etContrasena.getText().toString().trim();
-
-                cargarVistaSubirFoto();
-            } else {
-                mostrarErroresFormulario();
-            }
-        });
+    private void configurarCampoDocumento(int inputType, int maxLength, String nuevoHint) {
+        binding.etDocumento.setText("");
+        binding.etDocumento.setInputType(inputType);
+        binding.etDocumento.setFilters(new InputFilter[]{new InputFilter.LengthFilter(maxLength)});
+        binding.tilDocumento.setHint(nuevoHint);
     }
 
     private void cargarVistaSubirFoto() {
-        setContentView(R.layout.activity_subir_foto);
+        Intent intent = new Intent(RegistroActivity.this,UsuarioSubirFoto.class);
+        intent.putExtra("nombres", binding.etNombres.getText().toString());
+        intent.putExtra("apellidos", binding.etApellidos.getText().toString());
 
-        imgSeleccionada = findViewById(R.id.imagenSeleccionada);
-        btnCamara = findViewById(R.id.btnAbrirCamara);
-        btnRegistrarFinal = findViewById(R.id.btnRegistrarFinal);
-        ImageButton btnBackFoto = findViewById(R.id.btnBack);
+        int checkedId = binding.chipGroupTipoDoc.getCheckedChipId();
+        String tipoDocumento = "";
+        if (checkedId == R.id.chipDni) tipoDocumento = "DNI";
+        else if (checkedId == R.id.chipCarnet) tipoDocumento = "Carnet";
+        else if (checkedId == R.id.chipPasaporte) tipoDocumento = "Pasaporte";
 
-        btnBackFoto.setOnClickListener(v -> cargarVistaFormulario());
+        intent.putExtra("tipoDocumento", tipoDocumento);
+        intent.putExtra("numeroDocumento", binding.etDocumento.getText().toString());
+        intent.putExtra("fechaNacimiento", binding.etFechaNacimiento.getText().toString());
+        intent.putExtra("correo", binding.etCorreo.getText().toString());
+        intent.putExtra("telefono", binding.etTelefono.getText().toString());
+        intent.putExtra("direccion", binding.etDomicilio.getText().toString());
 
-        btnCamara.setOnClickListener(v ->
-                Toast.makeText(this, "Abrir cámara (a implementar)", Toast.LENGTH_SHORT).show());
-
-        btnRegistrarFinal.setOnClickListener(v -> {
-            btnRegistrarFinal.setEnabled(false);
-            mAuth.createUserWithEmailAndPassword(correo, contrasena)
-                    .addOnSuccessListener(authResult -> {
-                        FirebaseUser firebaseUser = mAuth.getCurrentUser();
-                        if (firebaseUser != null) {
-                            Usuario usuario = new Usuario(
-                                    nombres,
-                                    apellidos,
-                                    "cliente", // rol por defecto
-                                    tipoDocumento,
-                                    documento,
-                                    fechaNacimiento,
-                                    correo,
-                                    telefono,
-                                    direccion,
-                                    "", // urlFotoPerfil se agregará luego
-                                    true,
-                                    false
-                            );
-
-                            firestore.collection("usuarios")
-                                    .document(firebaseUser.getUid())
-                                    .set(usuario)
-                                    .addOnSuccessListener(unused -> {
-                                        mostrarDialogoRegistroExitoso();
-                                        mAuth.signOut();
-                                        btnRegistrarFinal.setEnabled(true);
-                                    })
-                                    .addOnFailureListener(e -> {
-                                        Toast.makeText(this, "Error al guardar usuario", Toast.LENGTH_SHORT).show();
-                                        btnRegistrarFinal.setEnabled(true);
-                                    });
-                        }
-
-                    })
-                    .addOnFailureListener(e -> {
-                        if (e.getMessage() != null && e.getMessage().contains("email address is already in use")) {
-                            Toast.makeText(this, "El correo ya está registrado", Toast.LENGTH_LONG).show();
-                        } else {
-                            Toast.makeText(this, "Error en el registro: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                        }
-                        btnRegistrarFinal.setEnabled(true);
-                    });
-        });
+        startActivity(intent);
     }
 
-    private void mostrarDialogoRegistroExitoso() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setView(R.layout.dialog_registro_exitoso);
-        builder.setCancelable(false);
-        AlertDialog dialog = builder.create();
-        dialog.show();
+    private boolean validarFormulario() {
+        boolean valido = true;
 
-        new Handler().postDelayed(() -> {
-            dialog.dismiss();
-            startActivity(new Intent(this, LoginActivity.class));
-            finish();
-        }, 2500);
-    }
+        String nombres = binding.etNombres.getText().toString().trim();
+        String apellidos = binding.etApellidos.getText().toString().trim();
+        String correo = binding.etCorreo.getText().toString().trim();
+        String telefono = binding.etTelefono.getText().toString().trim();
+        String documento = binding.etDocumento.getText().toString().trim();
+        int checkedId = binding.chipGroupTipoDoc.getCheckedChipId();
+        String direccion = binding.etDomicilio.getText().toString().trim();
+        String fecha = binding.etFechaNacimiento.getText().toString().trim();
 
-    private void mostrarCalendario() {
-        final Calendar calendario = Calendar.getInstance();
-        int anio = calendario.get(Calendar.YEAR);
-        int mes = calendario.get(Calendar.MONTH);
-        int dia = calendario.get(Calendar.DAY_OF_MONTH);
+        if (nombres.isEmpty()) {
+            binding.tilNombres.setError("Campo obligatorio");
+            valido = false;
+        } else binding.tilNombres.setError(null);
 
-        DatePickerDialog datePicker = new DatePickerDialog(
-                this,
-                (view, year, month, dayOfMonth) -> {
-                    String fecha = String.format("%02d/%02d/%04d", dayOfMonth, month + 1, year);
-                    etFechaNacimiento.setText(fecha);
-                },
-                anio, mes, dia
-        );
-        datePicker.show();
-    }
+        if (apellidos.isEmpty()) {
+            binding.tilApellidos.setError("Campo obligatorio");
+            valido = false;
+        } else binding.tilApellidos.setError(null);
 
-    private boolean formularioEsValido() {
-        String correo = etCorreo.getText().toString().trim();
-        String telefono = etTelefono.getText().toString().trim();
-        String contrasena = etContrasena.getText().toString().trim();
-        String tipoDoc = spinnerDocumento.getSelectedItem().toString();
-        String numDoc = etDocumento.getText().toString().trim();
+        if (checkedId == R.id.chipDni && documento.length() != 8) {
+            binding.tilDocumento.setError("DNI debe tener 8 dígitos");
+            valido = false;
+        } else if (checkedId == R.id.chipCarnet && documento.length() < 9) {
+            binding.tilDocumento.setError("Carnet inválido");
+            valido = false;
+        } else if (checkedId == R.id.chipPasaporte && documento.length() < 6) {
+            binding.tilDocumento.setError("Pasaporte inválido");
+            valido = false;
+        } else binding.tilDocumento.setError(null);
 
-        return
-                !etNombres.getText().toString().trim().isEmpty() &&
-                        !etApellidos.getText().toString().trim().isEmpty() &&
-                        validarNumeroDocumento(tipoDoc, numDoc) &&
-                        !etFechaNacimiento.getText().toString().trim().isEmpty() &&
-                        !correo.isEmpty() && Patterns.EMAIL_ADDRESS.matcher(correo).matches() &&
-                        !telefono.isEmpty() && telefono.length() >= 9 &&
-                        !etDomicilio.getText().toString().trim().isEmpty() &&
-                        !contrasena.isEmpty() && evaluarNivelContrasena(contrasena) >= 50;
-    }
+        if (correo.isEmpty()) {
+            binding.tilCorreo.setError("Campo obligatorio");
+            valido = false;
+        } else if (!correo.matches("^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,6}$")) {
+            binding.tilCorreo.setError("Correo inválido");
+            valido = false;
+        } else binding.tilCorreo.setError(null);
 
-    private boolean validarNumeroDocumento(String tipo, String valor) {
-        switch (tipo) {
-            case "DNI":
-                return valor.matches("^\\d{8}$");
-            case "Carné de Extranjería":
-                return valor.matches("^(001|002|003|004|005|006|007|008|009)\\d{6}$");
-            case "Pasaporte peruano":
-                return valor.matches("^[A-Z]{2}\\d{6}$");
-            default:
-                return false;
-        }
-    }
+        if (telefono.length() != 9) {
+            binding.tilTelefono.setError("Teléfono debe tener 9 dígitos");
+            valido = false;
+        } else binding.tilTelefono.setError(null);
 
-    private void mostrarErroresFormulario() {
-        String tipoDoc = spinnerDocumento.getSelectedItem().toString();
-        String numDoc = etDocumento.getText().toString().trim();
+        if (direccion.isEmpty()) {
+            binding.tilDomicilio.setError("Campo obligatorio");
+            valido = false;
+        } else binding.tilDomicilio.setError(null);
 
-        if (etNombres.getText().toString().trim().isEmpty())
-            etNombres.setError("Ingresa tus nombres");
-        if (etApellidos.getText().toString().trim().isEmpty())
-            etApellidos.setError("Ingresa tus apellidos");
-        if (!validarNumeroDocumento(tipoDoc, numDoc))
-            etDocumento.setError("Formato inválido para " + tipoDoc);
-        if (etFechaNacimiento.getText().toString().trim().isEmpty())
-            etFechaNacimiento.setError("Selecciona tu fecha de nacimiento");
-
-        String correo = etCorreo.getText().toString().trim();
-        if (correo.isEmpty())
-            etCorreo.setError("Ingresa tu correo");
-        else if (!Patterns.EMAIL_ADDRESS.matcher(correo).matches())
-            etCorreo.setError("Correo no válido");
-
-        String telefono = etTelefono.getText().toString().trim();
-        if (telefono.isEmpty())
-            etTelefono.setError("Ingresa tu teléfono");
-        else if (telefono.length() < 9)
-            etTelefono.setError("Debe tener mínimo 9 dígitos");
-
-        if (etDomicilio.getText().toString().trim().isEmpty())
-            etDomicilio.setError("Ingresa tu domicilio");
-
-        String contrasena = etContrasena.getText().toString().trim();
-        if (contrasena.isEmpty())
-            etContrasena.setError("Ingresa tu contraseña");
-        else if (evaluarNivelContrasena(contrasena) < 50)
-            etContrasena.setError("Contraseña no segura");
-    }
-
-    private void evaluarSeguridadContrasena(String password) {
-        int nivel = evaluarNivelContrasena(password);
-        pbSeguridad.setProgress(nivel);
-
-        if (nivel < 50) {
-            tvNivelSeguridad.setText("Débil");
-            tvNivelSeguridad.setTextColor(getResources().getColor(android.R.color.holo_red_dark));
-            pbSeguridad.setProgressTintList(getColorStateList(android.R.color.holo_red_light));
-        } else if (nivel < 75) {
-            tvNivelSeguridad.setText("Media");
-            tvNivelSeguridad.setTextColor(getResources().getColor(android.R.color.holo_orange_dark));
-            pbSeguridad.setProgressTintList(getColorStateList(android.R.color.holo_orange_light));
+        if (fecha.isEmpty()) {
+            binding.tilFechaNacimiento.setError("Selecciona una fecha");
+            valido = false;
         } else {
-            tvNivelSeguridad.setText("Fuerte");
-            tvNivelSeguridad.setTextColor(getResources().getColor(android.R.color.holo_green_dark));
-            pbSeguridad.setProgressTintList(getColorStateList(android.R.color.holo_green_light));
+            try {
+                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+                sdf.setLenient(false);
+                Date fechaNacimiento = sdf.parse(fecha);
+                Date hoy = new Date();
+
+                if (fechaNacimiento.after(hoy)) {
+                    binding.tilFechaNacimiento.setError("La fecha no puede ser en el futuro");
+                    valido = false;
+                } else {
+                    Calendar nacimiento = Calendar.getInstance();
+                    nacimiento.setTime(fechaNacimiento);
+                    Calendar actual = Calendar.getInstance();
+
+                    int edad = actual.get(Calendar.YEAR) - nacimiento.get(Calendar.YEAR);
+                    if (actual.get(Calendar.DAY_OF_YEAR) < nacimiento.get(Calendar.DAY_OF_YEAR)) edad--;
+
+                    if (edad < 18) {
+                        binding.tilFechaNacimiento.setError("Debes tener al menos 18 años");
+                        valido = false;
+                    } else if (edad > 65) {
+                        binding.tilFechaNacimiento.setError("Edad máxima permitida es 65 años");
+                        valido = false;
+                    } else {
+                        binding.tilFechaNacimiento.setError(null);
+                    }
+                }
+
+            } catch (Exception e) {
+                binding.tilFechaNacimiento.setError("Fecha inválida");
+                valido = false;
+            }
         }
+
+        return valido;
     }
 
-    private int evaluarNivelContrasena(String password) {
-        int nivel = 0;
-        if (password.length() >= 8) nivel += 25;
-        if (password.matches(".*[0-9].*")) nivel += 25;
-        if (password.matches(".*[A-Z].*")) nivel += 25;
-        if (password.matches(".*[!@#$%^&*()_+=~`?<>\\[\\]{}].*")) nivel += 25;
-        return nivel;
+    private void configurarCampoFechaNacimiento() {
+        binding.etFechaNacimiento.setOnClickListener(v -> {
+            int year = calendar.get(Calendar.YEAR);
+            int month = calendar.get(Calendar.MONTH);
+            int day = calendar.get(Calendar.DAY_OF_MONTH);
+
+            DatePickerDialog datePickerDialog = new DatePickerDialog(
+                    RegistroActivity.this,
+                    R.style.CustomDatePickerDialog,
+                    (view, selectedYear, selectedMonth, selectedDay) -> {
+                        String fechaFormateada = String.format(Locale.getDefault(), "%02d/%02d/%04d",
+                                selectedDay, selectedMonth + 1, selectedYear);
+                        binding.etFechaNacimiento.setText(fechaFormateada);
+                    },
+                    year, month, day
+            );
+
+            datePickerDialog.getDatePicker().setMaxDate(System.currentTimeMillis());
+            datePickerDialog.show();
+        });
     }
 }

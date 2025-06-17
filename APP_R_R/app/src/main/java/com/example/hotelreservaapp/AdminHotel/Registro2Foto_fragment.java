@@ -12,6 +12,7 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
@@ -19,6 +20,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.example.hotelreservaapp.AdminHotel.Model.Hotel;
+import com.example.hotelreservaapp.AdminHotel.ViewModel.RegistroViewModel;
 import com.example.hotelreservaapp.R;
 import com.example.hotelreservaapp.databinding.AdminhotelRegistro2FragmentBinding;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -37,6 +40,7 @@ public class Registro2Foto_fragment extends Fragment {
 
     private static final int REQUEST_CAMERA = 1;
     private ActivityResultLauncher<Intent> pickImageLauncher;
+    private RegistroViewModel registroViewModel;
     private Uri cameraImageUri;
     private final ActivityResultLauncher<Intent> takePhotoLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
@@ -89,13 +93,15 @@ public class Registro2Foto_fragment extends Fragment {
         btnContinuar2.setOnClickListener(v -> {
 
             //Logica para instanciar el viewmodel
-            //registroViewModel = new ViewModelProvider(requireActivity()).get(RegistroViewModel.class);
+            registroViewModel = new ViewModelProvider(requireActivity()).get(RegistroViewModel.class);
 
             if (file.exists()) {
                 // Guardar los datos en el ViewModelregistroViewModel.setNombre(nombre);
+                Hotel hotel = registroViewModel.getHotel().getValue();
+                hotel.setUrlImage("foto_hotel.jpg");
+                registroViewModel.setHotel(hotel);
+
                 // Navegar al siguiente fragmento
-
-
                 ((RegistroHotelActivity) requireActivity()).irASiguientePaso(new Registro3Habitaciones_fragment());
             } else {
                 Toast.makeText(getContext(), "Ingresa una foto", Toast.LENGTH_SHORT).show();

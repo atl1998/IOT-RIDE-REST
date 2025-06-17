@@ -5,12 +5,15 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.example.hotelreservaapp.AdminHotel.Model.Hotel;
+import com.example.hotelreservaapp.AdminHotel.ViewModel.RegistroViewModel;
 import com.example.hotelreservaapp.R;
 import com.example.hotelreservaapp.databinding.AdminhotelRegistro1FragmentBinding;
 import com.google.android.material.button.MaterialButton;
@@ -21,6 +24,7 @@ public class Registro1Datos_fragment extends Fragment {
 
     TextInputEditText etNombre, etDescripcion, etDepartamento, etProvincia, etDistrito, etDireccion;
     MaterialButton btnContinuar1;
+    private RegistroViewModel registroViewModel;
 
     private AdminhotelRegistro1FragmentBinding binding;
 
@@ -54,13 +58,22 @@ public class Registro1Datos_fragment extends Fragment {
             String direccion = etDireccion.getText().toString().trim();
 
             //Logica para instanciar el viewmodel
-            //registroViewModel = new ViewModelProvider(requireActivity()).get(RegistroViewModel.class);
+            registroViewModel = new ViewModelProvider(requireActivity()).get(RegistroViewModel.class);
 
             if (DatosValidos()) {
-                // Guardar los datos en el ViewModelregistroViewModel.setNombre(nombre);
+                // Guardar los datos
+                Hotel hotel = registroViewModel.getHotel().getValue();
+                hotel.setNombre(nombre);
+                hotel.setDescripcion(descripcion);
+                hotel.setDepartamento(departamento);
+                hotel.setProvincia(provincia);
+                hotel.setDistrito(distrito);
+                hotel.setDireccion(direccion);
+
+                // Guardar los datos en el ViewModel
+                registroViewModel.setHotel(hotel);
+
                 // Navegar al siguiente fragmento
-
-
                 ((RegistroHotelActivity) requireActivity()).irASiguientePaso(new Registro2Foto_fragment());
             } else {
                 Toast.makeText(getContext(), "Ingresa datos validos", Toast.LENGTH_SHORT).show();

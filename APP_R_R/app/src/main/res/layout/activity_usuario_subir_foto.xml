@@ -73,7 +73,7 @@
 
         <!-- Botón subir foto -->
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnSubirFotoTaxista"
+            android:id="@+id/btnSubirFotoCliente"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Continuar"
@@ -81,9 +81,9 @@
             android:backgroundTint="@color/dorado"
             android:layout_marginTop="16dp" />
 
-        <!-- Texto con enlace a términos -->
+        <!-- Texto informativo final para usuario cliente -->
         <LinearLayout
-            android:id="@+id/layoutTerminos"
+            android:id="@+id/layoutInfoCliente"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -91,23 +91,15 @@
             android:gravity="center">
 
             <TextView
-                android:id="@+id/tvInfoTerminos"
+                android:id="@+id/tvInfoCliente"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Al continuar aceptas nuestros "
+                android:text="Como cliente tendrás acceso a todos nuestros servicios."
                 android:textColor="#757575"
-                android:textSize="12sp" />
-
+                android:textSize="12sp"
+                android:textAlignment="center" />
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/tvTerminosLink"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Términos y Condiciones de Uso"
-            android:textColor="@color/dorado"
-            android:textSize="12sp"
-            android:textStyle="bold" />
 
     </LinearLayout>
 </ScrollView>

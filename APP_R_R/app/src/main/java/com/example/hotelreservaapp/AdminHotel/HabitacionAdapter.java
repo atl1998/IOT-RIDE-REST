@@ -14,16 +14,15 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.hotelreservaapp.AdminHotel.Model.Habitacion;
 import com.example.hotelreservaapp.R;
-import com.example.hotelreservaapp.AdminHotel.Habitaciones;
-import com.example.hotelreservaapp.cliente.DetallesHotel;
 
 import java.io.IOException;
 import java.util.List;
 
 public class HabitacionAdapter extends RecyclerView.Adapter<com.example.hotelreservaapp.AdminHotel.HabitacionAdapter.HabitacionViewHolder> {
 
-    private List<Habitaciones> habitaciones;
+    private List<Habitacion> habitaciones;
     private OnItemClickListener listener;
     private Context context;
     public interface OnItemClickListener {
@@ -31,7 +30,7 @@ public class HabitacionAdapter extends RecyclerView.Adapter<com.example.hotelres
         void onSeleccionCambio();
     }
 
-    public HabitacionAdapter(List<Habitaciones> habitaciones,Context context,  com.example.hotelreservaapp.AdminHotel.HabitacionAdapter.OnItemClickListener listener) {
+    public HabitacionAdapter(List<Habitacion> habitaciones, Context context, com.example.hotelreservaapp.AdminHotel.HabitacionAdapter.OnItemClickListener listener) {
         this.habitaciones = habitaciones;
         this.listener = listener;
         this.context = context;
@@ -47,7 +46,7 @@ public class HabitacionAdapter extends RecyclerView.Adapter<com.example.hotelres
 
     @Override
     public void onBindViewHolder(@NonNull com.example.hotelreservaapp.AdminHotel.HabitacionAdapter.HabitacionViewHolder holder, int position) {
-        Habitaciones habitacion = habitaciones.get(position);
+        Habitacion habitacion = habitaciones.get(position);
 
         holder.tvTitulo.setText(habitacion.getTitulo());
         holder.tvDetalles.setText(habitacion.getDetalles());

@@ -116,22 +116,35 @@ public class ListaHotelesCliente extends AppCompatActivity {
                     if (task.isSuccessful()) {
                         listaHoteles.clear(); // Limpiar lista antes de llenarla
                         for (QueryDocumentSnapshot document : task.getResult()) {
-                            String hotelId = document.getId();
-                            String nombre = document.getString("nombre");
-                            String ubicacion = document.getString("ubicacion");
-                            String contacto = document.getString("contacto");
-                            boolean servicioTaxi = document.getBoolean("servicioTaxi") != null && document.getBoolean("servicioTaxi");
-                            Double valoracion = document.getDouble("valoracion");
 
-                            Hotel hotel = new Hotel(hotelId, nombre, valoracion.floatValue(), contacto, ubicacion, servicioTaxi);
-                            listaHoteles.add(hotel);
+                            // Verificar que existan todos los campos necesarios
+                            if (document.contains("nombre") &&
+                                    document.contains("ubicacion") &&
+                                    document.contains("contacto") &&
+                                    document.contains("servicioTaxi") &&
+                                    document.contains("valoracion")) {
+
+                                String hotelId = document.getId();
+                                String nombre = document.getString("nombre");
+                                String ubicacion = document.getString("ubicacion");
+                                String contacto = document.getString("contacto");
+                                boolean servicioTaxi = Boolean.TRUE.equals(document.getBoolean("servicioTaxi"));
+                                Double valoracion = document.getDouble("valoracion");
+
+                                // Evitar errores si valoracion es null
+                                if (valoracion != null) {
+                                    Hotel hotel = new Hotel(hotelId, nombre, valoracion.floatValue(), contacto, ubicacion, servicioTaxi);
+                                    listaHoteles.add(hotel);
+                                }
+                            }
                         }
-                        adapter.notifyDataSetChanged(); // Refrescar
+                        adapter.notifyDataSetChanged(); // Refrescar RecyclerView
                     } else {
                         Toast.makeText(ListaHotelesCliente.this, "Error al cargar los hoteles", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
+
 
 
 

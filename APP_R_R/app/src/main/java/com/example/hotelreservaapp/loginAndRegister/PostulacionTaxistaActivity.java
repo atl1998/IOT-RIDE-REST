@@ -39,7 +39,7 @@ public class PostulacionTaxistaActivity extends AppCompatActivity {
 
                 // Mostrar el Toast de validación
                 Toast.makeText(PostulacionTaxistaActivity.this,
-                        nombreUsuario + ", sube los datos de tu vehículo",
+                        nombreUsuario + ", sube una foto tuya",
                         Toast.LENGTH_SHORT).show();
 
                 // Cargar la siguiente vista (SubirFotoResgistroTaxistaActivity)
@@ -78,7 +78,7 @@ public class PostulacionTaxistaActivity extends AppCompatActivity {
 
     private void cargarVistaSubirFoto() {
         // Cambiar a la actividad o vista de subir foto
-        Intent intent = new Intent(PostulacionTaxistaActivity.this, SubirFotoResgistroTaxistaActivity.class);
+        Intent intent = new Intent(PostulacionTaxistaActivity.this, SubirFotoPersonalTaxista.class);
 
         // Recoger los datos generales
         intent.putExtra("nombres", binding.etNombres.getText().toString());
