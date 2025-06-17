@@ -1,5 +1,6 @@
 package com.example.hotelreservaapp.superadmin;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -7,6 +8,8 @@ import android.util.Log;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -34,6 +37,17 @@ public class SolicitudesActivity extends AppCompatActivity  {
     private List<PostulacionTaxista> listaSolicitudes = new ArrayList<>();
 
     private FirebaseFirestore firestore;
+
+    private final ActivityResultLauncher<Intent> detalleSolicitudLauncher =
+            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+                    result -> {
+                        if (result.getResultCode() == RESULT_OK) {
+                            // La DetalleSolicitudActivity se cerró con éxito
+                            // Aquí es donde actualizas tu lista
+                            Toast.makeText(this, "La lista se actualizará.", Toast.LENGTH_SHORT).show();
+                            cargarSolicitudesDesdeFirestore();
+                        }
+                    });
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,7 +60,7 @@ public class SolicitudesActivity extends AppCompatActivity  {
         binding.btnBack.setOnClickListener(v -> finish());
 
         // RecyclerView
-        adapter = new SolicitudAdapter(this, new ArrayList<>());
+        adapter = new SolicitudAdapter(this, new ArrayList<>(), detalleSolicitudLauncher);
         binding.recyclerSolicitudes.setLayoutManager(new LinearLayoutManager(this));
         binding.recyclerSolicitudes.setAdapter(adapter);
 
@@ -80,6 +94,7 @@ public class SolicitudesActivity extends AppCompatActivity  {
                             // Convertimos el documento a un objeto PostulacionTaxista
                             PostulacionTaxista postulacion = document.toObject(PostulacionTaxista.class);
                             if (postulacion != null) {
+
                                 // Puedes establecer el ID del documento si lo necesitas en el adaptador
                                 // postulacion.setId(document.getId());
                                 listaSolicitudes.add(postulacion);

@@ -74,30 +74,18 @@ public class UsuarioAdapter extends RecyclerView.Adapter<UsuarioAdapter.UsuarioV
         holder.switchActivo.setChecked(usuario.isActivo());
         holder.switchActivo.setText(usuario.isActivo() ? "Activo" : "Inactivo");
 
-        String nombreArchivo = usuario.getUrlFoto(); // ej. "image1.png"
-        String rutaAsset = "file:///android_asset/" + nombreArchivo;
+        String imageUrl = usuario.getUrlFoto(); // Asumiendo que getUrlFoto() devuelve la URL de internet
+
+        Glide.with(context)
+                .load(imageUrl) // Carga la URL directamente. Si es null o inválida, irá al .error()
+                .placeholder(R.drawable.default_user_icon) // Imagen mientras carga
+                .error(R.drawable.default_user_icon)     // Imagen si la URL es null/inválida o si la carga falla
+                .circleCrop()
+                .into(holder.ivFoto);
 
         Log.d("DEBUG", "Estado: " + usuario.isActivo());
 
 
-        try {
-            // Intenta abrir la imagen para ver si existe
-            context.getAssets().open(nombreArchivo);
-
-            // Si no lanza excepción, la imagen existe
-            Glide.with(context)
-                    .load(rutaAsset)
-                    .placeholder(R.drawable.default_user_icon)
-                    .circleCrop()
-                    .into(holder.ivFoto);
-
-        } catch (IOException e) {
-            // Si falla (no existe), carga imagen por defecto
-            Glide.with(context)
-                    .load(R.drawable.default_user_icon)
-                    .circleCrop()
-                    .into(holder.ivFoto);
-        }
 
         // Lógica del switch con diálogo de confirmación
         holder.switchActivo.setOnClickListener(v -> {

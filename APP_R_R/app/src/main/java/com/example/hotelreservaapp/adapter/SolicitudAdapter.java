@@ -9,7 +9,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -26,15 +28,17 @@ public class SolicitudAdapter extends RecyclerView.Adapter<SolicitudAdapter.Soli
 
     private Context context;
     private Activity activity;
-
+    private ActivityResultLauncher<Intent> launcher; // Nuevo campo para el launcher
     private List<PostulacionTaxista> listaCompleta;
     private List<PostulacionTaxista> listaFiltrada;
-
-    public SolicitudAdapter(Activity activity, List<PostulacionTaxista> lista) {
+    // --- CONSTRUCTOR CORREGIDO ---
+    // Ahora el constructor acepta el ActivityResultLauncher
+    public SolicitudAdapter(Activity activity, List<PostulacionTaxista> lista, ActivityResultLauncher<Intent> launcher) {
         this.activity = activity;
-        this.context = activity;
+        this.context = activity; // 'activity' ya es un 'Context'
         this.listaCompleta = new ArrayList<>(lista);
         this.listaFiltrada = new ArrayList<>(lista);
+        this.launcher = launcher; // Asignamos el launcher aquí
     }
 
     public void setListaCompleta(List<PostulacionTaxista> nuevaLista) {
@@ -43,12 +47,15 @@ public class SolicitudAdapter extends RecyclerView.Adapter<SolicitudAdapter.Soli
         notifyDataSetChanged();
     }
 
-
     public void filtrar(String texto) {
         listaFiltrada.clear();
         texto = texto.toLowerCase().trim();
         for (PostulacionTaxista s : listaCompleta) {
-            if (s.getNombres().toLowerCase().contains(texto) || s.getCorreo().toLowerCase().contains(texto)) {
+            // Ampliando el filtro para incluir más campos (si deseas más flexibilidad en la búsqueda)
+            if (s.getNombres().toLowerCase().contains(texto) ||
+                    s.getApellidos().toLowerCase().contains(texto) || // Agregado para filtrar por apellido
+                    s.getCorreo().toLowerCase().contains(texto) ||
+                    (s.getNumeroPlaca() != null && s.getNumeroPlaca().toLowerCase().contains(texto))) { // Agregado para filtrar por placa
                 listaFiltrada.add(s);
             }
         }
@@ -68,30 +75,44 @@ public class SolicitudAdapter extends RecyclerView.Adapter<SolicitudAdapter.Soli
 
         holder.tvNombre.setText(s.getNombres() + " " + s.getApellidos());
         holder.tvCorreo.setText(s.getCorreo());
-        holder.tvPlaca.setText("Placa: " + s.getNumeroPlaca());
+        // Asegúrate de manejar el caso si getNumeroPlaca() puede ser null desde Firestore
+        holder.tvPlaca.setText("Placa: " + (s.getNumeroPlaca() != null ? s.getNumeroPlaca() : "N/A"));
 
-        // Imagen de usuario
+        // --- Carga de imágenes con Glide (CORREGIDO y SIN try-catch de IOException) ---
         Glide.with(context)
-                .load(s.getUrlFotoPerfil()) // Carga la URL directamente (de Firebase Storage, web, o URI local)
-                .placeholder(R.drawable.default_user_icon) // Imagen que se muestra mientras carga
-                .error(R.drawable.default_user_icon)     // ¡Esta es la clave! Imagen si la URL es null/inválida/falla
+                .load(s.getUrlFotoPerfil()) // Carga la URL directamente
+                .placeholder(R.drawable.default_user_icon) // Imagen mientras carga
+                .error(R.drawable.default_user_icon)     // Imagen si la URL es null/inválida/falla
                 .circleCrop()
                 .into(holder.ivFoto);
 
-        // Imagen de placa
         Glide.with(context)
                 .load(s.getFotoPlacaURL()) // Carga la URL directamente
                 .placeholder(R.drawable.placa_demo) // Imagen mientras carga
-                .error(R.drawable.placa_demo)     // ¡Esta es la clave! Imagen si la URL es null/inválida/falla
+                .error(R.drawable.placa_demo)     // Imagen si la URL es null/inválida/falla
                 .into(holder.ivPlaca);
 
-        // 👉 Evento clic: abrir nueva actividad
+        // 👉 Evento clic: abrir nueva actividad usando el launcher
         holder.itemView.setOnClickListener(v -> {
             Log.d("SolicitudAdapter", "Card clickeado: " + s.getNombres());
             Intent intent = new Intent(activity, DetalleSolicitudActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.putExtra("solicitud", s);
-            activity.startActivity(intent);
+
+            // IMPORTANTE: NO usar FLAG_ACTIVITY_NEW_TASK con ActivityResultLauncher
+            // a menos que sea estrictamente necesario y entiendas las implicaciones.
+            // Para un flujo simple de "abrir detalle y regresar", no es recomendable.
+            // intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+            // Lanzamos la actividad usando el launcher que recibimos
+            if (launcher != null) {
+                launcher.launch(intent);
+            } else {
+                // Fallback: Si por alguna razón el launcher no se pasó (no debería pasar),
+                // iniciamos la actividad de la forma tradicional.
+                activity.startActivity(intent);
+                Log.e("SolicitudAdapter", "ActivityResultLauncher es null. Se usó startActivity directamente.");
+                Toast.makeText(context, "Error interno: la lista no se actualizará automáticamente.", Toast.LENGTH_SHORT).show();
+            }
         });
     }
 

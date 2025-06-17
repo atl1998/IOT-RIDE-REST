@@ -1,11 +1,14 @@
 package com.example.hotelreservaapp.model;
 
+import com.google.firebase.firestore.DocumentId;
 import com.google.firebase.firestore.ServerTimestamp;
 
 import java.io.Serializable;
 import java.util.Date;
 
 public class PostulacionTaxista implements Serializable {
+    @DocumentId
+    private String id;
     private String nombres;
     private String apellidos;
     private String tipoDocumento;
@@ -20,7 +23,6 @@ public class PostulacionTaxista implements Serializable {
     private String estadoSolicitud; // Por defecto "pendiente_revision"
     @ServerTimestamp
     private Date fechaPostulacion; // La fecha en que se envió la postulación
-    private String notasAdministrador; // Para que el admin agregue comentarios
     private Date fechaRevision; // Fecha en que el admin revisó
     private String idUsuarioAsignado; // UID del usuario si la postulación es aprobada
 
@@ -47,7 +49,13 @@ public class PostulacionTaxista implements Serializable {
 
     // --- Getters y Setters para todos los campos ---
     // Puedes generar estos automáticamente en Android Studio (Click derecho -> Generate -> Getter and Setter)
+    public String getId() {
+        return id;
+    }
 
+    public void setId(String id) {
+        this.id = id;
+    }
     public String getNombres() { return nombres; }
     public void setNombres(String nombres) { this.nombres = nombres; }
 
@@ -89,9 +97,7 @@ public class PostulacionTaxista implements Serializable {
 
     public Date getFechaPostulacion() { return fechaPostulacion; }
     public void setFechaPostulacion(Date fechaPostulacion) { this.fechaPostulacion = fechaPostulacion; }
-
-    public String getNotasAdministrador() { return notasAdministrador; }
-    public void setNotasAdministrador(String notasAdministrador) { this.notasAdministrador = notasAdministrador; }
+    
 
     public Date getFechaRevision() { return fechaRevision; }
     public void setFechaRevision(Date fechaRevision) { this.fechaRevision = fechaRevision; }
