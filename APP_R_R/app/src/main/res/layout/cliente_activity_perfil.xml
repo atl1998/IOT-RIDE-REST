@@ -119,7 +119,7 @@
                         android:id="@+id/tv_user_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Adrian Bala"
+                        android:text="Nombre"
                         android:textColor="@color/black"
                         android:textSize="16sp"
                         android:textStyle="bold" />
@@ -128,7 +128,7 @@
                         android:id="@+id/tv_user_handle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="adrianbala@pucp.edu.pe"
+                        android:text="correo"
                         android:textColor="#808080"
                         android:textSize="14sp" />
                 </LinearLayout>
@@ -169,7 +169,7 @@
                         android:id="@+id/etNombre"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Adrian"
+                        android:text="nombres"
                         android:enabled="false" />
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -185,7 +185,7 @@
                         android:id="@+id/etApellido"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Bala"
+                        android:text="apellidos"
                         android:enabled="false" />
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -201,7 +201,7 @@
                         android:id="@+id/etCorreo"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="adrianbala@pucp.edu.pe"
+                        android:text="correo"
                         android:inputType="textEmailAddress"
                         android:enabled="false" />
                 </com.google.android.material.textfield.TextInputLayout>
@@ -218,7 +218,7 @@
                         android:id="@+id/etDni"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="70894123"
+                        android:text="num dni"
                         android:inputType="number"
                         android:enabled="false" />
                 </com.google.android.material.textfield.TextInputLayout>
@@ -235,7 +235,7 @@
                         android:id="@+id/etTelefono"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="987654321"
+                        android:text="num telefono"
                         android:inputType="phone"
                         android:enabled="false" />
                 </com.google.android.material.textfield.TextInputLayout>
@@ -252,7 +252,7 @@
                         android:id="@+id/etDireccion"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Av. Universitaria 1801"
+                        android:text="direccion"
                         android:enabled="false" />
                 </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>

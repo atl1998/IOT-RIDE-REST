@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+
+    <!-- Gradiente principal de la tarjeta -->
+    <gradient
+        android:angle="135"
+        android:startColor="#1e3c72"
+        android:centerColor="#2a5298"
+        android:endColor="#3b82f6"
+        android:type="linear" />
+
+    <!-- Esquinas redondeadas -->
+    <corners android:radius="16dp" />
+
+    <!-- Opcional: Borde sutil -->
+    <stroke
+        android:width="1dp"
+        android:color="#4f94cd" />
+
+</shape>
