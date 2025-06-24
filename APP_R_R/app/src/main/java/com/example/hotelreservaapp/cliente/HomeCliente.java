@@ -4,7 +4,11 @@ import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+
+import androidx.annotation.Nullable;
 import androidx.core.util.Pair;
+
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -66,6 +70,13 @@ public class HomeCliente extends AppCompatActivity {
         configurarBottomNav();
 
         etDestino = findViewById(R.id.etDestino);
+        etDestino.setOnClickListener(v -> {
+            Intent intent = new Intent(this, BuscadorDestino.class);
+            startActivityForResult(intent, 1001);
+        });
+
+
+        /**/
         etFecha = findViewById(R.id.etFecha);
         etCantidad = findViewById(R.id.etCantidad);
         btnBuscar = findViewById(R.id.btnBuscar);
@@ -115,6 +126,22 @@ public class HomeCliente extends AppCompatActivity {
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, destinos);
         etDestino.setAdapter(adapter);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1001 && resultCode == RESULT_OK && data != null) {
+            String nombreCiudad = data.getStringExtra("name");
+            String ciudad = data.getStringExtra("city");
+            String pais = data.getStringExtra("country");
+            String region = data.getStringExtra("region");
+
+            etDestino.setText(nombreCiudad);
+
+            // Opcional: guardar en variables globales para usarlas luego en filtros
+            Log.d("Destino", "Ciudad: " + ciudad + ", País: " + pais + ", Región: " + region);
+        }
     }
 
     @Override
