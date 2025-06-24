@@ -31,10 +31,13 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.List;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -177,7 +180,22 @@ public class LoginActivity extends AppCompatActivity {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             try {
                 GoogleSignInAccount account = task.getResult(ApiException.class);
-                autenticarConFirebase(account.getIdToken(), account.getDisplayName(), account.getEmail());
+                String email = account.getEmail();
+
+                firebaseAuth.fetchSignInMethodsForEmail(email)
+                        .addOnSuccessListener(result -> {
+                            List<String> metodos = result.getSignInMethods();
+                            if (metodos.contains(EmailAuthProvider.EMAIL_PASSWORD_SIGN_IN_METHOD)) {
+                                // Ya existe cuenta con ese correo, evitar duplicados
+                                Toast.makeText(this, "Ya tienes cuenta registrada con correo y contraseña. Inicia con ese método y vincula Google desde tu perfil.", Toast.LENGTH_LONG).show();
+                            } else {
+                                // No hay conflicto, continuar normalmente
+                                autenticarConFirebase(account.getIdToken(), account.getDisplayName(), email);
+                            }
+                        })
+                        .addOnFailureListener(e -> {
+                            Toast.makeText(this, "Error al verificar cuenta existente", Toast.LENGTH_SHORT).show();
+                        });
             } catch (ApiException e) {
                 Toast.makeText(this, "Error al iniciar sesión con Google", Toast.LENGTH_SHORT).show();
             }

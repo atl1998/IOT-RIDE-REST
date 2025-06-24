@@ -73,11 +73,11 @@
                 android:id="@+id/etCorreo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textCursorDrawable="@null"
                 android:hint="Correo electrónico"
-                android:textColorHint="#452C06"
+                android:inputType="textEmailAddress"
                 android:textColor="#452C06"
-                android:inputType="textEmailAddress" />
+                android:textColorHint="#452C06"
+                android:textCursorDrawable="@null" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Contraseña -->
