@@ -17,6 +17,9 @@
         android:theme="@style/Theme.HotelReservaApp"
         tools:targetApi="31">
         <activity
+            android:name=".cliente.ValidacionTarjeta"
+            android:exported="false" />
+        <activity
             android:name=".loginAndRegister.UsuarioSubirFoto"
             android:exported="false" />
         <activity

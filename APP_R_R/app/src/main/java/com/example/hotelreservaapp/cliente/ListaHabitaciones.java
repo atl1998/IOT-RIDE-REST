@@ -93,54 +93,29 @@ public class ListaHabitaciones extends AppCompatActivity {
                 return;
             }
 
-            String userId = user.getUid();
-            List<Map<String, Object>> habitacionesReservadas = new ArrayList<>();
-
+            ArrayList<Habitacion> habitacionesSeleccionadas = new ArrayList<>();
             for (Habitacion habitacion : listaHabitaciones) {
                 if (habitacion.getSeleccionadas() > 0) {
-                    // 1. Actualizar stock en Firestore
-                    int nuevaCantidad = habitacion.getCantDisponible() - habitacion.getSeleccionadas();
-
-                    db.collection("Hoteles")
-                            .document(hotelId)
-                            .collection("habitaciones")
-                            .document(habitacion.getIdDocumento())
-                            .update("cantidadDisponible", nuevaCantidad);
-
-                    // 2. Preparar habitación para la reserva
-                    Map<String, Object> hab = new HashMap<>();
-                    hab.put("habitacionId", habitacion.getIdDocumento());
-                    hab.put("nombreHabitacion", habitacion.getNombre());
-                    hab.put("cantidad", habitacion.getSeleccionadas());
-                    hab.put("precioUnidad", habitacion.getPrecio());
-                    habitacionesReservadas.add(hab);
+                    habitacionesSeleccionadas.add(habitacion);
                 }
             }
 
-            // 3. Crear la reserva principal
-            Map<String, Object> reserva = new HashMap<>();
-            reserva.put("fechaIni", new com.google.firebase.Timestamp(new Date(fechaInicioMillis)));
-            reserva.put("fechaFin", new com.google.firebase.Timestamp(new Date(fechaFinMillis)));
-            reserva.put("hotelId", hotelId);
-            reserva.put("personas", adultos + ninos); // Puedes permitir seleccionar cantidad
-            reserva.put("checkoutSolicitado", false);
-            reserva.put("estado", "En Progreso");
-            reserva.put("habitaciones", habitacionesReservadas);
-            reserva.put("fechaReserva", FieldValue.serverTimestamp());
+            if (habitacionesSeleccionadas.isEmpty()) {
+                Toast.makeText(this, "Selecciona al menos una habitación", Toast.LENGTH_SHORT).show();
+                return;
+            }
 
-            db.collection("usuarios")
-                    .document(userId)
-                    .collection("Reservas")
-                    .add(reserva)
-                    .addOnSuccessListener(docRef -> {
-                        Toast.makeText(this, "Reserva confirmada", Toast.LENGTH_SHORT).show();
-                        startActivity(new Intent(this, HistorialEventos.class));
-                    })
-                    .addOnFailureListener(e -> {
-                        Log.e("Firebase", "Error al guardar la reserva", e);
-                        Toast.makeText(this, "Error al registrar la reserva", Toast.LENGTH_SHORT).show();
-                    });
+            Intent intent = new Intent(this, ValidacionTarjeta.class);
+            intent.putExtra("hotelId", getIntent().getStringExtra("hotelId"));
+            intent.putExtra("fechaInicio", getIntent().getLongExtra("fechaInicio", -1));
+            intent.putExtra("fechaFin", getIntent().getLongExtra("fechaFin", -1));
+            intent.putExtra("adultos", getIntent().getIntExtra("adultos", 0));
+            intent.putExtra("ninos", getIntent().getIntExtra("ninos", 0));
+            intent.putExtra("habitacionesSeleccionadas", habitacionesSeleccionadas); // Serializable
+
+            startActivity(intent);
         });
+
 
 
 
