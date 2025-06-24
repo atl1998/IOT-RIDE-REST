@@ -47,8 +47,13 @@ public class NuevaContrasenaActivity extends AppCompatActivity {
         progressDialog.setMessage("Actualizando contraseña...");
         progressDialog.setCancelable(false);
 
+        String correo = getIntent().getStringExtra("correo");
+        String uid = getIntent().getStringExtra("uid");
+        String tempPass = getIntent().getStringExtra("tempPass");
+
+
         ImageButton btnBack = findViewById(R.id.btnBack);
-        btnBack.setOnClickListener(v -> finish());
+        btnBack.setOnClickListener(v -> onBackPressed());
 
         btnCambiarContrasena.setOnClickListener(v -> cambiarContrasena());
     }
@@ -77,11 +82,9 @@ public class NuevaContrasenaActivity extends AppCompatActivity {
             progressDialog.show();
             user.updatePassword(nueva)
                     .addOnSuccessListener(unused -> {
-                        // Actualizar campo requiereCambioContrasena en Firestore
                         db.collection("usuarios").document(user.getUid())
                                 .update("requiereCambioContrasena", false)
                                 .addOnSuccessListener(aVoid -> {
-                                    // Obtener rol para redirigir correctamente
                                     db.collection("usuarios").document(user.getUid())
                                             .get()
                                             .addOnSuccessListener(snapshot -> {
@@ -125,5 +128,22 @@ public class NuevaContrasenaActivity extends AppCompatActivity {
         }
         startActivity(intent);
         finish();
+    }
+    @Override
+    public void onBackPressed() {
+        FirebaseAuth.getInstance().signOut();
+        Intent intent = new Intent(this, LoginActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+        finish();
+    }
+
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (!isChangingConfigurations()) {
+            FirebaseAuth.getInstance().signOut();
+        }
     }
 }
