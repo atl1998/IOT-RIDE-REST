@@ -26,24 +26,22 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class ListaHotelesCliente extends AppCompatActivity {
     private RecyclerView recyclerView;
     private List<Hotel> listaHoteles;
-
     private FirebaseFirestore db;
-
     private long fechaInicioMillis, fechaFinMillis;
     private int adultos, ninos;
-
     private HotelAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.cliente_activity_lista_hoteles); // tu layout principal
-
         // Obtener extras enviados desde HomeCliente
         Intent intent = getIntent();
         String destino = intent.getStringExtra("destino");
@@ -122,7 +120,8 @@ public class ListaHotelesCliente extends AppCompatActivity {
                                     document.contains("ubicacion") &&
                                     document.contains("contacto") &&
                                     document.contains("servicioTaxi") &&
-                                    document.contains("valoracion")) {
+                                    document.contains("valoracion") &&
+                                    document.contains("precioMin")) {
 
                                 String hotelId = document.getId();
                                 String nombre = document.getString("nombre");
@@ -130,10 +129,11 @@ public class ListaHotelesCliente extends AppCompatActivity {
                                 String contacto = document.getString("contacto");
                                 boolean servicioTaxi = Boolean.TRUE.equals(document.getBoolean("servicioTaxi"));
                                 Double valoracion = document.getDouble("valoracion");
+                                Double precioMin = document.getDouble("precioMin");
 
                                 // Evitar errores si valoracion es null
                                 if (valoracion != null) {
-                                    Hotel hotel = new Hotel(hotelId, nombre, valoracion.floatValue(), contacto, ubicacion, servicioTaxi);
+                                    Hotel hotel = new Hotel(hotelId, nombre, valoracion.floatValue(), contacto, ubicacion, precioMin.floatValue(),servicioTaxi);
                                     listaHoteles.add(hotel);
                                 }
                             }
@@ -144,20 +144,6 @@ public class ListaHotelesCliente extends AppCompatActivity {
                     }
                 });
     }
-
-
-
-
-/*
-    private void llenarListaHoteles() {
-        listaHoteles.add(new Hotel("Hotel Lima", 4.5f, "9.1 Excelente - 200 opiniones", "Centro de Lima", "28 abr al 2 may", "S/350", R.drawable.hotel1));
-        listaHoteles.add(new Hotel("Hotel Cusco", 4.0f, "8.8 Fabuloso - 150 opiniones", "Cusco Histórico", "1 may al 5 may", "S/290", R.drawable.hotel2));
-        listaHoteles.add(new Hotel("Hotel Piura", 4.5f, "9.1 Excelente - 200 opiniones", "Centro de Lima", "28 abr al 2 may", "S/350", R.drawable.hotel1));
-        listaHoteles.add(new Hotel("Hotel Loreto", 4.0f, "8.8 Fabuloso - 150 opiniones", "Cusco Histórico", "1 may al 5 may", "S/290", R.drawable.hotel2));
-        // agrega más hoteles
-    }*/
-
-
     private void mostrarDialogoOrdenamiento() {
         // Inflar el layout del diálogo
         LayoutInflater inflater = LayoutInflater.from(this);
@@ -174,7 +160,6 @@ public class ListaHotelesCliente extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         // Obtener el ID del radio button seleccionado
                         int selectedId = radioGroup.getCheckedRadioButtonId();
-
                         if (selectedId == R.id.rb_puntuacion) {
                             // Ordenar por puntuación
                             ordenarPorPuntuacion();
@@ -185,7 +170,6 @@ public class ListaHotelesCliente extends AppCompatActivity {
                             // Ordenar por precio de mayor a menor
                             ordenarPorPrecioDescendente();
                         }
-
                         dialog.dismiss();
                     }
                 })
@@ -202,39 +186,33 @@ public class ListaHotelesCliente extends AppCompatActivity {
     }
 
     // Implementa estas funciones según tu lógica de ordenamiento
-    private void ordenarPorPuntuacion() {
-        // Aquí implementa la lógica para ordenar hoteles por puntuación
-        // Por ejemplo:
-        // Collections.sort(hotelesList, new Comparator<Hotel>() {
-        //     @Override
-        //     public int compare(Hotel h1, Hotel h2) {
-        //         return Float.compare(h2.getPuntuacion(), h1.getPuntuacion());
-        //     }
-        // });
-        // adapter.notifyDataSetChanged();
-    }
-
     private void ordenarPorPrecioAscendente() {
-        // Aquí implementa la lógica para ordenar hoteles por precio ascendente
-        // Por ejemplo:
-        // Collections.sort(hotelesList, new Comparator<Hotel>() {
-        //     @Override
-        //     public int compare(Hotel h1, Hotel h2) {
-        //         return Double.compare(h1.getPrecio(), h2.getPrecio());
-        //     }
-        // });
-        // adapter.notifyDataSetChanged();
+        Collections.sort(listaHoteles, new Comparator<Hotel>() {
+            @Override
+            public int compare(Hotel h1, Hotel h2) {
+                return Double.compare(h1.getPrecioMin(), h2.getPrecioMin());
+            }
+        });
+        adapter.notifyDataSetChanged(); // Refresca la lista
     }
 
     private void ordenarPorPrecioDescendente() {
-        // Aquí implementa la lógica para ordenar hoteles por precio descendente
-        // Por ejemplo:
-        // Collections.sort(hotelesList, new Comparator<Hotel>() {
-        //     @Override
-        //     public int compare(Hotel h1, Hotel h2) {
-        //         return Double.compare(h2.getPrecio(), h1.getPrecio());
-        //     }
-        // });
-        // adapter.notifyDataSetChanged();
+        Collections.sort(listaHoteles, new Comparator<Hotel>() {
+            @Override
+            public int compare(Hotel h1, Hotel h2) {
+                return Double.compare(h2.getPrecioMin(), h1.getPrecioMin());
+            }
+        });
+        adapter.notifyDataSetChanged(); // Refresca la lista
+    }
+
+    private void ordenarPorPuntuacion() {
+        Collections.sort(listaHoteles, new Comparator<Hotel>() {
+            @Override
+            public int compare(Hotel h1, Hotel h2) {
+                return Float.compare(h2.getValoracion(), h1.getValoracion()); // Mayor a menor
+            }
+        });
+        adapter.notifyDataSetChanged(); // Refresca el RecyclerView
     }
 }
