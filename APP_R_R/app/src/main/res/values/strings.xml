@@ -12,7 +12,7 @@
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
     <string name="title_activity_cliente_inicio">ClienteInicioActivity</string>
-    <string name="default_web_client_id">151851086372-k93qeiur31rcgfidfqj94a67vpte7v1j.apps.googleusercontent.com</string>
+    <string name="default_web_client_id" translatable="false">151851086372-k93qeiur31rcgfidfqj94a67vpte7v1j.apps.googleusercontent.com</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

@@ -1,6 +1,8 @@
 package com.example.hotelreservaapp.cliente;
 
-public class Habitacion {
+import java.io.Serializable;
+
+public class Habitacion implements Serializable {
     private String nombre;
     private int cantDisponible;
     private double precio;
