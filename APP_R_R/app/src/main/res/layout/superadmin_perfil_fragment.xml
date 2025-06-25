@@ -50,8 +50,14 @@
                         android:layout_height="match_parent"
                         android:scaleType="centerCrop"
                         android:src="@drawable/person" />
-                </androidx.cardview.widget.CardView>
 
+                </androidx.cardview.widget.CardView>
+                <ProgressBar
+                    android:id="@+id/progressBarPhoto"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center"
+                    android:visibility="gone" />
                 <ImageView
                     android:id="@+id/iv_change_photo"
                     android:layout_width="20dp"
@@ -62,6 +68,7 @@
                     android:background="@drawable/circle_background"
                     android:padding="2dp"
                     android:elevation="4dp" />
+
             </FrameLayout>
 
             <LinearLayout

@@ -36,6 +36,10 @@ import com.google.android.material.datepicker.CalendarConstraints;
 import com.google.android.material.datepicker.DateValidatorPointBackward;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -104,7 +108,7 @@ public class LogsFragment extends Fragment {
                     .commit();
         });
         // Cargar logs demo
-        cargarLogsDemo();
+        cargarLogsDesdeFirestore();
 
         // Picker de fecha
         binding.etFecha.setOnClickListener(v -> {
@@ -136,18 +140,30 @@ public class LogsFragment extends Fragment {
             adapter.actualizarLista(todosLosLogs);
         });
     }
-    private void cargarLogsDemo() {
-        todosLosLogs.add(new LogItem("10/04/2025", "10:45 AM", "Jorge Coronado", "Eliminó una reserva", R.drawable.coronado));
-        todosLosLogs.add(new LogItem("06/05/2025", "04:12 PM", "Lucía Quispe", "Agregó un nuevo hotel", R.drawable.default_profile));
-        todosLosLogs.add(new LogItem("04/05/2025", "08:30 AM", "Nilo Cori", "Modificó información de usuario", R.drawable.default_profile));
-        todosLosLogs.add(new LogItem("02/05/2025", "11:00 AM", "Adrian Bala", "Cambió estado de reserva", R.drawable.default_profile));
-        adapter.actualizarLista(todosLosLogs);
+    private void cargarLogsDesdeFirestore() {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("logs")
+                .orderBy("fecha", Query.Direction.DESCENDING)
+                .limit(100)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    List<LogItem> logs = new ArrayList<>();
+                    for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                        LogItem log = doc.toObject(LogItem.class);
+                        logs.add(log);
+                    }
+                    todosLosLogs = logs;
+                    adapter.actualizarLista(todosLosLogs);
+                })
+                .addOnFailureListener(e -> Toast.makeText(requireContext(), "Error al cargar logs", Toast.LENGTH_SHORT).show());
     }
 
     private void filtrarPorFecha(String fecha) {
         List<LogItem> filtrados = new ArrayList<>();
         for (LogItem log : todosLosLogs) {
-            if (log.getFecha().equals(fecha)) filtrados.add(log);
+            if (fecha.equals(log.getFechaFormateada())) {
+                filtrados.add(log);
+            }
         }
         adapter.actualizarLista(filtrados);
     }
@@ -199,7 +215,7 @@ public class LogsFragment extends Fragment {
         paint.setFakeBoldText(false);
 
         for (LogItem log : logs) {
-            String linea = log.getFecha() + " " + log.getHora() + " - " + log.getUsuario() + ": " + log.getAccion();
+            String linea = log.getFechaFormateada() + " " + log.getHoraFormateada() + " - " + log.getUsuario() + ": " + log.getAccion();
             canvas.drawText(linea, x, y, paint);
             y += 25;
 

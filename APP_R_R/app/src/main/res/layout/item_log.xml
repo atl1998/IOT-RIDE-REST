@@ -11,14 +11,23 @@
         android:layout_height="wrap_content"
         android:padding="12dp">
 
-        <!-- Contenedor de textos alineado a la izquierda -->
+        <ImageView
+            android:id="@+id/imgIcono"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/info_icon"
+            android:contentDescription="Tipo de log" />
+
+        <!-- Contenedor de textos a la derecha del icono -->
         <LinearLayout
             android:id="@+id/contenidoTexto"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_alignParentStart="true"
-            android:layout_centerVertical="true">
+            android:layout_toEndOf="@id/imgIcono"
+            android:layout_marginStart="12dp"
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/tvAccion"
@@ -44,16 +53,17 @@
                 android:text="10/05/2025 - 10:45 AM"
                 android:textColor="#888"
                 android:textSize="13sp" />
-        </LinearLayout>
 
-        <!-- Imagen del usuario alineada a la derecha -->
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/imgUsuario"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:src="@drawable/default_user_icon"
-            android:contentDescription="Foto usuario" />
+            <TextView
+                android:id="@+id/tvDetalle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Detalle del log..."
+                android:maxLines="2"
+                android:ellipsize="end"
+                android:textColor="#666"
+                android:textSize="13sp"
+                android:layout_marginTop="4dp"/>
+        </LinearLayout>
     </RelativeLayout>
 </androidx.cardview.widget.CardView>

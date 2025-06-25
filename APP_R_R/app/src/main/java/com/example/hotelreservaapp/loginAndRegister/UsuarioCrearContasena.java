@@ -9,6 +9,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.hotelreservaapp.LogManager;
 import com.example.hotelreservaapp.loginAndRegister.LoginActivity;
 import com.example.hotelreservaapp.R;
 import com.example.hotelreservaapp.databinding.ActivityUsuarioCrearContasenaBinding;
@@ -133,6 +134,12 @@ public class UsuarioCrearContasena extends AppCompatActivity {
                                 .document(firebaseUser.getUid())
                                 .set(usuario)
                                 .addOnSuccessListener(unused -> {
+                                    String nombreCompleto = nombres + " " + apellidos;
+                                    LogManager.registrarLogRegistro(
+                                            nombreCompleto,
+                                            "Registro de usuario",
+                                            "El usuario se registró como cliente con el correo " + correo
+                                    );
                                     Toast.makeText(this, "Registro exitoso", Toast.LENGTH_SHORT).show();
                                     mAuth.signOut();
                                     mostrarDialogoRegistroExitoso();

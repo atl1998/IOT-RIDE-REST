@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -22,9 +23,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+import com.bumptech.glide.request.target.CustomTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.example.hotelreservaapp.R;
 import com.example.hotelreservaapp.adapter.LogsAdapter;
 import com.example.hotelreservaapp.databinding.SuperadminPerfilFragmentBinding;
@@ -49,6 +55,8 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.auth.UserInfo;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -69,7 +77,7 @@ public class PerfilFragment extends Fragment {
     public PerfilFragment() {
         // Constructor vacío requerido
     }
-
+    private ProgressBar progressBar;
     private static final int REQUEST_CAMERA = 1;
     private ActivityResultLauncher<Intent> pickImageLauncher;
     private static final int RC_GOOGLE_LINK = 2000;
@@ -113,6 +121,8 @@ public class PerfilFragment extends Fragment {
         TextView user_name = binding.tvUserName;
         TextView correu = binding.tvUserHandle;
         btnVincularGoogle = view.findViewById(R.id.btnVincularGoogle);
+        progressBar = binding.progressBarPhoto;
+
 
         // Configurar el cliente Google
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -151,6 +161,37 @@ public class PerfilFragment extends Fragment {
                             etDni.setText(document.getString("numeroDocumento"));
                             etTelefono.setText(document.getString("telefono"));
                             etDireccion.setText(document.getString("direccion"));
+                            String urlFoto = document.getString("urlFotoPerfil");
+                            if (urlFoto != null && !urlFoto.isEmpty()) {
+                                progressBar.setVisibility(View.VISIBLE);
+
+                                Glide.with(this)
+                                        .load(urlFoto)
+                                        .placeholder(R.drawable.default_user_icon)
+                                        .error(R.drawable.default_user_icon)
+                                        .transition(DrawableTransitionOptions.withCrossFade())
+                                        .into(new CustomTarget<Drawable>() {
+                                            @Override
+                                            public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
+                                                binding.ivProfileImage.setImageDrawable(resource);
+                                                progressBar.setVisibility(View.GONE);
+                                            }
+
+                                            @Override
+                                            public void onLoadCleared(@Nullable Drawable placeholder) {
+
+                                            }
+
+                                            @Override
+                                            public void onLoadFailed(@Nullable Drawable errorDrawable) {
+                                                super.onLoadFailed(errorDrawable);
+                                                binding.ivProfileImage.setImageDrawable(errorDrawable);
+                                                progressBar.setVisibility(View.GONE);
+                                            }
+                                        });
+                            } else {
+                                binding.ivProfileImage.setImageResource(R.drawable.default_user_icon);
+                            }
                         }
                     })
                     .addOnFailureListener(e ->
@@ -214,12 +255,6 @@ public class PerfilFragment extends Fragment {
             }
         });
 
-
-        // Mostrar imagen si ya está guardada
-        File file = new File(requireContext().getFilesDir(), "foto_perfil.jpg");
-        if (file.exists()) {
-            binding.ivProfileImage.setImageURI(Uri.fromFile(file));
-        }
 
         // Inicializar pickImageLauncher
         pickImageLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
@@ -285,11 +320,41 @@ public class PerfilFragment extends Fragment {
             outputStream.close();
 
             binding.ivProfileImage.setImageURI(null); // Forzar reinicialización
-            binding.ivProfileImage.setImageURI(Uri.fromFile(file));        } catch (Exception e) {
+            binding.ivProfileImage.setImageURI(Uri.fromFile(file));
+            subirImagenAFirebaseStorage(uri);
+        } catch (Exception e) {
             e.printStackTrace();
             Toast.makeText(requireContext(), "Error al guardar imagen", Toast.LENGTH_SHORT).show();
         }
     }
+
+    private void subirImagenAFirebaseStorage(Uri uri) {
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        //Ponemos nombres únicos a los jpg
+        StorageReference storageRef = storage.getReference().child("fotos_perfil/" + usuarioActual.getUid() + ".jpg");
+
+        storageRef.putFile(uri)
+                .addOnSuccessListener(taskSnapshot -> {
+                    storageRef.getDownloadUrl().addOnSuccessListener(downloadUri -> {
+                        // Guardar la URL en Firestore
+                        db.collection("usuarios").document(usuarioActual.getUid())
+                                .update("urlFotoPerfil", downloadUri.toString())
+                                .addOnSuccessListener(aVoid -> {
+                                    Toast.makeText(getContext(), "Foto actualizada", Toast.LENGTH_SHORT).show();
+
+                                    File file = new File(requireContext().getFilesDir(), "foto_perfil.jpg");
+                                    if (file.exists()) {
+                                        file.delete();
+                                    }
+
+                                })
+                                .addOnFailureListener(e -> {
+                                    Toast.makeText(getContext(), "Error al guardar la foto", Toast.LENGTH_SHORT).show();
+                                });
+                    });
+                });
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -326,13 +391,5 @@ public class PerfilFragment extends Fragment {
         }
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        File file = new File(requireContext().getFilesDir(), "foto_perfil.jpg");
-        if (file.exists()) {
-            binding.ivProfileImage.setImageURI(null); // Forzar recarga
-            binding.ivProfileImage.setImageURI(Uri.fromFile(file));
-        }
-    }
+
 }
