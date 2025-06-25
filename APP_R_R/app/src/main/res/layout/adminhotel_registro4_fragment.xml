@@ -88,9 +88,10 @@ tools:context=".AdminHotel.Registro4AddHabitacion_fragment">
             android:id="@+id/etPrecio"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Precio"
+            android:hint="Precio en Soles"
             android:textColor="#452C06"
-            android:textColorHint="#BDBDBD" />
+            android:textColorHint="#BDBDBD"
+            android:inputType="numberDecimal"/>
     </com.google.android.material.textfield.TextInputLayout>
 
 
@@ -145,7 +146,7 @@ tools:context=".AdminHotel.Registro4AddHabitacion_fragment">
             android:hint="Tamaño en m2"
             android:textColor="#452C06"
             android:textColorHint="#BDBDBD"
-            android:inputType="text" />
+            android:inputType="numberDecimal" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <!-- Capacidad -->
@@ -206,7 +207,8 @@ tools:context=".AdminHotel.Registro4AddHabitacion_fragment">
             android:layout_height="wrap_content"
             android:hint="Cantidad de habitaciones"
             android:textColor="#452C06"
-            android:textColorHint="#BDBDBD" />
+            android:textColorHint="#BDBDBD"
+            android:inputType="number" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.card.MaterialCardView
