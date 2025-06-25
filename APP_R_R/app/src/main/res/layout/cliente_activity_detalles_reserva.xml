@@ -13,10 +13,10 @@
         android:id="@+id/headerLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:background="@color/amarillo_dorado"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <!-- Título + Chat + Notificaciones -->
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -29,34 +29,34 @@
                 android:id="@+id/titulo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:gravity="center"
                 android:text="Ride &amp; Rest"
                 android:textColor="#282828"
                 android:textSize="20sp"
                 android:textStyle="bold"
-                android:gravity="center"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"/>
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <!-- Botón de Búsqueda -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/buscar"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
+                android:layout_marginEnd="4dp"
                 android:backgroundTint="@color/transparente"
-                app:icon="@drawable/search_24dp_e3e3e3_fill0_wght400_grad0_opsz24"
-                app:iconTint="@color/marron_oscuro"
-                app:iconGravity="textStart"
-                app:iconPadding="0dp"
-                android:padding="15dp"
+                android:contentDescription="Abrir chat de soporte"
                 android:minWidth="0dp"
                 android:minHeight="0dp"
-                android:contentDescription="Abrir chat de soporte"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/notificaciones_cliente"
+                android:padding="15dp"
+                app:icon="@drawable/search_24dp_e3e3e3_fill0_wght400_grad0_opsz24"
+                app:iconGravity="textStart"
+                app:iconPadding="0dp"
+                app:iconTint="@color/marron_oscuro"
                 app:layout_constraintBottom_toBottomOf="parent"
-                android:layout_marginEnd="4dp"/>
+                app:layout_constraintEnd_toStartOf="@+id/notificaciones_cliente"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <!-- Botón de Notificaciones -->
             <com.google.android.material.button.MaterialButton
@@ -64,34 +64,34 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:backgroundTint="@color/transparente"
-                app:icon="@drawable/notifications_24dp_e3e3e3_fill0_wght400_grad0_opsz24"
-                app:iconTint="@color/marron_oscuro"
-                app:iconGravity="textStart"
-                app:iconPadding="0dp"
-                android:padding="15dp"
+                android:contentDescription="Ver notificaciones nuevas"
                 android:minWidth="0dp"
                 android:minHeight="0dp"
-                android:contentDescription="Ver notificaciones nuevas"
-                app:layout_constraintTop_toTopOf="parent"
+                android:padding="15dp"
+                app:icon="@drawable/notifications_24dp_e3e3e3_fill0_wght400_grad0_opsz24"
+                app:iconGravity="textStart"
+                app:iconPadding="0dp"
+                app:iconTint="@color/marron_oscuro"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"/>
+                app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <!-- Categorías: ScrollView horizontal -->
         <HorizontalScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:overScrollMode="never"
-            android:scrollbars="none"
             android:background="@color/amarillo_dorado"
+            android:overScrollMode="never"
             android:paddingTop="8dp"
-            android:paddingBottom="8dp">
+            android:paddingBottom="8dp"
+            android:scrollbars="none">
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
                 android:gravity="center_vertical"
+                android:orientation="horizontal"
                 android:paddingStart="12dp"
                 android:paddingEnd="12dp">
 
@@ -101,17 +101,17 @@
                     style="@style/Widget.Material3.Button.OutlinedButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
                     android:text="Favoritos"
                     android:textColor="@color/marron_oscuro"
+                    app:backgroundTint="@color/transparente"
+                    app:cornerRadius="30dp"
                     app:icon="@drawable/outline_favorite_border_24"
-                    app:iconTint="@color/marron_oscuro"
                     app:iconGravity="textStart"
                     app:iconPadding="8dp"
-                    app:backgroundTint="@color/transparente"
+                    app:iconTint="@color/marron_oscuro"
                     app:strokeColor="@color/marron_oscuro"
-                    app:strokeWidth="1dp"
-                    app:cornerRadius="30dp"
-                    android:layout_marginEnd="8dp"/>
+                    app:strokeWidth="1dp" />
 
                 <!-- Botón Reservas -->
                 <com.google.android.material.button.MaterialButton
@@ -119,17 +119,17 @@
                     style="@style/Widget.Material3.Button.OutlinedButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
                     android:text="Alojamientos"
                     android:textColor="@color/marron_oscuro"
+                    app:backgroundTint="@color/transparente"
+                    app:cornerRadius="30dp"
                     app:icon="@drawable/outline_bed_24"
-                    app:iconTint="@color/marron_oscuro"
                     app:iconGravity="textStart"
                     app:iconPadding="8dp"
-                    app:backgroundTint="@color/transparente"
+                    app:iconTint="@color/marron_oscuro"
                     app:strokeColor="@color/marron_oscuro"
-                    app:strokeWidth="1dp"
-                    app:cornerRadius="30dp"
-                    android:layout_marginEnd="8dp"/>
+                    app:strokeWidth="1dp" />
 
                 <!-- Botón Historial -->
                 <com.google.android.material.button.MaterialButton
@@ -139,14 +139,14 @@
                     android:layout_height="wrap_content"
                     android:text="Historial"
                     android:textColor="@color/marron_oscuro"
+                    app:backgroundTint="@color/transparente"
+                    app:cornerRadius="30dp"
                     app:icon="@drawable/outline_history_24"
-                    app:iconTint="@color/marron_oscuro"
                     app:iconGravity="textStart"
                     app:iconPadding="8dp"
-                    app:backgroundTint="@color/transparente"
+                    app:iconTint="@color/marron_oscuro"
                     app:strokeColor="@color/marron_oscuro"
-                    app:strokeWidth="1dp"
-                    app:cornerRadius="30dp" />
+                    app:strokeWidth="1dp" />
 
                 <!-- Botón taxi -->
                 <com.google.android.material.button.MaterialButton
@@ -156,14 +156,14 @@
                     android:layout_height="wrap_content"
                     android:text="Taxi"
                     android:textColor="@color/marron_oscuro"
+                    app:backgroundTint="@color/transparente"
+                    app:cornerRadius="30dp"
                     app:icon="@drawable/local_taxi_24dp_e3e3e3_fill0_wght400_grad0_opsz24"
-                    app:iconTint="@color/marron_oscuro"
                     app:iconGravity="textStart"
                     app:iconPadding="8dp"
-                    app:backgroundTint="@color/transparente"
+                    app:iconTint="@color/marron_oscuro"
                     app:strokeColor="@color/marron_oscuro"
-                    app:strokeWidth="1dp"
-                    app:cornerRadius="30dp" />
+                    app:strokeWidth="1dp" />
             </LinearLayout>
         </HorizontalScrollView>
     </LinearLayout>
@@ -187,25 +187,26 @@
         app:layout_constraintBottom_toBottomOf="parent">
 
         <LinearLayout
-            android:orientation="vertical"
+            android:id="@+id/detallesReservasLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="vertical"
             android:padding="16dp">
 
             <TextView
-                android:text="Tu reserva"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:textColor="#525252"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:text="Tu reserva"
+                android:textColor="#525252"
+                android:textSize="18sp"
+                android:textStyle="bold" />
 
             <!-- HOTEL -->
             <LinearLayout
-                android:layout_marginTop="12dp"
-                android:orientation="horizontal"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:orientation="horizontal">
 
                 <!-- Contenedor de los detalles del hotel -->
                 <com.google.android.material.imageview.ShapeableImageView
@@ -220,90 +221,92 @@
                     app:shapeAppearanceOverlay="@style/RoundedImageView" />
 
                 <LinearLayout
-                    android:orientation="vertical"
                     android:layout_width="0dp"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:layout_height="wrap_content">
+                    android:orientation="vertical">
 
                     <TextView
                         android:id="@+id/nombreHotel"
-                        android:text="Hotel MiM Ibiza"
-                        android:textStyle="bold"
-                        android:textSize="20sp"
-                        android:textColor="#2F2F2F"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp" />
+                        android:layout_marginTop="2dp"
+                        android:text="Hotel MiM Ibiza"
+                        android:textColor="#2F2F2F"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
+
                     <TextView
                         android:id="@+id/status"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="En progreso"
                         android:layout_marginTop="3dp"
+                        android:text="En progreso"
                         android:textColor="#4CAF50"
-                        android:textSize="17sp"
-                        />
+                        android:textSize="17sp" />
+
                     <LinearLayout
-                        android:orientation="horizontal"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
 
                         <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:orientation="horizontal"
+                            android:layout_marginTop="3dp"
                             android:gravity="center_vertical"
-                            android:layout_marginTop="3dp">
+                            android:orientation="horizontal">
 
                             <!-- Imagen de la estrella -->
                             <ImageView
                                 android:layout_width="22dp"
                                 android:layout_height="22dp"
-                                android:src="@drawable/star_fill_yellow"
+                                android:layout_marginEnd="4dp"
                                 android:contentDescription="Estrella"
-                                android:layout_marginEnd="4dp"/>
+                                android:src="@drawable/star_fill_yellow" />
 
                             <!-- Texto del puntaje -->
                             <TextView
                                 android:id="@+id/valoracion"
-                                android:text="3.5/5"
-                                android:textSize="16sp"
                                 android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"/>
+                                android:layout_height="wrap_content"
+                                android:text="3.5/5"
+                                android:textSize="16sp" />
                         </LinearLayout>
 
                         <TextView
                             android:id="@+id/ubicacion"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
                             android:layout_marginTop="3dp"
                             android:text="   📍 España, Ibiza"
-                            android:textSize="16sp"
-                            android:textColor="#808080"
 
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
+                            android:textColor="#808080"
+                            android:textSize="16sp" />
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
 
             <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="13dp"
                 android:text="Detalles"
-                android:textSize="18sp"
-                android:textStyle="bold"
                 android:textColor="#525252"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
             <LinearLayout
-                android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
                 <LinearLayout
-                    android:orientation="horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
                     android:gravity="center_vertical"
+                    android:orientation="horizontal"
                     android:paddingStart="0dp"
                     android:paddingEnd="16dp">
 
@@ -322,27 +325,27 @@
                             android:id="@+id/labelFecha"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_alignParentStart="true"
                             android:text="Fecha:"
-                            android:textSize="16sp"
                             android:textColor="#000000"
-                            android:layout_alignParentStart="true" />
+                            android:textSize="16sp" />
 
                         <TextView
                             android:id="@+id/valorFecha"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
                             android:text="28 Abr - 2 Mar 2024"
-                            android:textSize="16sp"
                             android:textColor="#444444"
-                            android:layout_alignParentEnd="true" />
+                            android:textSize="16sp" />
                     </RelativeLayout>
                 </LinearLayout>
 
                 <LinearLayout
-                    android:orientation="horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
+                    android:orientation="horizontal"
                     android:paddingStart="0dp"
                     android:paddingEnd="16dp">
 
@@ -361,27 +364,27 @@
                             android:id="@+id/labelPersonas"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_alignParentStart="true"
                             android:text="Personas:"
-                            android:textSize="16sp"
                             android:textColor="#000000"
-                            android:layout_alignParentStart="true" />
+                            android:textSize="16sp" />
 
                         <TextView
                             android:id="@+id/valorPersonas"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
                             android:text="2 Personas (1 Habitación)"
-                            android:textSize="16sp"
                             android:textColor="#444444"
-                            android:layout_alignParentEnd="true" />
+                            android:textSize="16sp" />
                     </RelativeLayout>
                 </LinearLayout>
 
                 <LinearLayout
-                    android:orientation="horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
+                    android:orientation="horizontal"
                     android:paddingStart="0dp"
                     android:paddingEnd="16dp">
 
@@ -400,27 +403,27 @@
                             android:id="@+id/labelHabitacion"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_alignParentStart="true"
                             android:text="Tipo de habitación:"
-                            android:textSize="16sp"
                             android:textColor="#000000"
-                            android:layout_alignParentStart="true" />
+                            android:textSize="16sp" />
 
                         <TextView
                             android:id="@+id/valorHabitacion"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
                             android:text="Matrimonial"
-                            android:textSize="16sp"
                             android:textColor="#444444"
-                            android:layout_alignParentEnd="true" />
+                            android:textSize="16sp" />
                     </RelativeLayout>
                 </LinearLayout>
 
                 <LinearLayout
-                    android:orientation="horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
+                    android:orientation="horizontal"
                     android:paddingStart="0dp"
                     android:paddingEnd="16dp">
 
@@ -439,19 +442,19 @@
                             android:id="@+id/labelContacto"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_alignParentStart="true"
                             android:text="Contacto:"
-                            android:textSize="16sp"
                             android:textColor="#000000"
-                            android:layout_alignParentStart="true" />
+                            android:textSize="16sp" />
 
                         <TextView
                             android:id="@+id/valorContacto"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
                             android:text="+34 911234567"
-                            android:textSize="16sp"
                             android:textColor="#444444"
-                            android:layout_alignParentEnd="true" />
+                            android:textSize="16sp" />
                     </RelativeLayout>
                 </LinearLayout>
 
@@ -459,40 +462,40 @@
 
 
             <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="13dp"
                 android:text="Fechas Definidas"
-                android:textSize="18sp"
-                android:textStyle="bold"
                 android:textColor="#525252"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:textSize="18sp"
+                android:textStyle="bold" />
 
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="16dp"
+                android:backgroundTint="#F2F2F2"
+                app:cardBackgroundColor="#F2F2F2"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="0dp"
-                app:strokeWidth="0dp"
-                android:backgroundTint="#F2F2F2"
-                app:cardBackgroundColor="#F2F2F2">
+                app:strokeWidth="0dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:paddingTop="20dp"
-                    android:paddingBottom="24dp"
                     android:paddingStart="20dp"
-                    android:paddingEnd="20dp">
+                    android:paddingTop="20dp"
+                    android:paddingEnd="20dp"
+                    android:paddingBottom="24dp">
 
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
+                        android:layout_marginBottom="6dp"
                         android:gravity="center_vertical"
-                        android:layout_marginBottom="6dp">
+                        android:orientation="horizontal">
 
                         <ImageView
                             android:layout_width="26dp"
@@ -520,25 +523,25 @@
                             android:id="@+id/fechaCheckIn"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="28 de Abril:"
-                            android:textSize="16sp"
+                            android:layout_alignParentStart="true"
                             android:paddingStart="5dp"
+                            android:text="28 de Abril:"
                             android:textColor="#474747"
-                            android:layout_alignParentStart="true" />
+                            android:textSize="16sp" />
 
                         <!-- Texto clickeable -->
                         <TextView
                             android:id="@+id/definirHoraLlegada"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Definir hora de llegada"
-                            android:textSize="16sp"
-                            android:paddingEnd="5dp"
-                            android:textColor="@color/dorado"
-                            android:textStyle="bold"
                             android:layout_alignParentEnd="true"
                             android:clickable="true"
-                            android:focusable="true" />
+                            android:focusable="true"
+                            android:paddingEnd="5dp"
+                            android:text="Definir hora de llegada"
+                            android:textColor="@color/dorado"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
                     </RelativeLayout>
                 </LinearLayout>
 
@@ -549,27 +552,27 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="16dp"
+                android:backgroundTint="#F2F2F2"
+                app:cardBackgroundColor="#F2F2F2"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="0dp"
-                app:strokeWidth="0dp"
-                android:backgroundTint="#F2F2F2"
-                app:cardBackgroundColor="#F2F2F2">
+                app:strokeWidth="0dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:paddingTop="20dp"
-                    android:paddingBottom="24dp"
                     android:paddingStart="20dp"
-                    android:paddingEnd="20dp">
+                    android:paddingTop="20dp"
+                    android:paddingEnd="20dp"
+                    android:paddingBottom="24dp">
 
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
+                        android:layout_marginBottom="6dp"
                         android:gravity="center_vertical"
-                        android:layout_marginBottom="6dp">
+                        android:orientation="horizontal">
 
                         <ImageView
                             android:layout_width="26dp"
@@ -597,35 +600,35 @@
                             android:id="@+id/fechaCheckOut"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="2 de Marzo:"
-                            android:textSize="16sp"
+                            android:layout_alignParentStart="true"
                             android:paddingStart="5dp"
+                            android:text="2 de Marzo:"
                             android:textColor="#474747"
-                            android:layout_alignParentStart="true" />
+                            android:textSize="16sp" />
 
                         <!-- Texto clickeable -->
                         <TextView
                             android:id="@+id/HoraDeSalida"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Por definir / Rango: 11am-1pm"
-                            android:textSize="16sp"
-                            android:paddingEnd="5dp"
-                            android:textColor="#646464"
-                            android:textStyle="bold"
                             android:layout_alignParentEnd="true"
                             android:clickable="false"
-                            android:focusable="true" />
+                            android:focusable="true"
+                            android:paddingEnd="5dp"
+                            android:text="Por definir / Rango: 11am-1pm"
+                            android:textColor="#646464"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
                     </RelativeLayout>
                 </LinearLayout>
 
             </com.google.android.material.card.MaterialCardView>
 
             <LinearLayout
-                android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
+                android:orientation="horizontal"
                 android:paddingStart="0dp"
                 android:paddingEnd="16dp">
 
@@ -638,25 +641,25 @@
                         android:id="@+id/labelUbicacion"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
                         android:layout_marginTop="3dp"
                         android:text="Ubicación"
-                        android:textStyle="bold"
-                        android:textSize="18sp"
                         android:textColor="#525252"
-                        android:layout_alignParentStart="true" />
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/abrirMapa"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
                         android:layout_marginTop="5dp"
-                        android:text="Abrir mapa"
-                        android:textSize="16sp"
-                        android:textColor="@color/dorado"
                         android:clickable="true"
-                        android:textStyle="bold"
                         android:focusable="true"
-                        android:layout_alignParentEnd="true" />
+                        android:text="Abrir mapa"
+                        android:textColor="@color/dorado"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
                 </RelativeLayout>
             </LinearLayout>
 
@@ -665,8 +668,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="120dp"
                 android:layout_marginHorizontal="16dp"
-                android:layout_marginTop="8dp"
-                >
+                android:layout_marginTop="8dp">
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -694,8 +696,8 @@
                             android:layout_width="23dp"
                             android:layout_height="23dp"
                             android:layout_gravity="center"
-                            android:src="@drawable/location_white"
-                            android:contentDescription="Ubicación del hotel"/>
+                            android:contentDescription="Ubicación del hotel"
+                            android:src="@drawable/location_white" />
                     </FrameLayout>
 
                 </RelativeLayout>
@@ -704,23 +706,23 @@
             </com.google.android.material.card.MaterialCardView>
 
             <LinearLayout
-                android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
+                android:orientation="horizontal"
                 android:paddingStart="0dp"
                 android:paddingEnd="16dp">
 
-                    <TextView
-                        android:id="@+id/labServiciosAlojamiento"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="Servicios De Alojamiento"
-                        android:textStyle="bold"
-                        android:textSize="18sp"
-                        android:textColor="#525252"
-                        android:layout_alignParentStart="true" />
+                <TextView
+                    android:id="@+id/labServiciosAlojamiento"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginTop="8dp"
+                    android:text="Servicios De Alojamiento"
+                    android:textColor="#525252"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
 
 
             </LinearLayout>
@@ -812,7 +814,7 @@
                     <ImageView
                         android:layout_width="24dp"
                         android:layout_height="24dp"
-                        android:src="@drawable/room_service"/>
+                        android:src="@drawable/room_service" />
 
                     <TextView
                         android:layout_width="wrap_content"

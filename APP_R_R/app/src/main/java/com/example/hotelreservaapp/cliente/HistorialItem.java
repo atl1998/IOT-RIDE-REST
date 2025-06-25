@@ -27,14 +27,15 @@ public class HistorialItem implements Serializable {
     private String taxistaEnabled = "No Disponible";
     private String checkInHora;
     private String checkOutHora;
+    private String hotelId;
 
     public HistorialItem(String idReserva, String estado, String nombreHotel,
-                         String ubicacion, int imagenResId, String taxistaEnabled, boolean checkoutEnabled,
+                         String ubicacion, String taxistaEnabled, boolean checkoutEnabled,
                          boolean cuentaConTaxi, Timestamp fechaIni, Timestamp fechaFin) {
         this.idReserva = idReserva;
         this.nombreHotel = nombreHotel;
         this.ubicacion = ubicacion;
-        this.imagenResId = imagenResId;
+        //this.imagenResId = imagenResId;
         this.taxistaEnabled = taxistaEnabled;
         this.checkoutEnabled = checkoutEnabled;
         this.cuentaConTaxi = cuentaConTaxi;
@@ -43,6 +44,14 @@ public class HistorialItem implements Serializable {
         this.fechaIni=fechaIni;
         this.fechas=getRangoFechasBonito();
 
+    }
+
+    public String getHotelId() {
+        return hotelId;
+    }
+
+    public void setHotelId(String hotelId) {
+        this.hotelId = hotelId;
     }
 
     public void setFechaIni(Timestamp fechaIni) {

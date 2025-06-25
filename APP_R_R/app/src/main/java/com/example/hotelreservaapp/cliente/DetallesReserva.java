@@ -6,8 +6,10 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -18,6 +20,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.bumptech.glide.Glide;
 import com.example.hotelreservaapp.Objetos.Notificaciones;
 import com.example.hotelreservaapp.Objetos.NotificacionesStorageHelper;
 import com.example.hotelreservaapp.Objetos.NotificationManagerNoAPP;
@@ -33,6 +36,8 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -52,6 +57,8 @@ public class DetallesReserva extends AppCompatActivity {
     ImageView imageHotel;
     private String idReserva;
     private String userId;
+    private String hotelId;
+    private LinearLayout detallesReservasLayout;
 
     private String Tipo;
 
@@ -61,6 +68,8 @@ public class DetallesReserva extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.cliente_activity_detalles_reserva);
+        detallesReservasLayout = findViewById(R.id.detallesReservasLayout);
+        detallesReservasLayout.setVisibility(View.INVISIBLE);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -220,6 +229,7 @@ public class DetallesReserva extends AppCompatActivity {
             historialItem.setFechaFin(null);
             historialItem.setFechaIni(null);
             intent.putExtra("HistorialItem", historialItem); // usuario es un objeto de tu clase
+            intent.putExtra("hotelId", hotelId);
             startActivity(intent);
         });
     }
@@ -235,7 +245,7 @@ public class DetallesReserva extends AppCompatActivity {
                 .get()
                 .addOnSuccessListener(reservaDoc -> {
                     if (reservaDoc.exists()) {
-                        String hotelId = reservaDoc.getString("hotelId");
+                        hotelId = reservaDoc.getString("hotelId");
                         String estado = reservaDoc.getString("estado");
                         Timestamp fechaInicioTS = reservaDoc.getTimestamp("fechaIni");
                         Timestamp fechaFinTS = reservaDoc.getTimestamp("fechaFin");
@@ -259,11 +269,8 @@ public class DetallesReserva extends AppCompatActivity {
                                         Boolean servicioTaxi = hotelDoc.getBoolean("servicioTaxi");
                                         Double valoracionDoc = hotelDoc.getDouble("valoracion");
                                         String contacto = hotelDoc.getString("contacto");
-                                        int imagen = R.drawable.hotel1;
-                                        if ("hotel2".equals(hotelDoc.getId())) {
-                                            imagen = R.drawable.hotel2;
-                                        }
-                                        historialItem = new HistorialItem(idReserva, estado, nombreHotelDoc, "📍 " + ubicacionDoc, imagen, solicitarTaxista, checkoutEnable, servicioTaxi, fechaInicioTS, fechaFinTS);
+
+                                        historialItem = new HistorialItem(idReserva, estado, nombreHotelDoc, "📍 " + ubicacionDoc, solicitarTaxista, checkoutEnable, servicioTaxi, fechaInicioTS, fechaFinTS);
                                         historialItem.setPersonas(personas);
                                         historialItem.setValoracion(valoracionDoc);
                                         historialItem.setContacto(contacto);
@@ -292,7 +299,8 @@ public class DetallesReserva extends AppCompatActivity {
                                         }
 
                                         valorFecha.setText(historialItem.getRangoFechasBonito());
-                                        valorPersonas.setText(historialItem.getPersonas() + " Personas");                                        nombreHotel.setText(historialItem.getNombreHotel());
+                                        valorPersonas.setText(historialItem.getPersonas() + " Personas");
+                                        nombreHotel.setText(historialItem.getNombreHotel());
                                         status.setText(historialItem.getEstado());
                                         valoracion.setText(String.valueOf(historialItem.getValoracion()));
                                         ubicacion.setText(historialItem.getUbicacion());
@@ -300,11 +308,20 @@ public class DetallesReserva extends AppCompatActivity {
                                         valorContacto.setText(historialItem.getContacto());
                                         fechaCheckIn.setText(historialItem.getFechaIniBonito());
                                         fechaCheckOut.setText(historialItem.getFechaFinBonito());
-                                        imageHotel.setImageResource(imagen);
+                                        descargarMostrarSinGuardar("fotos_hotel"+"/"+hotelId+"/"+hotelId+".jpg");
+                                        detallesReservasLayout.setVisibility(View.VISIBLE);
                                     }
                                 });
                     }
                 })
-                .addOnFailureListener(e -> Log.e("Firestore", "Error al cargar reservas", e));
+                .addOnFailureListener(e -> {
+                    Log.e("Firestore", "Error al obtener datos", e);
+                    detallesReservasLayout.setVisibility(View.VISIBLE); // en caso de error, también mostrar algo
+                });
+    }
+    public void descargarMostrarSinGuardar(String path){
+        FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
+        StorageReference imageRef = firebaseStorage.getReference().child(path);
+        Glide.with(DetallesReserva.this).load(imageRef).into(imageHotel);
     }
 }
