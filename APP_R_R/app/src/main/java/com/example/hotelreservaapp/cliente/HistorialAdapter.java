@@ -60,10 +60,11 @@ public class HistorialAdapter extends RecyclerView.Adapter<HistorialAdapter.View
     @Override
     public void onBindViewHolder(HistorialAdapter.ViewHolder holder, int position) {
         HistorialItem item = historialList.get(position);
-        FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
-        String hotelId = item.getHotelId();
-        StorageReference imageRef = firebaseStorage.getReference().child("fotos_hotel"+"/"+hotelId+"/"+hotelId+".jpg");
-        Glide.with(holder.itemView.getContext()).load(imageRef).into(holder.imageHotel);
+        //FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
+        //String hotelId = item.getHotelId();
+        //StorageReference imageRef = firebaseStorage.getReference().child("fotos_hotel"+"/"+hotelId+"/"+hotelId+".jpg");
+        String UrlFotoHotel = item.getUrlImage();
+        Glide.with(holder.itemView.getContext()).load(UrlFotoHotel).into(holder.imageHotel);
         holder.nombreHotel.setText(item.getNombreHotel());
         holder.status.setText(" "+item.getEstado());
         if (item.getEstado().equals("En Progreso")) {
@@ -74,13 +75,23 @@ public class HistorialAdapter extends RecyclerView.Adapter<HistorialAdapter.View
         holder.fechas.setText(item.getFechas());
         holder.ubicacion.setText(item.getUbicacion());
 
-        // Habilitar/deshabilitar btnCheckout según el campo del modelo
-        holder.btnCheckout.setEnabled(item.isCheckoutEnabled());
-        holder.btnCheckout.setAlpha(item.isCheckoutEnabled() ? 1f : 0.5f);
+        String estado = item.getEstado(); // El estado puede ser "Pendiente", "Terminado", etc.
 
-        // Igual para btnTaxista si tienes campo en modelo (ejemplo: isTaxiEnabled)
-        holder.btnTaxista.setEnabled(item.isTaxiEnabled());
-        holder.btnTaxista.setAlpha(item.isTaxiEnabled() ? 1f : 0.5f);
+        if ("Pendiente".equals(estado) || "Terminado".equals(estado)) {
+            // Estado NO permite botones activos
+            holder.btnCheckout.setEnabled(false);
+            holder.btnCheckout.setAlpha(0.5f);
+
+            holder.btnTaxista.setEnabled(false);
+            holder.btnTaxista.setAlpha(0.5f);
+        } else {
+            // Estado válido para activar botones según condiciones
+            holder.btnCheckout.setEnabled(item.isCheckoutEnabled());
+            holder.btnCheckout.setAlpha(item.isCheckoutEnabled() ? 1f : 0.5f);
+
+            holder.btnTaxista.setEnabled(item.isTaxiEnabled());
+            holder.btnTaxista.setAlpha(item.isTaxiEnabled() ? 1f : 0.5f);
+        }
 
         holder.btnCheckout.setOnClickListener(v -> listener.onCheckoutClicked(item));
         holder.btnTaxista.setOnClickListener(v -> listener.onTaxiClicked(item));

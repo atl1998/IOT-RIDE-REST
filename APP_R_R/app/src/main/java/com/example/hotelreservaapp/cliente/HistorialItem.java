@@ -28,6 +28,7 @@ public class HistorialItem implements Serializable {
     private String checkInHora;
     private String checkOutHora;
     private String hotelId;
+    private String UrlImage;
 
     public HistorialItem(String idReserva, String estado, String nombreHotel,
                          String ubicacion, String taxistaEnabled, boolean checkoutEnabled,
@@ -44,6 +45,14 @@ public class HistorialItem implements Serializable {
         this.fechaIni=fechaIni;
         this.fechas=getRangoFechasBonito();
 
+    }
+
+    public String getUrlImage() {
+        return UrlImage;
+    }
+
+    public void setUrlImage(String urlImage) {
+        UrlImage = urlImage;
     }
 
     public String getHotelId() {
@@ -200,7 +209,7 @@ public class HistorialItem implements Serializable {
         this.checkoutEnabled = enabled;
     }
     public boolean isTaxiEnabled() {
-        // Puede ser No solicitado, Terminado, No disponible tmb
+        // Puede ser Solicitado, No solicitado, Terminado, No disponible tmb
         return "Solicitado".equalsIgnoreCase(taxistaEnabled);
     }
 

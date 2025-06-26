@@ -265,15 +265,19 @@ public class DetallesReserva extends AppCompatActivity {
                                 .addOnSuccessListener(hotelDoc -> {
                                     if (hotelDoc.exists()) {
                                         String nombreHotelDoc = hotelDoc.getString("nombre");
-                                        String ubicacionDoc = hotelDoc.getString("ubicacion");
+                                        String distrito = hotelDoc.getString("distrito");
+                                        String provincia = hotelDoc.getString("provincia");
+                                        String ubicacionDoc = distrito+", "+provincia;
                                         Boolean servicioTaxi = hotelDoc.getBoolean("servicioTaxi");
                                         Double valoracionDoc = hotelDoc.getDouble("valoracion");
                                         String contacto = hotelDoc.getString("contacto");
+                                        String UrlFotoHotel = hotelDoc.getString("UrlFotoHotel");
 
                                         historialItem = new HistorialItem(idReserva, estado, nombreHotelDoc, "📍 " + ubicacionDoc, solicitarTaxista, checkoutEnable, servicioTaxi, fechaInicioTS, fechaFinTS);
                                         historialItem.setPersonas(personas);
                                         historialItem.setValoracion(valoracionDoc);
                                         historialItem.setContacto(contacto);
+                                        historialItem.setUrlImage(UrlFotoHotel);
                                         historialItem.setTipoHab(tipoHabitacion);
                                         // Validación para CheckInHora
                                         if (checkInHora != null && !checkInHora.trim().isEmpty() && !checkInHora.equals("No especificado")) {
@@ -308,7 +312,7 @@ public class DetallesReserva extends AppCompatActivity {
                                         valorContacto.setText(historialItem.getContacto());
                                         fechaCheckIn.setText(historialItem.getFechaIniBonito());
                                         fechaCheckOut.setText(historialItem.getFechaFinBonito());
-                                        descargarMostrarSinGuardar("fotos_hotel"+"/"+hotelId+"/"+hotelId+".jpg");
+                                        descargarMostrarSinGuardar(UrlFotoHotel);
                                         detallesReservasLayout.setVisibility(View.VISIBLE);
                                     }
                                 });
@@ -319,9 +323,9 @@ public class DetallesReserva extends AppCompatActivity {
                     detallesReservasLayout.setVisibility(View.VISIBLE); // en caso de error, también mostrar algo
                 });
     }
-    public void descargarMostrarSinGuardar(String path){
-        FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
-        StorageReference imageRef = firebaseStorage.getReference().child(path);
-        Glide.with(DetallesReserva.this).load(imageRef).into(imageHotel);
+    public void descargarMostrarSinGuardar(String url){
+        //FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
+        //StorageReference imageRef = firebaseStorage.getReference().child(path);
+        Glide.with(DetallesReserva.this).load(url).into(imageHotel);
     }
 }

@@ -249,12 +249,12 @@ public class HistorialEventos extends AppCompatActivity implements HistorialItem
 
                         // Mapa temporal para guardar datos de cada reserva junto con su hotelId
                         Map<String, QueryDocumentSnapshot> reservasMap = new HashMap<>();
-                        List<String> hotelIds = new ArrayList<>(); // <-- lista paralela
+                        // List<String> hotelIds = new ArrayList<>(); // <-- lista paralela
 
                         for (QueryDocumentSnapshot reservaDoc : reservasSnapshot) {
                             String hotelId = reservaDoc.getString("hotelId");
                             reservasMap.put(reservaDoc.getId(), reservaDoc);
-                            hotelIds.add(hotelId);
+                            // hotelIds.add(hotelId);
                             // Agregar tarea para obtener hotel
                             hotelTasks.add(db.collection("Hoteles").document(hotelId).get());
                         }
@@ -264,9 +264,8 @@ public class HistorialEventos extends AppCompatActivity implements HistorialItem
                                 DocumentSnapshot hotelDoc = (DocumentSnapshot) results.get(i);
                                 // Aquí obtenemos la reserva correspondiente
                                 DocumentSnapshot reservaDoc = reservasSnapshot.getDocuments().get(i);
-                                String hotelId = hotelIds.get(i);
                                 String idReserva = reservaDoc.getId();
-                                String estado = reservaDoc.getString("estado");
+                                String estadoActual = reservaDoc.getString("estado");
                                 Timestamp fechaInicioTS = reservaDoc.getTimestamp("fechaIni");
                                 Timestamp fechaFinTS = reservaDoc.getTimestamp("fechaFin");
                                 String fechaInicio = getFechaBonitaDesdeTimestamp(fechaInicioTS);
@@ -276,11 +275,38 @@ public class HistorialEventos extends AppCompatActivity implements HistorialItem
 
                                 if (hotelDoc.exists()) {
                                     String nombreHotel = hotelDoc.getString("nombre");
-                                    String ubicacion = hotelDoc.getString("ubicacion");
+                                    String distrito = hotelDoc.getString("distrito");
+                                    String provincia = hotelDoc.getString("provincia");
+                                    String ubicacion = distrito+", "+provincia;
+                                    String UrlHotel = hotelDoc.getString("UrlFotoHotel");
                                     Boolean servicioTaxi = hotelDoc.getBoolean("servicioTaxi");
                                     Boolean checkoutEnable = !(checkoutSolicitado);
-                                    HistorialItem historialItem = new HistorialItem(idReserva, estado, nombreHotel, "📍 " + ubicacion, solicitarTaxista, checkoutEnable, servicioTaxi, fechaInicioTS, fechaFinTS);
-                                    historialItem.setHotelId(hotelId);
+
+                                    // Verificación del estado según fecha actual
+                                    Date ahora = new Date(); // hora actual del sistema
+                                    String estadoEsperado;
+
+                                    if (ahora.before(fechaInicioTS.toDate())) {
+                                        estadoEsperado = "Pendiente";
+                                    } else if (ahora.after(fechaFinTS.toDate())) {
+                                        estadoEsperado = "Terminado";
+                                    } else {
+                                        estadoEsperado = "En progreso";
+                                    }
+
+                                    // Si el estado guardado no es el correcto, actualizar en Firestore
+                                    if (!estadoEsperado.equals(estadoActual)) {
+                                        db.collection("usuarios")
+                                                .document(userId)
+                                                .collection("Reservas")
+                                                .document(idReserva)
+                                                .update("estado", estadoEsperado)
+                                                .addOnSuccessListener(aVoid -> Log.d("Estado", "Actualizado a " + estadoEsperado))
+                                                .addOnFailureListener(e -> Log.e("Estado", "Error al actualizar estado", e));
+                                    }
+
+                                    HistorialItem historialItem = new HistorialItem(idReserva, estadoEsperado, nombreHotel, "📍 " + ubicacion, solicitarTaxista, checkoutEnable, servicioTaxi, fechaInicioTS, fechaFinTS);
+                                    historialItem.setUrlImage(UrlHotel);
                                     historialItems.add(historialItem);
                                 }
                             }
