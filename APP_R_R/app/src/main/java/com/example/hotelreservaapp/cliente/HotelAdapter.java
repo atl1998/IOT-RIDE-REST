@@ -59,7 +59,9 @@ public class HotelAdapter extends RecyclerView.Adapter<HotelAdapter.HotelViewHol
         // ⚠️ Estáticos por ahora
         holder.txtPuntuacion.setText("8.8 Fabuloso - 1434 comentarios"); // estático
         holder.txtFechas.setText("Desde el 28 abr al 2 mar"); // estático
-        holder.txtPrecio.setText("Desde S/345.00"); // estático
+        Float precioMinHotel = hotel.getPrecioMin();
+        String precioFormateado = String.format("%.2f", precioMinHotel);
+        holder.txtPrecio.setText("Desde S/ " + precioFormateado + ":");
         holder.imgHotel.setImageResource(R.drawable.hotel1_img1); // imagen por defecto
 
         // Aquí añades el nuevo campo 'contacto' o 'servicioTaxi'

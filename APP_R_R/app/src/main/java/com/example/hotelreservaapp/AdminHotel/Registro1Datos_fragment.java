@@ -83,6 +83,7 @@ public class Registro1Datos_fragment extends Fragment {
     }
 
     public boolean DatosValidos() {
+        boolean valido = true;
         String nombre = etNombre.getText().toString().trim();
         String descripcion = etDescripcion.getText().toString().trim();
         String departamento = etDepartamento.getText().toString().trim();
@@ -90,10 +91,38 @@ public class Registro1Datos_fragment extends Fragment {
         String distrito = etDistrito.getText().toString().trim();
         String direccion = etDireccion.getText().toString().trim();
 
-        if (nombre.isEmpty() || descripcion.isEmpty() || departamento.isEmpty() || provincia.isEmpty() || distrito.isEmpty() || direccion.isEmpty()) {
-            return false;
-        }
+        if (nombre.isEmpty()) {
+            binding.tilNombres.setError("Campo obligatorio");
+            valido = false;
+        }  else binding.tilNombres.setError(null);
 
-        return true;
+        if (descripcion.isEmpty()) {
+            binding.tilDescripcion.setError("Campo obligatorio");
+            valido = false;
+        } else binding.tilDescripcion.setError(null);
+
+        if (departamento.isEmpty()) {
+            binding.tilDepartamento.setError("Campo obligatorio");
+            valido = false;
+        } else binding.tilDepartamento.setError(null);
+
+        if (provincia.isEmpty()) {
+            binding.tilProvincia.setError("Campo obligatorio");
+            valido = false;
+        } else binding.tilProvincia.setError(null);
+
+        if (distrito.isEmpty()) {
+            binding.tilDistrito.setError("Campo obligatorio");
+            valido = false;
+        } else binding.tilDistrito.setError(null);
+
+        if (direccion.isEmpty()) {
+            binding.tilDireccion.setError("Campo obligatorio");
+            valido = false;
+        } else binding.tilDireccion.setError(null);
+
+
+
+        return valido;
     }
 }

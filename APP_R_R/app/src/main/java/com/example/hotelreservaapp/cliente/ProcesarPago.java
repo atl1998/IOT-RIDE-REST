@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,18 +19,23 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.bumptech.glide.Glide;
 import com.example.hotelreservaapp.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 public class ProcesarPago extends AppCompatActivity {
     private TextView nombreHotel, status, valoracion, ubicacion, valorFecha, valorPersonas, valorHabitacion,
             valorPrecioHabitacion, valorServiciosExtras, valorCargoDanhos, valorServicioTaxi, valorPrecioTotal;
     ImageView imageHotel;
     private String userId;
+    private String hotelId;
+    private LinearLayout procesarPagoLayout;
     HistorialItem historialItem;
     // ES RESUMEN DE PAGO XD NO REALIZAR PAGOOO, SE AUTOCOBRA
     @Override
@@ -37,6 +43,8 @@ public class ProcesarPago extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.cliente_activity_procesar_pago);
+        procesarPagoLayout = findViewById(R.id.procesarPagoLayout);
+        procesarPagoLayout.setVisibility(View.INVISIBLE);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -65,6 +73,7 @@ public class ProcesarPago extends AppCompatActivity {
         imageHotel = findViewById(R.id.imageHotel);
 
         historialItem = (HistorialItem) getIntent().getSerializableExtra("HistorialItem");
+        hotelId = getIntent().getStringExtra("hotelId");
 
         nombreHotel.setText(historialItem.getNombreHotel());
         status.setText(historialItem.getEstado());
@@ -73,7 +82,6 @@ public class ProcesarPago extends AppCompatActivity {
         valorFecha.setText(historialItem.getFechas());
         valorPersonas.setText(historialItem.getPersonas() + " Personas");
         valorHabitacion.setText(historialItem.getTipoHab());
-        imageHotel.setImageResource(historialItem.getImagenResId());
 
         if ("No disponible".equalsIgnoreCase(historialItem.getTaxistaEnabled())) {
             valorServicioTaxi.setText("No Disponible");
@@ -138,8 +146,13 @@ public class ProcesarPago extends AppCompatActivity {
                         valorCargoDanhos.setText("S/. - - -");
                         valorPrecioTotal.setText("S/. - - -");
                     }
+                    descargarMostrarSinGuardar("fotos_hotel"+"/"+hotelId+"/"+hotelId+".jpg");
+                    procesarPagoLayout.setVisibility(View.VISIBLE);
                 })
-                .addOnFailureListener(e -> Log.e("Firestore", "Error al obtener datos", e));
+                .addOnFailureListener(e -> {
+                    Log.e("Firestore", "Error al obtener datos", e);
+                    procesarPagoLayout.setVisibility(View.VISIBLE); // en caso de error, también mostrar algo
+                });
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottonNavigationView);
         bottomNavigationView.setOnItemSelectedListener(item -> {
@@ -228,5 +241,10 @@ public class ProcesarPago extends AppCompatActivity {
             // Mostrar mensaje al usuario
             Toast.makeText(ProcesarPago.this, "¡Servicio solicitado correctamente!", Toast.LENGTH_SHORT).show();
         });
+    }
+    public void descargarMostrarSinGuardar(String path){
+        FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
+        StorageReference imageRef = firebaseStorage.getReference().child(path);
+        Glide.with(ProcesarPago.this).load(imageRef).into(imageHotel);
     }
 }

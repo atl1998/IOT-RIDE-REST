@@ -249,11 +249,12 @@ public class HistorialEventos extends AppCompatActivity implements HistorialItem
 
                         // Mapa temporal para guardar datos de cada reserva junto con su hotelId
                         Map<String, QueryDocumentSnapshot> reservasMap = new HashMap<>();
+                        List<String> hotelIds = new ArrayList<>(); // <-- lista paralela
 
                         for (QueryDocumentSnapshot reservaDoc : reservasSnapshot) {
                             String hotelId = reservaDoc.getString("hotelId");
                             reservasMap.put(reservaDoc.getId(), reservaDoc);
-
+                            hotelIds.add(hotelId);
                             // Agregar tarea para obtener hotel
                             hotelTasks.add(db.collection("Hoteles").document(hotelId).get());
                         }
@@ -263,6 +264,7 @@ public class HistorialEventos extends AppCompatActivity implements HistorialItem
                                 DocumentSnapshot hotelDoc = (DocumentSnapshot) results.get(i);
                                 // Aquí obtenemos la reserva correspondiente
                                 DocumentSnapshot reservaDoc = reservasSnapshot.getDocuments().get(i);
+                                String hotelId = hotelIds.get(i);
                                 String idReserva = reservaDoc.getId();
                                 String estado = reservaDoc.getString("estado");
                                 Timestamp fechaInicioTS = reservaDoc.getTimestamp("fechaIni");
@@ -277,13 +279,9 @@ public class HistorialEventos extends AppCompatActivity implements HistorialItem
                                     String ubicacion = hotelDoc.getString("ubicacion");
                                     Boolean servicioTaxi = hotelDoc.getBoolean("servicioTaxi");
                                     Boolean checkoutEnable = !(checkoutSolicitado);
-
-                                    int imagen = R.drawable.hotel1;
-                                    if ("hotel2".equals(hotelDoc.getId())) {
-                                        imagen = R.drawable.hotel2;
-                                    }
-
-                                    historialItems.add(new HistorialItem(idReserva, estado, nombreHotel, "📍 " + ubicacion, imagen, solicitarTaxista, checkoutEnable, servicioTaxi, fechaInicioTS, fechaFinTS));
+                                    HistorialItem historialItem = new HistorialItem(idReserva, estado, nombreHotel, "📍 " + ubicacion, solicitarTaxista, checkoutEnable, servicioTaxi, fechaInicioTS, fechaFinTS);
+                                    historialItem.setHotelId(hotelId);
+                                    historialItems.add(historialItem);
                                 }
                             }
 

@@ -14,8 +14,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 
 import com.example.hotelreservaapp.AdminHotel.InicioFragment;
+import com.example.hotelreservaapp.AdminHotel.MainActivity;
 import com.example.hotelreservaapp.AdminHotel.RegistroHotelActivity;
-import com.example.hotelreservaapp.MainActivity;
 import com.example.hotelreservaapp.R;
 import com.example.hotelreservaapp.SuperAdminMainActivity;
 import com.example.hotelreservaapp.cliente.HomeCliente;
@@ -50,6 +50,8 @@ public class LoginActivity extends AppCompatActivity {
     private SharedPreferences prefs;
     private static final int RC_SIGN_IN = 1001;
     private GoogleSignInClient googleSignInClient;
+
+    private Boolean gestionaHotel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -141,6 +143,7 @@ public class LoginActivity extends AppCompatActivity {
                                         if (document.exists()) {
                                             Boolean activo = document.getBoolean("estado");
                                             Boolean requiereCambio = document.getBoolean("requiereCambioContrasena");
+                                            gestionaHotel = document.getBoolean("hotelAsignado");
 
                                             if (activo != null && !activo) {
                                                 Toast.makeText(this, "Tu cuenta está inactiva. Contacta al administrador.", Toast.LENGTH_SHORT).show();
@@ -274,7 +277,11 @@ public class LoginActivity extends AppCompatActivity {
                 intent = new Intent(this, SuperAdminMainActivity.class);
                 break;
             case "adminHotel":
-                intent = new Intent(this, RegistroHotelActivity.class);
+                if(gestionaHotel){
+                    intent = new Intent(this, MainActivity.class);
+                } else {
+                    intent = new Intent(this, RegistroHotelActivity.class);
+                }
                 break;
             case "taxista":
                 intent = new Intent(this, TaxistaMain.class);

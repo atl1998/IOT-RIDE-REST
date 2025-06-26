@@ -13,7 +13,10 @@ import android.widget.Toast;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.hotelreservaapp.R;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.List;
 
@@ -57,7 +60,10 @@ public class HistorialAdapter extends RecyclerView.Adapter<HistorialAdapter.View
     @Override
     public void onBindViewHolder(HistorialAdapter.ViewHolder holder, int position) {
         HistorialItem item = historialList.get(position);
-
+        FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
+        String hotelId = item.getHotelId();
+        StorageReference imageRef = firebaseStorage.getReference().child("fotos_hotel"+"/"+hotelId+"/"+hotelId+".jpg");
+        Glide.with(holder.itemView.getContext()).load(imageRef).into(holder.imageHotel);
         holder.nombreHotel.setText(item.getNombreHotel());
         holder.status.setText(" "+item.getEstado());
         if (item.getEstado().equals("En Progreso")) {
@@ -67,7 +73,6 @@ public class HistorialAdapter extends RecyclerView.Adapter<HistorialAdapter.View
         }
         holder.fechas.setText(item.getFechas());
         holder.ubicacion.setText(item.getUbicacion());
-        holder.imageHotel.setImageResource(item.getImagenResId());
 
         // Habilitar/deshabilitar btnCheckout según el campo del modelo
         holder.btnCheckout.setEnabled(item.isCheckoutEnabled());

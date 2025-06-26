@@ -6,8 +6,8 @@ public class Habitacion {
     private int disponibles;
     private double precio;
     private String tipoCama;
-    private int tamano;
 
+    private double tamano;
     private String url;
 
     private int seleccionadas = 0;
@@ -20,7 +20,7 @@ public class Habitacion {
         this.seleccionadas = seleccionadas;
     }
 
-    public Habitacion(String titulo, String detalles, int disponibles, double precio, String tipoCama, int tamano, String url) {
+    public Habitacion(String titulo, String detalles, int disponibles, double precio, String tipoCama, double tamano, String url) {
         this.setTitulo(titulo);
         this.setDetalles(detalles);
         this.setDisponibles(disponibles);
@@ -40,7 +40,7 @@ public class Habitacion {
     public int getDisponibles() { return disponibles; }
     public double getPrecio() { return precio; }
     public String getTipoCama() { return tipoCama; }
-    public int getTamano() { return tamano; }
+    public double getTamano() { return tamano; }
 
     public String getUrl() {
         return url;
@@ -70,7 +70,7 @@ public class Habitacion {
         this.tipoCama = tipoCama;
     }
 
-    public void setTamano(int tamano) {
+    public void setTamano(double tamano) {
         this.tamano = tamano;
     }
 }
