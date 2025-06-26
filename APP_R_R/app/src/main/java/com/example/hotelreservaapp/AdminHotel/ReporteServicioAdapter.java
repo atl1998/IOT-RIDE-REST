@@ -4,23 +4,18 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.example.hotelreservaapp.R;
 
-import java.io.IOException;
 import java.util.List;
 
 public class ReporteServicioAdapter extends RecyclerView.Adapter<com.example.hotelreservaapp.AdminHotel.ReporteServicioAdapter.ServiciosViewHolder> {
 
-    private List<Servicios> servicios;
+    private List<ServiciosAdapter.Servicios> servicios;
     private OnItemClickListener listener;
     private Context context;
     public interface OnItemClickListener {
@@ -28,7 +23,7 @@ public class ReporteServicioAdapter extends RecyclerView.Adapter<com.example.hot
         void onSeleccionCambio();
     }
 
-    public ReporteServicioAdapter(List<Servicios> Servicios,Context context) {
+    public ReporteServicioAdapter(List<ServiciosAdapter.Servicios> Servicios, Context context) {
         this.servicios = Servicios;
         this.context = context;
     }
@@ -43,7 +38,7 @@ public class ReporteServicioAdapter extends RecyclerView.Adapter<com.example.hot
 
     @Override
     public void onBindViewHolder(@NonNull com.example.hotelreservaapp.AdminHotel.ReporteServicioAdapter.ServiciosViewHolder holder, int position) {
-        Servicios servicio = servicios.get(position);
+        ServiciosAdapter.Servicios servicio = servicios.get(position);
 
         holder.tvTitulo.setText(servicio.getTitulo());
         holder.tvPrecio.setText(servicio.getPrecio());

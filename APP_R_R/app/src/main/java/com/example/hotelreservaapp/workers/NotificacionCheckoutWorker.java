@@ -45,7 +45,7 @@ public class NotificacionCheckoutWorker extends Worker {
         String titulo2 = "Servicio de Taxi";
         String tituloAmigable2 = "¡Tu hotel cuenta con servicio de Taxi!";
         String mensaje2 = "Su hotel cuenta con servicio de taxi, si desea solicitar dicho servicio por favor dirigirse a “Revisar el pago realizado” en detalles de tu hotel reservado, y presionar el botón “Solicitar Servicio de Taxi”.";
-        String mensajeExtra2 = "";
+        String mensajeExtra2 = "Recuerde que su servicio de taxi solo es válido durante todo el último día reservado.";
         long fecha2 = System.currentTimeMillis();
 
         Context context = getApplicationContext();

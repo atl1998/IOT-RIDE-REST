@@ -82,6 +82,7 @@ public class ProcesarPago extends AppCompatActivity {
         valorFecha.setText(historialItem.getFechas());
         valorPersonas.setText(historialItem.getPersonas() + " Personas");
         valorHabitacion.setText(historialItem.getTipoHab());
+        descargarMostrarSinGuardar(historialItem.getUrlImage());
 
         if ("No disponible".equalsIgnoreCase(historialItem.getTaxistaEnabled())) {
             valorServicioTaxi.setText("No Disponible");
@@ -146,7 +147,6 @@ public class ProcesarPago extends AppCompatActivity {
                         valorCargoDanhos.setText("S/. - - -");
                         valorPrecioTotal.setText("S/. - - -");
                     }
-                    descargarMostrarSinGuardar("fotos_hotel"+"/"+hotelId+"/"+hotelId+".jpg");
                     procesarPagoLayout.setVisibility(View.VISIBLE);
                 })
                 .addOnFailureListener(e -> {
@@ -242,9 +242,9 @@ public class ProcesarPago extends AppCompatActivity {
             Toast.makeText(ProcesarPago.this, "¡Servicio solicitado correctamente!", Toast.LENGTH_SHORT).show();
         });
     }
-    public void descargarMostrarSinGuardar(String path){
-        FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
-        StorageReference imageRef = firebaseStorage.getReference().child(path);
-        Glide.with(ProcesarPago.this).load(imageRef).into(imageHotel);
+    public void descargarMostrarSinGuardar(String url){
+        //FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
+        //StorageReference imageRef = firebaseStorage.getReference().child(path);
+        Glide.with(ProcesarPago.this).load(url).into(imageHotel);
     }
 }

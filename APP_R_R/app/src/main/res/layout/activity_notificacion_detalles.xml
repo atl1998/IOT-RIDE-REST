@@ -87,70 +87,65 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:background="@android:color/white">
 
-        <!-- Layout para las notificaciones -->
+
+
         <LinearLayout
             android:id="@+id/layoutNotificacion"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="0dp"
-            android:background="@android:color/white"
-            android:layout_marginBottom="0dp">
+            android:padding="24dp"
+            android:gravity="center"
+            android:background="@android:color/white">
 
             <TextView
                 android:id="@+id/headerNotification"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginLeft="90px"
-                android:layout_marginTop="60px"
-                android:layout_marginRight="90px"
+                android:layout_marginBottom="16dp"
+                android:fontFamily="sans-serif-medium"
+                android:lineSpacingExtra="6dp"
                 android:text="¡Tu Checkout fue solicitado correctamente!"
                 android:textAlignment="center"
-                android:textColor="#525252"
-                android:textSize="22sp"
+                android:textColor="#353535"
+                android:textSize="24sp"
                 android:textStyle="bold" />
 
             <ImageView
                 android:id="@+id/ImageNotificacion"
-                android:layout_width="500px"
-                android:layout_height="500px"
-                android:layout_gravity="center"
-                android:layout_marginTop="30px"
-                android:layout_marginBottom="30px"
+                android:layout_width="220dp"
+                android:layout_height="220dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="24dp"
                 android:scaleType="fitCenter"
-                android:src="@drawable/checkout_image_v2" />
+                android:src="@drawable/checkout_image_v2"
+                android:contentDescription="Imagen notificación" />
 
             <TextView
                 android:id="@+id/ContentNotification"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="32dp"
-                android:layout_marginEnd="32dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="20dp"
-                android:fontFamily="sans-serif"
-                android:lineSpacingExtra="4dp"
                 android:text="El checkout fue solicitado correctamente. Cuando este proceso termine se le notificará por este medio para que pueda realizar su pago."
-                android:textAlignment="center"
-                android:textColor="#141414"
-                android:textSize="18sp" />
+                android:textColor="#444444"
+                android:textSize="17sp"
+                android:lineSpacingExtra="5dp"
+                android:fontFamily="sans-serif"
+                android:layout_marginBottom="12dp" />
 
             <TextView
                 android:id="@+id/ContenidoExtra"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="32dp"
-                android:layout_marginEnd="32dp"
-                android:layout_marginTop="0dp"
-                android:layout_marginBottom="40dp"
-                android:fontFamily="sans-serif"
-                android:lineSpacingExtra="4dp"
                 android:text="Este proceso podría tardar alrededor de 1 hora, por favor estar pendiente a la siguiente notificación."
-                android:textAlignment="center"
-                android:textColor="#141414"
-                android:textSize="18sp" />
+                android:textColor="#666666"
+                android:textSize="16sp"
+                android:lineSpacingExtra="5dp"
+                android:fontFamily="sans-serif"
+                android:layout_marginBottom="40dp" />
         </LinearLayout>
+
+
+
     </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

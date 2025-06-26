@@ -25,6 +25,7 @@ import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -53,6 +54,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -74,7 +76,12 @@ public class HistorialEventos extends AppCompatActivity implements HistorialItem
     private String Tipo;
     private RecyclerView recyclerView;
     private List<HistorialItem> historialItems;
+    private List<HistorialItem> historialItemsFiltrados;
     private String userId;
+    private MaterialButton btnFiltroTodos;
+    private MaterialButton btnFiltroPendientes;
+    private MaterialButton btnFiltroEnProgreso;
+    private MaterialButton btnFiltroTerminados;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,9 +103,10 @@ public class HistorialEventos extends AppCompatActivity implements HistorialItem
 
         // Inicializar lista vacía antes
         historialItems = new ArrayList<>();
+        historialItemsFiltrados = new ArrayList<>(); // para mostrar en el adapter
 
         // Crear adapter con lista vacía
-        adapter = new HistorialAdapter(this, historialItems, this);
+        adapter = new HistorialAdapter(this, historialItemsFiltrados, this);
         recyclerView.setAdapter(adapter);
 
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
@@ -108,6 +116,33 @@ public class HistorialEventos extends AppCompatActivity implements HistorialItem
         }
 
         cargarHistorial();
+
+        btnFiltroTodos = findViewById(R.id.btnFiltroTodos);
+        btnFiltroPendientes = findViewById(R.id.btnFiltroPendientes);
+        btnFiltroEnProgreso = findViewById(R.id.btnFiltroEnProgreso);
+        btnFiltroTerminados = findViewById(R.id.btnFiltroTerminados);
+
+        btnFiltroTodos.setOnClickListener(v -> {
+            aplicarFiltro("Todos");
+            resaltarBotonSeleccionado(btnFiltroTodos);
+        });
+
+        btnFiltroPendientes.setOnClickListener(v -> {
+            aplicarFiltro("Pendiente");
+            resaltarBotonSeleccionado(btnFiltroPendientes);
+        });
+
+        btnFiltroEnProgreso.setOnClickListener(v -> {
+            aplicarFiltro("En Progreso");
+            resaltarBotonSeleccionado(btnFiltroEnProgreso);
+        });
+
+        btnFiltroTerminados.setOnClickListener(v -> {
+            aplicarFiltro("Terminado");
+            resaltarBotonSeleccionado(btnFiltroTerminados);
+        });
+
+        btnFiltroTodos.performClick();
 
         bottomNav = findViewById(R.id.bottonNavigationView);
         configurarBottomNav();
@@ -249,12 +284,12 @@ public class HistorialEventos extends AppCompatActivity implements HistorialItem
 
                         // Mapa temporal para guardar datos de cada reserva junto con su hotelId
                         Map<String, QueryDocumentSnapshot> reservasMap = new HashMap<>();
-                        List<String> hotelIds = new ArrayList<>(); // <-- lista paralela
+                        // List<String> hotelIds = new ArrayList<>(); // <-- lista paralela
 
                         for (QueryDocumentSnapshot reservaDoc : reservasSnapshot) {
                             String hotelId = reservaDoc.getString("hotelId");
                             reservasMap.put(reservaDoc.getId(), reservaDoc);
-                            hotelIds.add(hotelId);
+                            // hotelIds.add(hotelId);
                             // Agregar tarea para obtener hotel
                             hotelTasks.add(db.collection("Hoteles").document(hotelId).get());
                         }
@@ -264,9 +299,8 @@ public class HistorialEventos extends AppCompatActivity implements HistorialItem
                                 DocumentSnapshot hotelDoc = (DocumentSnapshot) results.get(i);
                                 // Aquí obtenemos la reserva correspondiente
                                 DocumentSnapshot reservaDoc = reservasSnapshot.getDocuments().get(i);
-                                String hotelId = hotelIds.get(i);
                                 String idReserva = reservaDoc.getId();
-                                String estado = reservaDoc.getString("estado");
+                                String estadoActual = reservaDoc.getString("estado");
                                 Timestamp fechaInicioTS = reservaDoc.getTimestamp("fechaIni");
                                 Timestamp fechaFinTS = reservaDoc.getTimestamp("fechaFin");
                                 String fechaInicio = getFechaBonitaDesdeTimestamp(fechaInicioTS);
@@ -276,16 +310,81 @@ public class HistorialEventos extends AppCompatActivity implements HistorialItem
 
                                 if (hotelDoc.exists()) {
                                     String nombreHotel = hotelDoc.getString("nombre");
-                                    String ubicacion = hotelDoc.getString("ubicacion");
+                                    String distrito = hotelDoc.getString("distrito");
+                                    String provincia = hotelDoc.getString("provincia");
+                                    String ubicacion = distrito+", "+provincia;
+                                    String UrlHotel = hotelDoc.getString("UrlFotoHotel");
                                     Boolean servicioTaxi = hotelDoc.getBoolean("servicioTaxi");
-                                    Boolean checkoutEnable = !(checkoutSolicitado);
-                                    HistorialItem historialItem = new HistorialItem(idReserva, estado, nombreHotel, "📍 " + ubicacion, solicitarTaxista, checkoutEnable, servicioTaxi, fechaInicioTS, fechaFinTS);
-                                    historialItem.setHotelId(hotelId);
+                                    //Boolean checkoutEnable = !(checkoutSolicitado);
+                                    // Comparar si hoy es el mismo día que fechaFin
+                                    Calendar hoy = Calendar.getInstance();
+                                    Calendar fechaFinCalendar = Calendar.getInstance();
+                                    fechaFinCalendar.setTime(fechaFinTS.toDate());
+                                    Date ahora = new Date(); // hora actual del sistema
+
+                                    boolean esMismoDia = hoy.get(Calendar.YEAR) == fechaFinCalendar.get(Calendar.YEAR) &&
+                                            hoy.get(Calendar.MONTH) == fechaFinCalendar.get(Calendar.MONTH) &&
+                                            hoy.get(Calendar.DAY_OF_MONTH) == fechaFinCalendar.get(Calendar.DAY_OF_MONTH);
+
+                                    Boolean checkoutEnable;
+                                    if (esMismoDia) {
+                                        checkoutEnable = !checkoutSolicitado; // Puede pedir checkout solo si no lo solicitó
+                                    } else {
+                                        checkoutEnable = false;
+
+                                        // Solo forzar a false si hoy es ANTES del día de salida (aún no se puede solicitar)
+                                        if (ahora.before(fechaFinTS.toDate()) && checkoutSolicitado != null && checkoutSolicitado) {
+                                            db.collection("usuarios")
+                                                    .document(userId)
+                                                    .collection("Reservas")
+                                                    .document(idReserva)
+                                                    .update("checkoutSolicitado", false)
+                                                    .addOnSuccessListener(aVoid -> Log.d("Checkout", "Resetado a false porque aún no es el día"))
+                                                    .addOnFailureListener(e -> Log.e("Checkout", "Error al resetear checkoutSolicitado", e));
+                                        }
+                                    }
+
+                                    // Verificación del estado según fecha actual
+                                    String estadoEsperado;
+
+                                    if (ahora.before(fechaInicioTS.toDate())) {
+                                        estadoEsperado = "Pendiente";
+                                    } else if (ahora.after(fechaFinTS.toDate())) {
+                                        estadoEsperado = "Terminado";
+                                    } else {
+                                        estadoEsperado = "En Progreso";
+                                    }
+
+                                    // Si el estado guardado no es el correcto, actualizar en Firestore
+                                    if (!estadoEsperado.equals(estadoActual)) {
+                                        db.collection("usuarios")
+                                                .document(userId)
+                                                .collection("Reservas")
+                                                .document(idReserva)
+                                                .update("estado", estadoEsperado)
+                                                .addOnSuccessListener(aVoid -> Log.d("Estado", "Actualizado a " + estadoEsperado))
+                                                .addOnFailureListener(e -> Log.e("Estado", "Error al actualizar estado", e));
+                                    }
+
+                                    HistorialItem historialItem = new HistorialItem(idReserva, estadoEsperado, nombreHotel, "📍 " + ubicacion, solicitarTaxista, checkoutEnable, servicioTaxi, fechaInicioTS, fechaFinTS);
+                                    historialItem.setUrlImage(UrlHotel);
                                     historialItems.add(historialItem);
+                                    Log.d("HistorialEventos", "Item cargado: idReserva=" + idReserva + ", hotel=" + nombreHotel + ", estado=" + estadoEsperado + ", ubicacion=" + ubicacion);
                                 }
                             }
+                            // Línea: justo antes de actualizar historialItemsFiltrados y llamar adapter
+                            Log.d("HistorialEventos", "Historial cargado. Items totales: " + historialItems.size());
 
-                            adapter.notifyDataSetChanged();
+                            aplicarFiltro("Todos");
+
+
+                            // Actualizar también la lista filtrada con todos los elementos
+                            //historialItemsFiltrados.clear();
+                            //historialItemsFiltrados.addAll(historialItems);
+
+                            // Mostrar los datos filtrados
+                            //adapter.setItems(historialItemsFiltrados); // <- este método lo agregas en el paso 3
+                            //adapter.notifyDataSetChanged();
                         });
 
                     }
@@ -437,6 +536,33 @@ public class HistorialEventos extends AppCompatActivity implements HistorialItem
             dialog.dismiss();
         });
     }
+    private void aplicarFiltro(String estadoFiltrado) {
+        historialItemsFiltrados.clear();
+        Log.d("HistorialEventos", "Aplicando filtro: " + estadoFiltrado);
+        Log.d("HistorialEventos", "Items antes de filtrar: " + historialItems.size());
+        if (estadoFiltrado.equals("Todos")) {
+            historialItemsFiltrados.addAll(historialItems);
+        } else {
+            for (HistorialItem item : historialItems) {
+                if (item.getEstado().equalsIgnoreCase(estadoFiltrado)) {
+                    historialItemsFiltrados.add(item);
+                }
+            }
+        }
+        Log.d("HistorialEventos", "Items después de filtrar: " + historialItemsFiltrados.size());
+
+        adapter.setItems(historialItemsFiltrados); // necesitas este método en el adapter (lo harás en el paso 3)
+    }
+
+    private void resaltarBotonSeleccionado(MaterialButton botonSeleccionado) {
+        btnFiltroTodos.setBackgroundColor(ContextCompat.getColor(this, R.color.colorBotonInactivo));
+        btnFiltroPendientes.setBackgroundColor(ContextCompat.getColor(this, R.color.colorBotonInactivo));
+        btnFiltroEnProgreso.setBackgroundColor(ContextCompat.getColor(this, R.color.colorBotonInactivo));
+        btnFiltroTerminados.setBackgroundColor(ContextCompat.getColor(this, R.color.colorBotonInactivo));
+
+        botonSeleccionado.setBackgroundColor(ContextCompat.getColor(this, R.color.colorBotonActivo));
+    }
+
 
     public void LanzarNotificacionSolicitarCheckout() {
         // Tipo Solicitar Checkout: 01

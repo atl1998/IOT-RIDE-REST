@@ -16,9 +16,13 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.hotelreservaapp.R;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class HotelAdapter extends RecyclerView.Adapter<HotelAdapter.HotelViewHolder> {
 
@@ -50,26 +54,55 @@ public class HotelAdapter extends RecyclerView.Adapter<HotelAdapter.HotelViewHol
     public void onBindViewHolder(@NonNull HotelViewHolder holder, int position) {
         Hotel hotel = listaHoteles.get(position);
 
-        String nombreCompleto=hotel.getNombre()+' '+hotel.getHotelId();
-
+        String nombreCompleto = hotel.getNombre() + " " + hotel.getHotelId();
         holder.txtNombre.setText(nombreCompleto);
-        holder.txtUbicacion.setText(hotel.getUbicacion());
-        holder.ratingBar.setRating(hotel.getValoracion());
+        holder.txtUbicacion.setText(hotel.getDireccion());
+        float valoracion= hotel.getValoracion();
+        holder.ratingBar.setRating(valoracion);
 
-        // ⚠️ Estáticos por ahora
-        holder.txtPuntuacion.setText("8.8 Fabuloso - 1434 comentarios"); // estático
-        holder.txtFechas.setText("Desde el 28 abr al 2 mar"); // estático
+        // Asignar descripción según el valor de valoración
+        String descripcion;
+        if (valoracion < 2.0) {
+            descripcion = "Malo";
+        } else if (valoracion < 3.0) {
+            descripcion = "Regular";
+        } else if (valoracion < 4.0) {
+            descripcion = "Aceptable";
+        } else if (valoracion < 4.5) {
+            descripcion = "Bueno";
+        } else {
+            descripcion = "Fabuloso";
+        }
+
+        String valoracionStr = String.format(Locale.US, "%.1f", valoracion);
+        holder.txtPuntuacion.setText(valoracionStr + " " + descripcion + " - 14 comentarios");
+
+        if (fechaInicioMillis > 0 && fechaFinMillis > 0) {
+            SimpleDateFormat sdf = new SimpleDateFormat("dd MMM", new Locale("es", "ES"));
+            String fechaInicioStr = sdf.format(new Date(fechaInicioMillis));
+            String fechaFinStr = sdf.format(new Date(fechaFinMillis));
+            holder.txtFechas.setText("Desde el " + fechaInicioStr + " al " + fechaFinStr);
+        } else {
+            holder.txtFechas.setText("Fechas no seleccionadas");
+        }
+
         Float precioMinHotel = hotel.getPrecioMin();
         String precioFormateado = String.format("%.2f", precioMinHotel);
-        holder.txtPrecio.setText("Desde S/ " + precioFormateado + ":");
-        holder.imgHotel.setImageResource(R.drawable.hotel1_img1); // imagen por defecto
+        holder.txtPrecio.setText("Desde S/ " + precioFormateado);
 
-        // Aquí añades el nuevo campo 'contacto' o 'servicioTaxi'
+        // Cargar imagen desde URL con Glide
+        Glide.with(context)
+                .load(hotel.getUrlFotoHotel())
+                .placeholder(R.drawable.ic_launcher_background) // imagen de espera
+                .error(R.drawable.ic_error) // imagen en caso de error (agrega si quieres)
+                .into(holder.imgHotel);
+
+        // Acción del botón Ver Detalles
         holder.btnVerDetalles.setOnClickListener(v -> {
             Toast.makeText(context, "Detalles de " + hotel.getNombre(), Toast.LENGTH_SHORT).show();
 
-            Intent intent=new Intent(context, DetallesHotel.class);
-            intent.putExtra("hotelId",hotel.getHotelId());
+            Intent intent = new Intent(context, DetallesHotel.class);
+            intent.putExtra("hotelId", hotel.getHotelId());
             intent.putExtra("fechaInicio", fechaInicioMillis);
             intent.putExtra("fechaFin", fechaFinMillis);
             intent.putExtra("adultos", adultos);
@@ -98,9 +131,10 @@ public class HotelAdapter extends RecyclerView.Adapter<HotelAdapter.HotelViewHol
             txtFechas = itemView.findViewById(R.id.txtFechas);
             txtPrecio = itemView.findViewById(R.id.txtPrecio);
             ratingBar = itemView.findViewById(R.id.ratingBar);
-            imgHotel = itemView.findViewById(R.id.imgHotel);
+            imgHotel = itemView.findViewById(R.id.imgHotel); // <- este es el usado con Glide
             btnVerDetalles = itemView.findViewById(R.id.btnVerDetalles);
         }
     }
 }
+
 

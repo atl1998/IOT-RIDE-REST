@@ -22,7 +22,7 @@
             android:src="@drawable/ic_launcher_background" />
 
         <TextView
-            android:id="@+id/tvTitulo"
+            android:id="@+id/tvTipo"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:textSize="18sp"
@@ -31,7 +31,7 @@
             app:layout_constraintTop_toBottomOf="@id/imgHotel"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            tools:text="Habitacion superior - 1 cama grande" />
+            tools:text="Habitacion matrimonial" />
 
         <TextView
             android:id="@+id/tvDetalles"
@@ -44,16 +44,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             tools:text="- Precio para 2 adultos\n- 1 cama doble grande\n- Turneño 25 m2\n- WiFi de alto velocidad\n- Desayuno incluido" />
 
-        <TextView
-            android:id="@+id/tvDisponibles"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            app:layout_constraintTop_toBottomOf="@id/tvDetalles"
-            app:layout_constraintStart_toStartOf="parent"
-            tools:text="Habitaciones disponibles: 3" />
 
         <TextView
             android:id="@+id/tvPrecio"

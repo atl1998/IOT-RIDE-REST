@@ -2,6 +2,7 @@ package com.example.hotelreservaapp.cliente;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +19,7 @@ import com.example.hotelreservaapp.R;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class HistorialAdapter extends RecyclerView.Adapter<HistorialAdapter.ViewHolder> {
@@ -28,7 +30,7 @@ public class HistorialAdapter extends RecyclerView.Adapter<HistorialAdapter.View
 
     public HistorialAdapter(Context context, List<HistorialItem> historialList, HistorialItemListener listener) {
         this.context = context;
-        this.historialList = historialList;
+        this.historialList = new ArrayList<>(historialList); // copia la lista, no referencia directa
         this.listener = listener;
     }
 
@@ -60,10 +62,12 @@ public class HistorialAdapter extends RecyclerView.Adapter<HistorialAdapter.View
     @Override
     public void onBindViewHolder(HistorialAdapter.ViewHolder holder, int position) {
         HistorialItem item = historialList.get(position);
-        FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
-        String hotelId = item.getHotelId();
-        StorageReference imageRef = firebaseStorage.getReference().child("fotos_hotel"+"/"+hotelId+"/"+hotelId+".jpg");
-        Glide.with(holder.itemView.getContext()).load(imageRef).into(holder.imageHotel);
+        Log.d("HistorialAdapter", "onBindViewHolder posición " + position + ": " + item.getNombreHotel() + ", estado: " + item.getEstado());
+        //FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
+        //String hotelId = item.getHotelId();
+        //StorageReference imageRef = firebaseStorage.getReference().child("fotos_hotel"+"/"+hotelId+"/"+hotelId+".jpg");
+        String UrlFotoHotel = item.getUrlImage();
+        Glide.with(holder.itemView.getContext()).load(UrlFotoHotel).into(holder.imageHotel);
         holder.nombreHotel.setText(item.getNombreHotel());
         holder.status.setText(" "+item.getEstado());
         if (item.getEstado().equals("En Progreso")) {
@@ -74,13 +78,23 @@ public class HistorialAdapter extends RecyclerView.Adapter<HistorialAdapter.View
         holder.fechas.setText(item.getFechas());
         holder.ubicacion.setText(item.getUbicacion());
 
-        // Habilitar/deshabilitar btnCheckout según el campo del modelo
-        holder.btnCheckout.setEnabled(item.isCheckoutEnabled());
-        holder.btnCheckout.setAlpha(item.isCheckoutEnabled() ? 1f : 0.5f);
+        String estado = item.getEstado(); // El estado puede ser "Pendiente", "Terminado", etc.
 
-        // Igual para btnTaxista si tienes campo en modelo (ejemplo: isTaxiEnabled)
-        holder.btnTaxista.setEnabled(item.isTaxiEnabled());
-        holder.btnTaxista.setAlpha(item.isTaxiEnabled() ? 1f : 0.5f);
+        if ("Pendiente".equals(estado) || "Terminado".equals(estado)) {
+            // Estado NO permite botones activos
+            holder.btnCheckout.setEnabled(false);
+            holder.btnCheckout.setAlpha(0.5f);
+
+            holder.btnTaxista.setEnabled(false);
+            holder.btnTaxista.setAlpha(0.5f);
+        } else {
+            // Estado válido para activar botones según condiciones
+            holder.btnCheckout.setEnabled(item.isCheckoutEnabled());
+            holder.btnCheckout.setAlpha(item.isCheckoutEnabled() ? 1f : 0.5f);
+
+            holder.btnTaxista.setEnabled(item.isTaxiEnabled());
+            holder.btnTaxista.setAlpha(item.isTaxiEnabled() ? 1f : 0.5f);
+        }
 
         holder.btnCheckout.setOnClickListener(v -> listener.onCheckoutClicked(item));
         holder.btnTaxista.setOnClickListener(v -> listener.onTaxiClicked(item));
@@ -91,5 +105,14 @@ public class HistorialAdapter extends RecyclerView.Adapter<HistorialAdapter.View
     public int getItemCount() {
         return historialList.size();
     }
+
+    public void setItems(List<HistorialItem> nuevosItems) {
+        this.historialList.clear();
+        this.historialList.addAll(nuevosItems);
+        notifyDataSetChanged();  // <---- Agregar esto
+    }
+
+
+
 }
 
