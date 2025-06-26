@@ -50,6 +50,8 @@ public class Registro5Servicios_fragment extends Fragment {
     private FirebaseUser usuarioActual;
     private FirebaseFirestore db;
 
+    private String hotelId;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -133,11 +135,40 @@ public class Registro5Servicios_fragment extends Fragment {
         Hotel hotel = registroViewModel.getHotel().getValue();
         if (hotel == null) return;
 
+        Hotel hotelSinListas = new Hotel(
+                hotel.getNombre(),
+                hotel.getDescripcion(),
+                hotel.getDepartamento(),
+                hotel.getProvincia(),
+                hotel.getDistrito(),
+                hotel.getDireccion(),
+                hotel.getUrlImage(),
+                hotel.getValoracion()
+        );
+
         // Guarda todo el objeto Proyecto, incluyendo la lista de Tarea
         db.collection("Hoteles")
-                .document(hotel.getNombre().replaceAll("\\s+", ""))    // o el ID que prefieras
-                .set(hotel)
+                .add(hotelSinListas)
                 .addOnSuccessListener(aVoid -> {
+                    //Guardado de subcolecciones
+                    hotelId = aVoid.getId();
+
+                    // Luego guardas habitaciones como subcolección
+                    for (Habitacion hab : hotel.getHabitaciones()) {
+                        db.collection("Hoteles")
+                                .document(hotelId)
+                                .collection("habitaciones")
+                                .add(hab);
+                    }
+
+                    // Y también los servicios como subcolección
+                    for (Servicio srv : hotel.getServicios()) {
+                        db.collection("Hoteles")
+                                .document(hotelId)
+                                .collection("servicios")
+                                .add(srv);
+                    }
+
                     //Parte del log
                     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                     if (user != null) {
@@ -169,19 +200,16 @@ public class Registro5Servicios_fragment extends Fragment {
                     Log.e("Firestore", "Error guardando proyecto", e);
                 });
 
-
-        //((RegistroHotelActivity) requireActivity()).irASiguientePaso(new Registro3Habitaciones_fragment());
     }
 
     private void actualizarAdminHotel(){
         Hotel hotel = registroViewModel.getHotel().getValue();
         // Cargar datos del usuario desde Firestore
         String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();  // o cualquier UID válido
-        String idHotel = hotel.getNombre().replaceAll("\\s+", "");
 
         Map<String, Object> nuevosDatos = new HashMap<>();
         nuevosDatos.put("hotelAsignado", true);
-        nuevosDatos.put("idHotel", idHotel);
+        nuevosDatos.put("idHotel", hotelId);
 
         db.collection("usuarios").document(uid)
                 .update(nuevosDatos)
