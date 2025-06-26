@@ -117,23 +117,24 @@ public class ListaHotelesCliente extends AppCompatActivity {
 
                             // Verificar que existan todos los campos necesarios
                             if (document.contains("nombre") &&
-                                    document.contains("ubicacion") &&
-                                    document.contains("contacto") &&
-                                    document.contains("servicioTaxi") &&
                                     document.contains("valoracion") &&
                                     document.contains("precioMin")) {
 
                                 String hotelId = document.getId();
                                 String nombre = document.getString("nombre");
-                                String ubicacion = document.getString("ubicacion");
-                                String contacto = document.getString("contacto");
+                                String descripcion= document.getString("descripcion");
+                                String direccion = document.getString("direccion");
+                                String departamento = document.getString("departamento");
+                                String provincia= document.getString("provincia");
+                                String distrito= document.getString("distrito");
                                 boolean servicioTaxi = Boolean.TRUE.equals(document.getBoolean("servicioTaxi"));
                                 Double valoracion = document.getDouble("valoracion");
                                 Double precioMin = document.getDouble("precioMin");
+                                String urlFoto = document.getString("UrlFotoHotel");
 
                                 // Evitar errores si valoracion es null
                                 if (valoracion != null) {
-                                    Hotel hotel = new Hotel(hotelId, nombre, valoracion.floatValue(), contacto, ubicacion, precioMin.floatValue(),servicioTaxi);
+                                    Hotel hotel = new Hotel(hotelId,nombre,descripcion,direccion,departamento,provincia,distrito,valoracion.floatValue(),precioMin.floatValue(),servicioTaxi,urlFoto);
                                     listaHoteles.add(hotel);
                                 }
                             }

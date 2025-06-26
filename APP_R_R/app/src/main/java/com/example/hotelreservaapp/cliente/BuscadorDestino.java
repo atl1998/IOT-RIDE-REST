@@ -1,6 +1,195 @@
 package com.example.hotelreservaapp.cliente;
 
+
 import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.Handler;
+import android.view.MenuItem;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.SearchView;
+import android.widget.Toast;
+import androidx.appcompat.widget.Toolbar;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.hotelreservaapp.R;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import okhttp3.Call;
+import okhttp3.Callback;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
+
+public class BuscadorDestino extends AppCompatActivity {
+
+    private final Handler debounceHandler = new Handler();
+    private Runnable debounceRunnable;
+
+    private SearchView buscador;
+    private ListView listaCiudades;
+    private ArrayAdapter<String> adapter;
+    private ArrayList<String> nombresCiudades = new ArrayList<>();
+    private ArrayList<JSONObject> datosCiudades = new ArrayList<>();
+
+    private final OkHttpClient cliente = new OkHttpClient();
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.cliente_activity_buscador_destino);
+
+        // Configurar Toolbar con flecha de retroceso
+        Toolbar toolbar = findViewById(R.id.toolbarDestino);
+        setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setTitle("Buscar destino");
+        }
+
+        buscador = findViewById(R.id.buscadorCiudad);
+        listaCiudades = findViewById(R.id.listaCiudades);
+
+        buscador.setQueryHint("Introduce tu destino");
+
+        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, nombresCiudades);
+        listaCiudades.setAdapter(adapter);
+
+        buscador.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                debounceHandler.removeCallbacks(debounceRunnable);
+
+                if (newText.length() >= 2) {
+                    debounceRunnable = () -> buscarCiudadesNominatim(newText);
+                    debounceHandler.postDelayed(debounceRunnable, 400);
+                } else {
+                    nombresCiudades.clear();
+                    datosCiudades.clear();
+                    adapter.notifyDataSetChanged();
+                }
+                return true;
+            }
+        });
+
+        listaCiudades.setOnItemClickListener((parent, view, position, id) -> {
+            try {
+                JSONObject ciudad = datosCiudades.get(position);
+                JSONObject address = ciudad.optJSONObject("address");
+
+                Intent resultIntent = new Intent();
+                resultIntent.putExtra("name", ciudad.optString("display_name", ""));
+                resultIntent.putExtra("city", address != null ? address.optString("city", "") : "");
+                resultIntent.putExtra("country", address != null ? address.optString("country", "") : "");
+                resultIntent.putExtra("region", address != null ? address.optString("state", "") : "");
+                setResult(Activity.RESULT_OK, resultIntent);
+                finish();
+            } catch (Exception e) {
+                Toast.makeText(this, "Error al enviar ciudad seleccionada", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void buscarCiudadesNominatim(String query) {
+        String url = "https://nominatim.openstreetmap.org/search?q=" + Uri.encode(query)
+                + "&format=json&accept-language=es&addressdetails=1&countrycodes=pe";
+
+        Request request = new Request.Builder()
+                .url(url)
+                .header("User-Agent", "RideAndRest/1.0 (a20206466@pucp.edu.pe)") // obligatorio para Nominatim
+                .get()
+                .build();
+
+        cliente.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                runOnUiThread(() ->
+                        Toast.makeText(BuscadorDestino.this, "Error de conexión", Toast.LENGTH_SHORT).show()
+                );
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                nombresCiudades.clear();
+                datosCiudades.clear();
+
+                if (response.isSuccessful()) {
+                    try {
+                        String json = response.body().string();
+                        JSONArray data = new JSONArray(json);
+
+                        for (int i = 0; i < data.length(); i++) {
+                            JSONObject lugar = data.getJSONObject(i);
+                            String displayName = lugar.getString("display_name");
+                            String tipo = lugar.optString("type", "");
+
+                            // Solo mostramos ciudades y regiones relevantes
+                            List<String> tiposValidos = Arrays.asList("city", "town", "village", "state", "region", "administrative", "district");
+
+                            if (tiposValidos.contains(tipo)) {
+                                String tipoLegible = traducirTipoLugar(tipo);
+                                nombresCiudades.add(displayName + " (" + tipoLegible + ")");
+                                datosCiudades.add(lugar);
+                            }
+                        }
+
+                        runOnUiThread(() -> adapter.notifyDataSetChanged());
+
+                    } catch (Exception e) {
+                        runOnUiThread(() ->
+                                Toast.makeText(BuscadorDestino.this, "Error al procesar resultados", Toast.LENGTH_SHORT).show()
+                        );
+                    }
+                }
+            }
+        });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            setResult(Activity.RESULT_CANCELED);
+            finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private String traducirTipoLugar(String tipo) {
+        switch (tipo) {
+            case "city": return "Ciudad";
+            case "town": return "Pueblo";
+            case "village": return "Villa";
+            case "state": return "Departamento";
+            case "province": return "Provincia";
+            case "district": return "Distrito";
+            case "administrative": return "Región";
+            default: return tipo;
+        }
+    }
+}
+
+
+
+/*import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.widget.ArrayAdapter;
@@ -165,5 +354,5 @@ public class BuscadorDestino extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-}
+}*/
 
