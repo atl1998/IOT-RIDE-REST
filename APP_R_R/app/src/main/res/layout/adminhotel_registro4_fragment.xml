@@ -55,7 +55,7 @@ tools:context=".AdminHotel.Registro4AddHabitacion_fragment">
 
     <!-- Nombres y tipo -->
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/tilNombres"
+        android:id="@+id/tilTipo"
         style="@style/EstiloFormularioMarron"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -65,10 +65,10 @@ tools:context=".AdminHotel.Registro4AddHabitacion_fragment">
         app:layout_constraintEnd_toEndOf="parent">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/etNombre"
+            android:id="@+id/etTipo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Nombre y tipo"
+            android:hint="Tipo"
             android:textColor="#452C06"
             android:textColorHint="#BDBDBD" />
     </com.google.android.material.textfield.TextInputLayout>
@@ -80,7 +80,7 @@ tools:context=".AdminHotel.Registro4AddHabitacion_fragment">
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
-        app:layout_constraintTop_toBottomOf="@id/tilNombres"
+        app:layout_constraintTop_toBottomOf="@id/tilTipo"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
@@ -107,27 +107,6 @@ tools:context=".AdminHotel.Registro4AddHabitacion_fragment">
         app:layout_constraintEnd_toEndOf="parent" />-->
 
 
-    <!-- Descripcion -->
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/tilDescripcion"
-        style="@style/EstiloFormularioMarron"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        app:layout_constraintTop_toBottomOf="@id/tilPrecio"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/etDescripcion"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Descripcion"
-            android:textColor="#452C06"
-            android:textColorHint="#BDBDBD"
-            android:inputType="text" />
-    </com.google.android.material.textfield.TextInputLayout>
-
     <!-- Tamaño -->
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/tilTamaño"
@@ -135,7 +114,7 @@ tools:context=".AdminHotel.Registro4AddHabitacion_fragment">
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
-        app:layout_constraintTop_toBottomOf="@id/tilDescripcion"
+        app:layout_constraintTop_toBottomOf="@id/tilPrecio"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
@@ -170,47 +149,7 @@ tools:context=".AdminHotel.Registro4AddHabitacion_fragment">
             android:inputType="text" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <!-- Servicios -->
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/tilServicios"
-        style="@style/EstiloFormularioMarron"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        app:layout_constraintTop_toBottomOf="@id/tilCapacidad"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/etServicios"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Servicios incluidos"
-            android:textColor="#452C06"
-            android:textColorHint="#BDBDBD" />
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <!-- Cantidad de habitaciones -->
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/tilCantHabitaciones"
-        style="@style/EstiloFormularioMarron"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        app:layout_constraintTop_toBottomOf="@id/tilServicios"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/etCantHabitaciones"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Cantidad de habitaciones"
-            android:textColor="#452C06"
-            android:textColorHint="#BDBDBD"
-            android:inputType="number" />
-    </com.google.android.material.textfield.TextInputLayout>
-
+    <!-- Imagen -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/image_input_card"
         android:layout_width="match_parent"
@@ -220,7 +159,7 @@ tools:context=".AdminHotel.Registro4AddHabitacion_fragment">
         android:clickable="true"
         android:focusable="true"
         android:foreground="?attr/selectableItemBackground"
-        app:layout_constraintTop_toBottomOf="@id/tilCantHabitaciones">
+        app:layout_constraintTop_toBottomOf="@id/tilCapacidad">
 
 
         <LinearLayout

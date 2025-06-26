@@ -1,4 +1,5 @@
-package com.example.hotelreservaapp.AdminHotel;
+package com.example.hotelreservaapp.AdminHotel.Adapter;
+
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -13,22 +14,23 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.hotelreservaapp.AdminHotel.Model.Servicio;
 import com.example.hotelreservaapp.R;
 
 import java.io.IOException;
 import java.util.List;
 
-public class ServiciosAdapter extends RecyclerView.Adapter<com.example.hotelreservaapp.AdminHotel.ServiciosAdapter.ServiciosViewHolder> {
+public class ServicioAdapter extends RecyclerView.Adapter<com.example.hotelreservaapp.AdminHotel.Adapter.ServicioAdapter.ServiciosViewHolder> {
 
-    private List<Servicios> servicios;
-    private OnItemClickListener listener;
+    private List<Servicio> servicios;
+    private com.example.hotelreservaapp.AdminHotel.Adapter.ServicioAdapter.OnItemClickListener listener;
     private Context context;
     public interface OnItemClickListener {
         void onItemClick(int position);
         void onSeleccionCambio();
     }
 
-    public ServiciosAdapter(List<Servicios> Servicios,Context context,  com.example.hotelreservaapp.AdminHotel.ServiciosAdapter.OnItemClickListener listener) {
+    public ServicioAdapter(List<Servicio> Servicios, Context context, com.example.hotelreservaapp.AdminHotel.Adapter.ServicioAdapter.OnItemClickListener listener) {
         this.servicios = Servicios;
         this.listener = listener;
         this.context = context;
@@ -36,18 +38,18 @@ public class ServiciosAdapter extends RecyclerView.Adapter<com.example.hotelrese
 
     @NonNull
     @Override
-    public com.example.hotelreservaapp.AdminHotel.ServiciosAdapter.ServiciosViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public com.example.hotelreservaapp.AdminHotel.Adapter.ServicioAdapter.ServiciosViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.adminhotel_item_servicio, parent, false);
-        return new com.example.hotelreservaapp.AdminHotel.ServiciosAdapter.ServiciosViewHolder(view, listener);
+        return new com.example.hotelreservaapp.AdminHotel.Adapter.ServicioAdapter.ServiciosViewHolder(view, listener);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull com.example.hotelreservaapp.AdminHotel.ServiciosAdapter.ServiciosViewHolder holder, int position) {
-        Servicios servicio = servicios.get(position);
+    public void onBindViewHolder(@NonNull com.example.hotelreservaapp.AdminHotel.Adapter.ServicioAdapter.ServiciosViewHolder holder, int position) {
+        Servicio servicio = servicios.get(position);
 
-        holder.tvTitulo.setText(servicio.getTitulo());
-        holder.tvDetalles.setText(servicio.getDetalles());
+        holder.tvNombre.setText(servicio.getNombre());
+        holder.tvDescipcion.setText(servicio.getDescripcion());
         holder.tvPrecio.setText(String.format("Precio por persona: $" + servicio.getPrecio()));
 
         String nombreArchivo = servicio.getUrl(); // ej. "image1.png"
@@ -94,7 +96,7 @@ public class ServiciosAdapter extends RecyclerView.Adapter<com.example.hotelrese
     }
 
     public static class ServiciosViewHolder extends RecyclerView.ViewHolder {
-        TextView tvTitulo, tvDetalles, tvPrecio;
+        TextView tvNombre, tvDescipcion, tvPrecio;
 
         ImageView tvImagen;
         Button btnSeleccionar;
@@ -102,11 +104,11 @@ public class ServiciosAdapter extends RecyclerView.Adapter<com.example.hotelrese
         TextView tvSeleccionadas;
         Button btnEliminar;
 
-        public ServiciosViewHolder(@NonNull View itemView, final com.example.hotelreservaapp.AdminHotel.ServiciosAdapter.OnItemClickListener listener) {
+        public ServiciosViewHolder(@NonNull View itemView, final com.example.hotelreservaapp.AdminHotel.Adapter.ServicioAdapter.OnItemClickListener listener) {
             super(itemView);
 
-            tvTitulo = itemView.findViewById(R.id.tvTitulo);
-            tvDetalles = itemView.findViewById(R.id.tvDetalles);
+            tvNombre = itemView.findViewById(R.id.tvNombre);
+            tvDescipcion = itemView.findViewById(R.id.tvDescripcion);
             tvPrecio = itemView.findViewById(R.id.tvPrecio);
             tvImagen = itemView.findViewById(R.id.tvImagen);
 
@@ -127,52 +129,6 @@ public class ServiciosAdapter extends RecyclerView.Adapter<com.example.hotelrese
         }
     }
 
-    public static class Servicios {
 
-        private String titulo;
-        private String precio;
-
-        private String url;
-        private String detalles;
-
-        public Servicios(String titulo, String precio, String url, String detalles){
-            this.setTitulo(titulo);
-            this.setPrecio(precio);
-            this.setUrl(url);
-            this.setDetalles(detalles);
-        }
-
-
-        public String getDetalles() {
-            return detalles;
-        }
-
-        public void setDetalles(String detalles) {
-            this.detalles = detalles;
-        }
-
-        public String getTitulo() {
-            return titulo;
-        }
-
-        public void setTitulo(String titulo) {
-            this.titulo = titulo;
-        }
-
-        public String getPrecio() {
-            return precio;
-        }
-
-        public void setPrecio(String precio) {
-            this.precio = precio;
-        }
-
-        public String getUrl() {
-            return url;
-        }
-
-        public void setUrl(String url) {
-            this.url = url;
-        }
-    }
 }
+

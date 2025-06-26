@@ -1,32 +1,19 @@
 package com.example.hotelreservaapp.AdminHotel.Model;
 
 public class Habitacion {
-    private String titulo;
-    private String detalles;
-    private int disponibles;
+    private String tipo;
     private double precio;
-    private String tipoCama;
-
     private double tamano;
+
+    private String capacidad;
     private String url;
 
-    private int seleccionadas = 0;
 
-    public int getSeleccionadas() {
-        return seleccionadas;
-    }
-
-    public void setSeleccionadas(int seleccionadas) {
-        this.seleccionadas = seleccionadas;
-    }
-
-    public Habitacion(String titulo, String detalles, int disponibles, double precio, String tipoCama, double tamano, String url) {
-        this.setTitulo(titulo);
-        this.setDetalles(detalles);
-        this.setDisponibles(disponibles);
+    public Habitacion(String tipo, double precio, double tamano, String capacidad,  String url) {
+        this.setTipo(tipo);
         this.setPrecio(precio);
-        this.setTipoCama(tipoCama);
         this.setTamano(tamano);
+        this.setCapacidad(capacidad);
         this.setUrl(url);
     }
 
@@ -34,13 +21,25 @@ public class Habitacion {
 
     }
 
-    // Getters
-    public String getTitulo() { return titulo; }
-    public String getDetalles() { return detalles; }
-    public int getDisponibles() { return disponibles; }
+    public String getTipo() {return tipo;}
+
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
+    }
+
     public double getPrecio() { return precio; }
-    public String getTipoCama() { return tipoCama; }
+    public void setPrecio(double precio) {
+        this.precio = precio;
+    }
     public double getTamano() { return tamano; }
+
+    public void setTamano(double tamano) {
+        this.tamano = tamano;
+    }
+
+    public String getCapacidad() {return capacidad;}
+
+    public void setCapacidad(String capacidad) {this.capacidad = capacidad;}
 
     public String getUrl() {
         return url;
@@ -50,27 +49,4 @@ public class Habitacion {
         this.url = url;
     }
 
-    public void setTitulo(String titulo) {
-        this.titulo = titulo;
-    }
-
-    public void setDetalles(String detalles) {
-        this.detalles = detalles;
-    }
-
-    public void setDisponibles(int disponibles) {
-        this.disponibles = disponibles;
-    }
-
-    public void setPrecio(double precio) {
-        this.precio = precio;
-    }
-
-    public void setTipoCama(String tipoCama) {
-        this.tipoCama = tipoCama;
-    }
-
-    public void setTamano(double tamano) {
-        this.tamano = tamano;
-    }
 }

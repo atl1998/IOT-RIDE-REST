@@ -5,12 +5,10 @@ import android.view.View;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.hotelreservaapp.AdminHotel.Adapter.NotificacionAdapter;
 import com.example.hotelreservaapp.R;
 import com.google.android.material.button.MaterialButton;
 

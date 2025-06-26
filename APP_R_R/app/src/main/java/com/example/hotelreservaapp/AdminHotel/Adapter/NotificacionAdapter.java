@@ -1,4 +1,4 @@
-package com.example.hotelreservaapp.AdminHotel;
+package com.example.hotelreservaapp.AdminHotel.Adapter;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,11 +8,10 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.hotelreservaapp.AdminHotel.Notificacion;
 import com.example.hotelreservaapp.R;
 
 import java.util.List;
-
-import de.hdodenhof.circleimageview.CircleImageView;
 
 public class NotificacionAdapter extends RecyclerView.Adapter<NotificacionAdapter.NotificacionViewHolder> {
 

@@ -6,7 +6,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/white"
     android:fillViewport="true"
-    tools:context=".AdminHotel.Registro3Habitaciones_fragment">
+    tools:context=".AdminHotel.Registro5Servicios_fragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/headerLayout"
@@ -43,7 +43,7 @@
             android:id="@+id/tvTitulo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Registro de habitaciones"
+            android:text="Registro de Servicios"
             android:textSize="24sp"
             android:textColor="#94751B"
             android:textStyle="bold"
@@ -83,12 +83,12 @@
                 android:paddingBottom="16dp">
 
                 <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/listaHabitaciones"
+                    android:id="@+id/listaServicios"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="8dp"
                     android:nestedScrollingEnabled="false"
-                    android:contentDescription="Lista de habitaciones disponibles" />
+                    android:contentDescription="Lista de servicios disponibles" />
 
                 <!-- Botón para siguiente
                 <Button
@@ -109,10 +109,10 @@
 
         <!-- Botón Continuar -->
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnContinuar3"
+            android:id="@+id/btnTerminar"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Continuar"
+            android:text="Terminar"
             android:enabled="true"
             android:backgroundTint="#94751B"
             android:textColor="@android:color/white"

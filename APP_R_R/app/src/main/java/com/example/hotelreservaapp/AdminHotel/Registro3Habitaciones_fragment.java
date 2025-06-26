@@ -15,11 +15,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.example.hotelreservaapp.AdminHotel.Adapter.HabitacionAdapter;
 import com.example.hotelreservaapp.AdminHotel.Model.Habitacion;
 import com.example.hotelreservaapp.AdminHotel.Model.Hotel;
 import com.example.hotelreservaapp.AdminHotel.ViewModel.RegistroViewModel;
 import com.example.hotelreservaapp.LogManager;
-import com.example.hotelreservaapp.databinding.AdminhotelRegistro3FragmentBinding;
 import com.example.hotelreservaapp.databinding.AdminhotelRegistro3FragmentBinding;
 import com.example.hotelreservaapp.model.Usuario;
 import com.google.android.material.button.MaterialButton;
@@ -28,7 +28,9 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class Registro3Habitaciones_fragment extends Fragment {
@@ -37,12 +39,13 @@ public class Registro3Habitaciones_fragment extends Fragment {
 
     private RegistroViewModel registroViewModel;
     private RecyclerView rvHabitaciones;
-    private com.example.hotelreservaapp.AdminHotel.HabitacionAdapter adapter;
+    private HabitacionAdapter adapter;
     private List<Habitacion> listaHabitaciones;
 
     private MaterialButton btnContinuar3;
     private ImageView btnAdd;
-
+    private FirebaseUser usuarioActual;
+    private FirebaseFirestore db;
 
 
 
@@ -52,6 +55,8 @@ public class Registro3Habitaciones_fragment extends Fragment {
         // Inflate the layout for this fragment
         binding = AdminhotelRegistro3FragmentBinding.inflate(inflater, container, false);
         registroViewModel = new ViewModelProvider(requireActivity()).get(RegistroViewModel.class);
+        db = FirebaseFirestore.getInstance();
+        usuarioActual = FirebaseAuth.getInstance().getCurrentUser();
 
         listaHabitaciones = new ArrayList<>(); // inicial vac
 
@@ -96,50 +101,13 @@ public class Registro3Habitaciones_fragment extends Fragment {
             if (listaHabitaciones != null) {
                 // Guardar en database
                 Hotel hotel = registroViewModel.getHotel().getValue();
-                    if (hotel == null) return;
+                hotel.setHabitaciones(listaHabitaciones);
+                registroViewModel.setHotel(hotel);
 
-                    FirebaseFirestore db = FirebaseFirestore.getInstance();
-                    // Guarda todo el objeto Proyecto, incluyendo la lista de Tarea
-                    db.collection("Hoteles")
-                            .document(hotel.getNombre())    // o el ID que prefieras
-                            .set(hotel)
-                            .addOnSuccessListener(aVoid -> {
-                                //Parte del log
-                                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                                if (user != null) {
-                                    String uid = user.getUid();
-
-                                    FirebaseFirestore.getInstance()
-                                            .collection("usuarios")
-                                            .document(uid)
-                                            .get()
-                                            .addOnSuccessListener(doc -> {
-                                                if (doc.exists()) {
-                                                    Usuario usuario = doc.toObject(Usuario.class);
-                                                    String nombres = usuario.getNombre();
-                                                    String apellidos = usuario.getApellido();
-                                                    String nombreCompleto = nombres + " " + apellidos;
-
-                                                    LogManager.registrarLogRegistro(
-                                                            nombreCompleto,
-                                                            "Registro de hotel",
-                                                            "El administrador de hotel" + nombreCompleto + "registró el hotel " + hotel.getNombre()
-                                                    );
-
-                                                    Log.d("Firestore", "Proyecto guardado correctamente");
-                                                }
-                                            });
-                                }
-                            })
-                            .addOnFailureListener(e -> {
-                                Log.e("Firestore", "Error guardando proyecto", e);
-                            });
-
-
-                //((RegistroHotelActivity) requireActivity()).irASiguientePaso(new Registro3Habitaciones_fragment());
-                startActivity(new Intent(getActivity(), MainActivity.class));
+                // Navegar al siguiente fragmento
+                ((RegistroHotelActivity) requireActivity()).irASiguientePaso(new Registro5Servicios_fragment());
             } else {
-                Toast.makeText(getContext(), "Ingresa una foto", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Ingresa una habitación", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -156,18 +124,13 @@ public class Registro3Habitaciones_fragment extends Fragment {
     private List<Habitacion> cargarData() {
         List<Habitacion> listaHa = new ArrayList<>();
         listaHa.add(new Habitacion(
-                "Habitacion superior - 1 cama grande",
-                "- Precio para 2 adultos\n- 1 cama doble grande\n- Turneño 25 m2\n- WiFi de alto velocidad\n- Desayuno incluido",
-                3,
+                "Standar",
                 354.00,
-                "Grande",
-                25,
+                16.5,
+                "Para dos personas",
                 "adminhotel_habitacion1.jpg"
         ));
-
-
         return listaHa;
     }
-
 
 }
