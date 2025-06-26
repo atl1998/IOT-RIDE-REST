@@ -53,6 +53,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -74,6 +75,7 @@ public class HistorialEventos extends AppCompatActivity implements HistorialItem
     private String Tipo;
     private RecyclerView recyclerView;
     private List<HistorialItem> historialItems;
+    private List<HistorialItem> historialItemsFiltrados;
     private String userId;
 
     @Override
@@ -96,6 +98,7 @@ public class HistorialEventos extends AppCompatActivity implements HistorialItem
 
         // Inicializar lista vacía antes
         historialItems = new ArrayList<>();
+        historialItemsFiltrados = new ArrayList<>(); // para mostrar en el adapter
 
         // Crear adapter con lista vacía
         adapter = new HistorialAdapter(this, historialItems, this);
@@ -280,10 +283,36 @@ public class HistorialEventos extends AppCompatActivity implements HistorialItem
                                     String ubicacion = distrito+", "+provincia;
                                     String UrlHotel = hotelDoc.getString("UrlFotoHotel");
                                     Boolean servicioTaxi = hotelDoc.getBoolean("servicioTaxi");
-                                    Boolean checkoutEnable = !(checkoutSolicitado);
+                                    //Boolean checkoutEnable = !(checkoutSolicitado);
+                                    // Comparar si hoy es el mismo día que fechaFin
+                                    Calendar hoy = Calendar.getInstance();
+                                    Calendar fechaFinCalendar = Calendar.getInstance();
+                                    fechaFinCalendar.setTime(fechaFinTS.toDate());
+                                    Date ahora = new Date(); // hora actual del sistema
+
+                                    boolean esMismoDia = hoy.get(Calendar.YEAR) == fechaFinCalendar.get(Calendar.YEAR) &&
+                                            hoy.get(Calendar.MONTH) == fechaFinCalendar.get(Calendar.MONTH) &&
+                                            hoy.get(Calendar.DAY_OF_MONTH) == fechaFinCalendar.get(Calendar.DAY_OF_MONTH);
+
+                                    Boolean checkoutEnable;
+                                    if (esMismoDia) {
+                                        checkoutEnable = !checkoutSolicitado; // Puede pedir checkout solo si no lo solicitó
+                                    } else {
+                                        checkoutEnable = false;
+
+                                        // Solo forzar a false si hoy es ANTES del día de salida (aún no se puede solicitar)
+                                        if (ahora.before(fechaFinTS.toDate()) && checkoutSolicitado != null && checkoutSolicitado) {
+                                            db.collection("usuarios")
+                                                    .document(userId)
+                                                    .collection("Reservas")
+                                                    .document(idReserva)
+                                                    .update("checkoutSolicitado", false)
+                                                    .addOnSuccessListener(aVoid -> Log.d("Checkout", "Resetado a false porque aún no es el día"))
+                                                    .addOnFailureListener(e -> Log.e("Checkout", "Error al resetear checkoutSolicitado", e));
+                                        }
+                                    }
 
                                     // Verificación del estado según fecha actual
-                                    Date ahora = new Date(); // hora actual del sistema
                                     String estadoEsperado;
 
                                     if (ahora.before(fechaInicioTS.toDate())) {

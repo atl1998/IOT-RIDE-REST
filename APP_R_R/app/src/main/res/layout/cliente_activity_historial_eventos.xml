@@ -177,6 +177,85 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
+    <!-- FILTROS ESTADO: Nuevo LinearLayout horizontal con botones -->
+    <!-- FILTROS ESTADO: ScrollView horizontal con botones -->
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:overScrollMode="never"
+        android:scrollbars="none"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:background="#FFFFFF"
+        app:layout_constraintTop_toBottomOf="@id/headerLayout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <com.google.android.material.button.MaterialButtonToggleGroup
+            android:id="@+id/filtroEstadosToggleGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            app:singleSelection="true"
+            app:selectionRequired="true">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnFiltroTodos"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Todos"
+                android:textColor="@color/marron_oscuro"
+                app:strokeColor="@color/marron_oscuro"
+                app:strokeWidth="1dp"
+
+                android:layout_marginEnd="12dp"
+                android:checkable="true" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnFiltroPendientes"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Pendiente"
+                android:textColor="@color/marron_oscuro"
+                app:strokeColor="@color/marron_oscuro"
+                app:strokeWidth="1dp"
+                app:cornerRadius="30dp"
+                android:layout_marginEnd="12dp"
+                android:checkable="true" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnFiltroEnProgreso"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="En progreso"
+                android:textColor="@color/marron_oscuro"
+                app:strokeColor="@color/marron_oscuro"
+                app:strokeWidth="1dp"
+                app:cornerRadius="30dp"
+                android:layout_marginEnd="12dp"
+                android:checkable="true" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnFiltroTerminados"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Terminado"
+                android:textColor="@color/marron_oscuro"
+                app:strokeColor="@color/marron_oscuro"
+                app:strokeWidth="1dp"
+                android:checkable="true" />
+        </com.google.android.material.button.MaterialButtonToggleGroup>
+
+    </HorizontalScrollView>
+
+
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerHistorial"
         android:layout_width="0dp"
@@ -186,7 +265,7 @@
         app:layout_constraintBottom_toTopOf="@+id/bottonNavigationView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/headerLayout" />
+        app:layout_constraintTop_toBottomOf="@id/filtroEstadosToggleGroup" />
 
 
 
