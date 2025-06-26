@@ -18,6 +18,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -149,6 +150,8 @@ public class PerfilFragment extends Fragment {
                     startActivityForResult(signInIntent, RC_GOOGLE_LINK);
                 });
         // Cargar datos del usuario desde Firestore
+        Log.d("SplashDebug", "usuario: " + usuarioActual);
+
         if (usuarioActual != null) {
             db.collection("usuarios").document(usuarioActual.getUid()).get()
                     .addOnSuccessListener(document -> {

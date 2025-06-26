@@ -31,11 +31,13 @@ public class NuevaContrasenaActivity extends AppCompatActivity {
     private FirebaseAuth firebaseAuth;
     private FirebaseFirestore db;
     private ProgressDialog progressDialog;
+    //waos
+    private boolean cambioRealizado = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_nueva_contrasena); // asegúrate que el archivo XML se llame así
+        setContentView(R.layout.activity_nueva_contrasena);
 
         etNuevaContrasena = findViewById(R.id.etNuevaContrasena);
         etConfirmarContrasena = findViewById(R.id.etConfirmarContrasena);
@@ -89,6 +91,8 @@ public class NuevaContrasenaActivity extends AppCompatActivity {
                                             .get()
                                             .addOnSuccessListener(snapshot -> {
                                                 progressDialog.dismiss();
+                                                //owo
+                                                cambioRealizado = true;
                                                 String rol = snapshot.getString("rol");
                                                 redirigirSegunRol(rol);
                                             });
@@ -139,11 +143,5 @@ public class NuevaContrasenaActivity extends AppCompatActivity {
     }
 
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        if (!isChangingConfigurations()) {
-            FirebaseAuth.getInstance().signOut();
-        }
-    }
+
 }
