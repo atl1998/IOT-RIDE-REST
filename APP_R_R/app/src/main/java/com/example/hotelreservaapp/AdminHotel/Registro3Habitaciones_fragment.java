@@ -99,11 +99,6 @@ public class Registro3Habitaciones_fragment extends Fragment {
         btnContinuar3 = binding.btnContinuar3;
         btnContinuar3.setOnClickListener(v -> {
             if (listaHabitaciones != null) {
-                // Guardar en database
-                Hotel hotel = registroViewModel.getHotel().getValue();
-                hotel.setHabitaciones(listaHabitaciones);
-                registroViewModel.setHotel(hotel);
-
                 // Navegar al siguiente fragmento
                 ((RegistroHotelActivity) requireActivity()).irASiguientePaso(new Registro5Servicios_fragment());
             } else {

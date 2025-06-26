@@ -29,7 +29,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="Datos de Pago"
+                android:text="Proceso de pago"
                 android:textColor="#282828"
                 android:textSize="20sp"
                 android:textStyle="bold"
@@ -82,69 +82,50 @@
             android:orientation="vertical"
             android:padding="24dp">
 
-
-
-            <!-- Visualización de la tarjeta -->
-            <androidx.cardview.widget.CardView
-                android:id="@+id/cardViewTarjeta"
+            <!-- Tarjeta visual -->
+            <RelativeLayout
+                android:id="@+id/cardView"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
-                android:layout_marginBottom="32dp"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="8dp"
-                android:background="@drawable/gradient_card_background">
+                android:layout_marginTop="12dp"
+                android:background="@drawable/tarjeta_image"
+                android:padding="16dp">
 
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@drawable/gradient_card_background"
-                    android:padding="20dp">
-
-                    <!-- Número de tarjeta -->
-                    <TextView
-                        android:id="@+id/tvNumeroTarjeta"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="**** **** **** ****"
-                        android:textColor="@color/white"
-                        android:textSize="22sp"
-                        android:textStyle="bold"
-                        android:letterSpacing="0.1"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintVertical_bias="0.4" />
-
-                    <!-- Nombre del titular -->
-                    <TextView
-                        android:id="@+id/tvNombreTitular"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="NOMBRE DEL TITULAR"
-                        android:textColor="@color/white"
-                        android:textSize="14sp"
-                        android:textStyle="bold"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/tvNumeroTarjeta"
-                        app:layout_constraintVertical_bias="0.8" />
-
-                    <!-- Fecha de vencimiento -->
-                    <TextView
-                        android:id="@+id/tvFechaVencimiento"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="MM/AA"
-                        android:textColor="@color/white"
-                        android:textSize="14sp"
-                        android:textStyle="bold"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/tvNumeroTarjeta"
-                        app:layout_constraintVertical_bias="0.8" />
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
-            </androidx.cardview.widget.CardView>
+                <TextView
+                    android:id="@+id/cardNumberText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="70dp"
+                    android:layout_marginLeft="20dp"
+                    android:text="XXXX - XXXX - XXXX - XXXX"
+                    android:textSize="18sp" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginBottom="34dp"
+                    android:layout_marginLeft="180dp"
+                    android:text="Vence\nFin De"
+                    android:textSize="12sp" />
+                <TextView
+                    android:id="@+id/fechaVencimiento"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginBottom="40dp"
+                    android:layout_marginLeft="224dp"
+                    android:text="XX/XX"
+                    android:textSize="16sp" />
+                <TextView
+                    android:id="@+id/cardNameText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginLeft="20dp"
+                    android:text="Nombre Apellido"
+                    android:textSize="16sp" />
+            </RelativeLayout>
 
             <!-- Formulario de datos -->
             <com.google.android.material.textfield.TextInputLayout
@@ -251,7 +232,7 @@
                 android:id="@+id/btnConfirmarPago"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
-                android:text="Validar Tarjeta"
+                android:text="Realizar pago"
                 android:textAllCaps="false"
                 android:textSize="16sp"
                 android:textStyle="bold"

@@ -16,7 +16,7 @@ public class Hotel {
     private List<Servicio> servicios; // Lista de servicios
 
     public Hotel() {}
-    public Hotel(String nombre, String descripcion, String departamento, String provincia, String distrito, String direccion, String urlImage, List<Habitacion> habitaciones, double valoracion ) {
+    public Hotel(String nombre, String descripcion, String departamento, String provincia, String distrito, String direccion, String urlImage, double valoracion, List<Habitacion> habitaciones, List<Servicio> servicios ) {
         this.setNombre(nombre);
         this.setDescripcion(descripcion);
         this.setDepartamento(departamento);
@@ -24,7 +24,20 @@ public class Hotel {
         this.setDistrito(distrito);
         this.setDireccion(direccion);
         this.setUrlImage(urlImage);
+        this.setValoracion(valoracion);
         this.setHabitaciones(habitaciones);
+        this.setServicios(servicios);
+    }
+
+    public Hotel(String nombre, String descripcion, String departamento, String provincia, String distrito, String direccion, String urlImage, double valoracion ) {
+        this.setNombre(nombre);
+        this.setDescripcion(descripcion);
+        this.setDepartamento(departamento);
+        this.setProvincia(provincia);
+        this.setDistrito(distrito);
+        this.setDireccion(direccion);
+        this.setUrlImage(urlImage);
+        this.setValoracion(valoracion);
     }
 
     public String getNombre() {
