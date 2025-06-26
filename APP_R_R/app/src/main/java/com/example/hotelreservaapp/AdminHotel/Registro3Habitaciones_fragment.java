@@ -18,9 +18,13 @@ import android.widget.Toast;
 import com.example.hotelreservaapp.AdminHotel.Model.Habitacion;
 import com.example.hotelreservaapp.AdminHotel.Model.Hotel;
 import com.example.hotelreservaapp.AdminHotel.ViewModel.RegistroViewModel;
+import com.example.hotelreservaapp.LogManager;
 import com.example.hotelreservaapp.databinding.AdminhotelRegistro3FragmentBinding;
 import com.example.hotelreservaapp.databinding.AdminhotelRegistro3FragmentBinding;
+import com.example.hotelreservaapp.model.Usuario;
 import com.google.android.material.button.MaterialButton;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
@@ -99,10 +103,37 @@ public class Registro3Habitaciones_fragment extends Fragment {
                     db.collection("Hoteles")
                             .document(hotel.getNombre())    // o el ID que prefieras
                             .set(hotel)
-                            .addOnSuccessListener(aVoid ->
-                                    Log.d("Firestore", "Proyecto guardado correctamente"))
-                            .addOnFailureListener(e ->
-                                    Log.e("Firestore", "Error guardando proyecto", e));
+                            .addOnSuccessListener(aVoid -> {
+                                //Parte del log
+                                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                                if (user != null) {
+                                    String uid = user.getUid();
+
+                                    FirebaseFirestore.getInstance()
+                                            .collection("usuarios")
+                                            .document(uid)
+                                            .get()
+                                            .addOnSuccessListener(doc -> {
+                                                if (doc.exists()) {
+                                                    Usuario usuario = doc.toObject(Usuario.class);
+                                                    String nombres = usuario.getNombre();
+                                                    String apellidos = usuario.getApellido();
+                                                    String nombreCompleto = nombres + " " + apellidos;
+
+                                                    LogManager.registrarLogRegistro(
+                                                            nombreCompleto,
+                                                            "Registro de hotel",
+                                                            "El administrador de hotel" + nombreCompleto + "registró el hotel " + hotel.getNombre()
+                                                    );
+
+                                                    Log.d("Firestore", "Proyecto guardado correctamente");
+                                                }
+                                            });
+                                }
+                            })
+                            .addOnFailureListener(e -> {
+                                Log.e("Firestore", "Error guardando proyecto", e);
+                            });
 
 
                 //((RegistroHotelActivity) requireActivity()).irASiguientePaso(new Registro3Habitaciones_fragment());

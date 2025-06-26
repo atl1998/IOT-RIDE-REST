@@ -8,16 +8,19 @@ public class Hotel {
     private float valoracion;
     private String contacto;
     private String ubicacion;
+    private float precioMin;
     private boolean servicioTaxi;
 
     // Constructor
 
-    public Hotel(String hotelId, String nombre, float valoracion, String contacto, String ubicacion, boolean servicioTaxi) {
+
+    public Hotel(String hotelId, String nombre, float valoracion, String contacto, String ubicacion, float precioMin, boolean servicioTaxi) {
         this.hotelId = hotelId;
         this.nombre = nombre;
         this.valoracion = valoracion;
         this.contacto = contacto;
         this.ubicacion = ubicacion;
+        this.precioMin = precioMin;
         this.servicioTaxi = servicioTaxi;
     }
 
@@ -59,6 +62,14 @@ public class Hotel {
 
     public void setUbicacion(String ubicacion) {
         this.ubicacion = ubicacion;
+    }
+
+    public float getPrecioMin() {
+        return precioMin;
+    }
+
+    public void setPrecioMin(float precioMin) {
+        this.precioMin = precioMin;
     }
 
     public boolean isServicioTaxi() {

@@ -205,11 +205,9 @@ public class PerfilFragment extends Fragment {
                 enModoEdicion = true;
                 btnEditar.setImageResource(R.drawable.save_icon);
 
-                etNombre.setEnabled(true);
-                etApellido.setEnabled(true);
-                etDni.setEnabled(true);
                 etTelefono.setEnabled(true);
                 etDireccion.setEnabled(true);
+                etCorreo.setEnabled(true);
             } else {
                 // Obtener valores actualizados
                 String nombre = etNombre.getText().toString().trim();
@@ -242,9 +240,7 @@ public class PerfilFragment extends Fragment {
                                 enModoEdicion = false;
                                 btnEditar.setImageResource(R.drawable.edit_icon);
 
-                                etNombre.setEnabled(false);
-                                etApellido.setEnabled(false);
-                                etDni.setEnabled(false);
+                                etCorreo.setEnabled(false);
                                 etTelefono.setEnabled(false);
                                 etDireccion.setEnabled(false);
                             })

@@ -168,26 +168,100 @@ public class Registro4AddHabitacion_fragment extends Fragment {
     }
 
     private boolean datosValidos() {
+        boolean valido = true;
         String nombre = binding.etNombre.getText().toString();
-        String precio = binding.etPrecio.getText().toString();
+        String precioText = binding.etPrecio.getText().toString();
         String descripcion = binding.etDescripcion.getText().toString();
-        String tamano = binding.etTamaO.getText().toString();
+        String tamanoText = binding.etTamaO.getText().toString();
         String capacidad = binding.etCapacidad.getText().toString();
         String servicios = binding.etServicios.getText().toString();
-        String cantidad = binding.etCantHabitaciones.getText().toString();
+        String cantidadText = binding.etCantHabitaciones.getText().toString();
         File file = new File(requireContext().getFilesDir(), "foto_habitacion.jpg");
 
+        //Valdación de formulario
+        if (nombre.isEmpty()) {
+            binding.tilNombres.setError("Campo obligatorio");
+            valido = false;
+        }  else binding.tilNombres.setError(null);
 
-        if(!nombre.isEmpty() && !precio.isEmpty() && !descripcion.isEmpty() && !tamano.isEmpty() && !capacidad.isEmpty() && !servicios.isEmpty() && !cantidad.isEmpty() && file.exists()) {
+        if (precioText.isEmpty()) {
+            binding.tilPrecio.setError("Campo obligatorio");
+            valido = false;
+        } else {
+            try {
+                double precio = Double.parseDouble(precioText);
+
+                if (precio < 0) {
+                    binding.tilPrecio.setError("El precio no puede ser negativo");
+                    valido = false;
+                } else binding.tilNombres.setError(null);
+            } catch (NumberFormatException e) {
+                binding.tilPrecio.setError("Ingresa un número válido");
+                valido = false;
+            }
+        }
+
+        if (descripcion.isEmpty()) {
+            binding.tilDescripcion.setError("Campo obligatorio");
+            valido = false;
+        }  else binding.tilDescripcion.setError(null);
+
+        if (tamanoText.isEmpty()) {
+            binding.tilTamaO.setError("Campo obligatorio");
+            valido = false;
+        } else {
+            try {
+                double tamano = Double.parseDouble(tamanoText);
+
+                if (tamano < 0) {
+                    binding.tilTamaO.setError("El tamaño no puede ser negativo");
+                    valido = false;
+                } else binding.tilTamaO.setError(null);
+            } catch (NumberFormatException e) {
+                binding.tilTamaO.setError("Ingresa un número válido");
+                valido = false;
+            }
+        }
+
+        if (capacidad.isEmpty()) {
+            binding.tilCapacidad.setError("Campo obligatorio");
+            valido = false;
+        }  else binding.tilCapacidad.setError(null);
+
+        if (servicios.isEmpty()) {
+            binding.tilServicios.setError("Campo obligatorio");
+            valido = false;
+        }  else binding.tilServicios.setError(null);
+
+        if (cantidadText.isEmpty()) {
+            binding.tilCantHabitaciones.setError("Campo obligatorio");
+            valido = false;
+        } else {
+            try {
+                double cantidad = Double.parseDouble(cantidadText);
+                if (cantidad < 0) {
+                    binding.tilCantHabitaciones.setError("La cantidad no puede ser negativa");
+                    valido = false;
+                } else binding.tilCantHabitaciones.setError(null);
+            } catch (NumberFormatException e) {
+                binding.tilCantHabitaciones.setError("Ingresa un número válido");
+                valido = false;
+            }
+        }
+
+        if(file.exists() && valido) {
             habitacion.setTitulo(nombre);
-            habitacion.setPrecio(Double.parseDouble(precio));
+            habitacion.setPrecio(Double.parseDouble(precioText));
             habitacion.setDetalles(descripcion);
-            habitacion.setTamano(Integer.parseInt(tamano));
-            habitacion.setDisponibles(Integer.parseInt(capacidad));
+            habitacion.setTamano(Double.parseDouble(tamanoText));
+            habitacion.setDisponibles(Integer.parseInt(cantidadText));
             habitacion.setUrl("foto_habitacion.jpg");
             habitacion.setTipoCama(servicios);
             return true;
+        } else {
+            Toast.makeText(getContext(), "Ingresa una foto", Toast.LENGTH_SHORT).show();
+            valido = false;
         }
-        return false;
+        return valido;
     }
 }

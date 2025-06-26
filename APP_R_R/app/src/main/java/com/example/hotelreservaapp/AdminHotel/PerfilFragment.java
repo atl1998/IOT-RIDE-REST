@@ -19,6 +19,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.hotelreservaapp.AdminHotel.ViewModel.RegistroViewModel;
@@ -33,6 +34,8 @@ import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -44,7 +47,9 @@ public class PerfilFragment extends Fragment {
 
     private AdminhotelFragmentPerfilBinding binding;
 
-    private RegistroViewModel registroViewModel;
+    private FirebaseFirestore db;
+    private boolean enModoEdicion = false;
+    private FirebaseUser usuarioActual;
 
     public PerfilFragment() {
         // Constructor vacío requerido
@@ -77,6 +82,9 @@ public class PerfilFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        db = FirebaseFirestore.getInstance();
+        usuarioActual = FirebaseAuth.getInstance().getCurrentUser();
+
         ImageView btnEditar = binding.ivEditProfile;
         TextInputEditText etNombre = binding.etNombre;
         TextInputEditText etApellido = binding.etApellido;
@@ -84,49 +92,92 @@ public class PerfilFragment extends Fragment {
         TextInputEditText etDni = binding.etDni;
         TextInputEditText etTelefono = binding.etTelefono;
         TextInputEditText etDireccion = binding.etDireccion;
+        TextView user_name = binding.tvUserName;
+        TextView correu = binding.tvUserHandle;
 
-        final boolean[] enModoEdicion = {false};
+        // Cargar datos del usuario desde Firestore
+        if (usuarioActual != null) {
+            db.collection("usuarios").document(usuarioActual.getUid()).get()
+                    .addOnSuccessListener(document -> {
+                        if (document.exists()) {
+                            etNombre.setText(document.getString("nombre"));
+                            user_name.setText(document.getString("nombre")+ " " + document.getString("apellido"));
+                            etApellido.setText(document.getString("apellido"));
+                            etCorreo.setText(usuarioActual.getEmail());
+                            correu.setText(usuarioActual.getEmail());
+                            etDni.setText(document.getString("numeroDocumento"));
+                            etTelefono.setText(document.getString("telefono"));
+                            etDireccion.setText(document.getString("direccion"));
+                        }
+                    })
+                    .addOnFailureListener(e ->
+                            Toast.makeText(getContext(), "Error al cargar datos", Toast.LENGTH_SHORT).show()
+                    );
+        }
 
         btnEditar.setOnClickListener(v -> {
-            enModoEdicion[0] = !enModoEdicion[0];
-
-            etNombre.setEnabled(enModoEdicion[0]);
-            etApellido.setEnabled(enModoEdicion[0]);
-            etDni.setEnabled(enModoEdicion[0]);
-            etTelefono.setEnabled(enModoEdicion[0]);
-            etDireccion.setEnabled(enModoEdicion[0]);
-            etCorreo.setEnabled(false); // El correo no se edita
-
-            if (enModoEdicion[0]) {
+            if (!enModoEdicion) {
+                // Activar modo edición
+                enModoEdicion = true;
                 btnEditar.setImageResource(R.drawable.save_icon);
-            } else {
-                btnEditar.setImageResource(R.drawable.edit_square_24dp_black);
 
-                // Obtener datos ingresados
+                etNombre.setEnabled(true);
+                etApellido.setEnabled(true);
+                etDni.setEnabled(true);
+                etTelefono.setEnabled(true);
+                etDireccion.setEnabled(true);
+            } else {
+                // Obtener valores actualizados
                 String nombre = etNombre.getText().toString().trim();
                 String apellido = etApellido.getText().toString().trim();
                 String dni = etDni.getText().toString().trim();
                 String telefono = etTelefono.getText().toString().trim();
                 String direccion = etDireccion.getText().toString().trim();
 
-                Toast.makeText(requireContext(), "Datos actualizados", Toast.LENGTH_SHORT).show();
+                // Validaciones
+                if (nombre.isEmpty() || apellido.isEmpty() || dni.isEmpty() ||
+                        telefono.isEmpty() || direccion.isEmpty()) {
+                    Toast.makeText(getContext(), "Completa todos los campos antes de guardar", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                // Guardar en Firestore
+                if (usuarioActual != null) {
+                    db.collection("usuarios").document(usuarioActual.getUid())
+                            .update(
+                                    "nombre", nombre,
+                                    "apellido", apellido,
+                                    "numeroDocumento", dni,
+                                    "telefono", telefono,
+                                    "direccion", direccion
+                            )
+                            .addOnSuccessListener(unused -> {
+                                Toast.makeText(getContext(), "Perfil actualizado", Toast.LENGTH_SHORT).show();
+
+                                // Desactivar modo edición
+                                enModoEdicion = false;
+                                btnEditar.setImageResource(R.drawable.edit_icon);
+
+                                etNombre.setEnabled(false);
+                                etApellido.setEnabled(false);
+                                etDni.setEnabled(false);
+                                etTelefono.setEnabled(false);
+                                etDireccion.setEnabled(false);
+                            })
+                            .addOnFailureListener(e -> {
+                                Toast.makeText(getContext(), "Error al actualizar perfil", Toast.LENGTH_SHORT).show();
+                            });
+                }
             }
         });
+
 
         // Mostrar imagen si ya está guardada
         File file = new File(requireContext().getFilesDir(), "foto_perfil.jpg");
         if (file.exists()) {
             binding.ivProfileImage.setImageURI(Uri.fromFile(file));
         }
-        binding.btnCerrarSesion.setOnClickListener(v -> {
-            FirebaseAuth.getInstance().signOut(); // 🔐 Cierra sesión
-            Toast.makeText(getContext(), "Sesión cerrada", Toast.LENGTH_SHORT).show();
 
-            //  Redirige a LoginActivity
-            Intent intent = new Intent(getContext(), LoginActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
-        });
         // Inicializar pickImageLauncher
         pickImageLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
             if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
@@ -138,23 +189,17 @@ public class PerfilFragment extends Fragment {
         // Inicializar botón para cambiar foto
         binding.ivChangePhoto.setOnClickListener(v -> mostrarDialogoFoto());
 
+        // Inicializar botón para cerrar sesión
         binding.btnCerrarSesion.setOnClickListener(v -> {
-            SharedPreferences prefs = requireActivity().getSharedPreferences("user_prefs", Context.MODE_PRIVATE);
-            //requireActivity().finish();
-            SharedPreferences.Editor editor = prefs.edit();
-            //Borramos la sesión owo
-            editor.clear();
-            //C aplican los cambios
-            editor.apply();
-            //Toad
-            Toast.makeText(requireContext(), "Sesión cerrada correctamente", Toast.LENGTH_SHORT).show();
-            // Volver al login
-            Intent intent = new Intent(requireActivity(), MainActivity.class);
-            //Evitamos que el usuario pueda volver dando atrás limpiando las actividades de la pila
+            FirebaseAuth.getInstance().signOut(); // 🔐 Cierra sesión
+            Toast.makeText(getContext(), "Sesión cerrada", Toast.LENGTH_SHORT).show();
+
+            //  Redirige a LoginActivity
+            Intent intent = new Intent(getContext(), LoginActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
-            requireActivity().finish();
         });
+
 
     }
 
