@@ -44,7 +44,6 @@ import java.util.TimeZone;
 
 public class HomeCliente extends AppCompatActivity {
     MaterialButton btnBusqueda;
-
     BottomNavigationView bottomNav;
     private EditText etFecha, etCantidad;
     private MaterialButton btnBuscar;
@@ -58,7 +57,7 @@ public class HomeCliente extends AppCompatActivity {
     private RecyclerView ofertasRecyclerView;
     private OfertaHotelAdapter ofertasAdapter;
     private List<OfertaHotel> listaOfertas;
-    private AutoCompleteTextView etDestino;
+    private EditText etDestino;
     private String tipoDestinoSeleccionado = "";
 
     @Override
@@ -120,9 +119,9 @@ public class HomeCliente extends AppCompatActivity {
         btnNotificaciones.setOnClickListener(v -> startActivity(new Intent(this, ClienteNotificaciones.class)));
 
         // Autocompletado local como ayuda adicional
-        String[] destinos = {"Lima", "Arequipa", "Cusco", "Trujillo", "Piura", "Chiclayo", "Iquitos", "Tacna", "Puno", "Huancayo"};
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, destinos);
-        etDestino.setAdapter(adapter);
+        //String[] destinos = {"Lima", "Arequipa", "Cusco", "Trujillo", "Piura", "Chiclayo", "Iquitos", "Tacna", "Puno", "Huancayo"};
+        //ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, destinos);
+        //etDestino.setAdapter(adapter);
     }
 
     @Override
@@ -135,6 +134,7 @@ public class HomeCliente extends AppCompatActivity {
             if (nombre != null) etDestino.setText(nombre);
             tipoDestinoSeleccionado = tipo != null ? tipo : "";
 
+            Log.d("Destino", "Seleccionado: " + nombre + " (Tipo: " + tipoDestinoSeleccionado + ")");
             Log.d("Destino", "Seleccionado: " + nombre + " (Tipo: " + tipoDestinoSeleccionado + ")");
         }
     }

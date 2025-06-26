@@ -94,18 +94,44 @@ public class BuscadorDestino extends AppCompatActivity {
             try {
                 JSONObject ciudad = datosCiudades.get(position);
                 JSONObject address = ciudad.optJSONObject("address");
+                String tipo = ciudad.optString("type", "");  // Ej: city, state, administrative...
 
+                String nombreNormalizado = "";
+
+                // Determinar qué campo usar como nombre según el tipo
+                if (tipo.equals("state")) {
+                    nombreNormalizado = address != null ? address.optString("state", "") : "";
+                } else if (tipo.equals("region") || tipo.equals("administrative")) {
+                    nombreNormalizado = address != null ? address.optString("region", "") : "";
+                    if (nombreNormalizado.isEmpty()) {
+                        nombreNormalizado = address != null ? address.optString("state_district", "") : "";
+                    }
+                } else if (tipo.equals("city") || tipo.equals("town") || tipo.equals("village")) {
+                    nombreNormalizado = address != null ? address.optString("city", "") : "";
+                    if (nombreNormalizado.isEmpty()) {
+                        nombreNormalizado = ciudad.optString("display_name", "").split(",")[0].trim();
+                    }
+                }
+
+                // Verificación final
+                if (nombreNormalizado.isEmpty()) {
+                    Toast.makeText(this, "No se pudo obtener un nombre válido", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                // Enviar datos a HomeCliente
                 Intent resultIntent = new Intent();
-                resultIntent.putExtra("name", ciudad.optString("display_name", ""));
-                resultIntent.putExtra("city", address != null ? address.optString("city", "") : "");
-                resultIntent.putExtra("country", address != null ? address.optString("country", "") : "");
-                resultIntent.putExtra("region", address != null ? address.optString("state", "") : "");
+                resultIntent.putExtra("name", nombreNormalizado);  // nombre limpio
+                resultIntent.putExtra("tipo", tipo);              // tipo: city, state, etc.
+                resultIntent.putExtra("nombreCompleto", ciudad.optString("display_name", ""));
                 setResult(Activity.RESULT_OK, resultIntent);
                 finish();
+
             } catch (Exception e) {
                 Toast.makeText(this, "Error al enviar ciudad seleccionada", Toast.LENGTH_SHORT).show();
             }
         });
+
     }
 
     private void buscarCiudadesNominatim(String query) {

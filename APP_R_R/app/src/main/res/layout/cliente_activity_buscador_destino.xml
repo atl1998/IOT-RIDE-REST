@@ -1,28 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
-    android:padding="16dp"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/background_screen">
 
+    <!-- Toolbar Principal -->
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbarDestino"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
+        android:elevation="4dp"
         app:title="Buscar destino"
         app:titleTextColor="@android:color/white"
-        app:navigationIcon="@drawable/arrow_left" />
+        app:titleTextAppearance="@style/ToolbarTitleStyle"
+        app:navigationIcon="@drawable/arrow_left"
+        app:navigationContentDescription="Volver" />
 
-    <SearchView
-        android:id="@+id/buscadorCiudad"
-        android:queryHint="Buscar ciudad"
+    <!-- Contenedor del SearchView -->
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:background="@color/search_container_background">
 
-    <ListView
-        android:id="@+id/listaCiudades"
+        <SearchView
+            android:id="@+id/buscadorCiudad"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:queryHint="Buscar ciudad"
+            android:background="@drawable/search_view_background"
+            android:elevation="2dp"
+            android:iconifiedByDefault="false"
+            android:queryBackground="@android:color/transparent"
+            android:submitBackground="@android:color/transparent"
+            app:searchIcon="@drawable/search_icon"
+            app:closeIcon="@drawable/ic_close" />
+
+    </LinearLayout>
+
+    <!-- Separador visual -->
+    <View
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="1dp"
+        android:background="@color/divider_color" />
+
+    <!-- Contenedor de la Lista -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="8dp"
+        android:background="@color/list_background">
+
+        <ListView
+            android:id="@+id/listaCiudades"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:divider="@color/list_divider"
+            android:dividerHeight="1dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:clipToPadding="false"
+            android:scrollbars="vertical"
+            android:fadeScrollbars="true"
+            android:scrollbarStyle="outsideOverlay"
+            android:listSelector="@drawable/list_item_selector" />
+
+        <!-- Mensaje cuando no hay resultados (opcional) -->
+        <TextView
+            android:id="@+id/tvNoResults"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="No se encontraron ciudades"
+            android:textColor="@color/text_secondary"
+            android:textSize="16sp"
+            android:visibility="gone"
+            android:drawablePadding="16dp"
+            android:gravity="center" />
+
+    </FrameLayout>
+
 </LinearLayout>
