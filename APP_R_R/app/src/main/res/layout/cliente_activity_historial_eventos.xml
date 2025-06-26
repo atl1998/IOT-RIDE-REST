@@ -180,6 +180,7 @@
     <!-- FILTROS ESTADO: Nuevo LinearLayout horizontal con botones -->
     <!-- FILTROS ESTADO: ScrollView horizontal con botones -->
     <HorizontalScrollView
+        android:id="@+id/filtronav"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:overScrollMode="never"
@@ -265,7 +266,7 @@
         app:layout_constraintBottom_toTopOf="@+id/bottonNavigationView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/filtroEstadosToggleGroup" />
+        app:layout_constraintTop_toBottomOf="@id/filtronav" />
 
 
 

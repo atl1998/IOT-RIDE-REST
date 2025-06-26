@@ -2,6 +2,7 @@ package com.example.hotelreservaapp.cliente;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +19,7 @@ import com.example.hotelreservaapp.R;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class HistorialAdapter extends RecyclerView.Adapter<HistorialAdapter.ViewHolder> {
@@ -28,7 +30,7 @@ public class HistorialAdapter extends RecyclerView.Adapter<HistorialAdapter.View
 
     public HistorialAdapter(Context context, List<HistorialItem> historialList, HistorialItemListener listener) {
         this.context = context;
-        this.historialList = historialList;
+        this.historialList = new ArrayList<>(historialList); // copia la lista, no referencia directa
         this.listener = listener;
     }
 
@@ -60,6 +62,7 @@ public class HistorialAdapter extends RecyclerView.Adapter<HistorialAdapter.View
     @Override
     public void onBindViewHolder(HistorialAdapter.ViewHolder holder, int position) {
         HistorialItem item = historialList.get(position);
+        Log.d("HistorialAdapter", "onBindViewHolder posición " + position + ": " + item.getNombreHotel() + ", estado: " + item.getEstado());
         //FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
         //String hotelId = item.getHotelId();
         //StorageReference imageRef = firebaseStorage.getReference().child("fotos_hotel"+"/"+hotelId+"/"+hotelId+".jpg");
@@ -102,5 +105,14 @@ public class HistorialAdapter extends RecyclerView.Adapter<HistorialAdapter.View
     public int getItemCount() {
         return historialList.size();
     }
+
+    public void setItems(List<HistorialItem> nuevosItems) {
+        this.historialList.clear();
+        this.historialList.addAll(nuevosItems);
+        notifyDataSetChanged();  // <---- Agregar esto
+    }
+
+
+
 }
 

@@ -25,6 +25,7 @@ import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -77,6 +78,10 @@ public class HistorialEventos extends AppCompatActivity implements HistorialItem
     private List<HistorialItem> historialItems;
     private List<HistorialItem> historialItemsFiltrados;
     private String userId;
+    private MaterialButton btnFiltroTodos;
+    private MaterialButton btnFiltroPendientes;
+    private MaterialButton btnFiltroEnProgreso;
+    private MaterialButton btnFiltroTerminados;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,7 +106,7 @@ public class HistorialEventos extends AppCompatActivity implements HistorialItem
         historialItemsFiltrados = new ArrayList<>(); // para mostrar en el adapter
 
         // Crear adapter con lista vacía
-        adapter = new HistorialAdapter(this, historialItems, this);
+        adapter = new HistorialAdapter(this, historialItemsFiltrados, this);
         recyclerView.setAdapter(adapter);
 
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
@@ -111,6 +116,33 @@ public class HistorialEventos extends AppCompatActivity implements HistorialItem
         }
 
         cargarHistorial();
+
+        btnFiltroTodos = findViewById(R.id.btnFiltroTodos);
+        btnFiltroPendientes = findViewById(R.id.btnFiltroPendientes);
+        btnFiltroEnProgreso = findViewById(R.id.btnFiltroEnProgreso);
+        btnFiltroTerminados = findViewById(R.id.btnFiltroTerminados);
+
+        btnFiltroTodos.setOnClickListener(v -> {
+            aplicarFiltro("Todos");
+            resaltarBotonSeleccionado(btnFiltroTodos);
+        });
+
+        btnFiltroPendientes.setOnClickListener(v -> {
+            aplicarFiltro("Pendiente");
+            resaltarBotonSeleccionado(btnFiltroPendientes);
+        });
+
+        btnFiltroEnProgreso.setOnClickListener(v -> {
+            aplicarFiltro("En Progreso");
+            resaltarBotonSeleccionado(btnFiltroEnProgreso);
+        });
+
+        btnFiltroTerminados.setOnClickListener(v -> {
+            aplicarFiltro("Terminado");
+            resaltarBotonSeleccionado(btnFiltroTerminados);
+        });
+
+        btnFiltroTodos.performClick();
 
         bottomNav = findViewById(R.id.bottonNavigationView);
         configurarBottomNav();
@@ -320,7 +352,7 @@ public class HistorialEventos extends AppCompatActivity implements HistorialItem
                                     } else if (ahora.after(fechaFinTS.toDate())) {
                                         estadoEsperado = "Terminado";
                                     } else {
-                                        estadoEsperado = "En progreso";
+                                        estadoEsperado = "En Progreso";
                                     }
 
                                     // Si el estado guardado no es el correcto, actualizar en Firestore
@@ -337,10 +369,22 @@ public class HistorialEventos extends AppCompatActivity implements HistorialItem
                                     HistorialItem historialItem = new HistorialItem(idReserva, estadoEsperado, nombreHotel, "📍 " + ubicacion, solicitarTaxista, checkoutEnable, servicioTaxi, fechaInicioTS, fechaFinTS);
                                     historialItem.setUrlImage(UrlHotel);
                                     historialItems.add(historialItem);
+                                    Log.d("HistorialEventos", "Item cargado: idReserva=" + idReserva + ", hotel=" + nombreHotel + ", estado=" + estadoEsperado + ", ubicacion=" + ubicacion);
                                 }
                             }
+                            // Línea: justo antes de actualizar historialItemsFiltrados y llamar adapter
+                            Log.d("HistorialEventos", "Historial cargado. Items totales: " + historialItems.size());
 
-                            adapter.notifyDataSetChanged();
+                            aplicarFiltro("Todos");
+
+
+                            // Actualizar también la lista filtrada con todos los elementos
+                            //historialItemsFiltrados.clear();
+                            //historialItemsFiltrados.addAll(historialItems);
+
+                            // Mostrar los datos filtrados
+                            //adapter.setItems(historialItemsFiltrados); // <- este método lo agregas en el paso 3
+                            //adapter.notifyDataSetChanged();
                         });
 
                     }
@@ -492,6 +536,33 @@ public class HistorialEventos extends AppCompatActivity implements HistorialItem
             dialog.dismiss();
         });
     }
+    private void aplicarFiltro(String estadoFiltrado) {
+        historialItemsFiltrados.clear();
+        Log.d("HistorialEventos", "Aplicando filtro: " + estadoFiltrado);
+        Log.d("HistorialEventos", "Items antes de filtrar: " + historialItems.size());
+        if (estadoFiltrado.equals("Todos")) {
+            historialItemsFiltrados.addAll(historialItems);
+        } else {
+            for (HistorialItem item : historialItems) {
+                if (item.getEstado().equalsIgnoreCase(estadoFiltrado)) {
+                    historialItemsFiltrados.add(item);
+                }
+            }
+        }
+        Log.d("HistorialEventos", "Items después de filtrar: " + historialItemsFiltrados.size());
+
+        adapter.setItems(historialItemsFiltrados); // necesitas este método en el adapter (lo harás en el paso 3)
+    }
+
+    private void resaltarBotonSeleccionado(MaterialButton botonSeleccionado) {
+        btnFiltroTodos.setBackgroundColor(ContextCompat.getColor(this, R.color.colorBotonInactivo));
+        btnFiltroPendientes.setBackgroundColor(ContextCompat.getColor(this, R.color.colorBotonInactivo));
+        btnFiltroEnProgreso.setBackgroundColor(ContextCompat.getColor(this, R.color.colorBotonInactivo));
+        btnFiltroTerminados.setBackgroundColor(ContextCompat.getColor(this, R.color.colorBotonInactivo));
+
+        botonSeleccionado.setBackgroundColor(ContextCompat.getColor(this, R.color.colorBotonActivo));
+    }
+
 
     public void LanzarNotificacionSolicitarCheckout() {
         // Tipo Solicitar Checkout: 01
