@@ -150,12 +150,12 @@ public class PerfilFragment extends Fragment {
                     startActivityForResult(signInIntent, RC_GOOGLE_LINK);
                 });
         // Cargar datos del usuario desde Firestore
-        Log.d("SplashDebug", "usuario: " + usuarioActual);
-
         if (usuarioActual != null) {
             db.collection("usuarios").document(usuarioActual.getUid()).get()
                     .addOnSuccessListener(document -> {
                         if (document.exists()) {
+                            String nombre = document.getString("nombre");
+                            Log.d("a",nombre);
                             etNombre.setText(document.getString("nombre"));
                             user_name.setText(document.getString("nombre")+ " " + document.getString("apellido"));
                             etApellido.setText(document.getString("apellido"));
