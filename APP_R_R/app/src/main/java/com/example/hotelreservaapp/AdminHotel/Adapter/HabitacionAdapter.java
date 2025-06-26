@@ -1,4 +1,4 @@
-package com.example.hotelreservaapp.AdminHotel;
+package com.example.hotelreservaapp.AdminHotel.Adapter;
 
 import android.content.Context;
 import android.content.Intent;
@@ -14,13 +14,14 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.hotelreservaapp.AdminHotel.DetalleHabitacionActivity;
 import com.example.hotelreservaapp.AdminHotel.Model.Habitacion;
 import com.example.hotelreservaapp.R;
 
 import java.io.IOException;
 import java.util.List;
 
-public class HabitacionAdapter extends RecyclerView.Adapter<com.example.hotelreservaapp.AdminHotel.HabitacionAdapter.HabitacionViewHolder> {
+public class HabitacionAdapter extends RecyclerView.Adapter<HabitacionAdapter.HabitacionViewHolder> {
 
     private List<Habitacion> habitaciones;
     private OnItemClickListener listener;
@@ -30,7 +31,7 @@ public class HabitacionAdapter extends RecyclerView.Adapter<com.example.hotelres
         void onSeleccionCambio();
     }
 
-    public HabitacionAdapter(List<Habitacion> habitaciones, Context context, com.example.hotelreservaapp.AdminHotel.HabitacionAdapter.OnItemClickListener listener) {
+    public HabitacionAdapter(List<Habitacion> habitaciones, Context context, HabitacionAdapter.OnItemClickListener listener) {
         this.habitaciones = habitaciones;
         this.listener = listener;
         this.context = context;
@@ -38,19 +39,24 @@ public class HabitacionAdapter extends RecyclerView.Adapter<com.example.hotelres
 
     @NonNull
     @Override
-    public com.example.hotelreservaapp.AdminHotel.HabitacionAdapter.HabitacionViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public HabitacionAdapter.HabitacionViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.adminhotel_item_habitacion, parent, false);
-        return new com.example.hotelreservaapp.AdminHotel.HabitacionAdapter.HabitacionViewHolder(view, listener);
+        return new HabitacionAdapter.HabitacionViewHolder(view, listener);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull com.example.hotelreservaapp.AdminHotel.HabitacionAdapter.HabitacionViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull HabitacionAdapter.HabitacionViewHolder holder, int position) {
         Habitacion habitacion = habitaciones.get(position);
 
-        holder.tvTitulo.setText(habitacion.getTitulo());
-        holder.tvDetalles.setText(habitacion.getDetalles());
-        holder.tvDisponibles.setText("Habitaciones disponibles: " + habitacion.getDisponibles());
+        holder.tvTipo.setText(habitacion.getTipo());
+        holder.tvDetalles.setText(String.format(
+                "- Capacidad para %s personas\n- Tamaño en m2: %.2f",
+                habitacion.getCapacidad(),
+                habitacion.getTamano()
+        ));
+
+
         holder.tvPrecio.setText(String.format("Precio para 2 noches: $%.2f", habitacion.getPrecio()));
 
         String nombreArchivo = habitacion.getUrl(); // ej. "image1.png"
@@ -102,7 +108,7 @@ public class HabitacionAdapter extends RecyclerView.Adapter<com.example.hotelres
     }
 
     public static class HabitacionViewHolder extends RecyclerView.ViewHolder {
-        TextView tvTitulo, tvDetalles, tvDisponibles, tvPrecio;
+        TextView tvTipo, tvDetalles, tvPrecio;
 
         ImageView tvImagen;
         Button btnSeleccionar;
@@ -110,12 +116,11 @@ public class HabitacionAdapter extends RecyclerView.Adapter<com.example.hotelres
         TextView tvSeleccionadas;
         Button btnEliminar;
 
-        public HabitacionViewHolder(@NonNull View itemView, final com.example.hotelreservaapp.AdminHotel.HabitacionAdapter.OnItemClickListener listener) {
+        public HabitacionViewHolder(@NonNull View itemView, final HabitacionAdapter.OnItemClickListener listener) {
             super(itemView);
 
-            tvTitulo = itemView.findViewById(R.id.tvTitulo);
+            tvTipo = itemView.findViewById(R.id.tvTipo);
             tvDetalles = itemView.findViewById(R.id.tvDetalles);
-            tvDisponibles = itemView.findViewById(R.id.tvDisponibles);
             tvPrecio = itemView.findViewById(R.id.tvPrecio);
             tvImagen = itemView.findViewById(R.id.imgHotel);
 

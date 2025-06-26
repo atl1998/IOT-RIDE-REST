@@ -23,9 +23,10 @@ import android.widget.Toast;
 
 import com.example.hotelreservaapp.AdminHotel.Model.Habitacion;
 import com.example.hotelreservaapp.AdminHotel.Model.Hotel;
+import com.example.hotelreservaapp.AdminHotel.Model.Servicio;
 import com.example.hotelreservaapp.AdminHotel.ViewModel.RegistroViewModel;
 import com.example.hotelreservaapp.R;
-import com.example.hotelreservaapp.databinding.AdminhotelRegistro4FragmentBinding;
+import com.example.hotelreservaapp.databinding.AdminhotelRegistro6FragmentBinding;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButton;
 
@@ -35,17 +36,19 @@ import java.io.InputStream;
 import java.util.List;
 
 
-public class Registro4AddHabitacion_fragment extends Fragment {
+public class Registro6AddServicio_fragment extends Fragment {
 
-    private AdminhotelRegistro4FragmentBinding binding;
-    private MaterialButton btnContinuar4;
+    private AdminhotelRegistro6FragmentBinding binding;
+
+    private MaterialButton btnContinuar6;
     private RegistroViewModel registroViewModel;
     private ImageButton btnBack;
 
     private static final int REQUEST_CAMERA = 1;
     private ActivityResultLauncher<Intent> pickImageLauncher;
-    private Habitacion habitacion = new Habitacion();
+    private Servicio servicio = new Servicio();
     private Uri cameraImageUri;
+
     private final ActivityResultLauncher<Intent> takePhotoLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
@@ -60,7 +63,7 @@ public class Registro4AddHabitacion_fragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        binding = AdminhotelRegistro4FragmentBinding.inflate(inflater, container, false);
+        binding = AdminhotelRegistro6FragmentBinding.inflate(inflater, container, false);
         return binding.getRoot();
     }
 
@@ -71,7 +74,7 @@ public class Registro4AddHabitacion_fragment extends Fragment {
         final boolean[] enModoEdicion = {false};
 
         // Mostrar imagen si ya está guardada
-        File file = new File(requireContext().getFilesDir(), "foto_habitacion.jpg");
+        File file = new File(requireContext().getFilesDir(), "foto_servicio.jpg");
         if (file.exists()) {
             binding.ivProfileImage.setImageURI(Uri.fromFile(file));
             binding.buttonOpenCamera.setIcon(ContextCompat.getDrawable(requireContext(), R.drawable.edit_square_24dp_black));
@@ -90,8 +93,8 @@ public class Registro4AddHabitacion_fragment extends Fragment {
         binding.buttonOpenCamera.setOnClickListener(v -> mostrarDialogoFoto());
 
         //Lógica para continuar
-        btnContinuar4 = binding.btnContinuar4;
-        btnContinuar4.setOnClickListener(v -> {
+        btnContinuar6 = binding.btnContinuar4;
+        btnContinuar6.setOnClickListener(v -> {
 
             //Logica para instanciar el viewmodel
             registroViewModel = new ViewModelProvider(requireActivity()).get(RegistroViewModel.class);
@@ -99,13 +102,13 @@ public class Registro4AddHabitacion_fragment extends Fragment {
             if (datosValidos()) {
                 // Guardar los datos en el ViewModelregistroViewModel.setNombre(nombre);
                 Hotel hotel = registroViewModel.getHotel().getValue();
-                List<Habitacion> lista = hotel.getHabitaciones();
-                lista.add(habitacion);
-                hotel.setHabitaciones(lista);
+                List<Servicio> lista = hotel.getServicios();
+                lista.add(servicio);
+                hotel.setServicios(lista);
                 registroViewModel.setHotel(hotel);
                 // Navegar al siguiente fragmento
-                ((RegistroHotelActivity) requireActivity()).irASiguientePaso(new Registro3Habitaciones_fragment());
-                Toast.makeText(getContext(), "Habitación añadida", Toast.LENGTH_SHORT).show();
+                ((RegistroHotelActivity) requireActivity()).irASiguientePaso(new Registro5Servicios_fragment());
+                Toast.makeText(getContext(), "Servicio añadido", Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(getContext(), "Ingresa los datos correctamente", Toast.LENGTH_SHORT).show();
             }
@@ -122,7 +125,7 @@ public class Registro4AddHabitacion_fragment extends Fragment {
     private void guardarImagenEnArchivosInternos(Uri uri) {
         try {
             InputStream inputStream = requireContext().getContentResolver().openInputStream(uri);
-            File file = new File(requireContext().getFilesDir(), "foto_habitacion.jpg");
+            File file = new File(requireContext().getFilesDir(), "foto_servicio.jpg");
             FileOutputStream outputStream = new FileOutputStream(file);
 
             byte[] buffer = new byte[1024];
@@ -155,7 +158,7 @@ public class Registro4AddHabitacion_fragment extends Fragment {
         });
 
         view.findViewById(R.id.opcionCamara).setOnClickListener(v -> {
-            File imageFile = new File(requireContext().getFilesDir(), "foto_habitacion.jpg");
+            File imageFile = new File(requireContext().getFilesDir(), "foto_servicio.jpg");
             cameraImageUri = FileProvider.getUriForFile(requireContext(), requireContext().getPackageName() + ".provider", imageFile);
             Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, cameraImageUri);
@@ -168,17 +171,21 @@ public class Registro4AddHabitacion_fragment extends Fragment {
 
     private boolean datosValidos() {
         boolean valido = true;
-        String tipo = binding.etTipo.getText().toString();
+        String nombre = binding.etNombre.getText().toString();
+        String descripcion = binding.etDescripcion.getText().toString();
         String precioText = binding.etPrecio.getText().toString();
-        String tamanoText = binding.etTamaO.getText().toString();
-        String capacidad = binding.etCapacidad.getText().toString();
-        File file = new File(requireContext().getFilesDir(), "foto_habitacion.jpg");
+        File file = new File(requireContext().getFilesDir(), "foto_servicio.jpg");
 
         //Valdación de formulario
-        if (tipo.isEmpty()) {
-            binding.tilTipo.setError("Campo obligatorio");
+        if (nombre.isEmpty()) {
+            binding.tilNombre.setError("Campo obligatorio");
             valido = false;
-        }  else binding.tilTipo.setError(null);
+        }  else binding.tilNombre.setError(null);
+
+        if (descripcion.isEmpty()) {
+            binding.tilDescripcion.setError("Campo obligatorio");
+            valido = false;
+        }  else binding.tilDescripcion.setError(null);
 
         if (precioText.isEmpty()) {
             binding.tilPrecio.setError("Campo obligatorio");
@@ -197,34 +204,12 @@ public class Registro4AddHabitacion_fragment extends Fragment {
             }
         }
 
-        if (tamanoText.isEmpty()) {
-            binding.tilTamaO.setError("Campo obligatorio");
-            valido = false;
-        } else {
-            try {
-                double tamano = Double.parseDouble(tamanoText);
-
-                if (tamano < 0) {
-                    binding.tilTamaO.setError("El tamaño no puede ser negativo");
-                    valido = false;
-                } else binding.tilTamaO.setError(null);
-            } catch (NumberFormatException e) {
-                binding.tilTamaO.setError("Ingresa un número válido");
-                valido = false;
-            }
-        }
-
-        if (capacidad.isEmpty()) {
-            binding.tilCapacidad.setError("Campo obligatorio");
-            valido = false;
-        }  else binding.tilCapacidad.setError(null);
 
         if(file.exists() && valido) {
-            habitacion.setTipo(tipo);
-            habitacion.setPrecio(Double.parseDouble(precioText));
-            habitacion.setTamano(Double.parseDouble(tamanoText));
-            habitacion.setCapacidad(capacidad);
-            habitacion.setUrl("foto_habitacion.jpg");
+            servicio.setNombre(nombre);
+            servicio.setDescripcion(descripcion);
+            servicio.setPrecio(Double.parseDouble(precioText));
+            servicio.setUrl("foto_servicio.jpg");
             return true;
         } else {
             Toast.makeText(getContext(), "Ingresa una foto", Toast.LENGTH_SHORT).show();

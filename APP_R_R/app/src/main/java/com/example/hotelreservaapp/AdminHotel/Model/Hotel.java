@@ -10,11 +10,13 @@ public class Hotel {
     private String Distrito;
     private String Direccion;
     private String urlImage;
+    private double valoracion;
 
-    private List<Habitacion> habitaciones;  // Lista de objetos
+    private List<Habitacion> habitaciones; // Lista de habitaciones
+    private List<Servicio> servicios; // Lista de servicios
 
     public Hotel() {}
-    public Hotel(String nombre, String descripcion, String departamento, String provincia, String distrito, String direccion, String urlImage, List<Habitacion> habitaciones ) {
+    public Hotel(String nombre, String descripcion, String departamento, String provincia, String distrito, String direccion, String urlImage, List<Habitacion> habitaciones, double valoracion ) {
         this.setNombre(nombre);
         this.setDescripcion(descripcion);
         this.setDepartamento(departamento);
@@ -87,5 +89,21 @@ public class Hotel {
 
     public void setHabitaciones(List<Habitacion> habitaciones) {
         this.habitaciones = habitaciones;
+    }
+
+    public double getValoracion() {
+        return valoracion;
+    }
+
+    public void setValoracion(double valoracion) {
+        this.valoracion = valoracion;
+    }
+
+    public List<Servicio> getServicios() {
+        return servicios;
+    }
+
+    public void setServicios(List<Servicio> servicios) {
+        this.servicios = servicios;
     }
 }

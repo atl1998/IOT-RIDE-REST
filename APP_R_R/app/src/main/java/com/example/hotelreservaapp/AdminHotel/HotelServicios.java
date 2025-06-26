@@ -6,9 +6,6 @@ import android.view.View;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -22,7 +19,7 @@ public class HotelServicios extends AppCompatActivity {
 
     private RecyclerView rvServicios;
     private com.example.hotelreservaapp.AdminHotel.ServiciosAdapter adapter;
-    private List<Servicios> listaServicios;
+    private List<ServiciosAdapter.Servicios> listaServicios;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +33,7 @@ public class HotelServicios extends AppCompatActivity {
 
         // Inicializar lista de habitaciones
         listaServicios = new ArrayList<>();
-        listaServicios.add(new Servicios(
+        listaServicios.add(new ServiciosAdapter.Servicios(
                 "Buffet Almuerzo",
                 "50",
                 "adminhotel_servicio_buffet.jpg",
@@ -44,14 +41,14 @@ public class HotelServicios extends AppCompatActivity {
         ));
 
 
-        listaServicios.add(new Servicios(
+        listaServicios.add(new ServiciosAdapter.Servicios(
                 "Clase de yoga",
                 "30",
                 "adminhotel_servicio_yoga.jpg",
                 "Únete a nuestra clase de yoga, donde experimentarás una práctica relajante que mejora tu flexibilidad, fortalece el cuerpo y equilibra la mente. Ideal para todos los niveles, con un enfoque en el bienestar y la calma interior.\n"
         ));
 
-        listaServicios.add(new Servicios(
+        listaServicios.add(new ServiciosAdapter.Servicios(
                 "Gimnasio",
                 "40",
                 "adminhotel_servicio_hym.jpg",
@@ -64,7 +61,7 @@ public class HotelServicios extends AppCompatActivity {
         adapter = new ServiciosAdapter(listaServicios,this,  new ServiciosAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
-                Servicios servicio = listaServicios.get(position);
+                ServiciosAdapter.Servicios servicio = listaServicios.get(position);
                 /*mostrarPopupSeleccion(habitacion);*/
             }
 

@@ -6,14 +6,10 @@ import android.view.View;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.hotelreservaapp.R;
-import com.example.hotelreservaapp.model.UsuarioListaSuperAdmin;
 import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
@@ -21,7 +17,7 @@ import java.util.List;
 
 public class ReporteServicioActivity extends AppCompatActivity {
 
-    List<Servicios> serviciosList = new ArrayList<>();
+    List<ServiciosAdapter.Servicios> serviciosList = new ArrayList<>();
     MaterialButton btnNotificaiones;
     MaterialButton btnBuscar;
     ReporteServicioAdapter adapter;
@@ -64,10 +60,10 @@ public class ReporteServicioActivity extends AppCompatActivity {
     }
 
     private void cargarServiciosDeEjemplo() {
-        serviciosList.add(new Servicios("Gimnasio", "$532.00", "url", "ga"));
-        serviciosList.add(new Servicios("Clases de yoga", "$232.00", "url", "ga"));
-        serviciosList.add(new Servicios("Buffet criollo", "$332.00", "url", "ga"));
-        serviciosList.add(new Servicios("Desayuno buffet", "$132.00", "url", "ga"));
+        serviciosList.add(new ServiciosAdapter.Servicios("Gimnasio", "$532.00", "url", "ga"));
+        serviciosList.add(new ServiciosAdapter.Servicios("Clases de yoga", "$232.00", "url", "ga"));
+        serviciosList.add(new ServiciosAdapter.Servicios("Buffet criollo", "$332.00", "url", "ga"));
+        serviciosList.add(new ServiciosAdapter.Servicios("Desayuno buffet", "$132.00", "url", "ga"));
 
     }
 }

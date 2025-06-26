@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.hotelreservaapp.AdminHotel.Adapter.HabitacionAdapter;
 import com.example.hotelreservaapp.AdminHotel.Model.Habitacion;
 import com.example.hotelreservaapp.R;
 import com.google.android.material.button.MaterialButton;
@@ -21,7 +22,7 @@ import java.util.List;
 public class HotelHabitaciones extends AppCompatActivity {
 
     private RecyclerView rvHabitaciones;
-    private com.example.hotelreservaapp.AdminHotel.HabitacionAdapter adapter;
+    private HabitacionAdapter adapter;
     private List<Habitacion> listaHabitaciones;
 
     Button btnReservar;
@@ -38,51 +39,14 @@ public class HotelHabitaciones extends AppCompatActivity {
         // Inicializar lista de habitaciones
         listaHabitaciones = new ArrayList<>();
         listaHabitaciones.add(new Habitacion(
-                "Habitacion superior - 1 cama grande",
-                "- Precio para 2 adultos\n- 1 cama doble grande\n- Turneño 25 m2\n- WiFi de alto velocidad\n- Desayuno incluido",
-                3,
+                "Standar",
                 354.00,
-                "Grande",
-                25,
+                16.5,
+                "Para dos personas",
                 "adminhotel_habitacion1.jpg"
         ));
 
-        listaHabitaciones.add(new Habitacion(
-                "Habitacion deluxe cama extragrande",
-                "- Precio para 2 adultos\n- 1 cama doble extra grande\n- Turneño 30 m2\n- WiFi de alto velocidad\n- Desayuno incluido",
-                2,
-                417.00,
-                "Extra grande",
-                30,
-                "adminhotel_habitacion3.jpg"
-        ));
-        listaHabitaciones.add(new Habitacion(
-                "Habitacion deluxe cama extragrande",
-                "- Precio para 2 adultos\n- 1 cama doble extra grande\n- Turneño 30 m2\n- WiFi de alto velocidad\n- Desayuno incluido",
-                2,
-                417.00,
-                "Extra grande",
-                30,
-                "adminhotel_habitacion3.jpg"
-        ));
-        listaHabitaciones.add(new Habitacion(
-                "Habitacion deluxe cama extragrande",
-                "- Precio para 2 adultos\n- 1 cama doble extra grande\n- Turneño 30 m2\n- WiFi de alto velocidad\n- Desayuno incluido",
-                2,
-                417.00,
-                "Extra grande",
-                30,
-                "adminhotel_habitacion3.jpg"
-        ));
-        listaHabitaciones.add(new Habitacion(
-                "Habitacion deluxe cama extragrande",
-                "- Precio para 2 adultos\n- 1 cama doble extra grande\n- Turneño 30 m2\n- WiFi de alto velocidad\n- Desayuno incluido",
-                2,
-                417.00,
-                "Extra grande",
-                30,
-                "adminhotel_habitacion3.jpg"
-        ));
+
 
         //Inicializamos el adapter
         adapter = new HabitacionAdapter(listaHabitaciones,this,  new HabitacionAdapter.OnItemClickListener() {
@@ -99,8 +63,8 @@ public class HotelHabitaciones extends AppCompatActivity {
         });
 
         rvHabitaciones.setAdapter(adapter);
-        btnReservar = findViewById(R.id.btnReservarAhora);
-        /*
+        /*btnReservar = findViewById(R.id.btnReservarAhora);
+
         btnReservar.setOnClickListener(v -> {
             //por ahora directamente al mio bala
             startActivity(new Intent(this, DetalleHabitacionActivity.class));
