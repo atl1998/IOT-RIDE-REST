@@ -18,6 +18,7 @@ import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
@@ -47,6 +48,7 @@ public class Registro4AddHabitacion_fragment extends Fragment {
     private ActivityResultLauncher<Intent> pickImageLauncher;
     private Habitacion habitacion = new Habitacion();
     private Uri cameraImageUri;
+    private ArrayAdapter<String> habAdapter;
     private final ActivityResultLauncher<Intent> takePhotoLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
@@ -89,6 +91,14 @@ public class Registro4AddHabitacion_fragment extends Fragment {
 
         // Inicializar botón para cambiar foto
         binding.buttonOpenCamera.setOnClickListener(v -> mostrarDialogoFoto());
+
+        String [] habNames = getResources().getStringArray(R.array.tipos_habitacion);
+        /* ----- Adapter de Departamentos ----- */
+        habAdapter = new ArrayAdapter<>(
+                requireContext(),
+                android.R.layout.simple_list_item_1,
+                habNames);
+        binding.etTipo.setAdapter(habAdapter);
 
         //Lógica para continuar
         btnContinuar4 = binding.btnContinuar4;

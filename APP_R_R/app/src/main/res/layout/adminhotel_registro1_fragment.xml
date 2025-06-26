@@ -113,18 +113,23 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
+        app:endIconMode="dropdown_menu"
         app:layout_constraintTop_toBottomOf="@id/tilDescripcion"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <com.google.android.material.textfield.TextInputEditText
+        <AutoCompleteTextView
             android:id="@+id/etDepartamento"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:hint="Departamento"
+            android:inputType="none"
+            android:focusable="true"
+            android:clickable="true"
             android:textColor="#452C06"
             android:textColorHint="#BDBDBD"
-            android:inputType="text" />
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"/>
     </com.google.android.material.textfield.TextInputLayout>
 
     <!-- Provincia -->
@@ -134,18 +139,21 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
+        app:endIconMode="dropdown_menu"
         app:layout_constraintTop_toBottomOf="@id/tilDepartamento"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <com.google.android.material.textfield.TextInputEditText
+        <AutoCompleteTextView
             android:id="@+id/etProvincia"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:hint="Provincia"
-            android:textColor="#452C06"
-            android:textColorHint="#BDBDBD"
-            android:inputType="text" />
+            android:inputType="none"
+            android:focusable="true"
+            android:clickable="true"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"/>
     </com.google.android.material.textfield.TextInputLayout>
 
     <!-- Distrito -->
@@ -155,18 +163,21 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
+        app:endIconMode="dropdown_menu"
         app:layout_constraintTop_toBottomOf="@id/tilProvincia"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <com.google.android.material.textfield.TextInputEditText
+        <AutoCompleteTextView
             android:id="@+id/etDistrito"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:hint="Distrito"
-            android:textColor="#452C06"
-            android:textColorHint="#BDBDBD"
-            android:inputType="text" />
+            android:inputType="none"
+            android:focusable="true"
+            android:clickable="true"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"/>
     </com.google.android.material.textfield.TextInputLayout>
 
     <!-- Dirección -->

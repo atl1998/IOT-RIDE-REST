@@ -102,7 +102,6 @@ public class Registro5Servicios_fragment extends Fragment {
             if (listaServicios != null) {
                 // Guardar en database
                 guardarHotel();
-                actualizarAdminHotel();
                 startActivity(new Intent(getActivity(), MainActivity.class));
             } else {
                 Toast.makeText(getContext(), "Ingresa una foto", Toast.LENGTH_SHORT).show();
@@ -151,6 +150,7 @@ public class Registro5Servicios_fragment extends Fragment {
                 .addOnSuccessListener(aVoid -> {
                     //Guardado de subcolecciones
                     hotelId = aVoid.getId();
+                    actualizarAdminHotel();
 
                     // Luego guardas habitaciones como subcolección
                     for (Habitacion hab : hotel.getHabitaciones()) {
