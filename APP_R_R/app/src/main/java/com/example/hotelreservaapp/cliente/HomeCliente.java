@@ -59,6 +59,7 @@ public class HomeCliente extends AppCompatActivity {
     private OfertaHotelAdapter ofertasAdapter;
     private List<OfertaHotel> listaOfertas;
     private AutoCompleteTextView etDestino;
+    private String tipoDestinoSeleccionado = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,25 +67,27 @@ public class HomeCliente extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.cliente_activity_home);
 
+        etDestino = findViewById(R.id.etDestino);
+        etFecha = findViewById(R.id.etFecha);
+        etCantidad = findViewById(R.id.etCantidad);
+        btnBuscar = findViewById(R.id.btnBuscar);
+        btnNotificaciones = findViewById(R.id.notificaciones_cliente);
         bottomNav = findViewById(R.id.bottonNavigationView);
+        ofertasRecyclerView = findViewById(R.id.ofertasRecyclerView);
+
         configurarBottomNav();
 
-        etDestino = findViewById(R.id.etDestino);
+        // Abrir BuscadorDestino personalizado
         etDestino.setOnClickListener(v -> {
             Intent intent = new Intent(this, BuscadorDestino.class);
             startActivityForResult(intent, 1001);
         });
 
-
-        /**/
-        etFecha = findViewById(R.id.etFecha);
-        etCantidad = findViewById(R.id.etCantidad);
-        btnBuscar = findViewById(R.id.btnBuscar);
-
+        // Configurar selección de fechas y visitantes
         etFecha.setOnClickListener(view -> showDateRangePicker());
         setupVisitorsSelection();
 
-        // Cargar búsqueda previa
+        // Cargar búsqueda anterior si existe
         SharedPreferences prefs = getSharedPreferences("BusquedaHotelPrefs", MODE_PRIVATE);
         String destinoGuardado = prefs.getString("destino", "");
         long fechaInicio = prefs.getLong("fechaInicio", -1);
@@ -98,14 +101,14 @@ public class HomeCliente extends AppCompatActivity {
             calendarFin.setTimeInMillis(fechaFin);
             actualizarFechasSeleccionadas();
         }
+
         cantidadAdultos = adultos;
         cantidadNinos = ninos;
         actualizarCantidadVisitantes();
 
         btnBuscar.setOnClickListener(v -> realizarBusqueda());
 
-        // Ofertas
-        ofertasRecyclerView = findViewById(R.id.ofertasRecyclerView);
+        // Cargar ofertas demo
         ofertasRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         cargarOfertasEjemplo();
         ofertasAdapter = new OfertaHotelAdapter(this, listaOfertas);
@@ -114,16 +117,10 @@ public class HomeCliente extends AppCompatActivity {
                 Toast.makeText(HomeCliente.this, "Seleccionaste: " + oferta.getNombre(), Toast.LENGTH_SHORT).show()
         );
 
-        btnNotificaciones = findViewById(R.id.notificaciones_cliente);
         btnNotificaciones.setOnClickListener(v -> startActivity(new Intent(this, ClienteNotificaciones.class)));
 
-        // Autocompletar destino
-        String[] destinos = {"Lima", "Arequipa", "Cusco", "Trujillo", "Piura", "Chiclayo", "Iquitos", "Tacna", "Puno", "Huancayo",
-                "Cajamarca", "Ayacucho", "Huaraz", "Tarapoto", "Tumbes", "Moquegua", "Pucallpa", "Ica", "Chimbote", "Juliaca",
-                "Puerto Maldonado", "Sullana", "Jaén", "Cerro de Pasco", "Huaral", "Cañete", "Huacho", "Abancay",
-                "Bagua Grande", "Satipo", "Oxapampa", "Chachapoyas", "Yurimaguas", "Tingo María", "Barranca", "Talara",
-                "Huánuco", "Moyobamba", "La Merced"};
-
+        // Autocompletado local como ayuda adicional
+        String[] destinos = {"Lima", "Arequipa", "Cusco", "Trujillo", "Piura", "Chiclayo", "Iquitos", "Tacna", "Puno", "Huancayo"};
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, destinos);
         etDestino.setAdapter(adapter);
     }
@@ -132,16 +129,45 @@ public class HomeCliente extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1001 && resultCode == RESULT_OK && data != null) {
-            String nombreCiudad = data.getStringExtra("name");
-            String ciudad = data.getStringExtra("city");
-            String pais = data.getStringExtra("country");
-            String region = data.getStringExtra("region");
+            String nombre = data.getStringExtra("name");
+            String tipo = data.getStringExtra("tipo"); // <- tipo: "city", "state", etc.
 
-            etDestino.setText(nombreCiudad);
+            if (nombre != null) etDestino.setText(nombre);
+            tipoDestinoSeleccionado = tipo != null ? tipo : "";
 
-            // Opcional: guardar en variables globales para usarlas luego en filtros
-            Log.d("Destino", "Ciudad: " + ciudad + ", País: " + pais + ", Región: " + region);
+            Log.d("Destino", "Seleccionado: " + nombre + " (Tipo: " + tipoDestinoSeleccionado + ")");
         }
+    }
+
+    private void realizarBusqueda() {
+        String destino = etDestino.getText().toString().trim();
+
+        if (destino.isEmpty()) {
+            Toast.makeText(this, "Por favor, ingresa un destino", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (calendarInicio == null || calendarFin == null || calendarInicio.getTimeInMillis() >= calendarFin.getTimeInMillis()) {
+            Toast.makeText(this, "Selecciona un rango de fechas válido", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        SharedPreferences.Editor editor = getSharedPreferences("BusquedaHotelPrefs", MODE_PRIVATE).edit();
+        editor.putString("destino", destino);
+        editor.putLong("fechaInicio", calendarInicio.getTimeInMillis());
+        editor.putLong("fechaFin", calendarFin.getTimeInMillis());
+        editor.putInt("adultos", cantidadAdultos);
+        editor.putInt("ninos", cantidadNinos);
+        editor.apply();
+
+        Intent intent = new Intent(this, ListaHotelesCliente.class);
+        intent.putExtra("destino", destino);
+        intent.putExtra("tipo", tipoDestinoSeleccionado); // <- enviar tipo al siguiente activity
+        intent.putExtra("fechaInicio", calendarInicio.getTimeInMillis());
+        intent.putExtra("fechaFin", calendarFin.getTimeInMillis());
+        intent.putExtra("adultos", cantidadAdultos);
+        intent.putExtra("ninos", cantidadNinos);
+        startActivity(intent);
     }
 
     @Override
@@ -280,36 +306,6 @@ public class HomeCliente extends AppCompatActivity {
         String visitantes = (cantidadAdultos == 1 ? "1 adulto" : cantidadAdultos + " adultos");
         if (cantidadNinos > 0) visitantes += cantidadNinos == 1 ? ", 1 niño" : ", " + cantidadNinos + " niños";
         etCantidad.setText(visitantes);
-    }
-
-    private void realizarBusqueda() {
-        String destino = etDestino.getText().toString().trim();
-        String fechas = etFecha.getText().toString().trim();
-        String visitantes = etCantidad.getText().toString().trim();
-
-        if (destino.isEmpty() || fechas.isEmpty() || visitantes.isEmpty()) {
-            Toast.makeText(this, "Complete todos los campos", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        // Guardar búsqueda
-        SharedPreferences prefs = getSharedPreferences("BusquedaHotelPrefs", MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putString("destino", destino);
-        editor.putLong("fechaInicio", calendarInicio.getTimeInMillis());
-        editor.putLong("fechaFin", calendarFin.getTimeInMillis());
-        editor.putInt("adultos", cantidadAdultos);
-        editor.putInt("ninos", cantidadNinos);
-        editor.apply();
-
-        // Navegar a lista de hoteles
-        Intent intent = new Intent(this, ListaHotelesCliente.class);
-        intent.putExtra("destino", destino);
-        intent.putExtra("fechaInicio", calendarInicio.getTimeInMillis());
-        intent.putExtra("fechaFin", calendarFin.getTimeInMillis());
-        intent.putExtra("adultos", cantidadAdultos);
-        intent.putExtra("ninos", cantidadNinos);
-        startActivity(intent);
     }
 
     private void cargarOfertasEjemplo() {
