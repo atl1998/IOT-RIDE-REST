@@ -6,7 +6,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/white"
     android:fillViewport="true"
-    tools:context=".AdminHotel.Registro6AddServicio_fragment">
+    tools:context=".AdminHotel.Fragments.Registro6AddServicio_fragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"

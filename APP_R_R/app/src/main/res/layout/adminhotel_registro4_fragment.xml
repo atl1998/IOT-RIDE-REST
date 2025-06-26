@@ -6,7 +6,7 @@ android:layout_height="match_parent"
 xmlns:tools="http://schemas.android.com/tools"
 android:background="@color/white"
 android:fillViewport="true"
-tools:context=".AdminHotel.Registro4AddHabitacion_fragment">
+tools:context=".AdminHotel.Fragments.Registro4AddHabitacion_fragment">
 
 <androidx.constraintlayout.widget.ConstraintLayout
     android:layout_width="match_parent"

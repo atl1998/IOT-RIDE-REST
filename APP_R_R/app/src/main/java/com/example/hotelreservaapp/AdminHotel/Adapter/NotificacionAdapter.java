@@ -8,7 +8,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.hotelreservaapp.AdminHotel.Notificacion;
+import com.example.hotelreservaapp.AdminHotel.Model.Notificacion;
 import com.example.hotelreservaapp.R;
 
 import java.util.List;

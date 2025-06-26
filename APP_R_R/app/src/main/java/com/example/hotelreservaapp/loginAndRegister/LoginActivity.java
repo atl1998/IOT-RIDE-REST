@@ -5,21 +5,17 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.view.View;
 import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
 
-import com.example.hotelreservaapp.AdminHotel.InicioFragment;
 import com.example.hotelreservaapp.AdminHotel.MainActivity;
 import com.example.hotelreservaapp.AdminHotel.RegistroHotelActivity;
 import com.example.hotelreservaapp.R;
 import com.example.hotelreservaapp.SuperAdminMainActivity;
 import com.example.hotelreservaapp.cliente.HomeCliente;
-import com.example.hotelreservaapp.model.DetallesTaxista;
 import com.example.hotelreservaapp.model.Usuario;
 import com.example.hotelreservaapp.taxista.TaxistaMain;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;

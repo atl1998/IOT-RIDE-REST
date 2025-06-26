@@ -9,6 +9,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.hotelreservaapp.AdminHotel.Adapter.ReporteServicioAdapter;
+import com.example.hotelreservaapp.AdminHotel.Model.Servicio;
 import com.example.hotelreservaapp.R;
 import com.google.android.material.button.MaterialButton;
 
@@ -17,7 +19,7 @@ import java.util.List;
 
 public class ReporteServicioActivity extends AppCompatActivity {
 
-    List<ServiciosAdapter.Servicios> serviciosList = new ArrayList<>();
+    List<Servicio> serviciosList = new ArrayList<>();
     MaterialButton btnNotificaiones;
     MaterialButton btnBuscar;
     ReporteServicioAdapter adapter;
@@ -60,10 +62,8 @@ public class ReporteServicioActivity extends AppCompatActivity {
     }
 
     private void cargarServiciosDeEjemplo() {
-        serviciosList.add(new ServiciosAdapter.Servicios("Gimnasio", "$532.00", "url", "ga"));
-        serviciosList.add(new ServiciosAdapter.Servicios("Clases de yoga", "$232.00", "url", "ga"));
-        serviciosList.add(new ServiciosAdapter.Servicios("Buffet criollo", "$332.00", "url", "ga"));
-        serviciosList.add(new ServiciosAdapter.Servicios("Desayuno buffet", "$132.00", "url", "ga"));
+        serviciosList.add(new Servicio("Buffet criollo", "ga", 332.00, "url"));
+        serviciosList.add(new Servicio("Desayuno buffet", "ga", 132.00, "url"));
 
     }
 }

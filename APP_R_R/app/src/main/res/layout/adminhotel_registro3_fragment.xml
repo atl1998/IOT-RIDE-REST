@@ -6,7 +6,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/white"
     android:fillViewport="true"
-    tools:context=".AdminHotel.Registro3Habitaciones_fragment">
+    tools:context=".AdminHotel.Fragments.Registro3Habitaciones_fragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/headerLayout"

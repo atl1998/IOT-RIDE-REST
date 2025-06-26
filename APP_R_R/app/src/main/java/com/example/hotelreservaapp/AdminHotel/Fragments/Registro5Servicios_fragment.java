@@ -1,4 +1,4 @@
-package com.example.hotelreservaapp.AdminHotel;
+package com.example.hotelreservaapp.AdminHotel.Fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,15 +15,14 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.example.hotelreservaapp.AdminHotel.Adapter.HabitacionAdapter;
 import com.example.hotelreservaapp.AdminHotel.Adapter.ServicioAdapter;
+import com.example.hotelreservaapp.AdminHotel.MainActivity;
 import com.example.hotelreservaapp.AdminHotel.Model.Habitacion;
 import com.example.hotelreservaapp.AdminHotel.Model.Hotel;
 import com.example.hotelreservaapp.AdminHotel.Model.Servicio;
+import com.example.hotelreservaapp.AdminHotel.RegistroHotelActivity;
 import com.example.hotelreservaapp.AdminHotel.ViewModel.RegistroViewModel;
 import com.example.hotelreservaapp.LogManager;
-import com.example.hotelreservaapp.R;
-import com.example.hotelreservaapp.databinding.AdminhotelRegistro3FragmentBinding;
 import com.example.hotelreservaapp.databinding.AdminhotelRegistro5FragmentBinding;
 import com.example.hotelreservaapp.model.Usuario;
 import com.google.android.material.button.MaterialButton;
