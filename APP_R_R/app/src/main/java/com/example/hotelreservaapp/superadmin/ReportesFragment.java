@@ -20,6 +20,14 @@ import com.example.hotelreservaapp.R;
 import com.example.hotelreservaapp.adapter.ReportesAdapter;
 import com.example.hotelreservaapp.databinding.SuperadminReportesFragmentBinding;
 import com.example.hotelreservaapp.model.Reporte;
+import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.components.Description;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.google.android.material.datepicker.CalendarConstraints;
 import com.google.android.material.datepicker.DateValidatorPointBackward;
 import com.google.android.material.datepicker.MaterialDatePicker;
@@ -27,9 +35,12 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.TimeZone;
 
 public class ReportesFragment extends Fragment {
@@ -63,110 +74,87 @@ public class ReportesFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        ArrayAdapter<String> adapterHoteles = new ArrayAdapter<>(
-                requireContext(),
-                android.R.layout.simple_dropdown_item_1line,
-                hoteles
-        );
-        binding.spinnerHotel.setAdapter(adapterHoteles);
-        binding.spinnerHotel.setText("Todos", false);
+        // Datos ficticios
+        Map<String, Integer> conteo = new HashMap<>();
+        conteo.put("Hotel Miraflores Palace", 5);
+        conteo.put("Hotel Costa Azul", 3);
+        conteo.put("Hotel Andino Real", 4);
 
-        ImageView iconHelp = view.findViewById(R.id.iconHelp);
-        iconHelp.setOnClickListener(v -> {
-            new MaterialAlertDialogBuilder(requireContext())
-                    .setTitle("Sección Reportes")
-                    .setMessage("Aquí puedes visualizar todos los reportes de reservas realizados mediante la app.\nUtiliza los distintos filtros y selecciona la reserva de tu interés para ver más información")
-                    .setPositiveButton("Entendido", null)
-                    .show();
+        // Ordenar y tomar top 3
+        List<Map.Entry<String, Integer>> topHoteles = new ArrayList<>(conteo.entrySet());
+        Collections.sort(topHoteles, (a, b) -> b.getValue().compareTo(a.getValue()));
+        topHoteles = topHoteles.subList(0, Math.min(3, topHoteles.size()));
+
+        List<BarEntry> entries = new ArrayList<>();
+        List<String> etiquetas = new ArrayList<>();
+        int index = 0;
+        for (Map.Entry<String, Integer> entry : topHoteles) {
+            entries.add(new BarEntry(index, entry.getValue()));
+            etiquetas.add(entry.getKey());
+            index++;
+        }
+
+        BarDataSet dataSet = new BarDataSet(entries, "Top 3 Hoteles");
+        dataSet.setColor(getResources().getColor(R.color.bluee));
+        dataSet.setValueTextColor(getResources().getColor(R.color.marron_oscuro));
+        BarData barData = new BarData(dataSet);
+        barData.setBarWidth(0.5f);
+
+        BarChart chart = binding.barChartTop3;
+        chart.setData(barData);
+        chart.getXAxis().setValueFormatter(new IndexAxisValueFormatter(etiquetas));
+        chart.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
+        chart.getXAxis().setGranularity(1f);
+        chart.getXAxis().setGranularityEnabled(true);
+        chart.getXAxis().setTextColor(getResources().getColor(R.color.marron_oscuro));
+        chart.getAxisLeft().setTextColor(getResources().getColor(R.color.marron_oscuro));
+        chart.getAxisRight().setEnabled(false);
+
+        YAxis yAxis = chart.getAxisLeft();
+        yAxis.setAxisMinimum(0f);
+
+        Description description = new Description();
+        description.setText("");
+        chart.setDescription(description);
+
+        chart.setExtraTopOffset(10f);
+        chart.setExtraLeftOffset(10f);
+        chart.setExtraRightOffset(10f);
+
+        chart.setDrawGridBackground(false);
+        chart.setDrawBarShadow(false);
+        chart.animateY(1000);
+        chart.invalidate();
+
+        // Botón para ver historial de reservas
+        binding.btnVerHistorial.setOnClickListener(v -> {
+            Intent intent = new Intent(requireContext(), HistorialReservasActivity.class);
+            startActivity(intent);
         });
 
-        binding.etFecha.setOnClickListener(v -> {
-            CalendarConstraints.DateValidator dateValidator =
-                    DateValidatorPointBackward.before(MaterialDatePicker.todayInUtcMilliseconds());
-
-            CalendarConstraints constraints = new CalendarConstraints.Builder()
-                    .setValidator(dateValidator)
-                    .build();
-
-            MaterialDatePicker<Long> datePicker = MaterialDatePicker.Builder.datePicker()
-                    .setTitleText("Selecciona una fecha")
-                    .setCalendarConstraints(constraints)
-                    .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
-                    .build();
-
-            datePicker.show(getParentFragmentManager(), "MATERIAL_DATE_PICKER");
-
-            datePicker.addOnPositiveButtonClickListener(selection -> {
-                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-                sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
-                String fechaFormateada = sdf.format(new Date(selection));
-                binding.etFecha.setText(fechaFormateada);
-                filtrarResultados();
-            });
-        });
-
-        binding.spinnerHotel.setOnItemClickListener((parent, view1, position, id) -> filtrarResultados());
-
-        todosLosReportes = new ArrayList<>();
-        todosLosReportes.add(new Reporte("Hotel Miraflores Palace", "Adrian Bala", "10/04/2025", "Confirmada", R.drawable.hotel1));
-        todosLosReportes.add(new Reporte("Hotel Costa Azul", "Nilo Cori", "06/05/2025", "Cancelada", R.drawable.hotel2));
-        todosLosReportes.add(new Reporte("Hotel Andino Real", "Giorgio Coronado", "07/05/2025", "Confirmada", R.drawable.hotel1_example));
-        todosLosReportes.add(new Reporte("Hotel El Sol Imperial", "Camila Mendoza", "05/05/2025", "Confirmada", R.drawable.hotel2_example));
-        todosLosReportes.add(new Reporte("Hotel Laguna Dorada", "Sebastián Vega", "04/05/2025", "Cancelada", R.drawable.hotel3_example));
-        todosLosReportes.add(new Reporte("Hotel Nevado Blanco", "Renata Silva", "03/05/2025", "Confirmada", R.drawable.hotel4_example));
-        todosLosReportes.add(new Reporte("Hotel Bahía Serena", "Diego Ríos", "02/05/2025", "Confirmada", R.drawable.hotel5_example));
-        todosLosReportes.add(new Reporte("Hotel Miraflores Palace", "Valeria López", "02/05/2025", "Confirmada", R.drawable.hotel1));
-        todosLosReportes.add(new Reporte("Hotel Costa Azul", "Santiago Pérez", "30/04/2025", "Cancelada", R.drawable.hotel2));
-        todosLosReportes.add(new Reporte("Hotel Andino Real", "Andrea Ruiz", "01/05/2025", "Confirmada", R.drawable.hotel1_example));
-        todosLosReportes.add(new Reporte("Hotel Miraflores Palace", "Matías Delgado", "29/04/2025", "Cancelada", R.drawable.hotel1));
-
-        adapter = new ReportesAdapter(todosLosReportes);
-        binding.recyclerRegistros.setLayoutManager(new LinearLayoutManager(requireContext()));
-        binding.recyclerRegistros.setAdapter(adapter);
-
-        binding.btnLimpiarFecha.setOnClickListener(v -> {
-            binding.etFecha.setText("");
-            filtrarResultados();
-        });
-
-        LinearLayout opcionReportes = binding.opcionReportes;
-        LinearLayout opcionLogs = binding.opcionLogs;
-
-        binding.opcionReportes.setBackgroundResource(R.drawable.bg_opcion_selected);
-        binding.opcionLogs.setBackgroundResource(R.drawable.bg_opcion_unselected);
-
-
-        opcionReportes.setOnClickListener(v -> {
-            opcionReportes.setBackgroundResource(R.drawable.bg_opcion_selected);
-            opcionLogs.setBackgroundResource(R.drawable.bg_opcion_unselected);
-        });
-
-        opcionLogs.setOnClickListener(v -> {
-            opcionLogs.setBackgroundResource(R.drawable.bg_opcion_selected);
-            opcionReportes.setBackgroundResource(R.drawable.bg_opcion_unselected);
+        // Botón para ver Logs
+        binding.opcionLogs.setOnClickListener(v -> {
+            binding.opcionLogs.setBackgroundResource(R.drawable.bg_opcion_selected);
+            binding.opcionReportes.setBackgroundResource(R.drawable.bg_opcion_unselected);
             FragmentTransaction transaction = requireActivity()
                     .getSupportFragmentManager()
                     .beginTransaction();
-            transaction.replace(R.id.fragmentContainer, new LogsFragment());  // Usa el ID de tu container principal
-            transaction.addToBackStack(null); // Permite regresar con el botón atrás
+            transaction.replace(R.id.fragmentContainer, new LogsFragment());
+            transaction.addToBackStack(null);
             transaction.commit();
+        });
+
+        binding.opcionReportes.setOnClickListener(v -> {
+            binding.opcionReportes.setBackgroundResource(R.drawable.bg_opcion_selected);
+            binding.opcionLogs.setBackgroundResource(R.drawable.bg_opcion_unselected);
+        });
+        binding.iconHelp.setOnClickListener(v -> {
+            new MaterialAlertDialogBuilder(requireContext())
+                    .setTitle("Reportes de reservas")
+                    .setMessage("Aquí puedes visualizar las estadísticas de los hoteles con mayor número de reservas. Usa el botón inferior para ver el historial detallado.")
+                    .setPositiveButton("Entendido", null)
+                    .show();
         });
     }
 
-    private void filtrarResultados() {
-        String hotelSeleccionado = binding.spinnerHotel.getText().toString().trim();
-        String fechaSeleccionada = binding.etFecha.getText().toString().trim();
-
-        List<Reporte> filtrados = new ArrayList<>();
-        for (Reporte r : todosLosReportes) {
-            boolean coincideHotel = hotelSeleccionado.equals("Todos") || r.getHotel().equalsIgnoreCase(hotelSeleccionado);
-            boolean coincideFecha = fechaSeleccionada.isEmpty() || r.getFecha().equals(fechaSeleccionada);
-
-            if (coincideHotel && coincideFecha) {
-                filtrados.add(r);
-            }
-        }
-
-        adapter.actualizarLista(filtrados);
-    }
 }

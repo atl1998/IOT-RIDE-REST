@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F5F5">
+    android:background="#F5F5F5"
+    android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -82,7 +83,7 @@
                     android:id="@+id/tv_user_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Adrian Bala"
+                    android:text=""
                     android:textColor="@color/black"
                     android:textSize="16sp"
                     android:textStyle="bold" />
@@ -91,7 +92,7 @@
                     android:id="@+id/tv_user_handle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="adrianbala@pucp.edu.pe"
+                    android:text=""
                     android:textColor="#808080"
                     android:textSize="14sp" />
             </LinearLayout>
@@ -132,7 +133,7 @@
                     android:id="@+id/etNombre"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Adrian"
+                    android:text=""
                     android:enabled="false" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -148,7 +149,7 @@
                     android:id="@+id/etApellido"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Bala"
+                    android:text=""
                     android:enabled="false" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -164,7 +165,7 @@
                     android:id="@+id/etCorreo"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="adrianbala@pucp.edu.pe"
+                    android:text=""
                     android:inputType="textEmailAddress"
                     android:enabled="false" />
             </com.google.android.material.textfield.TextInputLayout>
@@ -181,7 +182,7 @@
                     android:id="@+id/etDni"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="70894123"
+                    android:text=""
                     android:inputType="number"
                     android:enabled="false" />
             </com.google.android.material.textfield.TextInputLayout>
@@ -198,7 +199,7 @@
                     android:id="@+id/etTelefono"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="987654321"
+                    android:text=""
                     android:inputType="phone"
                     android:enabled="false" />
             </com.google.android.material.textfield.TextInputLayout>
@@ -215,7 +216,7 @@
                     android:id="@+id/etDireccion"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Av. Universitaria 1801"
+                    android:text=""
                     android:enabled="false" />
             </com.google.android.material.textfield.TextInputLayout>
         </LinearLayout>

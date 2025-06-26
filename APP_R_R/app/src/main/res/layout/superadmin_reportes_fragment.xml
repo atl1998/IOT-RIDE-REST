@@ -31,7 +31,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Registros"
+                android:text="Reportes de reserva"
                 android:paddingStart="5sp"
                 android:textStyle="bold"
                 android:textSize="20sp"
@@ -116,75 +116,48 @@
             </LinearLayout>
         </HorizontalScrollView>
     </LinearLayout>
-
-    <!-- 🟫 Filtros -->
-    <LinearLayout
-        android:id="@+id/filtrosLayout"
-        android:layout_width="0dp"
+    <TextView
+        android:id="@+id/tvTituloGrafico"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp"
+        android:text="Top 3 hoteles con más reservas registradas"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:textColor="@color/marron_oscuro"
         app:layout_constraintTop_toBottomOf="@id/header"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Seleccionar hotel"
-            app:endIconMode="dropdown_menu">
-
-            <AutoCompleteTextView
-                android:id="@+id/spinnerHotel"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingStart="12dp"
-                android:inputType="none"/>
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Fecha:"
-            android:textColor="@android:color/black"
-            android:layout_marginTop="12dp" />
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:endIconMode="custom"
-            app:endIconDrawable="@drawable/calendar_icon">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etFecha"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="none"
-                android:focusable="false" />
-        </com.google.android.material.textfield.TextInputLayout>
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnLimpiarFecha"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Quitar filtro de fecha"
-            android:layout_marginTop="8dp"
-            android:textColor="@color/black"
-            android:backgroundTint="@color/white"
-            app:strokeColor="@color/amarillo"
-            app:strokeWidth="1dp"
-            app:cornerRadius="8dp" />
-    </LinearLayout>
-
-    <!-- 🟩 Lista sin fondo -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerRegistros"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:padding="12dp"
-        app:layout_constraintTop_toBottomOf="@id/filtrosLayout"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:paddingBottom="80dp"/>
+        android:layout_marginTop="16dp"/>
+    <!-- BarChart -->
+    <com.github.mikephil.charting.charts.BarChart
+        android:id="@+id/barChartTop3"
+        android:layout_width="0dp"
+        android:layout_height="300dp"
+        android:layout_marginTop="24dp"
+        app:layout_constraintTop_toBottomOf="@id/tvTituloGrafico"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Botón para ir a historial -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnVerHistorial"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:backgroundTint="@color/white"
+        android:text="Ver historial de reservas"
+        android:textColor="@color/black"
+        app:cornerRadius="8dp"
+        app:icon="@drawable/historial_icon"
+        app:iconTint="@color/black"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.169"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/barChartTop3"
+        app:layout_constraintVertical_bias="0.05"
+        app:strokeColor="@color/amarillo_dorado"
+        app:strokeWidth="1dp" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

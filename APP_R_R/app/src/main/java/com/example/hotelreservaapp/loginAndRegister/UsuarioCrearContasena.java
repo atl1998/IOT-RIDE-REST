@@ -1,6 +1,7 @@
 package com.example.hotelreservaapp.loginAndRegister;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -17,6 +18,8 @@ import com.example.hotelreservaapp.model.Usuario;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 public class UsuarioCrearContasena extends AppCompatActivity {
 
@@ -27,6 +30,8 @@ public class UsuarioCrearContasena extends AppCompatActivity {
     // Firebase
     private FirebaseAuth mAuth;
     private FirebaseFirestore firestore;
+    private FirebaseStorage storage;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +42,7 @@ public class UsuarioCrearContasena extends AppCompatActivity {
         // Inicializar Firebase
         mAuth = FirebaseAuth.getInstance();
         firestore = FirebaseFirestore.getInstance();
+        storage = FirebaseStorage.getInstance();
 
         // Recuperar datos del intent anterior
         Intent intent = getIntent();
@@ -115,38 +121,16 @@ public class UsuarioCrearContasena extends AppCompatActivity {
                 .addOnSuccessListener(authResult -> {
                     FirebaseUser firebaseUser = mAuth.getCurrentUser();
                     if (firebaseUser != null) {
-                        Usuario usuario = new Usuario(
-                                nombres,
-                                apellidos,
-                                "cliente",
-                                tipoDocumento,
-                                numeroDocumento,
-                                fechaNacimiento,
-                                correo,
-                                telefono,
-                                direccion,
-                                fotoPerfilUri,
-                                true,
-                                false
-                        );
-
-                        firestore.collection("usuarios")
-                                .document(firebaseUser.getUid())
-                                .set(usuario)
-                                .addOnSuccessListener(unused -> {
-                                    String nombreCompleto = nombres + " " + apellidos;
-                                    LogManager.registrarLogRegistro(
-                                            nombreCompleto,
-                                            "Registro de usuario",
-                                            "El usuario se registró como cliente con el correo " + correo
-                                    );
-                                    Toast.makeText(this, "Registro exitoso", Toast.LENGTH_SHORT).show();
-                                    mAuth.signOut();
-                                    mostrarDialogoRegistroExitoso();
-                                })
-                                .addOnFailureListener(e -> {
-                                    Toast.makeText(this, "Error al guardar datos: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                                });
+                        if (fotoPerfilUri != null && !fotoPerfilUri.isEmpty()) {
+                            StorageReference ref = storage.getReference().child("fotos_perfil/" + firebaseUser.getUid() + ".jpg");
+                            ref.putFile(Uri.parse(fotoPerfilUri))
+                                    .addOnSuccessListener(taskSnapshot -> ref.getDownloadUrl().addOnSuccessListener(uri -> {
+                                        guardarUsuario(firebaseUser, uri.toString());
+                                    }))
+                                    .addOnFailureListener(e -> Toast.makeText(this, "Error al subir la foto", Toast.LENGTH_SHORT).show());
+                        } else {
+                            guardarUsuario(firebaseUser, "");
+                        }
                     }
                 })
                 .addOnFailureListener(e -> {
@@ -155,6 +139,41 @@ public class UsuarioCrearContasena extends AppCompatActivity {
                     } else {
                         Toast.makeText(this, "Error en el registro: " + e.getMessage(), Toast.LENGTH_LONG).show();
                     }
+                });
+    }
+
+    private void guardarUsuario(FirebaseUser firebaseUser, String urlFoto) {
+        Usuario usuario = new Usuario(
+                nombres,
+                apellidos,
+                "cliente",
+                tipoDocumento,
+                numeroDocumento,
+                fechaNacimiento,
+                correo,
+                telefono,
+                direccion,
+                urlFoto,
+                true,
+                false
+        );
+
+        firestore.collection("usuarios")
+                .document(firebaseUser.getUid())
+                .set(usuario)
+                .addOnSuccessListener(unused -> {
+                    String nombreCompleto = nombres + " " + apellidos;
+                    LogManager.registrarLogRegistro(
+                            nombreCompleto,
+                            "Registro de usuario",
+                            "El usuario se registró como cliente con el correo " + correo
+                    );
+                    Toast.makeText(this, "Registro exitoso", Toast.LENGTH_SHORT).show();
+                    mAuth.signOut();
+                    mostrarDialogoRegistroExitoso();
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "Error al guardar datos: " + e.getMessage(), Toast.LENGTH_LONG).show();
                 });
     }
 
