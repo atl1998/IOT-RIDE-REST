@@ -42,14 +42,14 @@ public class LogsAdapter extends RecyclerView.Adapter<LogsAdapter.LogViewHolder>
 
         // Icono según tipo de acción
         String accion = log.getAccion().toLowerCase();
-        if (accion.contains("creó") || accion.contains("agregó")) {
+        if (accion.toLowerCase().contains("registro") || accion.toLowerCase().contains("agregó")) {
             holder.imgIcono.setImageResource(R.drawable.add_icon);
-        } else if (accion.contains("eliminó") || accion.contains("canceló")) {
+        } else if (accion.toLowerCase().contains("eliminó") || accion.toLowerCase().contains("canceló")) {
             holder.imgIcono.setImageResource(R.drawable.delete_icon);
-        } else if (accion.contains("modificó") || accion
+        } else if (accion.toLowerCase().contains("modificó") || accion.toLowerCase()
                 .contains("actualizó")) {
             holder.imgIcono.setImageResource(R.drawable.edit_icon);
-        } else if (accion.contains("check-out") || accion.contains("finalizó")) {
+        } else if (accion.toLowerCase().contains("check-out") || accion.toLowerCase().contains("finalizó")) {
             holder.imgIcono.setImageResource(R.drawable.checkout_icon);
         } else {
             holder.imgIcono.setImageResource(R.drawable.info_icon);
