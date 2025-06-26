@@ -54,17 +54,16 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
     </LinearLayout>
 
-    <!-- Imagen del mapa estática -->
-    <ImageView
-        android:id="@+id/mapaImagen"
+    <fragment
+        android:id="@+id/mapaFragment"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:scaleType="centerCrop"
-        android:src="@drawable/viaje_en_curso"
         app:layout_constraintTop_toBottomOf="@id/header"
         app:layout_constraintBottom_toTopOf="@id/cardCliente"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
+
 
     <!-- Tarjeta flotante con datos -->
     <androidx.cardview.widget.CardView
@@ -80,23 +79,23 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="132dp"
+            android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:padding="12dp"
-            android:gravity="center_vertical">
+            android:padding="12dp">
 
             <ImageView
                 android:id="@+id/fotoCliente"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
-                android:src="@drawable/coronado"
                 android:layout_marginEnd="12dp"
-                android:scaleType="centerCrop" />
+                android:scaleType="centerCrop"
+                android:src="@drawable/coronado" />
 
             <LinearLayout
                 android:layout_width="0dp"
-                android:layout_weight="1"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:orientation="vertical">
 
                 <TextView
@@ -122,19 +121,19 @@
                     android:id="@+id/btnFinalizarViaje"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:backgroundTint="@color/estado_confirmado"
                     android:text="Finalizar Viaje"
                     android:textColor="@android:color/white"
-                    android:backgroundTint="@color/estado_confirmado"
-                    app:cornerRadius="12dp"
-                    android:layout_marginBottom="8dp" />
+                    app:cornerRadius="12dp" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnCancelarViaje"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:backgroundTint="@color/estado_cancelado"
                     android:text="Cancelar viaje"
                     android:textColor="@android:color/white"
-                    android:backgroundTint="@color/estado_cancelado"
                     app:cornerRadius="12dp" />
             </LinearLayout>
 
