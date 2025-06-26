@@ -44,7 +44,7 @@ public class SplashActivity extends AppCompatActivity {
         Log.d(TAG, "Splash iniciado");
 
         // Retrasar para mostrar el splash (3 segundos)
-        new android.os.Handler().postDelayed(this::verificarSesion, 5000);
+        new android.os.Handler().postDelayed(this::verificarSesion, 3000);
     }
 
     private void verificarSesion() {

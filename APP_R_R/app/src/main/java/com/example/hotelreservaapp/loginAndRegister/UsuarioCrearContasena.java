@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,6 +26,8 @@ import com.google.firebase.storage.StorageReference;
 public class UsuarioCrearContasena extends AppCompatActivity {
 
     private ActivityUsuarioCrearContasenaBinding binding;
+    private android.app.AlertDialog progressDialog;
+
     private String nombres, apellidos, tipoDocumento, numeroDocumento;
     private String fechaNacimiento, correo, telefono, direccion, fotoPerfilUri;
 
@@ -117,6 +121,7 @@ public class UsuarioCrearContasena extends AppCompatActivity {
     }
 
     private void registrarUsuarioEnFirebase(String contrasena) {
+        mostrarCargando("Registrando usuario...");
         mAuth.createUserWithEmailAndPassword(correo, contrasena)
                 .addOnSuccessListener(authResult -> {
                     FirebaseUser firebaseUser = mAuth.getCurrentUser();
@@ -128,12 +133,15 @@ public class UsuarioCrearContasena extends AppCompatActivity {
                                         guardarUsuario(firebaseUser, uri.toString());
                                     }))
                                     .addOnFailureListener(e -> Toast.makeText(this, "Error al subir la foto", Toast.LENGTH_SHORT).show());
+                            ocultarCargando();
+
                         } else {
                             guardarUsuario(firebaseUser, "");
                         }
                     }
                 })
                 .addOnFailureListener(e -> {
+                    ocultarCargando();
                     if (e.getMessage() != null && e.getMessage().contains("email address is already in use")) {
                         Toast.makeText(this, "El correo ya está registrado", Toast.LENGTH_LONG).show();
                     } else {
@@ -176,7 +184,22 @@ public class UsuarioCrearContasena extends AppCompatActivity {
                     Toast.makeText(this, "Error al guardar datos: " + e.getMessage(), Toast.LENGTH_LONG).show();
                 });
     }
-
+    private void mostrarCargando(String mensaje) {
+        binding.btnFinalizarRegistro.setEnabled(false);
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
+        View view = getLayoutInflater().inflate(R.layout.dialog_cargando, null);
+        builder.setView(view);
+        builder.setCancelable(false);
+        ((TextView) view.findViewById(R.id.tvMensajeCarga)).setText(mensaje);
+        progressDialog = builder.create();
+        progressDialog.show();
+    }
+    private void ocultarCargando() {
+        binding.btnFinalizarRegistro.setEnabled(true);
+        if (progressDialog != null && progressDialog.isShowing()) {
+            progressDialog.dismiss();
+        }
+    }
     private void irAInicioCliente() {
         Intent intent = new Intent(UsuarioCrearContasena.this, LoginActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
