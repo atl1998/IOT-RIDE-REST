@@ -142,23 +142,19 @@ public class DetalleSolicitudActivity extends AppCompatActivity  {
                         if (firebaseUser != null) {
                             String userUid = firebaseUser.getUid();
 
-                            // Referencias de origen
                             StorageReference origenPerfil = storage.getReference().child("fotos_postulaciones/foto_" + postulacion.getId() + ".jpg");
                             StorageReference origenPlaca = storage.getReference().child("fotos_postulaciones/placa_" + postulacion.getId() + ".jpg");
-
-                            // Referencias de destino
                             StorageReference destinoPerfil = storage.getReference().child("fotos_taxistas/" + userUid + "/foto_perfil.jpg");
                             StorageReference destinoPlaca = storage.getReference().child("fotos_taxistas/" + userUid + "/foto_placa.jpg");
 
-                            origenPerfil.getDownloadUrl().addOnSuccessListener(uriFotoPerfil -> {
-                                destinoPerfil.putFile(uriFotoPerfil).addOnSuccessListener(task1 -> {
+                            origenPerfil.getBytes(5 * 1024 * 1024).addOnSuccessListener(bytesPerfil -> {
+                                destinoPerfil.putBytes(bytesPerfil).addOnSuccessListener(task1 -> {
                                     destinoPerfil.getDownloadUrl().addOnSuccessListener(downloadUriPerfil -> {
 
-                                        origenPlaca.getDownloadUrl().addOnSuccessListener(uriFotoPlaca -> {
-                                            destinoPlaca.putFile(uriFotoPlaca).addOnSuccessListener(task2 -> {
+                                        origenPlaca.getBytes(5 * 1024 * 1024).addOnSuccessListener(bytesPlaca -> {
+                                            destinoPlaca.putBytes(bytesPlaca).addOnSuccessListener(task2 -> {
                                                 destinoPlaca.getDownloadUrl().addOnSuccessListener(downloadUriPlaca -> {
 
-                                                    // Construir objetos con nuevas URLs
                                                     DetallesTaxista driverDetails = new DetallesTaxista(
                                                             postulacion.getNumeroPlaca(),
                                                             downloadUriPlaca.toString()
@@ -180,7 +176,6 @@ public class DetalleSolicitudActivity extends AppCompatActivity  {
                                                     );
                                                     nuevoUsuario.setDriverDetails(driverDetails);
 
-                                                    // Batch Firestore
                                                     WriteBatch batch = firestore.batch();
                                                     DocumentReference usuarioDocRef = firestore.collection("usuarios").document(userUid);
                                                     batch.set(usuarioDocRef, nuevoUsuario);
@@ -196,7 +191,6 @@ public class DetalleSolicitudActivity extends AppCompatActivity  {
                                                         pDialog.dismissWithAnimation();
                                                         mostrarSweetDialogExito("Taxista habilitado exitosamente", "habilitado");
 
-                                                        // Notificación local
                                                         Notificacion nueva = new Notificacion(
                                                                 "Nuevo taxista habilitado",
                                                                 "Se ha habilitado correctamente un nuevo taxista.",
@@ -217,7 +211,6 @@ public class DetalleSolicitudActivity extends AppCompatActivity  {
                                                             notificationManager.notify(1, builder.build());
                                                         }
 
-                                                        // Enviar correo
                                                         try {
                                                             String uriText = "mailto:" + Uri.encode(email) +
                                                                     "?subject=" + Uri.encode("Acceso a la plataforma HotelReservaApp") +
@@ -233,8 +226,7 @@ public class DetalleSolicitudActivity extends AppCompatActivity  {
                                                             Intent intentEmail = new Intent(Intent.ACTION_SENDTO);
                                                             intentEmail.setData(Uri.parse(uriText));
                                                             startActivity(Intent.createChooser(intentEmail, "Enviar correo con..."));
-                                                        } catch (
-                                                                android.content.ActivityNotFoundException ex) {
+                                                        } catch (android.content.ActivityNotFoundException ex) {
                                                             Toast.makeText(this, "No se encontró una aplicación de correo.", Toast.LENGTH_SHORT).show();
                                                             Log.e("DetalleSolicitud", "No email app found: " + ex.getMessage());
                                                         }
@@ -245,22 +237,18 @@ public class DetalleSolicitudActivity extends AppCompatActivity  {
                                                         pDialog.dismissWithAnimation();
                                                         mostrarSweetDialogError("Error al guardar datos del taxista o postulación: " + e.getMessage(), "error_habilitar");
                                                         Log.e("DetalleSolicitud", "Error en batch de habilitación: ", e);
-                                                        if (firebaseUser != null) {
-                                                            firebaseUser.delete().addOnFailureListener(deleteEx ->
-                                                                    Log.e("DetalleSolicitud", "Error al borrar usuario de Auth tras fallo de batch: ", deleteEx));
-                                                        }
+                                                        firebaseUser.delete().addOnFailureListener(deleteEx ->
+                                                                Log.e("DetalleSolicitud", "Error al borrar usuario de Auth tras fallo de batch: ", deleteEx));
                                                     });
 
                                                 }).addOnFailureListener(e -> {
                                                     pDialog.dismissWithAnimation();
                                                     mostrarSweetDialogError("Error al obtener URL de la placa", "error_habilitar");
                                                 });
-
                                             }).addOnFailureListener(e -> {
                                                 pDialog.dismissWithAnimation();
                                                 mostrarSweetDialogError("Error al subir la foto de la placa", "error_habilitar");
                                             });
-
                                         }).addOnFailureListener(e -> {
                                             pDialog.dismissWithAnimation();
                                             mostrarSweetDialogError("No se encontró la imagen de la placa en Storage", "error_habilitar");
@@ -270,23 +258,25 @@ public class DetalleSolicitudActivity extends AppCompatActivity  {
                                         pDialog.dismissWithAnimation();
                                         mostrarSweetDialogError("Error al obtener URL de la foto de perfil", "error_habilitar");
                                     });
-
                                 }).addOnFailureListener(e -> {
                                     pDialog.dismissWithAnimation();
                                     mostrarSweetDialogError("Error al subir la foto de perfil", "error_habilitar");
                                 });
-
                             }).addOnFailureListener(e -> {
                                 pDialog.dismissWithAnimation();
                                 mostrarSweetDialogError("No se encontró la imagen de perfil en Storage", "error_habilitar");
                             });
                         }
+                    } else {
+                        pDialog.dismissWithAnimation();
+                        mostrarSweetDialogError("Error al crear usuario: " + authTask.getException().getMessage(), "error_habilitar");
                     }
                 });
     }
 
 
-private void rechazarSolicitud(PostulacionTaxista postulacion) {
+
+    private void rechazarSolicitud(PostulacionTaxista postulacion) {
         SweetAlertDialog pDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
         pDialog.setTitleText("Rechazando solicitud...");
         pDialog.setCancelable(false);
