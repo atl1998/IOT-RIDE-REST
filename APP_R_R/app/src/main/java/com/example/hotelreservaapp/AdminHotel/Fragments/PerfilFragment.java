@@ -35,6 +35,7 @@ import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.example.hotelreservaapp.R;
 import com.example.hotelreservaapp.adapter.LogsAdapter;
+import com.example.hotelreservaapp.databinding.AdminhotelFragmentPerfilBinding;
 import com.example.hotelreservaapp.databinding.SuperadminPerfilFragmentBinding;
 import com.example.hotelreservaapp.loginAndRegister.LoginActivity;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -71,7 +72,7 @@ import java.util.TimeZone;
 
 public class PerfilFragment extends Fragment {
 
-    private SuperadminPerfilFragmentBinding binding;
+    private AdminhotelFragmentPerfilBinding binding;
     private FirebaseFirestore db;
     private boolean enModoEdicion = false;
     private FirebaseUser usuarioActual;
@@ -87,7 +88,6 @@ public class PerfilFragment extends Fragment {
     private MaterialButton btnVincularGoogle;
     private Uri cameraImageUri;
 
-    private String va;
     private final ActivityResultLauncher<Intent> takePhotoLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
@@ -104,7 +104,7 @@ public class PerfilFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        binding = SuperadminPerfilFragmentBinding.inflate(inflater, container, false);
+        binding = AdminhotelFragmentPerfilBinding.inflate(inflater, container, false);
         return binding.getRoot();
     }
 
@@ -168,7 +168,6 @@ public class PerfilFragment extends Fragment {
                             etTelefono.setText(document.getString("telefono"));
                             etDireccion.setText(document.getString("direccion"));
                             String urlFoto = document.getString("urlFotoPerfil");
-                            va = document.getString("urlFotoPerfil");
                             if (urlFoto != null && !urlFoto.isEmpty()) {
                                 progressBar.setVisibility(View.VISIBLE);
 

@@ -49,11 +49,14 @@ public class Registro4AddHabitacion_fragment extends Fragment {
     private Habitacion habitacion = new Habitacion();
     private Uri cameraImageUri;
     private ArrayAdapter<String> habAdapter;
+    
+    private String FILE_INT;
+    private int num_hab;
     private final ActivityResultLauncher<Intent> takePhotoLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
                 if (result.getResultCode() == Activity.RESULT_OK) {
-                    File file = new File(requireContext().getFilesDir(), "foto_habitacion.jpg");
+                    File file = new File(requireContext().getFilesDir(), FILE_INT);
                     binding.ivProfileImage.setImageURI(null);
                     binding.ivProfileImage.setImageURI(Uri.fromFile(file));
                 }
@@ -71,10 +74,17 @@ public class Registro4AddHabitacion_fragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        //Logica para instanciar el viewmodel
+        registroViewModel = new ViewModelProvider(requireActivity()).get(RegistroViewModel.class);
+        num_hab = registroViewModel.getHotel().getValue().getHabitaciones().size();
+        num_hab++;
+        FILE_INT = "foto_habitacion_" + num_hab + ".jpg";
+
         final boolean[] enModoEdicion = {false};
+        
 
         // Mostrar imagen si ya está guardada
-        File file = new File(requireContext().getFilesDir(), "foto_habitacion.jpg");
+        File file = new File(requireContext().getFilesDir(), FILE_INT);
         if (file.exists()) {
             binding.ivProfileImage.setImageURI(Uri.fromFile(file));
             binding.buttonOpenCamera.setIcon(ContextCompat.getDrawable(requireContext(), R.drawable.edit_square_24dp_black));
@@ -104,9 +114,6 @@ public class Registro4AddHabitacion_fragment extends Fragment {
         btnContinuar4 = binding.btnContinuar4;
         btnContinuar4.setOnClickListener(v -> {
 
-            //Logica para instanciar el viewmodel
-            registroViewModel = new ViewModelProvider(requireActivity()).get(RegistroViewModel.class);
-
             if (datosValidos()) {
                 // Guardar los datos en el ViewModelregistroViewModel.setNombre(nombre);
                 Hotel hotel = registroViewModel.getHotel().getValue();
@@ -133,7 +140,7 @@ public class Registro4AddHabitacion_fragment extends Fragment {
     private void guardarImagenEnArchivosInternos(Uri uri) {
         try {
             InputStream inputStream = requireContext().getContentResolver().openInputStream(uri);
-            File file = new File(requireContext().getFilesDir(), "foto_habitacion.jpg");
+            File file = new File(requireContext().getFilesDir(), FILE_INT);
             FileOutputStream outputStream = new FileOutputStream(file);
 
             byte[] buffer = new byte[1024];
@@ -166,7 +173,7 @@ public class Registro4AddHabitacion_fragment extends Fragment {
         });
 
         view.findViewById(R.id.opcionCamara).setOnClickListener(v -> {
-            File imageFile = new File(requireContext().getFilesDir(), "foto_habitacion.jpg");
+            File imageFile = new File(requireContext().getFilesDir(), FILE_INT);
             cameraImageUri = FileProvider.getUriForFile(requireContext(), requireContext().getPackageName() + ".provider", imageFile);
             Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, cameraImageUri);
@@ -183,7 +190,7 @@ public class Registro4AddHabitacion_fragment extends Fragment {
         String precioText = binding.etPrecio.getText().toString();
         String tamanoText = binding.etTamaO.getText().toString();
         String capacidad = binding.etCapacidad.getText().toString();
-        File file = new File(requireContext().getFilesDir(), "foto_habitacion.jpg");
+        File file = new File(requireContext().getFilesDir(), FILE_INT);
 
         //Valdación de formulario
         if (tipo.isEmpty()) {
@@ -235,7 +242,7 @@ public class Registro4AddHabitacion_fragment extends Fragment {
             habitacion.setPrecio(Double.parseDouble(precioText));
             habitacion.setTamano(Double.parseDouble(tamanoText));
             habitacion.setCapacidad(capacidad);
-            habitacion.setUrl("foto_habitacion.jpg");
+            habitacion.setUrl(FILE_INT);
             return true;
         } else {
             Toast.makeText(getContext(), "Ingresa una foto", Toast.LENGTH_SHORT).show();
