@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,8 +33,12 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
+import com.google.firebase.messaging.FirebaseMessaging;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -153,6 +158,25 @@ public class LoginActivity extends AppCompatActivity {
                                                 finish();
                                                 return;
                                             }
+                                            String rol = document.getString("rol");
+                                            if ("cliente".equals(rol)) {
+                                                // guardar token
+                                                FirebaseMessaging.getInstance().getToken()
+                                                        .addOnCompleteListener(tokenTask  -> {
+                                                            if (tokenTask .isSuccessful()) {
+                                                                String token = tokenTask .getResult();
+                                                                Map<String, Object> data = new HashMap<>();
+                                                                data.put("fcmToken", token);
+                                                                FirebaseFirestore.getInstance()
+                                                                        .collection("usuarios")
+                                                                        .document(user.getUid())
+                                                                        .set(data, SetOptions.merge())
+                                                                        .addOnSuccessListener(aVoid -> Log.d("FCM", "Token FCM guardado en login"))
+                                                                        .addOnFailureListener(e -> Log.w("FCM", "Error guardando token", e));
+                                                            }
+                                                        });
+                                            }
+                                            // Luego rediriges según rol:
                                             redirigirSegunRol(document.getString("rol"));
                                         } else {
                                             Toast.makeText(this, "No se encontró el perfil del usuario", Toast.LENGTH_SHORT).show();
