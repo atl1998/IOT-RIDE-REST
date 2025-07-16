@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -79,6 +80,7 @@ public class ReportesFragment extends Fragment {
         conteo.put("Hotel Miraflores Palace", 5);
         conteo.put("Hotel Costa Azul", 3);
         conteo.put("Hotel Andino Real", 4);
+
 
         // Ordenar y tomar top 3
         List<Map.Entry<String, Integer>> topHoteles = new ArrayList<>(conteo.entrySet());

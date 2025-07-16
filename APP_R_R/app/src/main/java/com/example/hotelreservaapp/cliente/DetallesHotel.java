@@ -97,12 +97,12 @@ public class DetallesHotel extends AppCompatActivity {
         ImageCarousel carousel = findViewById(R.id.carousel);
         carousel.registerLifecycle(getLifecycle());
 
-
+        /*
         List<CarouselItem> images = new ArrayList<>();
         images.add(new CarouselItem(R.drawable.hotel1_img1));
         images.add(new CarouselItem(R.drawable.hotel1_img2));
         images.add(new CarouselItem(R.drawable.hotel1_img3));
-        carousel.setData(images);
+        carousel.setData(images);*/
 
     }
 
@@ -129,6 +129,20 @@ public class DetallesHotel extends AppCompatActivity {
                         String nombre = document.getString("nombre");
                         String ubicacion = document.getString("ubicacion");
                         String contacto = document.getString("contacto");
+                        String urlFoto =document.getString("UrlFotoHotel");
+
+                        if (urlFoto != null && !urlFoto.isEmpty()) {
+                            // Crear imagen dinámica con URL
+                            List<CarouselItem> imagenesRemotas = new ArrayList<>();
+                            imagenesRemotas.add(new CarouselItem(urlFoto));
+
+                            // Opcional: agregar más imágenes si tienes más URLs
+                            imagenesRemotas.add(new CarouselItem(urlFoto));
+                            imagenesRemotas.add(new CarouselItem(urlFoto));
+                            ImageCarousel carousel = findViewById(R.id.carousel);
+                            carousel.setData(imagenesRemotas);
+                        }
+
                         // Asignar estos valores a los TextViews
                         tvHotelName = findViewById(R.id.tvHotelName);  // Asegúrate de que tienes este TextView en tu layout
                         tvHotelName.setText(nombre);

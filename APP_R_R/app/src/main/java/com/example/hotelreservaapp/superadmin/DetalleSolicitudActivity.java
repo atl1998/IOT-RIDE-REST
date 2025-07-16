@@ -38,6 +38,8 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.WriteBatch;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -49,6 +51,7 @@ public class DetalleSolicitudActivity extends AppCompatActivity  {
     private SuperadminDetalleSolicitudActivityBinding binding;
     private FirebaseFirestore firestore;
     private FirebaseAuth firebaseAuth;
+    private FirebaseStorage storage;
     private PostulacionTaxista solicitudActual;
 
     @Override
@@ -59,6 +62,7 @@ public class DetalleSolicitudActivity extends AppCompatActivity  {
 
         firestore = FirebaseFirestore.getInstance();
         firebaseAuth = FirebaseAuth.getInstance();
+        storage = FirebaseStorage.getInstance();
 
         // Botón de volver
         binding.btnBack.setOnClickListener(v -> finish());
@@ -138,132 +142,139 @@ public class DetalleSolicitudActivity extends AppCompatActivity  {
                         if (firebaseUser != null) {
                             String userUid = firebaseUser.getUid();
 
-                            // 2. Crear objeto DetallesTaxista
-                            // IMPORTANTE: Asegúrate de que el constructor de DetallesTaxista coincida con esto.
-                            // Si tu clase DetallesTaxista tiene más campos obligatorios, inicialízalos aquí
-                            // (pueden ser null o valores por defecto si no vienen de PostulacionTaxista).
-                            DetallesTaxista driverDetails = new DetallesTaxista(
-                                    // Los campos disponibles de la postulación
-                                    postulacion.getNumeroPlaca(),
-                                    postulacion.getFotoPlacaURL()
-                                    /*
-                                    // Ejemplo si DetallesTaxista tiene más campos:
-                                    null, // numeroLicencia
-                                    null, // tipoLicencia
-                                    null, // fechaVencimientoLicencia
-                                    postulacion.getNumeroPlaca(),
-                                    postulacion.getFotoPlacaURL(),
-                                    null, // modeloVehiculo
-                                    null, // colorVehiculo
-                                    0,    // anioVehiculo
-                                    "activo", // estadoConductor
-                                    0.0   // calificacionPromedio
-                                    */
-                            );
+                            StorageReference origenPerfil = storage.getReference().child("fotos_postulaciones/foto_" + postulacion.getId() + ".jpg");
+                            StorageReference origenPlaca = storage.getReference().child("fotos_postulaciones/placa_" + postulacion.getId() + ".jpg");
+                            StorageReference destinoPerfil = storage.getReference().child("fotos_taxistas/" + userUid + "/foto_perfil.jpg");
+                            StorageReference destinoPlaca = storage.getReference().child("fotos_taxistas/" + userUid + "/foto_placa.jpg");
 
-                            // 3. Crear objeto Usuario
-                            // El constructor de Usuario DEBE coincidir con estos parámetros (orden y tipo).
-                            Usuario nuevoUsuario = new Usuario(
-                                    postulacion.getNombres(),
-                                    postulacion.getApellidos(),
-                                    "taxista", // Rol
-                                    postulacion.getTipoDocumento(),
-                                    postulacion.getNumeroDocumento(),
-                                    postulacion.getFechaNacimiento(),
-                                    postulacion.getCorreo(),
-                                    postulacion.getTelefono(),
-                                    postulacion.getDireccion(),
-                                    postulacion.getUrlFotoPerfil(),
-                                    true, // activo
-                                    true  // requiereCambioContrasena
-                            );
+                            origenPerfil.getBytes(5 * 1024 * 1024).addOnSuccessListener(bytesPerfil -> {
+                                destinoPerfil.putBytes(bytesPerfil).addOnSuccessListener(task1 -> {
+                                    destinoPerfil.getDownloadUrl().addOnSuccessListener(downloadUriPerfil -> {
 
-                            nuevoUsuario.setDriverDetails(driverDetails); // Asigna los detalles del taxista
+                                        origenPlaca.getBytes(5 * 1024 * 1024).addOnSuccessListener(bytesPlaca -> {
+                                            destinoPlaca.putBytes(bytesPlaca).addOnSuccessListener(task2 -> {
+                                                destinoPlaca.getDownloadUrl().addOnSuccessListener(downloadUriPlaca -> {
 
-                            // 4. Guardar el nuevo usuario en la colección "usuarios" usando el UID de Auth como ID de documento
-                            WriteBatch batch = firestore.batch();
-                            DocumentReference usuarioDocRef = firestore.collection("usuarios").document(userUid);
-                            batch.set(usuarioDocRef, nuevoUsuario);
+                                                    DetallesTaxista driverDetails = new DetallesTaxista(
+                                                            postulacion.getNumeroPlaca(),
+                                                            downloadUriPlaca.toString()
+                                                    );
 
-                            // 5. Actualizar la postulación original a "aprobado" y vincular con el UID
-                            DocumentReference postulacionDocRef = firestore.collection("postulacionesTaxistas").document(solicitudActual.getId());
-                            Map<String, Object> postulacionUpdates = new HashMap<>();
-                            postulacionUpdates.put("estadoSolicitud", "aprobado");
-                            postulacionUpdates.put("fechaRevision", FieldValue.serverTimestamp());
-                            postulacionUpdates.put("idUsuarioAsignado", userUid); // Vincula la postulación con el UID del usuario creado
-                            batch.update(postulacionDocRef, postulacionUpdates);
+                                                    Usuario nuevoUsuario = new Usuario(
+                                                            postulacion.getNombres(),
+                                                            postulacion.getApellidos(),
+                                                            "taxista",
+                                                            postulacion.getTipoDocumento(),
+                                                            postulacion.getNumeroDocumento(),
+                                                            postulacion.getFechaNacimiento(),
+                                                            postulacion.getCorreo(),
+                                                            postulacion.getTelefono(),
+                                                            postulacion.getDireccion(),
+                                                            downloadUriPerfil.toString(),
+                                                            true,
+                                                            true
+                                                    );
+                                                    nuevoUsuario.setDriverDetails(driverDetails);
 
-                            // Ejecutar el batch
-                            batch.commit()
-                                    .addOnSuccessListener(aVoid -> {
+                                                    WriteBatch batch = firestore.batch();
+                                                    DocumentReference usuarioDocRef = firestore.collection("usuarios").document(userUid);
+                                                    batch.set(usuarioDocRef, nuevoUsuario);
+
+                                                    DocumentReference postulacionDocRef = firestore.collection("postulacionesTaxistas").document(postulacion.getId());
+                                                    Map<String, Object> postulacionUpdates = new HashMap<>();
+                                                    postulacionUpdates.put("estadoSolicitud", "aprobado");
+                                                    postulacionUpdates.put("fechaRevision", FieldValue.serverTimestamp());
+                                                    postulacionUpdates.put("idUsuarioAsignado", userUid);
+                                                    batch.update(postulacionDocRef, postulacionUpdates);
+
+                                                    batch.commit().addOnSuccessListener(aVoid -> {
+                                                        pDialog.dismissWithAnimation();
+                                                        mostrarSweetDialogExito("Taxista habilitado exitosamente", "habilitado");
+
+                                                        Notificacion nueva = new Notificacion(
+                                                                "Nuevo taxista habilitado",
+                                                                "Se ha habilitado correctamente un nuevo taxista.",
+                                                                System.currentTimeMillis(), false
+                                                        );
+                                                        new Thread(() -> AppDatabase.getInstance(DetalleSolicitudActivity.this)
+                                                                .notificacionDao().insertar(nueva)).start();
+
+                                                        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "ChannelRideAndRest")
+                                                                .setSmallIcon(R.drawable.icon_notification)
+                                                                .setContentTitle(nueva.titulo)
+                                                                .setContentText(nueva.mensaje)
+                                                                .setPriority(NotificationCompat.PRIORITY_HIGH);
+
+                                                        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+                                                        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS)
+                                                                == PackageManager.PERMISSION_GRANTED) {
+                                                            notificationManager.notify(1, builder.build());
+                                                        }
+
+                                                        try {
+                                                            String uriText = "mailto:" + Uri.encode(email) +
+                                                                    "?subject=" + Uri.encode("Acceso a la plataforma HotelReservaApp") +
+                                                                    "&body=" + Uri.encode(
+                                                                    "Hola " + postulacion.getNombres() + " " + postulacion.getApellidos() + ",\n\n" +
+                                                                            "¡Felicidades! Has sido habilitado como taxista en HotelReservaApp.\n\n" +
+                                                                            "Tus datos de acceso son:\n" +
+                                                                            "📧 Correo: " + email + "\n" +
+                                                                            "🔐 Contraseña temporal: " + contrasenaTemporal + "\n\n" +
+                                                                            "Por favor, inicia sesión en la app y cambia tu contraseña para mayor seguridad.\n\n" +
+                                                                            "Atentamente,\nEquipo de HotelReservaApp");
+
+                                                            Intent intentEmail = new Intent(Intent.ACTION_SENDTO);
+                                                            intentEmail.setData(Uri.parse(uriText));
+                                                            startActivity(Intent.createChooser(intentEmail, "Enviar correo con..."));
+                                                        } catch (android.content.ActivityNotFoundException ex) {
+                                                            Toast.makeText(this, "No se encontró una aplicación de correo.", Toast.LENGTH_SHORT).show();
+                                                            Log.e("DetalleSolicitud", "No email app found: " + ex.getMessage());
+                                                        }
+
+                                                        regresarALista("habilitado");
+
+                                                    }).addOnFailureListener(e -> {
+                                                        pDialog.dismissWithAnimation();
+                                                        mostrarSweetDialogError("Error al guardar datos del taxista o postulación: " + e.getMessage(), "error_habilitar");
+                                                        Log.e("DetalleSolicitud", "Error en batch de habilitación: ", e);
+                                                        firebaseUser.delete().addOnFailureListener(deleteEx ->
+                                                                Log.e("DetalleSolicitud", "Error al borrar usuario de Auth tras fallo de batch: ", deleteEx));
+                                                    });
+
+                                                }).addOnFailureListener(e -> {
+                                                    pDialog.dismissWithAnimation();
+                                                    mostrarSweetDialogError("Error al obtener URL de la placa", "error_habilitar");
+                                                });
+                                            }).addOnFailureListener(e -> {
+                                                pDialog.dismissWithAnimation();
+                                                mostrarSweetDialogError("Error al subir la foto de la placa", "error_habilitar");
+                                            });
+                                        }).addOnFailureListener(e -> {
+                                            pDialog.dismissWithAnimation();
+                                            mostrarSweetDialogError("No se encontró la imagen de la placa en Storage", "error_habilitar");
+                                        });
+
+                                    }).addOnFailureListener(e -> {
                                         pDialog.dismissWithAnimation();
-                                        mostrarSweetDialogExito("Taxista habilitado exitosamente", "habilitado");
-
-                                        // 6. Notificación local
-                                        Notificacion nueva = new Notificacion("Nuevo taxista habilitado",
-                                                "Se ha habilitado correctamente un nuevo taxista.",
-                                                System.currentTimeMillis(), false);
-                                        // Usa el hilo secundario para Room para evitar bloqueo de UI
-                                        if (AppDatabase.getInstance(this) != null && AppDatabase.getInstance(this).notificacionDao() != null) {
-                                            new Thread(() -> AppDatabase.getInstance(DetalleSolicitudActivity.this).notificacionDao().insertar(nueva)).start();
-                                        }
-
-                                        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "ChannelRideAndRest")
-                                                .setSmallIcon(R.drawable.icon_notification)
-                                                .setContentTitle(nueva.titulo)
-                                                .setContentText(nueva.mensaje)
-                                                .setPriority(NotificationCompat.PRIORITY_HIGH);
-
-                                        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
-                                        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS)
-                                                == PackageManager.PERMISSION_GRANTED) {
-                                            notificationManager.notify(1, builder.build());
-                                        }
-
-                                        // 7. Abrir cliente de correo para enviar acceso
-                                        try {
-                                            String uriText = "mailto:" + Uri.encode(email) +
-                                                    "?subject=" + Uri.encode("Acceso a la plataforma HotelReservaApp") +
-                                                    "&body=" + Uri.encode(
-                                                    "Hola " + postulacion.getNombres() + " " + postulacion.getApellidos() + ",\n\n" +
-                                                            "¡Felicidades! Has sido habilitado como taxista en HotelReservaApp.\n\n" +
-                                                            "Tus datos de acceso son:\n" +
-                                                            "📧 Correo: " + email + "\n" +
-                                                            "🔐 Contraseña temporal: " + contrasenaTemporal + "\n\n" +
-                                                            "Por favor, inicia sesión en la app y cambia tu contraseña para mayor seguridad.\n\n" +
-                                                            "Atentamente,\nEquipo de HotelReservaApp");
-
-                                            Intent intentEmail = new Intent(Intent.ACTION_SENDTO);
-                                            intentEmail.setData(Uri.parse(uriText));
-                                            startActivity(Intent.createChooser(intentEmail, "Enviar correo con..."));
-                                        } catch (android.content.ActivityNotFoundException ex) {
-                                            Toast.makeText(this, "No se encontró una aplicación de correo.", Toast.LENGTH_SHORT).show();
-                                            Log.e("DetalleSolicitud", "No email app found: " + ex.getMessage());
-                                        }
-
-                                        regresarALista("habilitado");
-                                    })
-                                    .addOnFailureListener(e -> {
-                                        pDialog.dismissWithAnimation();
-                                        mostrarSweetDialogError("Error al guardar datos del taxista o postulación: " + e.getMessage(), "error_habilitar");
-                                        Log.e("DetalleSolicitud", "Error en batch de habilitación: ", e);
-                                        // IMPORTANTE: Si falla el batch (Firestore), elimina el usuario de Auth para evitar cuentas huérfanas.
-                                        if (firebaseUser != null) {
-                                            firebaseUser.delete().addOnFailureListener(deleteEx -> Log.e("DetalleSolicitud", "Error al borrar usuario de Auth tras fallo de batch: ", deleteEx));
-                                        }
+                                        mostrarSweetDialogError("Error al obtener URL de la foto de perfil", "error_habilitar");
                                     });
-                        } else {
-                            pDialog.dismissWithAnimation();
-                            mostrarSweetDialogError("Error: UID de Firebase Auth nulo al crear usuario.", "error_habilitar");
-                            Log.e("DetalleSolicitud", "UID de Firebase Auth nulo al crear usuario.");
+                                }).addOnFailureListener(e -> {
+                                    pDialog.dismissWithAnimation();
+                                    mostrarSweetDialogError("Error al subir la foto de perfil", "error_habilitar");
+                                });
+                            }).addOnFailureListener(e -> {
+                                pDialog.dismissWithAnimation();
+                                mostrarSweetDialogError("No se encontró la imagen de perfil en Storage", "error_habilitar");
+                            });
                         }
                     } else {
                         pDialog.dismissWithAnimation();
-                        mostrarSweetDialogError("Error al registrar usuario en Auth: " + authTask.getException().getMessage(), "error_habilitar");
-                        Log.e("DetalleSolicitud", "Error al crear usuario en Auth: ", authTask.getException());
+                        mostrarSweetDialogError("Error al crear usuario: " + authTask.getException().getMessage(), "error_habilitar");
                     }
                 });
     }
+
+
 
     private void rechazarSolicitud(PostulacionTaxista postulacion) {
         SweetAlertDialog pDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);

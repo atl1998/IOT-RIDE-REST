@@ -1,8 +1,13 @@
-package com.example.hotelreservaapp.AdminHotel;
+package com.example.hotelreservaapp.AdminHotel.Fragments;
 
+import static com.google.common.reflect.Reflection.getPackageName;
+
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.net.Uri;
 
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -15,22 +20,24 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.example.hotelreservaapp.AdminHotel.Adapter.HabitacionAdapter;
 import com.example.hotelreservaapp.AdminHotel.Adapter.ServicioAdapter;
+import com.example.hotelreservaapp.AdminHotel.MainActivity;
 import com.example.hotelreservaapp.AdminHotel.Model.Habitacion;
 import com.example.hotelreservaapp.AdminHotel.Model.Hotel;
 import com.example.hotelreservaapp.AdminHotel.Model.Servicio;
+import com.example.hotelreservaapp.AdminHotel.RegistroHotelActivity;
 import com.example.hotelreservaapp.AdminHotel.ViewModel.RegistroViewModel;
 import com.example.hotelreservaapp.LogManager;
-import com.example.hotelreservaapp.R;
-import com.example.hotelreservaapp.databinding.AdminhotelRegistro3FragmentBinding;
 import com.example.hotelreservaapp.databinding.AdminhotelRegistro5FragmentBinding;
 import com.example.hotelreservaapp.model.Usuario;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -49,6 +56,8 @@ public class Registro5Servicios_fragment extends Fragment {
     private ImageView btnAdd;
     private FirebaseUser usuarioActual;
     private FirebaseFirestore db;
+
+    private String hotelId;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -101,10 +110,9 @@ public class Registro5Servicios_fragment extends Fragment {
             if (listaServicios != null) {
                 // Guardar en database
                 guardarHotel();
-                actualizarAdminHotel();
                 startActivity(new Intent(getActivity(), MainActivity.class));
             } else {
-                Toast.makeText(getContext(), "Ingresa una foto", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Ingresa una foto",     Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -133,11 +141,46 @@ public class Registro5Servicios_fragment extends Fragment {
         Hotel hotel = registroViewModel.getHotel().getValue();
         if (hotel == null) return;
 
+        Hotel hotelSinListas = new Hotel(
+                hotel.getNombre(),
+                hotel.getDescripcion(),
+                hotel.getDepartamento(),
+                hotel.getProvincia(),
+                hotel.getDistrito(),
+                hotel.getDireccion(),
+                hotel.getUrlImage(),
+                hotel.getValoracion()
+        );
+
         // Guarda todo el objeto Proyecto, incluyendo la lista de Tarea
         db.collection("Hoteles")
-                .document(hotel.getNombre().replaceAll("\\s+", ""))    // o el ID que prefieras
-                .set(hotel)
+                .add(hotelSinListas)
                 .addOnSuccessListener(aVoid -> {
+                    //Guardado de subcolecciones
+                    hotelId = aVoid.getId();
+
+                    // Luego guardas habitaciones como subcolección
+                    for (Habitacion hab : hotel.getHabitaciones()) {
+                        db.collection("Hoteles")
+                                .document(hotelId)
+                                .collection("habitaciones")
+                                .add(hab);
+                    }
+
+                    // Y también los servicios como subcolección
+                    for (Servicio srv : hotel.getServicios()) {
+                        db.collection("Hoteles")
+                                .document(hotelId)
+                                .collection("servicios")
+                                .add(srv);
+                    }
+
+                    // 2️⃣ foto
+                    guardarFotoHotel(hotelId, hotel.getUrlImage());
+
+                    // 3️⃣ actualizar usuario
+                    actualizarAdminHotel(hotelId);
+
                     //Parte del log
                     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                     if (user != null) {
@@ -169,27 +212,53 @@ public class Registro5Servicios_fragment extends Fragment {
                     Log.e("Firestore", "Error guardando proyecto", e);
                 });
 
-
-        //((RegistroHotelActivity) requireActivity()).irASiguientePaso(new Registro3Habitaciones_fragment());
     }
 
-    private void actualizarAdminHotel(){
-        Hotel hotel = registroViewModel.getHotel().getValue();
-        // Cargar datos del usuario desde Firestore
-        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();  // o cualquier UID válido
-        String idHotel = hotel.getNombre().replaceAll("\\s+", "");
+    private void guardarFotoHotel(String hotelId, String nombreInterno) {
+        Context ctx = requireContext();
+        File foto = new File(ctx.getFilesDir(), nombreInterno);
+        if (!foto.exists()) {
+            Log.w("FOTO", "No se encontró la imagen interna");
+            return;
+        }
 
-        Map<String, Object> nuevosDatos = new HashMap<>();
-        nuevosDatos.put("hotelAsignado", true);
-        nuevosDatos.put("idHotel", idHotel);
+        Uri uri = FileProvider.getUriForFile(
+                ctx, ctx.getPackageName() + ".provider", foto);
 
-        db.collection("usuarios").document(uid)
-                .update(nuevosDatos)
-                .addOnSuccessListener(aVoid -> {
-                    Toast.makeText(getContext(), "Hotel creado correctamente", Toast.LENGTH_SHORT).show();
+        StorageReference ref = FirebaseStorage.getInstance()
+                .getReference()
+                .child("hoteles")
+                .child(hotelId)          // carpeta propia del hotel
+                .child("foto.jpg");
+
+        ref.putFile(uri)
+                .continueWithTask(t -> {
+                    if (!t.isSuccessful()) throw t.getException();
+                    return ref.getDownloadUrl();
                 })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(getContext(), "Error al crear hotel: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                });
+                .addOnSuccessListener(url -> {
+                    db.collection("Hoteles").document(hotelId)
+                            .update("urlImage", url.toString())
+                            .addOnSuccessListener(v -> {
+                                foto.delete();      // limpia la copia interna
+                                Toast.makeText(ctx, "Hotel creado correctamente", Toast.LENGTH_SHORT).show();
+                                startActivity(new Intent(ctx, MainActivity.class));
+                            });
+                })
+                .addOnFailureListener(e ->
+                        Toast.makeText(ctx, "Error subiendo foto: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
+
+
+    private void actualizarAdminHotel(String hotelId){
+        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        Map<String,Object> map = new HashMap<>();
+        map.put("hotelAsignado", true);
+        map.put("idHotel", hotelId);
+
+        db.collection("usuarios").document(uid).update(map);
+    }
+
+
+
 }

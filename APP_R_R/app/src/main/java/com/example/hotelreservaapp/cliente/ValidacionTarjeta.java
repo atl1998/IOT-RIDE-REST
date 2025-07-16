@@ -104,7 +104,9 @@ public class ValidacionTarjeta extends AppCompatActivity {
                 .add(reserva)
                 .addOnSuccessListener(docRef -> {
                     Toast.makeText(this, "Reserva confirmada", Toast.LENGTH_SHORT).show();
-                    startActivity(new Intent(this, HistorialEventos.class));
+                    Intent intent2 = new Intent(this, CreacionReserva.class);
+                    intent2.putExtra("reservaId", docRef.getId()); // pasamos el ID de la reserva
+                    startActivity(intent2);
                     finish();
                 })
                 .addOnFailureListener(e -> {

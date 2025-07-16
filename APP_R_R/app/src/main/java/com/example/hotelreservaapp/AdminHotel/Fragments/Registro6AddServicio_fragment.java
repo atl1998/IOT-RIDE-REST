@@ -1,4 +1,4 @@
-package com.example.hotelreservaapp.AdminHotel;
+package com.example.hotelreservaapp.AdminHotel.Fragments;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -21,9 +21,9 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
-import com.example.hotelreservaapp.AdminHotel.Model.Habitacion;
 import com.example.hotelreservaapp.AdminHotel.Model.Hotel;
 import com.example.hotelreservaapp.AdminHotel.Model.Servicio;
+import com.example.hotelreservaapp.AdminHotel.RegistroHotelActivity;
 import com.example.hotelreservaapp.AdminHotel.ViewModel.RegistroViewModel;
 import com.example.hotelreservaapp.R;
 import com.example.hotelreservaapp.databinding.AdminhotelRegistro6FragmentBinding;
@@ -49,11 +49,14 @@ public class Registro6AddServicio_fragment extends Fragment {
     private Servicio servicio = new Servicio();
     private Uri cameraImageUri;
 
+    private String FILE_INT;
+    private int num_ser;
+
     private final ActivityResultLauncher<Intent> takePhotoLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
                 if (result.getResultCode() == Activity.RESULT_OK) {
-                    File file = new File(requireContext().getFilesDir(), "foto_habitacion.jpg");
+                    File file = new File(requireContext().getFilesDir(), FILE_INT);
                     binding.ivProfileImage.setImageURI(null);
                     binding.ivProfileImage.setImageURI(Uri.fromFile(file));
                 }
@@ -71,10 +74,16 @@ public class Registro6AddServicio_fragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        //Logica para instanciar el viewmodel
+        registroViewModel = new ViewModelProvider(requireActivity()).get(RegistroViewModel.class);
+        num_ser = registroViewModel.getHotel().getValue().getServicios().size();
+        num_ser++;
+        FILE_INT = "foto_servicio_" + num_ser + ".jpg";
+
         final boolean[] enModoEdicion = {false};
 
         // Mostrar imagen si ya está guardada
-        File file = new File(requireContext().getFilesDir(), "foto_servicio.jpg");
+        File file = new File(requireContext().getFilesDir(), FILE_INT);
         if (file.exists()) {
             binding.ivProfileImage.setImageURI(Uri.fromFile(file));
             binding.buttonOpenCamera.setIcon(ContextCompat.getDrawable(requireContext(), R.drawable.edit_square_24dp_black));
@@ -95,9 +104,6 @@ public class Registro6AddServicio_fragment extends Fragment {
         //Lógica para continuar
         btnContinuar6 = binding.btnContinuar4;
         btnContinuar6.setOnClickListener(v -> {
-
-            //Logica para instanciar el viewmodel
-            registroViewModel = new ViewModelProvider(requireActivity()).get(RegistroViewModel.class);
 
             if (datosValidos()) {
                 // Guardar los datos en el ViewModelregistroViewModel.setNombre(nombre);
@@ -125,7 +131,7 @@ public class Registro6AddServicio_fragment extends Fragment {
     private void guardarImagenEnArchivosInternos(Uri uri) {
         try {
             InputStream inputStream = requireContext().getContentResolver().openInputStream(uri);
-            File file = new File(requireContext().getFilesDir(), "foto_servicio.jpg");
+            File file = new File(requireContext().getFilesDir(), FILE_INT);
             FileOutputStream outputStream = new FileOutputStream(file);
 
             byte[] buffer = new byte[1024];
@@ -158,7 +164,7 @@ public class Registro6AddServicio_fragment extends Fragment {
         });
 
         view.findViewById(R.id.opcionCamara).setOnClickListener(v -> {
-            File imageFile = new File(requireContext().getFilesDir(), "foto_servicio.jpg");
+            File imageFile = new File(requireContext().getFilesDir(), FILE_INT);
             cameraImageUri = FileProvider.getUriForFile(requireContext(), requireContext().getPackageName() + ".provider", imageFile);
             Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, cameraImageUri);
@@ -174,7 +180,7 @@ public class Registro6AddServicio_fragment extends Fragment {
         String nombre = binding.etNombre.getText().toString();
         String descripcion = binding.etDescripcion.getText().toString();
         String precioText = binding.etPrecio.getText().toString();
-        File file = new File(requireContext().getFilesDir(), "foto_servicio.jpg");
+        File file = new File(requireContext().getFilesDir(), FILE_INT);
 
         //Valdación de formulario
         if (nombre.isEmpty()) {
@@ -209,7 +215,7 @@ public class Registro6AddServicio_fragment extends Fragment {
             servicio.setNombre(nombre);
             servicio.setDescripcion(descripcion);
             servicio.setPrecio(Double.parseDouble(precioText));
-            servicio.setUrl("foto_servicio.jpg");
+            servicio.setUrl(FILE_INT);
             return true;
         } else {
             Toast.makeText(getContext(), "Ingresa una foto", Toast.LENGTH_SHORT).show();

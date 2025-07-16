@@ -18,6 +18,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -153,6 +154,8 @@ public class PerfilFragment extends Fragment {
             db.collection("usuarios").document(usuarioActual.getUid()).get()
                     .addOnSuccessListener(document -> {
                         if (document.exists()) {
+                            String nombre = document.getString("nombre");
+                            Log.d("a",nombre);
                             etNombre.setText(document.getString("nombre"));
                             user_name.setText(document.getString("nombre")+ " " + document.getString("apellido"));
                             etApellido.setText(document.getString("apellido"));

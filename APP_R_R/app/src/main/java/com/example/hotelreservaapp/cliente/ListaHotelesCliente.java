@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -38,17 +39,38 @@ public class ListaHotelesCliente extends AppCompatActivity {
     private int adultos, ninos;
     private HotelAdapter adapter;
 
+
+    TextView tvDestinoSeleccionado;
+    TextView tvFechasSeleccionadas;
+
+    private String destino;
+    private String tipo;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.cliente_activity_lista_hoteles); // tu layout principal
         // Obtener extras enviados desde HomeCliente
         Intent intent = getIntent();
-        String destino = intent.getStringExtra("destino");
+        destino = intent.getStringExtra("destino");
+        tipo = intent.getStringExtra("tipo");
         long fechaInicioMillis = intent.getLongExtra("fechaInicio", -1);
         long fechaFinMillis = intent.getLongExtra("fechaFin", -1);
         int adultos = intent.getIntExtra("adultos", 0);
         int ninos = intent.getIntExtra("ninos", 0);
+
+        tvDestinoSeleccionado = findViewById(R.id.tvDestinoSeleccionado);
+        tvFechasSeleccionadas = findViewById(R.id.tvFechasSeleccionadas);
+        // Mostrar destino
+        String destinoTexto = (tipo != null && tipo.equals("state")) ? "Región: " : "Ciudad: ";
+        tvDestinoSeleccionado.setText(destinoTexto + destino);
+
+        // Mostrar fechas
+        String fechasTexto = (fechaInicioMillis != -1 && fechaFinMillis != -1)
+                ? "Fechas: Del " + android.text.format.DateFormat.format("dd/MM/yyyy", fechaInicioMillis)
+                + " al " + android.text.format.DateFormat.format("dd/MM/yyyy", fechaFinMillis)
+                : "Fechas no seleccionadas";
+        tvFechasSeleccionadas.setText(fechasTexto);
 
         String fechas = (fechaInicioMillis != -1 && fechaFinMillis != -1) ?
                 "Del " + android.text.format.DateFormat.format("dd/MM/yyyy", fechaInicioMillis) +
@@ -115,27 +137,42 @@ public class ListaHotelesCliente extends AppCompatActivity {
                         listaHoteles.clear(); // Limpiar lista antes de llenarla
                         for (QueryDocumentSnapshot document : task.getResult()) {
 
-                            // Verificar que existan todos los campos necesarios
                             if (document.contains("nombre") &&
                                     document.contains("valoracion") &&
                                     document.contains("precioMin")) {
 
                                 String hotelId = document.getId();
                                 String nombre = document.getString("nombre");
-                                String descripcion= document.getString("descripcion");
+                                String descripcion = document.getString("descripcion");
                                 String direccion = document.getString("direccion");
                                 String departamento = document.getString("departamento");
-                                String provincia= document.getString("provincia");
-                                String distrito= document.getString("distrito");
+                                String provincia = document.getString("provincia");
+                                String distrito = document.getString("distrito");
                                 boolean servicioTaxi = Boolean.TRUE.equals(document.getBoolean("servicioTaxi"));
                                 Double valoracion = document.getDouble("valoracion");
                                 Double precioMin = document.getDouble("precioMin");
                                 String urlFoto = document.getString("UrlFotoHotel");
 
-                                // Evitar errores si valoracion es null
-                                if (valoracion != null) {
-                                    Hotel hotel = new Hotel(hotelId,nombre,descripcion,direccion,departamento,provincia,distrito,valoracion.floatValue(),precioMin.floatValue(),servicioTaxi,urlFoto);
-                                    listaHoteles.add(hotel);
+                                // Verificar si coincide con el filtro de destino
+                                String campoFiltrado;
+
+                                if ("state".equals(tipo)) {
+                                    campoFiltrado = departamento != null ? departamento.trim().toLowerCase() : "";
+                                } else if ("region".equals(tipo) || "administrative".equals(tipo)) {
+                                    campoFiltrado = departamento != null ? departamento.trim().toLowerCase() : "";
+                                } else {
+                                    campoFiltrado = provincia != null ? provincia.trim().toLowerCase() : "";
+                                }
+
+                                String destinoFiltrado = destino != null ? destino.trim().toLowerCase() : "";
+
+                                if (campoFiltrado.equals(destinoFiltrado)) {
+                                    if (valoracion != null) {
+                                        Hotel hotel = new Hotel(hotelId, nombre, descripcion, direccion, departamento,
+                                                provincia, distrito, valoracion.floatValue(), precioMin.floatValue(),
+                                                servicioTaxi, urlFoto);
+                                        listaHoteles.add(hotel);
+                                    }
                                 }
                             }
                         }
@@ -145,6 +182,7 @@ public class ListaHotelesCliente extends AppCompatActivity {
                     }
                 });
     }
+
     private void mostrarDialogoOrdenamiento() {
         // Inflar el layout del diálogo
         LayoutInflater inflater = LayoutInflater.from(this);

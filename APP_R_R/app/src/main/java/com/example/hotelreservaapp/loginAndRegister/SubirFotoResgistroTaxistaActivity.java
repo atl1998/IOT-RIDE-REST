@@ -12,7 +12,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.hotelreservaapp.R;
 import com.example.hotelreservaapp.databinding.ActivitySubirFotoResgistroTaxistaBinding;
 import com.example.hotelreservaapp.model.PostulacionTaxista;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.io.IOException;
 
@@ -28,6 +32,8 @@ public class SubirFotoResgistroTaxistaActivity extends AppCompatActivity {
     private String fechaNacimiento, correo, telefono, direccion, fotoPerfilUri;
 
     private FirebaseFirestore firestore;
+    private FirebaseStorage storage;
+    private FirebaseUser firebaseUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +42,8 @@ public class SubirFotoResgistroTaxistaActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         firestore = FirebaseFirestore.getInstance();
+        storage = FirebaseStorage.getInstance();
+        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
         // Recuperar datos del intent
         Intent intent = getIntent();
@@ -47,7 +55,7 @@ public class SubirFotoResgistroTaxistaActivity extends AppCompatActivity {
         correo = intent.getStringExtra("correo");
         telefono = intent.getStringExtra("telefono");
         direccion = intent.getStringExtra("direccion");
-        fotoPerfilUri = intent.getStringExtra("fotoPerfilUri"); // <- ✅ Foto del rostro
+        fotoPerfilUri = intent.getStringExtra("fotoPerfilUri");
 
         // Botón volver
         binding.btnBack.setOnClickListener(v -> onBackPressed());
@@ -107,7 +115,37 @@ public class SubirFotoResgistroTaxistaActivity extends AppCompatActivity {
 
     // Crear objeto y enviarlo a Firestore
     private void enviarPostulacionTaxista() {
+
         Toast.makeText(this, "Enviando postulación...", Toast.LENGTH_SHORT).show();
+// Crear documento en blanco para obtener el ID
+        firestore.collection("postulacionesTaxistas")
+                .add(new PostulacionTaxista()) // temporal
+                .addOnSuccessListener(documentReference -> {
+                    String uid = documentReference.getId();
+
+                    StorageReference refFoto = storage.getReference().child("fotos_postulaciones/foto_" + uid + ".jpg");
+                    StorageReference refPlaca = storage.getReference().child("fotos_postulaciones/placa_" + uid + ".jpg");
+
+                    // Subir foto del rostro
+                    refFoto.putFile(Uri.parse(fotoPerfilUri))
+                            .addOnSuccessListener(task1 -> refFoto.getDownloadUrl().addOnSuccessListener(uriFoto -> {
+                                // Subir foto del vehículo
+                                refPlaca.putFile(imageUri)
+                                        .addOnSuccessListener(task2 -> refPlaca.getDownloadUrl().addOnSuccessListener(uriPlaca -> {
+                                            // Finalmente, actualizamos el documento
+                                            guardarPostulacion(uid, uriFoto.toString(), uriPlaca.toString());
+                                        }))
+                                        .addOnFailureListener(e -> Toast.makeText(this, "Error al subir foto del vehículo", Toast.LENGTH_SHORT).show());
+                            }))
+                            .addOnFailureListener(e -> Toast.makeText(this, "Error al subir foto de perfil", Toast.LENGTH_SHORT).show());
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "Error al iniciar postulación: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                });
+    }
+
+    private void guardarPostulacion(String uid, String urlFotoPerfil, String urlFotoPlaca) {
+        String placa = binding.etPlaca.getText().toString().trim();
 
         PostulacionTaxista postulacion = new PostulacionTaxista();
         postulacion.setNombres(nombres);
@@ -118,26 +156,21 @@ public class SubirFotoResgistroTaxistaActivity extends AppCompatActivity {
         postulacion.setCorreo(correo);
         postulacion.setTelefono(telefono);
         postulacion.setDireccion(direccion);
-        postulacion.setNumeroPlaca(binding.etPlaca.getText().toString().trim());
-        postulacion.setFotoPlacaURL(imageUri.toString()); // Foto vehículo
-        postulacion.setUrlFotoPerfil(fotoPerfilUri);       // Foto rostro
+        postulacion.setNumeroPlaca(placa);
+        postulacion.setUrlFotoPerfil(urlFotoPerfil);
+        postulacion.setFotoPlacaURL(urlFotoPlaca);
         postulacion.setEstadoSolicitud("pendiente");
 
         firestore.collection("postulacionesTaxistas")
-                .add(postulacion)
-                .addOnSuccessListener(documentReference -> {
-                    mostrarDialogoRegistroExitosoTaxista(
-                            nombres, apellidos, tipoDocumento, numeroDocumento,
-                            fechaNacimiento, correo, telefono, direccion,
-                            binding.etPlaca.getText().toString().trim(),
-                            imageUri.toString()
-                    );
-                })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(this, "Error al enviar: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                });
+                .document(uid)
+                .set(postulacion)
+                .addOnSuccessListener(unused -> mostrarDialogoRegistroExitosoTaxista(
+                        nombres, apellidos, tipoDocumento, numeroDocumento,
+                        fechaNacimiento, correo, telefono, direccion,
+                        placa, urlFotoPlaca
+                ))
+                .addOnFailureListener(e -> Toast.makeText(this, "Error al guardar postulación final: " + e.getMessage(), Toast.LENGTH_LONG).show());
     }
-
     private void mostrarDialogoRegistroExitosoTaxista(String nombres, String apellidos, String tipoDocumento, String numeroDocumento,
                                                       String fechaNacimiento, String correo, String telefono, String direccion,
                                                       String placa, String fotoVehiculo) {

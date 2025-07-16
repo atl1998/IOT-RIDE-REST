@@ -1,4 +1,4 @@
-package com.example.hotelreservaapp.AdminHotel;
+package com.example.hotelreservaapp.AdminHotel.Fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,35 +9,36 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.hotelreservaapp.AdminHotel.HotelHabitaciones;
+import com.example.hotelreservaapp.AdminHotel.HotelServicios;
+import com.example.hotelreservaapp.AdminHotel.NotificacionesActivity;
 import com.example.hotelreservaapp.R;
-import com.example.hotelreservaapp.databinding.AdminhotelFragmentInicioBinding;
-import com.example.hotelreservaapp.databinding.AdminhotelFragmentReportesBinding;
+import com.example.hotelreservaapp.databinding.AdminhotelFragmentHotelBinding;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
 
 
-public class ReportesFragment extends Fragment {
+public class HotelFragment extends Fragment {
 
-
-    private AdminhotelFragmentReportesBinding binding;
+    private AdminhotelFragmentHotelBinding binding;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.adminhotel_fragment_reportes, container, false);
+        View view = inflater.inflate(R.layout.adminhotel_fragment_hotel, container, false);
 
         //Para ir a reportes usuario y servicio
-        MaterialCardView cardUsuario = view.findViewById(R.id.cardUsuario);
+        MaterialCardView cardHabitaciones = view.findViewById(R.id.cardHabitaciones);
         MaterialCardView cardServicio = view.findViewById(R.id.cardServicio);
 
-        cardUsuario.setOnClickListener(v -> {
+        cardHabitaciones.setOnClickListener(v -> {
             //por ahora directamente al mio bala
-            startActivity(new Intent(getActivity(), ReporteUsuarioActivity.class));
+            startActivity(new Intent(getActivity(), HotelHabitaciones.class));
         });
 
         cardServicio.setOnClickListener(v -> {
             //por ahora directamente al mio bala
-            startActivity(new Intent(getActivity(), ReporteServicioActivity.class));
+            startActivity(new Intent(getActivity(), HotelServicios.class));
         });
 
         //Para ir a notificaciones
@@ -47,6 +48,7 @@ public class ReportesFragment extends Fragment {
             startActivity(new Intent(getActivity(), NotificacionesActivity.class));
         });
 
-        return view;
+
+         return view;
     }
 }
