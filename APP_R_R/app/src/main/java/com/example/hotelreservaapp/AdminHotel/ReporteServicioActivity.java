@@ -28,7 +28,6 @@ public class ReporteServicioActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.adminhotel_activity_reporte_servicio);
         cargarServiciosDeEjemplo();
 

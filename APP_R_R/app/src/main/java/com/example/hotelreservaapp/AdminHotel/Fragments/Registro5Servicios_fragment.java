@@ -227,7 +227,7 @@ public class Registro5Servicios_fragment extends Fragment {
 
         StorageReference ref = FirebaseStorage.getInstance()
                 .getReference()
-                .child("hoteles")
+                .child("fotos_hotel")
                 .child(hotelId)          // carpeta propia del hotel
                 .child("foto.jpg");
 

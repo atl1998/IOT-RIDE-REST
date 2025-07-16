@@ -35,7 +35,6 @@ public class HotelServicios extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.adminhotel_activity_hotel_servicios);
 
         rvServicios = findViewById(R.id.listaServicios);
