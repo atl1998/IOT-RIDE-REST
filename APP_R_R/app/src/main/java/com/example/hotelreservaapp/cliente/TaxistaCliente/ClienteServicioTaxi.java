@@ -154,6 +154,7 @@ public class ClienteServicioTaxi extends AppCompatActivity implements OnMapReady
                         String estadoTaxi = documentSnapshot.getString("solicitarTaxista");
                         if ("En progreso".equals(estadoTaxi)) {
                             bottomSheet.setVisibility(View.GONE); // 👈 Ocultar el bottom sheet
+                            //ocultar fragment de mapa owo y habilitar el gift
                         } else {
                             bottomSheet.setVisibility(View.VISIBLE); // (por si estaba oculto)
                         }
