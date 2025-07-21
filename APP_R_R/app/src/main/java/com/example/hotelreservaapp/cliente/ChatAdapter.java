@@ -70,6 +70,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
         }
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(v.getContext(), DetalleChat.class);
+            intent.putExtra("chatId", chat.getChatId());
             v.getContext().startActivity(intent);
         });
     }

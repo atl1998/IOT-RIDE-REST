@@ -1,11 +1,15 @@
 package com.example.hotelreservaapp.cliente;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,102 +17,132 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.hotelreservaapp.R;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.TimeZone;
 
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 
 public class DetalleChat extends AppCompatActivity {
 
-    private MaterialButton btnVolver;
+    private LinearLayout messagesContainer;
     private EditText messageEditText;
     private FloatingActionButton sendButton;
-    private LinearLayout messagesContainer;
+    private ScrollView scrollView;
 
-    private static final String PREF_NAME = "chat_prefs";
-    private static final String KEY_MESSAGES = "mensajes_chat";
+    private FirebaseFirestore db;
+    private FirebaseUser currentUser;
+    private String chatId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.cliente_activity_detalle_chat);
 
-        btnVolver = findViewById(R.id.btnVolverChatCliente);
+        messagesContainer = findViewById(R.id.messagesContainer);
         messageEditText = findViewById(R.id.messageEditText);
         sendButton = findViewById(R.id.sendButton);
-        messagesContainer = findViewById(R.id.messagesContainer);
+        scrollView = findViewById(R.id.scrollView);
 
-        btnVolver.setOnClickListener(v -> startActivity(new Intent(this, ClienteChat.class)));
+        db = FirebaseFirestore.getInstance();
+        currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
+        if (currentUser == null) {
+            Toast.makeText(this, "No has iniciado sesión", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
+
+        // Obtener el chatId desde el intent
+        chatId = getIntent().getStringExtra("chatId");
+        if (chatId == null) {
+            Toast.makeText(this, "Error: chat no encontrado", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
+
+        // Listener en tiempo real
+        db.collection("chats")
+                .document(chatId)
+                .collection("mensajes")
+                .orderBy("timestamp", Query.Direction.ASCENDING)
+                .addSnapshotListener((snapshots, e) -> {
+                    if (e != null) {
+                        Log.e("CHAT", "Error leyendo mensajes", e);
+                        return;
+                    }
+
+                    messagesContainer.removeAllViews(); // limpiar vista
+                    for (QueryDocumentSnapshot doc : snapshots) {
+                        String contenido = doc.getString("contenido");
+                        String remitenteId = doc.getString("remitenteId");
+
+                        boolean esMio = currentUser.getUid().equals(remitenteId);
+                        mostrarMensaje(contenido, esMio);
+                    }
+
+                    scrollView.post(() -> scrollView.fullScroll(View.FOCUS_DOWN));
+                });
+
+        // Botón enviar
         sendButton.setOnClickListener(v -> {
-            String message = messageEditText.getText().toString().trim();
-            if (!message.isEmpty()) {
-                addSentMessage(message);
-                saveMessageToLocalStorage(message);
-                messageEditText.setText(""); // limpiar campo
-            }
+            String texto = messageEditText.getText().toString().trim();
+            if (texto.isEmpty()) return;
+
+            Map<String, Object> mensaje = new HashMap<>();
+            mensaje.put("contenido", texto);
+            mensaje.put("remitenteId", currentUser.getUid());
+            mensaje.put("timestamp", FieldValue.serverTimestamp());
+
+            db.collection("chats")
+                    .document(chatId)
+                    .collection("mensajes")
+                    .add(mensaje)
+                    .addOnSuccessListener(doc -> {
+                        messageEditText.setText("");
+                    });
         });
-
-        loadMessagesFromLocalStorage(); // 🔄 cargar al iniciar
     }
 
-    private void addSentMessage(String message) {
-        View sentMessageView = LayoutInflater.from(this)
-                .inflate(R.layout.item_cliente_message_sent, messagesContainer, false);
+    private void mostrarMensaje(String texto, boolean esMio) {
+        TextView textView = new TextView(this);
+        textView.setText(texto);
+        textView.setPadding(20, 10, 20, 10);
+        textView.setTextSize(15f);
+        textView.setMaxWidth(800);
 
-        TextView messageText = sentMessageView.findViewById(R.id.text_message);
-        TextView messageTime = sentMessageView.findViewById(R.id.text_time);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT);
 
-        messageText.setText(message);
-        messageTime.setText(obtenerHoraActual());
-
-        messagesContainer.addView(sentMessageView);
-        scrollToBottom();
-    }
-
-    private String obtenerHoraActual() {
-        SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a", Locale.getDefault());
-        sdf.setTimeZone(TimeZone.getTimeZone("America/Lima"));
-        return sdf.format(new Date());
-    }
-
-    private void saveMessageToLocalStorage(String message) {
-        SharedPreferences prefs = getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-        String oldMessages = prefs.getString(KEY_MESSAGES, "[]");
-
-        try {
-            JSONArray jsonArray = new JSONArray(oldMessages);
-            jsonArray.put(message); // Agregar nuevo mensaje
-            prefs.edit().putString(KEY_MESSAGES, jsonArray.toString()).apply();
-        } catch (JSONException e) {
-            e.printStackTrace();
+        if (esMio) {
+            textView.setBackgroundResource(R.drawable.sent_message_background);
+            textView.setTextColor(Color.WHITE);
+            params.gravity = Gravity.END;
+        } else {
+            textView.setBackgroundResource(R.drawable.received_message_background);
+            textView.setTextColor(Color.BLACK);
+            params.gravity = Gravity.START;
         }
-    }
 
-    private void loadMessagesFromLocalStorage() {
-        SharedPreferences prefs = getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-        String savedMessages = prefs.getString(KEY_MESSAGES, "[]");
-
-        try {
-            JSONArray jsonArray = new JSONArray(savedMessages);
-            for (int i = 0; i < jsonArray.length(); i++) {
-                String mensaje = jsonArray.getString(i);
-                addSentMessage(mensaje);
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
-    private void scrollToBottom() {
-        final View scrollView = findViewById(R.id.scrollView); // Asegúrate de que este ID sea correcto
-        scrollView.post(() -> scrollView.scrollTo(0, messagesContainer.getBottom()));
+        textView.setLayoutParams(params);
+        messagesContainer.addView(textView);
     }
 }
+
