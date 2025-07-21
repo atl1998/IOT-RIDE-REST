@@ -105,6 +105,8 @@ public class ValidacionTarjeta extends AppCompatActivity {
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
+        String userId = user.getUid();
+
         // 🔍 Validar tarjeta en Firestore
         db.collection("banco")
                 .whereEqualTo("numTarjeta", numTarjeta)
@@ -113,6 +115,60 @@ public class ValidacionTarjeta extends AppCompatActivity {
                 .whereEqualTo("nombreTitular", titular)
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
+
+
+                    Intent intent1 = getIntent();
+                    String hotelId1 = intent1.getStringExtra("hotelId");
+                    db.collection("Hoteles")
+                            .document(hotelId1)
+                            .get()
+                            .addOnSuccessListener(hotelDoc -> {
+                                if (hotelDoc.exists()) {
+                                    String adminId = hotelDoc.getString("idAdminHotel"); // 👈 asegúrate de que esté bien escrito en Firestore
+
+                                    if (adminId != null && !adminId.isEmpty()) {
+                                        Map<String, Object> chatData = new HashMap<>();
+                                        chatData.put("idUsuario", userId);
+                                        chatData.put("idAdminHotel", adminId);
+                                        chatData.put("idHotel",hotelId1);
+
+                                        db.collection("chats")
+                                                .add(chatData)
+                                                .addOnSuccessListener(chatRef -> {
+                                                    Log.d("Firestore", "Chat creado con ID: " + chatRef.getId());
+
+                                                    // ✅ Crear primer mensaje automático
+                                                    Map<String, Object> primerMensaje = new HashMap<>();
+                                                    primerMensaje.put("contenido", "Hola, he realizado una reserva. ¿Podrías ayudarme con más información?");
+                                                    primerMensaje.put("remitenteId", userId);
+                                                    primerMensaje.put("timestamp", FieldValue.serverTimestamp());
+
+                                                    db.collection("chats")
+                                                            .document(chatRef.getId())
+                                                            .collection("mensajes")
+                                                            .add(primerMensaje)
+                                                            .addOnSuccessListener(msgRef -> {
+                                                                Log.d("Firestore", "Mensaje inicial enviado");
+                                                            })
+                                                            .addOnFailureListener(e -> {
+                                                                Log.e("Firestore", "Error al enviar mensaje inicial", e);
+                                                            });
+                                                })
+                                                .addOnFailureListener(e -> {
+                                                    Log.e("Firestore", "Error creando chat", e);
+                                                });
+                                    } else {
+                                        Log.w("Firestore", "El hotel no tiene un adminId válido");
+                                    }
+                                } else {
+                                    Log.w("Firestore", "Hotel no encontrado");
+                                }
+                            })
+                            .addOnFailureListener(e -> {
+                                Log.e("Firestore", "No se pudo obtener hotel", e);
+                            });
+
+
                     if (!queryDocumentSnapshots.isEmpty()) {
                         // 🎯 Tarjeta válida → continuar con la reserva
 
@@ -170,7 +226,6 @@ public class ValidacionTarjeta extends AppCompatActivity {
                         reserva.put("habitaciones", habitacionesReserva);
                         reserva.put("fechaReserva", FieldValue.serverTimestamp());
 
-                        String userId = user.getUid();
                         db.collection("usuarios")
                                 .document(userId)
                                 .collection("Reservas")
@@ -210,5 +265,9 @@ public class ValidacionTarjeta extends AppCompatActivity {
                     Toast.makeText(this, "Error de conexión", Toast.LENGTH_SHORT).show();
                 });
     }
+
+
+
+
 
 }
