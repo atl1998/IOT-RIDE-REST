@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.content.Intent;
 import android.widget.Toast;
@@ -39,6 +40,8 @@ public class HistorialAdapter extends RecyclerView.Adapter<HistorialAdapter.View
         ImageView imageHotel;
         Button btnCheckout, btnTaxista;
         View cardView;
+        LinearLayout estrellasLayout;
+
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -50,6 +53,7 @@ public class HistorialAdapter extends RecyclerView.Adapter<HistorialAdapter.View
             btnCheckout = itemView.findViewById(R.id.btnCheckout);
             btnTaxista = itemView.findViewById(R.id.btnTaxista);
             cardView = itemView.findViewById(R.id.card_view);
+            estrellasLayout = itemView.findViewById(R.id.estrellasLayout);
         }
     }
 
@@ -96,6 +100,32 @@ public class HistorialAdapter extends RecyclerView.Adapter<HistorialAdapter.View
             holder.btnTaxista.setAlpha(item.isTaxiEnabled() ? 1f : 0.5f);
         }
 
+        holder.estrellasLayout.removeAllViews();
+
+        double valoracion = item.getValoracion(); // Asegúrate de tener getValoracion() en HistorialItem
+        int estrellasCompletas = (int) valoracion;
+        boolean hayMedia = (valoracion - estrellasCompletas) >= 0.5;
+        int estrellasVacias = 5 - estrellasCompletas - (hayMedia ? 1 : 0);
+
+        // Agrega estrellas llenas
+        for (int i = 0; i < estrellasCompletas; i++) {
+            ImageView estrella = crearEstrella(holder, R.drawable.star_fill_yellow);
+            holder.estrellasLayout.addView(estrella);
+        }
+
+        // Agrega media estrella si aplica
+        if (hayMedia) {
+            ImageView estrella = crearEstrella(holder, R.drawable.star_half);
+            holder.estrellasLayout.addView(estrella);
+        }
+
+        // Agrega estrellas vacías
+        for (int i = 0; i < estrellasVacias; i++) {
+            ImageView estrella = crearEstrella(holder, R.drawable.star_empity);
+            holder.estrellasLayout.addView(estrella);
+        }
+
+
         holder.btnCheckout.setOnClickListener(v -> listener.onCheckoutClicked(item));
         holder.btnTaxista.setOnClickListener(v -> listener.onTaxiClicked(item));
         holder.itemView.setOnClickListener(v -> listener.onItemClicked(item));
@@ -112,6 +142,20 @@ public class HistorialAdapter extends RecyclerView.Adapter<HistorialAdapter.View
         notifyDataSetChanged();  // <---- Agregar esto
     }
 
+    private ImageView crearEstrella(ViewHolder holder, int drawableRes) {
+        ImageView estrella = new ImageView(holder.itemView.getContext());
+        int size = dpToPx(22); // 22dp como en tu XML
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(size, size);
+        params.setMargins(2, 0, 2, 0);
+        estrella.setLayoutParams(params);
+        estrella.setImageResource(drawableRes);
+        return estrella;
+    }
+
+    private int dpToPx(int dp) {
+        float density = context.getResources().getDisplayMetrics().density;
+        return Math.round(dp * density);
+    }
 
 
 }

@@ -305,6 +305,7 @@ public class HistorialEventos extends AppCompatActivity implements HistorialItem
                                     String nombreHotel = hotelDoc.getString("nombre");
                                     String distrito = hotelDoc.getString("distrito");
                                     String provincia = hotelDoc.getString("provincia");
+                                    Double valoracion = hotelDoc.getDouble("valoracion");
                                     String ubicacion = distrito+", "+provincia;
                                     String UrlHotel = hotelDoc.getString("UrlFotoHotel");
                                     Boolean servicioTaxi = hotelDoc.getBoolean("servicioTaxi");
@@ -361,6 +362,7 @@ public class HistorialEventos extends AppCompatActivity implements HistorialItem
 
                                     HistorialItem historialItem = new HistorialItem(idReserva, estadoEsperado, nombreHotel, "📍 " + ubicacion, solicitarTaxista, checkoutEnable, servicioTaxi, fechaInicioTS, fechaFinTS);
                                     historialItem.setUrlImage(UrlHotel);
+                                    historialItem.setValoracion(valoracion);
                                     historialItems.add(historialItem);
                                     Log.d("HistorialEventos", "Item cargado: idReserva=" + idReserva + ", hotel=" + nombreHotel + ", estado=" + estadoEsperado + ", ubicacion=" + ubicacion);
                                 }
