@@ -23,6 +23,9 @@
         android:theme="@style/Theme.HotelReservaApp"
         tools:targetApi="31">
         <activity
+            android:name=".AdminHotel.DetallesChatActivity"
+            android:exported="false" />
+        <activity
             android:name=".AdminHotel.TestPushNotification"
             android:exported="false" />
         <activity
@@ -159,7 +162,7 @@
 
             <!-- Puedes agregar un intent-filter si es necesario -->
         </activity>
-        <activity android:name=".ClienteServicioTaxi" />
+        <activity android:name=".cliente.TaxistaCliente.ClienteServicioTaxi" />
         <activity android:name=".cliente.HistorialEventos">
 
             <!-- Puedes agregar un intent-filter si es necesario -->

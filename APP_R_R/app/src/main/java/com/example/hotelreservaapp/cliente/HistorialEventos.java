@@ -21,7 +21,6 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -29,16 +28,12 @@ import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-import androidx.work.OneTimeWorkRequest;
-import androidx.work.WorkManager;
-import androidx.work.WorkRequest;
 
-import com.example.hotelreservaapp.ClienteServicioTaxi;
+import com.example.hotelreservaapp.cliente.TaxistaCliente.ClienteServicioTaxi;
 import com.example.hotelreservaapp.Objetos.Notificaciones;
 import com.example.hotelreservaapp.Objetos.NotificacionesStorageHelper;
 import com.example.hotelreservaapp.Objetos.NotificationManagerNoAPP;
 import com.example.hotelreservaapp.R;
-import com.example.hotelreservaapp.workers.NotificacionCheckoutWorker;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -46,7 +41,6 @@ import com.google.android.material.button.MaterialButton;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
@@ -60,7 +54,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -284,12 +277,12 @@ public class HistorialEventos extends AppCompatActivity implements HistorialItem
 
                         // Mapa temporal para guardar datos de cada reserva junto con su hotelId
                         Map<String, QueryDocumentSnapshot> reservasMap = new HashMap<>();
-                        // List<String> hotelIds = new ArrayList<>(); // <-- lista paralela
+                        List<String> hotelIds = new ArrayList<>();
 
                         for (QueryDocumentSnapshot reservaDoc : reservasSnapshot) {
                             String hotelId = reservaDoc.getString("hotelId");
                             reservasMap.put(reservaDoc.getId(), reservaDoc);
-                            // hotelIds.add(hotelId);
+                            hotelIds.add(hotelId);
                             // Agregar tarea para obtener hotel
                             hotelTasks.add(db.collection("Hoteles").document(hotelId).get());
                         }
@@ -300,6 +293,7 @@ public class HistorialEventos extends AppCompatActivity implements HistorialItem
                                 // Aquí obtenemos la reserva correspondiente
                                 DocumentSnapshot reservaDoc = reservasSnapshot.getDocuments().get(i);
                                 String idReserva = reservaDoc.getId();
+                                String hotelIdGod = hotelIds.get(i);
                                 String estadoActual = reservaDoc.getString("estado");
                                 Timestamp fechaInicioTS = reservaDoc.getTimestamp("fechaIni");
                                 Timestamp fechaFinTS = reservaDoc.getTimestamp("fechaFin");
@@ -312,6 +306,7 @@ public class HistorialEventos extends AppCompatActivity implements HistorialItem
                                     String nombreHotel = hotelDoc.getString("nombre");
                                     String distrito = hotelDoc.getString("distrito");
                                     String provincia = hotelDoc.getString("provincia");
+                                    Double valoracion = hotelDoc.getDouble("valoracion");
                                     String ubicacion = distrito+", "+provincia;
                                     String UrlHotel = hotelDoc.getString("UrlFotoHotel");
                                     Boolean servicioTaxi = hotelDoc.getBoolean("servicioTaxi");
@@ -368,6 +363,8 @@ public class HistorialEventos extends AppCompatActivity implements HistorialItem
 
                                     HistorialItem historialItem = new HistorialItem(idReserva, estadoEsperado, nombreHotel, "📍 " + ubicacion, solicitarTaxista, checkoutEnable, servicioTaxi, fechaInicioTS, fechaFinTS);
                                     historialItem.setUrlImage(UrlHotel);
+                                    historialItem.setValoracion(valoracion);
+                                    historialItem.setHotelId(hotelIdGod);
                                     historialItems.add(historialItem);
                                     Log.d("HistorialEventos", "Item cargado: idReserva=" + idReserva + ", hotel=" + nombreHotel + ", estado=" + estadoEsperado + ", ubicacion=" + ubicacion);
                                 }
@@ -401,6 +398,10 @@ public class HistorialEventos extends AppCompatActivity implements HistorialItem
     @Override
     public void onTaxiClicked(HistorialItem item) {
         Intent intent = new Intent(this, ClienteServicioTaxi.class);
+        // Supongamos que quieres pasar un ID, un nombre y una ubicación
+        intent.putExtra("IdHotel", item.getHotelId());
+        intent.putExtra("IdReserva", item.getIdReserva());
+        Log.d("DEBUG_INTENT", "Enviando: " + item.getHotelId() + " / " + item.getIdReserva());
         startActivity(intent);
     }
     @Override
@@ -477,13 +478,13 @@ public class HistorialEventos extends AppCompatActivity implements HistorialItem
 
                 // Obtener la hora actual en formato "HH:mm"
                 String horaActual = new SimpleDateFormat("HH:mm", Locale.getDefault()).format(new Date());
-                String checkin = "No especificado";
+                //String checkin = "No especificado";
 
                 // Crear mapa con los campos a actualizar
                 Map<String, Object> updates = new HashMap<>();
                 updates.put("checkoutSolicitado", true);
-                updates.put("CheckOutHora", horaActual);  // <-- esto será tipo String
-                updates.put("CheckInHora", checkin);
+                //updates.put("CheckOutHora", horaActual);  // <-- esto será tipo String
+                //updates.put("CheckInHora", checkin);
 
                 db.collection("usuarios")
                         .document(userId)
@@ -614,10 +615,11 @@ public class HistorialEventos extends AppCompatActivity implements HistorialItem
         if (ActivityCompat.checkSelfPermission(this, POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
             notificationManagerCompat.notify(1, builder.build());
         }
-
+        /*
         WorkRequest notificacionRetrasada = new OneTimeWorkRequest.Builder(NotificacionCheckoutWorker.class)
                 .setInitialDelay(15, TimeUnit.SECONDS)
                 .build();
         WorkManager.getInstance(this).enqueue(notificacionRetrasada);
+        */
     }
 }

@@ -59,18 +59,24 @@
             style="@style/EstiloFormularioMarron"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="12dp"
+            app:endIconMode="dropdown_menu"
             app:layout_constraintTop_toBottomOf="@id/tvSubtitulo"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
 
-            <com.google.android.material.textfield.TextInputEditText
+            <AutoCompleteTextView
                 android:id="@+id/etNombre"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Nombre"
+                android:layout_height="match_parent"
+                android:hint="Tipo"
+                android:inputType="none"
+                android:focusable="true"
+                android:clickable="true"
                 android:textColor="#452C06"
-                android:textColorHint="#BDBDBD" />
+                android:textColorHint="#BDBDBD"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Descripción -->
@@ -134,18 +140,12 @@
 
                 <ImageView
                     android:id="@+id/iv_profile_image"
-                    android:layout_width="150dp"
-                    android:layout_height="130dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
                     android:src="@drawable/adminhotel_icon_image"
                     app:iconTint="@color/adminhotel_nombres" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Select file"
-                    android:textColor="@color/adminhotel_nombres"
-                    android:textSize="16sp"
-                    android:layout_marginTop="12dp" />
+
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 

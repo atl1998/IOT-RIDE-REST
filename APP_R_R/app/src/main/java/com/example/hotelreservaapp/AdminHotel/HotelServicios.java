@@ -11,7 +11,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.hotelreservaapp.AdminHotel.Adapter.ServicioAdapter;
+import com.example.hotelreservaapp.AdminHotel.Adapter.ServicioRegistradoAdapter;
 import com.example.hotelreservaapp.AdminHotel.Model.Servicio;
 import com.example.hotelreservaapp.AdminHotel.ViewModel.RegistroViewModel;
 import com.example.hotelreservaapp.R;
@@ -26,7 +26,7 @@ import java.util.List;
 public class HotelServicios extends AppCompatActivity {
 
     private RecyclerView rvServicios;
-    private com.example.hotelreservaapp.AdminHotel.Adapter.ServicioAdapter adapter;
+    private com.example.hotelreservaapp.AdminHotel.Adapter.ServicioRegistradoAdapter adapter;
     private List<Servicio> listaServicios;
     private FirebaseFirestore db;
     private FirebaseUser usuarioActual;
@@ -49,7 +49,7 @@ public class HotelServicios extends AppCompatActivity {
         // Inicializar lista de habitaciones
         listaServicios = new ArrayList<>();
         //Inicializamos el adapter
-        adapter = new ServicioAdapter(listaServicios,this,  new ServicioAdapter.OnItemClickListener() {
+        adapter = new ServicioRegistradoAdapter(listaServicios,this,  new ServicioRegistradoAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
                 Servicio servicio = listaServicios.get(position);

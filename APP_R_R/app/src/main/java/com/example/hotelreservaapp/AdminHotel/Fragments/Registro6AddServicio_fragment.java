@@ -18,6 +18,8 @@ import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
@@ -40,6 +42,8 @@ public class Registro6AddServicio_fragment extends Fragment {
 
     private AdminhotelRegistro6FragmentBinding binding;
 
+    private AutoCompleteTextView etTipoServicio;
+
     private MaterialButton btnContinuar6;
     private RegistroViewModel registroViewModel;
     private ImageButton btnBack;
@@ -51,6 +55,8 @@ public class Registro6AddServicio_fragment extends Fragment {
 
     private String FILE_INT;
     private int num_ser;
+
+    String seleccionado;
 
     private final ActivityResultLauncher<Intent> takePhotoLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
@@ -82,13 +88,25 @@ public class Registro6AddServicio_fragment extends Fragment {
 
         final boolean[] enModoEdicion = {false};
 
-        // Mostrar imagen si ya está guardada
-        File file = new File(requireContext().getFilesDir(), FILE_INT);
-        if (file.exists()) {
-            binding.ivProfileImage.setImageURI(Uri.fromFile(file));
-            binding.buttonOpenCamera.setIcon(ContextCompat.getDrawable(requireContext(), R.drawable.edit_square_24dp_black));
-            binding.buttonOpenCamera.setText("Editar foto");
-        }
+        etTipoServicio = binding.etNombre;
+
+        String[] servicios = getResources().getStringArray(R.array.servicios_hotel);
+
+        ArrayAdapter<String> serviciosAdapter = new ArrayAdapter<>(
+                requireContext(),
+                android.R.layout.simple_list_item_1,
+                servicios
+        );
+
+        etTipoServicio.setAdapter(serviciosAdapter);
+
+        // (Opcional) Si quieres capturar la elección:
+        etTipoServicio.setOnItemClickListener((parent, v, position, id) -> {
+            seleccionado = serviciosAdapter.getItem(position);
+            Toast.makeText(getContext(),
+                    "Servicio: " + seleccionado,
+                    Toast.LENGTH_SHORT).show();
+        });
 
         // Inicializar pickImageLauncher
         pickImageLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
@@ -177,13 +195,12 @@ public class Registro6AddServicio_fragment extends Fragment {
 
     private boolean datosValidos() {
         boolean valido = true;
-        String nombre = binding.etNombre.getText().toString();
         String descripcion = binding.etDescripcion.getText().toString();
         String precioText = binding.etPrecio.getText().toString();
         File file = new File(requireContext().getFilesDir(), FILE_INT);
 
         //Valdación de formulario
-        if (nombre.isEmpty()) {
+        if (seleccionado.isEmpty()) {
             binding.tilNombre.setError("Campo obligatorio");
             valido = false;
         }  else binding.tilNombre.setError(null);
@@ -212,7 +229,7 @@ public class Registro6AddServicio_fragment extends Fragment {
 
 
         if(file.exists() && valido) {
-            servicio.setNombre(nombre);
+            servicio.setNombre(seleccionado);
             servicio.setDescripcion(descripcion);
             servicio.setPrecio(Double.parseDouble(precioText));
             servicio.setUrl(FILE_INT);

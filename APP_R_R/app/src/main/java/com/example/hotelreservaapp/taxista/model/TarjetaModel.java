@@ -11,6 +11,8 @@ public class TarjetaModel {
     private String nombreCliente;
     private String correoCliente;
     private String telefonoCliente;
+
+    @PropertyName("urlFotoPerfil")
     private String fotoCliente;
 
     private String direccionHotel;  // <- campo que Firestore envía como "direccionHotel"
@@ -35,6 +37,8 @@ public class TarjetaModel {
     private double lngOrigen;
     private double latDestino;
     private double lngDestino;
+    private String idReserva;
+    private String idHotel;
 
     public TarjetaModel() {
         // Requerido por Firestore
@@ -42,6 +46,23 @@ public class TarjetaModel {
 
     // Getters y Setters
     // Getters & setters
+
+    public String getIdReserva() {
+        return idReserva;
+    }
+
+    public void setIdReserva(String idReserva) {
+        this.idReserva = idReserva;
+    }
+
+    public String getIdHotel() {
+        return idHotel;
+    }
+
+    public void setIdHotel(String idHotel) {
+        this.idHotel = idHotel;
+    }
+
     public double getLatOrigen() { return latOrigen; }
     public void setLatOrigen(double latOrigen) { this.latOrigen = latOrigen; }
 
@@ -85,10 +106,12 @@ public class TarjetaModel {
         this.telefonoCliente = telefonoCliente;
     }
 
+    @PropertyName("urlFotoPerfil")
     public String getFotoCliente() {
         return fotoCliente;
     }
 
+    @PropertyName("urlFotoPerfil")
     public void setFotoCliente(String fotoCliente) {
         this.fotoCliente = fotoCliente;
     }

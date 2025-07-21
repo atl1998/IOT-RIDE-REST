@@ -1,4 +1,4 @@
-package com.example.hotelreservaapp.cliente;
+package com.example.hotelreservaapp.AdminHotel.Adapter;
 
 import android.content.Intent;
 import android.view.LayoutInflater;
@@ -11,13 +11,14 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.hotelreservaapp.cliente.Chat;
+import com.example.hotelreservaapp.AdminHotel.Model.*;
 import com.example.hotelreservaapp.R;
+import com.example.hotelreservaapp.AdminHotel.DetallesChatActivity;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder> {
+public class ChatAdapter extends RecyclerView.Adapter<com.example.hotelreservaapp.AdminHotel.Adapter.ChatAdapter.ChatViewHolder> {
 
     private List<Chat> chatList;
 
@@ -34,15 +35,15 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
 
     @NonNull
     @Override
-    public ChatViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public com.example.hotelreservaapp.AdminHotel.Adapter.ChatAdapter.ChatViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         // Inflar el layout del item (el layout de cada chat)
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.message_cliente, parent, false);
-        return new ChatViewHolder(itemView);
+        return new com.example.hotelreservaapp.AdminHotel.Adapter.ChatAdapter.ChatViewHolder(itemView);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ChatViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull com.example.hotelreservaapp.AdminHotel.Adapter.ChatAdapter.ChatViewHolder holder, int position) {
         Chat chat = chatList.get(position);
 
         holder.nombreHotel.setText(chat.getnombreHotel());
@@ -69,7 +70,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
             }
         }
         holder.itemView.setOnClickListener(v -> {
-            Intent intent = new Intent(v.getContext(), DetalleChat.class);
+            Intent intent = new Intent(v.getContext(), DetallesChatActivity.class);
             intent.putExtra("chatId", chat.getChatId());
             v.getContext().startActivity(intent);
         });

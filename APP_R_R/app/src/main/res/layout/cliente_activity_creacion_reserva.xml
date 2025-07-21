@@ -31,7 +31,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="Procesar Pago"
+                android:text="Pago Completado"
                 android:textColor="#282828"
                 android:textSize="20sp"
                 android:textStyle="bold"
@@ -44,24 +44,7 @@
 
             <!-- Botón de Notificaciones -->
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/añadirfavoritos"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_marginEnd="76dp"
-                android:backgroundTint="@color/transparente"
-                android:contentDescription="Abrir chat de soporte"
-                android:minWidth="0dp"
-                android:minHeight="0dp"
-                android:padding="15dp"
-                app:icon="@drawable/outline_arrow_back_24"
-                app:iconGravity="textStart"
-                app:iconPadding="0dp"
-                app:iconTint="@color/marron_oscuro"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/actividad3"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.0" />
+
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/notificaciones_cliente"

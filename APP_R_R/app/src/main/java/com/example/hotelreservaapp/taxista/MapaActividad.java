@@ -6,9 +6,9 @@ import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -17,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.bumptech.glide.Glide;
 import com.example.hotelreservaapp.R;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -50,122 +51,123 @@ import okhttp3.Response;
 
 public class MapaActividad extends AppCompatActivity implements OnMapReadyCallback {
 
-    private TextView nombreCliente, telefonoviajero;
+    private ImageView ivFotoCliente;
+    private TextView tvNombreCliente, tvTelefonoCliente;
     private MaterialButton btnVolver, btnConfirmarRecojo;
     private GoogleMap mMap;
-    private Marker markerActual, markerCliente;
+    private Marker markerTaxi, markerCliente;
     private Polyline rutaPolyline;
-    private FusedLocationProviderClient fusedLocationProviderClient;
+    private FusedLocationProviderClient fusedLocationClient;
 
-    private double clienteLat = -12.0219;
-    private double clienteLng = -77.1126;
-
-    private double destinoLat = -12.0087;     // <- ejemplo predeterminado
-    private double destinoLng = -77.0574;
-
-    private String nombre, telefono;
-    private boolean redirigirAViajeEnCurso = false;
+    // Datos del cliente
+    private String nombreCliente, telefonoCliente, fotoUrlCliente;
+    private double clienteLat, clienteLng;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.taxista_activity_mapa);
 
-        nombreCliente = findViewById(R.id.txtNombreCliente);
-        telefonoviajero = findViewById(R.id.telefonoviajero);
-        btnVolver = findViewById(R.id.btnVolver);
+        // Bind vistas
+        ivFotoCliente      = findViewById(R.id.ivFotoCliente);
+        tvNombreCliente    = findViewById(R.id.txtNombreCliente);
+        tvTelefonoCliente  = findViewById(R.id.telefonoviajero);
+        btnVolver          = findViewById(R.id.btnVolver);
         btnConfirmarRecojo = findViewById(R.id.btnConfirmarRecojo);
 
+        // Leer extras (exactos los mismos keys que en el adapter)
         Intent intent = getIntent();
-        nombre = intent.getStringExtra("nombre");
-        telefono = intent.getStringExtra("telefono");
-        redirigirAViajeEnCurso = intent.getBooleanExtra("viajeEnCurso", false);
-        clienteLat = intent.getDoubleExtra("latOrigen", -12.0219);
-        clienteLng = intent.getDoubleExtra("lngOrigen", -77.1126);
+        nombreCliente   = intent.getStringExtra("nombreCliente");
+        telefonoCliente = intent.getStringExtra("telefonoCliente");
+        fotoUrlCliente  = intent.getStringExtra("fotoCliente");
+        clienteLat      = intent.getDoubleExtra("latOrigen", 0);
+        clienteLng      = intent.getDoubleExtra("lngOrigen", 0);
 
-        if (nombre != null) nombreCliente.setText("Nombre: " + nombre);
-        if (telefono != null) telefonoviajero.setText("Contacto: " + telefono);
+        // Mostrar datos
+        tvNombreCliente.setText("Nombre: " + nombreCliente);
+        tvTelefonoCliente.setText("Contacto: " + telefonoCliente);
 
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
-        if (mapFragment != null) {
-            mapFragment.getMapAsync(this);
+        if (fotoUrlCliente != null && !fotoUrlCliente.isEmpty()) {
+            Glide.with(this)
+                    .load(fotoUrlCliente)
+                    .placeholder(R.drawable.default_profile)
+                    .into(ivFotoCliente);
+        } else {
+            ivFotoCliente.setImageResource(R.drawable.default_profile);
         }
 
-        btnVolver.setOnClickListener(v -> {
-            Intent i = new Intent(this, ViajeEnCursoActivity.class);
-            i.putExtra("nombre", nombre);
-            i.putExtra("telefono", telefono);
-            i.putExtra("latOrigen", clienteLat);
-            i.putExtra("lngOrigen", clienteLng);
-            i.putExtra("latDestino", destinoLat);
-            i.putExtra("lngDestino", destinoLng);
-            i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(i);
-        });
+        // Mapa y ubicación
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        SupportMapFragment mapFrag = (SupportMapFragment)
+                getSupportFragmentManager().findFragmentById(R.id.map);
+        if (mapFrag != null) mapFrag.getMapAsync(this);
 
+        // Botón “volver”
+        btnVolver.setOnClickListener(v -> finish());
 
+        // Confirmar recogida → ViajeEnCursoActivity
         btnConfirmarRecojo.setOnClickListener(v -> {
             Intent i = new Intent(this, ViajeEnCursoActivity.class);
-            i.putExtra("nombre", nombre);
-            i.putExtra("telefono", telefono);
+            i.putExtra("nombreCliente",   nombreCliente);
+            i.putExtra("telefonoCliente", telefonoCliente);
+            i.putExtra("fotoCliente",     fotoUrlCliente);
             i.putExtra("latOrigen", clienteLat);
             i.putExtra("lngOrigen", clienteLng);
-            i.putExtra("latDestino", destinoLat);
-            i.putExtra("lngDestino", destinoLng);
             startActivity(i);
         });
-
     }
 
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
         mMap = googleMap;
 
+        // aplicar estilo
         try {
-            boolean success = mMap.setMapStyle(
+            boolean ok = mMap.setMapStyle(
                     MapStyleOptions.loadRawResourceStyle(this, R.raw.mapa_driver_style)
             );
-            if (!success) {
-                Log.e("MAPA_ESTILO", "Error al aplicar estilo");
-            }
+            if (!ok) Log.e("MAP_STYLE", "Error aplicando estilo");
         } catch (Resources.NotFoundException e) {
-            Log.e("MAPA_ESTILO", "No se encontró el archivo de estilo. " + e.getMessage());
+            Log.e("MAP_STYLE", e.getMessage());
         }
 
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+        // permiso ubicación
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1001);
+            ActivityCompat.requestPermissions(
+                    this,
+                    new String[]{ Manifest.permission.ACCESS_FINE_LOCATION },
+                    1001
+            );
             return;
         }
 
         mMap.setMyLocationEnabled(true);
-        fusedLocationProviderClient.getLastLocation().addOnSuccessListener(location -> {
-            if (location != null) {
-                LatLng ubicacionActual = new LatLng(location.getLatitude(), location.getLongitude());
-                mostrarRuta(ubicacionActual, new LatLng(clienteLat, clienteLng));
-            } else {
-                Toast.makeText(this, "Ubicación actual no disponible", Toast.LENGTH_SHORT).show();
+        fusedLocationClient.getLastLocation().addOnSuccessListener(loc -> {
+            if (loc == null) {
+                Toast.makeText(this, "Ubicación no disponible", Toast.LENGTH_SHORT).show();
+                return;
             }
+            LatLng taxiPos = new LatLng(loc.getLatitude(), loc.getLongitude());
+            LatLng cliPos  = new LatLng(clienteLat, clienteLng);
+            drawRoute(taxiPos, cliPos);
         });
     }
 
-
-    private void mostrarRuta(LatLng origen, LatLng destino) {
-        if (mMap == null) return;
-
-        if (markerActual != null) markerActual.remove();
-        if (markerCliente != null) markerCliente.remove();
+    private void drawRoute(LatLng origen, LatLng destino) {
+        // limpiar
+        if (markerTaxi   != null) markerTaxi.remove();
+        if (markerCliente!= null) markerCliente.remove();
         if (rutaPolyline != null) rutaPolyline.remove();
 
-        Bitmap iconTaxi = BitmapFactory.decodeResource(getResources(), R.drawable.icono_auto);
-        Bitmap smallTaxi = Bitmap.createScaledBitmap(iconTaxi, 80, 80, false);
+        // iconos
+        Bitmap bmpTaxi   = BitmapFactory.decodeResource(getResources(), R.drawable.icono_auto);
+        Bitmap smallTaxi = Bitmap.createScaledBitmap(bmpTaxi, 80, 80, false);
+        Bitmap bmpCli    = BitmapFactory.decodeResource(getResources(), R.drawable.icono_cliente);
+        Bitmap smallCli  = Bitmap.createScaledBitmap(bmpCli, 80, 80, false);
 
-        Bitmap iconCliente = BitmapFactory.decodeResource(getResources(), R.drawable.icono_cliente);
-        Bitmap smallCliente = Bitmap.createScaledBitmap(iconCliente, 80, 80, false);
-
-        markerActual = mMap.addMarker(new MarkerOptions()
+        markerTaxi = mMap.addMarker(new MarkerOptions()
                 .position(origen)
                 .title("Tu ubicación")
                 .icon(BitmapDescriptorFactory.fromBitmap(smallTaxi)));
@@ -173,56 +175,62 @@ public class MapaActividad extends AppCompatActivity implements OnMapReadyCallba
         markerCliente = mMap.addMarker(new MarkerOptions()
                 .position(destino)
                 .title("Cliente")
-                .icon(BitmapDescriptorFactory.fromBitmap(smallCliente)));
+                .icon(BitmapDescriptorFactory.fromBitmap(smallCli)));
 
+        // Directions API
         String url = "https://maps.googleapis.com/maps/api/directions/json"
-                + "?origin=" + origen.latitude + "," + origen.longitude
-                + "&destination=" + destino.latitude + "," + destino.longitude
+                + "?origin="    + origen.latitude  + "," + origen.longitude
+                + "&destination="+ destino.latitude + "," + destino.longitude
                 + "&mode=driving"
                 + "&key=" + getString(R.string.google_maps_key);
 
-        OkHttpClient client = new OkHttpClient();
-        Request request = new Request.Builder().url(url).build();
-
-        client.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                Log.e("RUTA_ERROR", "Fallo HTTP: " + e.getMessage());
-            }
-
-            @Override
-            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                try {
-                    String json = response.body().string();
-                    JSONObject obj = new JSONObject(json);
-                    JSONArray routes = obj.getJSONArray("routes");
-
-                    if (routes.length() > 0) {
-                        String encoded = routes.getJSONObject(0)
-                                .getJSONObject("overview_polyline")
-                                .getString("points");
-                        List<LatLng> points = PolyUtil.decode(encoded);
-
-                        runOnUiThread(() -> {
-                            int colorRuta = ContextCompat.getColor(getApplicationContext(), R.color.dorado);
-
-                            rutaPolyline = mMap.addPolyline(new PolylineOptions()
-                                    .addAll(points)
-                                    .width(10)
-                                    .color(colorRuta));
-
-                            LatLngBounds bounds = new LatLngBounds.Builder()
-                                    .include(origen)
-                                    .include(destino)
-                                    .build();
-                            mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 120));
-                        });
-
+        new OkHttpClient().newCall(new Request.Builder().url(url).build())
+                .enqueue(new Callback() {
+                    @Override public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                        Log.e("DIRECTIONS", "HTTP fallo: " + e.getMessage());
                     }
-                } catch (JSONException e) {
-                    Log.e("RUTA_JSON", "Error al parsear JSON: " + e.getMessage());
-                }
-            }
-        });
+                    @Override public void onResponse(@NonNull Call call, @NonNull Response resp)
+                            throws IOException {
+                        try {
+                            String body = resp.body().string();
+                            JSONArray routes = new JSONObject(body).getJSONArray("routes");
+                            if (routes.length()==0) return;
+                            String points = routes.getJSONObject(0)
+                                    .getJSONObject("overview_polyline")
+                                    .getString("points");
+                            List<LatLng> decoded = PolyUtil.decode(points);
+
+                            runOnUiThread(() -> {
+                                rutaPolyline = mMap.addPolyline(new PolylineOptions()
+                                        .addAll(decoded)
+                                        .width(10)
+                                        .color(ContextCompat.getColor(MapaActividad.this, R.color.dorado)));
+
+                                LatLngBounds bounds = new LatLngBounds.Builder()
+                                        .include(origen)
+                                        .include(destino)
+                                        .build();
+                                mMap.animateCamera(
+                                        CameraUpdateFactory.newLatLngBounds(bounds, 120)
+                                );
+                            });
+                        } catch (JSONException e) {
+                            Log.e("DIRECTIONS", "JSON error: " + e.getMessage());
+                        }
+                    }
+                });
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           @NonNull String[] perms,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, perms, grantResults);
+        if (requestCode==1001
+                && grantResults.length>0
+                && grantResults[0]==PackageManager.PERMISSION_GRANTED
+                && mMap!=null) {
+            onMapReady(mMap);
+        }
     }
 }

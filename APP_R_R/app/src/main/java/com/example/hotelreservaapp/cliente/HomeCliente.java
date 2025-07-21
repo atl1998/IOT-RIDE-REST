@@ -26,6 +26,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.hotelreservaapp.R;
+import com.example.hotelreservaapp.cliente.TaxistaCliente.ClienteServicioTaxi;
+import com.example.hotelreservaapp.taxista.TaxistaMain;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.datepicker.CalendarConstraints;
@@ -46,7 +48,7 @@ public class HomeCliente extends AppCompatActivity {
     MaterialButton btnBusqueda;
     BottomNavigationView bottomNav;
     private EditText etFecha, etCantidad;
-    private MaterialButton btnBuscar;
+    private MaterialButton btnBuscar ,btntaxi;
     private Calendar calendarInicio = Calendar.getInstance();
     private Calendar calendarFin = Calendar.getInstance();
     private boolean isStartDateSelected = false;
@@ -74,6 +76,15 @@ public class HomeCliente extends AppCompatActivity {
         bottomNav = findViewById(R.id.bottonNavigationView);
         ofertasRecyclerView = findViewById(R.id.ofertasRecyclerView);
 
+        btntaxi = findViewById(R.id.btntaxi);
+
+        /*
+        btntaxi.setOnClickListener(v -> {
+            Intent intent = new Intent(HomeCliente.this,
+                    ClienteServicioTaxi.class);
+            startActivity(intent);
+        });
+        */
         configurarBottomNav();
 
         // Abrir BuscadorDestino personalizado
@@ -117,7 +128,12 @@ public class HomeCliente extends AppCompatActivity {
         );
 
         btnNotificaciones.setOnClickListener(v -> startActivity(new Intent(this, ClienteNotificaciones.class)));
-
+        /*
+        btntaxi.setOnClickListener(v -> {
+            startActivity(new Intent(this, ClienteServicioTaxi.class));
+            finish();
+        });
+        */
         // Autocompletado local como ayuda adicional
         //String[] destinos = {"Lima", "Arequipa", "Cusco", "Trujillo", "Piura", "Chiclayo", "Iquitos", "Tacna", "Puno", "Huancayo"};
         //ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, destinos);

@@ -4,7 +4,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,10 +19,19 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.hotelreservaapp.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.button.MaterialButton;
+import com.google.firebase.Timestamp;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class ClienteChat extends AppCompatActivity {
     private RecyclerView recyclerView;
@@ -45,38 +56,99 @@ public class ClienteChat extends AppCompatActivity {
         recyclerView = findViewById(R.id.recyclerViewChat);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        // Lista de mensajes (se llenan 20 chats simulados)
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser == null) {
+            Toast.makeText(this, "Usuario no autenticado", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
+        String currentUserId = currentUser.getUid();
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
         mensajeList = new ArrayList<>();
-        mensajeList.add(new Chat("Hotel Riviera", "10:15", "Yo: ¿Está incluida la cena?", false, true, true));
-        mensajeList.add(new Chat("Hotel Montaña", "10:20", "El check-in es a partir de las 2pm.", true, false, false));
-        mensajeList.add(new Chat("Hotel Paraíso", "10:22", "Yo: ¿A qué hora puedo hacer el check-out?", false, true, true));
-        mensajeList.add(new Chat("Hotel Estrella", "10:25", "Yo: Ya estoy en la recepción", false, true, true));
-        mensajeList.add(new Chat("Hotel Oasis", "10:30", "Su habitación ya está lista.", true, false, false));
-        mensajeList.add(new Chat("Hotel Sol y Luna", "10:34", "Yo: ¿Hay servicio a la habitación?", false, true, true));
-        mensajeList.add(new Chat("Hotel La Costa", "10:40", "El spa está abierto hasta las 8pm.", true, false, true));
-        mensajeList.add(new Chat("Hotel Azul", "10:42", "Yo: Necesito toallas adicionales", false, true, true));
-        mensajeList.add(new Chat("Hotel Primavera", "10:45", "Claro, en un momento se las llevamos.", true, false, true));
-        mensajeList.add(new Chat("Hotel Mar Azul", "10:47", "Yo: ¿Puedo hacer late check-out?", false, true, true));
-        mensajeList.add(new Chat("Hotel Luna", "10:50", "Está confirmado su desayuno a las 9.", true, false, true));
-        mensajeList.add(new Chat("Hotel Bella Vista", "10:52", "Yo: Perfecto, gracias", false, true, true));
-        mensajeList.add(new Chat("Hotel El Paraíso", "10:55", "El Wi-Fi es gratuito en todo el hotel.", true, false, true));
-        mensajeList.add(new Chat("Hotel Sur", "10:58", "Yo: ¿Dónde está el parqueadero?", false, true, true));
-        mensajeList.add(new Chat("Hotel Río", "11:00", "Está al fondo a la derecha.", true, false, true));
-        mensajeList.add(new Chat("Hotel Azul Marino", "11:02", "Yo: Llego en 15 minutos", false, true, true));
-        mensajeList.add(new Chat("Hotel Montemar", "11:05", "Lo esperamos con gusto.", true, false, true));
-        mensajeList.add(new Chat("Hotel Las Palmas", "11:08", "Yo: ¿Desea agregar un servicio extra?", false, true, true));
-        mensajeList.add(new Chat("Hotel El Dorado", "11:10", "Yo: Sí, una botella de vino por favor", false, true, true));
-        mensajeList.add(new Chat("Hotel Mirador", "11:12", "Enseguida se la llevamos.", true, false, true));
+        mensajeListFull = new ArrayList<>();
+        adapter = new ChatAdapter(mensajeList);
+        recyclerView.setAdapter(adapter);
+
+        db.collection("chats")
+                .whereEqualTo("idUsuario", currentUserId)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    mensajeList.clear();
+
+                    for (DocumentSnapshot doc : queryDocumentSnapshots.getDocuments()) {
+                        String chatId = doc.getId();
+                        String idHotel = doc.getString("idHotel");
+                        String idAdmin = doc.getString("idAdminHotel");
+
+                        // Nombre temporal hasta consultar hotel
+                        String nombreChat = "Hotel desconocido";
+
+                        Chat chat = new Chat(nombreChat, "", "Cargando...", false, false, false);
+                        chat.setChatId(chatId);
+                        mensajeList.add(chat);
+
+                        // 🔍 Consultar el nombre del hotel
+                        db.collection("Hoteles")
+                                .document(idHotel)
+                                .get()
+                                .addOnSuccessListener(hotelDoc -> {
+                                    if (hotelDoc.exists()) {
+                                        String nombreHotel = hotelDoc.getString("nombre");
+                                        if (nombreHotel != null) {
+                                            chat.setNombreHotel(nombreHotel);
+                                            adapter.notifyDataSetChanged();
+                                        }
+                                    }
+                                });
+
+                        // 🔁 Obtener el último mensaje
+                        db.collection("chats")
+                                .document(chatId)
+                                .collection("mensajes")
+                                .orderBy("timestamp", Query.Direction.DESCENDING)
+                                .limit(1)
+                                .get()
+                                .addOnSuccessListener(msnSnapshot -> {
+                                    if (!msnSnapshot.isEmpty()) {
+                                        DocumentSnapshot ultimoMensajeDoc = msnSnapshot.getDocuments().get(0);
+                                        String texto = ultimoMensajeDoc.getString("contenido");
+                                        Timestamp timestamp = ultimoMensajeDoc.getTimestamp("timestamp");
+                                        String hora = obtenerHoraFormateada(timestamp);
+                                        String remitenteId = ultimoMensajeDoc.getString("remitenteId");
+
+                                        chat.setUltimoMensaje(texto);
+                                        chat.setHoraMensaje(hora);
+                                        chat.setEnviadoPorMi(currentUserId.equals(remitenteId));
+                                    }
+
+                                    adapter.notifyDataSetChanged();
+                                });
+                    }
+
+                    mensajeListFull = new ArrayList<>(mensajeList);
+
+                    Collections.sort(mensajeList, (c1, c2) -> Boolean.compare(c1.isLeidoPorMi(), c2.isLeidoPorMi()));
+
+                    adapter.updateList(mensajeList);
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "Error al cargar chats", Toast.LENGTH_SHORT).show();
+                    Log.e("Firestore", "Error en consulta de chats", e);
+                });
+
+
 
         // Crear una copia de la lista original para realizar el filtrado
-        mensajeListFull = new ArrayList<>(mensajeList);
+        /*mensajeListFull = new ArrayList<>(mensajeList);
 
         // Ordenar: los no leídos primero
         Collections.sort(mensajeList, (c1, c2) -> Boolean.compare(c1.isLeidoPorMi(), c2.isLeidoPorMi()));
 
         // Crear y configurar el adaptador
         adapter = new ChatAdapter(mensajeList);
-        recyclerView.setAdapter(adapter);
+        recyclerView.setAdapter(adapter);*/
 
         // Configurar la barra de búsqueda
         EditText searchInput = findViewById(R.id.search_input);
@@ -148,5 +220,12 @@ public class ClienteChat extends AppCompatActivity {
 
         // Actualizar el adaptador con la lista filtrada
         adapter.updateList(filteredList);
+    }
+
+    private String obtenerHoraFormateada(Timestamp timestamp) {
+        if (timestamp == null) return "";
+        Date date = timestamp.toDate();
+        SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a", Locale.getDefault());
+        return sdf.format(date);
     }
 }

@@ -29,7 +29,7 @@ public class InicioFragment extends Fragment {
     private Adminhotel_UsuarioAdapter adapter;
     private List<UsuarioListaSuperAdmin> listaOriginal = new ArrayList<>();
 
-    MaterialButton btnNotificaiones;
+    MaterialButton btnListaChats;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -37,12 +37,17 @@ public class InicioFragment extends Fragment {
         View view = inflater.inflate(R.layout.adminhotel_fragment_inicio, container, false);
         cargarUsuariosDeEjemplo();
 
-        //Para ir a notificaciones
-        btnNotificaiones = view.findViewById(R.id.NotificacionesAdminHotel);
-        btnNotificaiones.setOnClickListener(v -> {
-            //por ahora directamente al mio bala
-            startActivity(new Intent(getActivity(), NotificacionesActivity.class));
+        //Para ir los chats
+        btnListaChats = view.findViewById(R.id.NotificacionesAdminHotel);
+        btnListaChats.setOnClickListener(v -> {
+            Fragment chatFragment = new ChatFragment(); // O el nombre real de tu fragmento de chat
+            requireActivity().getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.adminhotel_container_view, chatFragment) // Aquí usas el id de tu FragmentContainerView
+                    .addToBackStack(null) // Opcional, para que puedas volver atrás
+                    .commit();
         });
+
 
 
         // Configurar el RecyclerView

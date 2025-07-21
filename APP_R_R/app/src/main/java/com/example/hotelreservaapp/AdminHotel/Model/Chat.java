@@ -1,4 +1,4 @@
-package com.example.hotelreservaapp.cliente;
+package com.example.hotelreservaapp.AdminHotel.Model;
 
 public class Chat {
     private String nombreHotel;
@@ -77,3 +77,4 @@ public class Chat {
         this.chatId = chatId;
     }
 }
+

@@ -209,8 +209,9 @@ public class HistorialItem implements Serializable {
         this.checkoutEnabled = enabled;
     }
     public boolean isTaxiEnabled() {
-        // Puede ser Solicitado, No solicitado, Terminado, No disponible tmb
-        return "Solicitado".equalsIgnoreCase(taxistaEnabled);
+        // Puede ser Solicitado, No solicitado, Terminado, No disponible tmb o En progreso
+        return "Solicitado".equalsIgnoreCase(taxistaEnabled)
+                || "En progreso".equalsIgnoreCase(taxistaEnabled);
     }
 
     public String getNombreHotel() {
