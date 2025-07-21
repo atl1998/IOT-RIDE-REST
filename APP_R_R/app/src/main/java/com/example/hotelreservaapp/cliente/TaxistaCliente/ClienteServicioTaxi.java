@@ -7,7 +7,10 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -90,11 +93,21 @@ public class ClienteServicioTaxi extends AppCompatActivity implements OnMapReady
     private String direccionCliente;
     private String dniCliente;
     private String fotoUrlCliente;
+    private String idHotel;
+    private String idReserva;
+    private FrameLayout bottomSheet;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cliente_servicio_taxi);
+
+        bottomSheet = findViewById(R.id.bottom_sheet);
+
+        idHotel = getIntent().getStringExtra("IdHotel");
+        idReserva = getIntent().getStringExtra("IdReserva");
+        Log.d("DEBUG_INTENT", "Recibido: " + idHotel + " / " + idReserva);
 
         // Firebase
         auth = FirebaseAuth.getInstance();
@@ -130,6 +143,28 @@ public class ClienteServicioTaxi extends AppCompatActivity implements OnMapReady
                 getSupportFragmentManager().findFragmentById(R.id.map);
         if (mapFrag != null) mapFrag.getMapAsync(this);
 
+        // Verificar si ya solicitó taxi y ocultar bottom sheet si es necesario
+        db.collection("usuarios")
+                .document(usuarioActual.getUid())
+                .collection("Reservas")
+                .document(idReserva)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        String estadoTaxi = documentSnapshot.getString("solicitarTaxista");
+                        if ("En progreso".equals(estadoTaxi)) {
+                            bottomSheet.setVisibility(View.GONE); // 👈 Ocultar el bottom sheet
+                        } else {
+                            bottomSheet.setVisibility(View.VISIBLE); // (por si estaba oculto)
+                        }
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("DEBUG_VERIFICACION", "Error al verificar estado de taxi", e);
+                });
+
+
+
         // Solicitar ahora
         findViewById(R.id.btnRequestNow).setOnClickListener(v -> {
             if (usuarioActual == null) {
@@ -142,6 +177,10 @@ public class ClienteServicioTaxi extends AppCompatActivity implements OnMapReady
             }
             if (nombreCliente == null) {
                 Toast.makeText(this, "Cargando perfil, espera...", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (idHotel == null || idReserva == null) {
+                Toast.makeText(this, "Faltan datos del hotel o la reserva", Toast.LENGTH_LONG).show();
                 return;
             }
 
@@ -172,11 +211,28 @@ public class ClienteServicioTaxi extends AppCompatActivity implements OnMapReady
             solicitud.setLatDestino(dest.latitude);
             solicitud.setLngDestino(dest.longitude);
 
+            solicitud.setIdHotel(idHotel);
+            solicitud.setIdReserva(idReserva);
+
             db.collection("servicios_taxi")
                     .add(solicitud)
                     .addOnSuccessListener(docRef -> {
                         Toast.makeText(this, "Solicitud enviada", Toast.LENGTH_SHORT).show();
+
+                        db.collection("usuarios")
+                                .document(usuarioActual.getUid())
+                                .collection("Reservas")
+                                .document(idReserva)
+                                .update("solicitarTaxista", "En progreso")
+                                .addOnSuccessListener(aVoid -> Log.d("DEBUG_UPDATE", "Campo 'solicitarTaxista' actualizado"))
+                                .addOnFailureListener(e -> Log.e("DEBUG_UPDATE", "Error al actualizar 'solicitarTaxista'", e));
+
+                        Intent intent = getIntent();
                         finish();
+                        overridePendingTransition(0, 0); // sin animación al cerrar
+                        startActivity(intent);
+                        overridePendingTransition(0, 0); // sin animación al abrir
+
                     })
                     .addOnFailureListener(e -> {
                         Toast.makeText(this, "Error enviando solicitud", Toast.LENGTH_SHORT).show();

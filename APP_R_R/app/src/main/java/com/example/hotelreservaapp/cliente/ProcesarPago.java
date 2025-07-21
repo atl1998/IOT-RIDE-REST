@@ -182,7 +182,7 @@ public class ProcesarPago extends AppCompatActivity {
         Boolean ServicioTaxi = sharedPreferences.getBoolean("ServicioTaxi", false);
         */
 
-        if("No Solicitado".equals(historialItem.getTaxistaEnabled())){
+        if("No solicitado".equals(historialItem.getTaxistaEnabled())){
             btnrealizarpago.setEnabled(true);
             btnrealizarpago.setAlpha(1f);
         }

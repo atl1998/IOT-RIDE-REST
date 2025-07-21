@@ -277,12 +277,12 @@ public class HistorialEventos extends AppCompatActivity implements HistorialItem
 
                         // Mapa temporal para guardar datos de cada reserva junto con su hotelId
                         Map<String, QueryDocumentSnapshot> reservasMap = new HashMap<>();
-                        // List<String> hotelIds = new ArrayList<>(); // <-- lista paralela
+                        List<String> hotelIds = new ArrayList<>();
 
                         for (QueryDocumentSnapshot reservaDoc : reservasSnapshot) {
                             String hotelId = reservaDoc.getString("hotelId");
                             reservasMap.put(reservaDoc.getId(), reservaDoc);
-                            // hotelIds.add(hotelId);
+                            hotelIds.add(hotelId);
                             // Agregar tarea para obtener hotel
                             hotelTasks.add(db.collection("Hoteles").document(hotelId).get());
                         }
@@ -293,6 +293,7 @@ public class HistorialEventos extends AppCompatActivity implements HistorialItem
                                 // Aquí obtenemos la reserva correspondiente
                                 DocumentSnapshot reservaDoc = reservasSnapshot.getDocuments().get(i);
                                 String idReserva = reservaDoc.getId();
+                                String hotelIdGod = hotelIds.get(i);
                                 String estadoActual = reservaDoc.getString("estado");
                                 Timestamp fechaInicioTS = reservaDoc.getTimestamp("fechaIni");
                                 Timestamp fechaFinTS = reservaDoc.getTimestamp("fechaFin");
@@ -363,6 +364,7 @@ public class HistorialEventos extends AppCompatActivity implements HistorialItem
                                     HistorialItem historialItem = new HistorialItem(idReserva, estadoEsperado, nombreHotel, "📍 " + ubicacion, solicitarTaxista, checkoutEnable, servicioTaxi, fechaInicioTS, fechaFinTS);
                                     historialItem.setUrlImage(UrlHotel);
                                     historialItem.setValoracion(valoracion);
+                                    historialItem.setHotelId(hotelIdGod);
                                     historialItems.add(historialItem);
                                     Log.d("HistorialEventos", "Item cargado: idReserva=" + idReserva + ", hotel=" + nombreHotel + ", estado=" + estadoEsperado + ", ubicacion=" + ubicacion);
                                 }
@@ -396,6 +398,10 @@ public class HistorialEventos extends AppCompatActivity implements HistorialItem
     @Override
     public void onTaxiClicked(HistorialItem item) {
         Intent intent = new Intent(this, ClienteServicioTaxi.class);
+        // Supongamos que quieres pasar un ID, un nombre y una ubicación
+        intent.putExtra("IdHotel", item.getHotelId());
+        intent.putExtra("IdReserva", item.getIdReserva());
+        Log.d("DEBUG_INTENT", "Enviando: " + item.getHotelId() + " / " + item.getIdReserva());
         startActivity(intent);
     }
     @Override

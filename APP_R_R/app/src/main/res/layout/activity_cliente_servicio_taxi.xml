@@ -56,7 +56,8 @@
                 app:layout_constraintStart_toEndOf="@id/btnVolver"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"/>
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintHorizontal_bias="0.38"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <!-- Línea de separación -->
@@ -83,40 +84,44 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="@android:color/white"
-        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+        android:visibility="gone"
         app:behavior_peekHeight="300dp"
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:padding="16dp"
+            android:visibility="visible">
 
             <!-- Origen -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Origen:"
-                    android:textStyle="bold"/>
+                    android:textStyle="bold" />
+
                 <TextView
                     android:id="@+id/textViewOrigin"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingStart="8dp"/>
+                    android:paddingStart="8dp" />
             </LinearLayout>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@android:color/darker_gray"
-                android:layout_marginVertical="8dp"/>
+                android:layout_marginVertical="8dp"
+                android:background="@android:color/darker_gray" />
 
             <!-- Destino -->
             <com.google.android.material.textfield.TextInputLayout
@@ -129,15 +134,15 @@
                     android:id="@+id/editTextDestination"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="text"
-                    android:imeOptions="actionSearch"/>
+                    android:imeOptions="actionSearch"
+                    android:inputType="text" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@android:color/darker_gray"
-                android:layout_marginVertical="8dp"/>
+                android:layout_marginVertical="8dp"
+                android:background="@android:color/darker_gray" />
 
             <!-- Tiempo y Distancia -->
             <LinearLayout
@@ -150,16 +155,18 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:orientation="horizontal">
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Tiempo:"
-                        android:textStyle="bold"/>
+                        android:textStyle="bold" />
+
                     <TextView
                         android:id="@+id/textViewTime"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"/>
+                        android:layout_marginStart="8dp" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -167,16 +174,18 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:orientation="horizontal">
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Distancia:"
-                        android:textStyle="bold"/>
+                        android:textStyle="bold" />
+
                     <TextView
                         android:id="@+id/textViewDistance"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"/>
+                        android:layout_marginStart="8dp" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -187,11 +196,11 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="40dp"
-                android:text="SOLICITAR AHORA"
                 android:backgroundTint="@color/negro"
+                android:text="SOLICITAR AHORA"
+                android:textColor="@android:color/white"
                 app:cornerRadius="50dp"
-                app:strokeWidth="0dp"
-                android:textColor="@android:color/white"/>
+                app:strokeWidth="0dp" />
 
         </LinearLayout>
     </FrameLayout>

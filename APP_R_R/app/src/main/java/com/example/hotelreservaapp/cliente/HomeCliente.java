@@ -77,12 +77,14 @@ public class HomeCliente extends AppCompatActivity {
         ofertasRecyclerView = findViewById(R.id.ofertasRecyclerView);
 
         btntaxi = findViewById(R.id.btntaxi);
+
+        /*
         btntaxi.setOnClickListener(v -> {
             Intent intent = new Intent(HomeCliente.this,
                     ClienteServicioTaxi.class);
             startActivity(intent);
         });
-
+        */
         configurarBottomNav();
 
         // Abrir BuscadorDestino personalizado
@@ -126,11 +128,12 @@ public class HomeCliente extends AppCompatActivity {
         );
 
         btnNotificaciones.setOnClickListener(v -> startActivity(new Intent(this, ClienteNotificaciones.class)));
+        /*
         btntaxi.setOnClickListener(v -> {
             startActivity(new Intent(this, ClienteServicioTaxi.class));
             finish();
         });
-
+        */
         // Autocompletado local como ayuda adicional
         //String[] destinos = {"Lima", "Arequipa", "Cusco", "Trujillo", "Piura", "Chiclayo", "Iquitos", "Tacna", "Puno", "Huancayo"};
         //ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, destinos);
