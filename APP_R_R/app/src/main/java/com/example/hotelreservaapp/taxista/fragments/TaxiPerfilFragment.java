@@ -17,6 +17,7 @@ import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 
+import com.bumptech.glide.Glide;
 import com.example.hotelreservaapp.R;
 import com.example.hotelreservaapp.databinding.TaxistaFragmentPerfilBinding;
 import com.example.hotelreservaapp.loginAndRegister.LoginActivity;
@@ -25,6 +26,9 @@ import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -37,8 +41,6 @@ public class TaxiPerfilFragment extends Fragment {
     private FirebaseUser usuarioActual;
     private boolean enModoEdicion = false;
     private Uri cameraImageUri;
-
-    private static final int REQUEST_CAMERA = 100;
 
     private final ActivityResultLauncher<Intent> pickImageLauncher =
             registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
@@ -53,6 +55,7 @@ public class TaxiPerfilFragment extends Fragment {
                 if (result.getResultCode() == Activity.RESULT_OK) {
                     File file = new File(requireContext().getFilesDir(), "foto_perfil.jpg");
                     binding.ivProfileImage.setImageURI(Uri.fromFile(file));
+                    uploadImageToStorage(file);
                 }
             });
 
@@ -75,14 +78,32 @@ public class TaxiPerfilFragment extends Fragment {
             db.collection("usuarios").document(usuarioActual.getUid()).get()
                     .addOnSuccessListener(document -> {
                         if (document.exists()) {
+                            // Cargar datos de texto
                             binding.etNombre.setText(document.getString("nombre"));
                             binding.etApellido.setText(document.getString("apellido"));
                             binding.etCorreo.setText(usuarioActual.getEmail());
                             binding.etDni.setText(document.getString("numeroDocumento"));
                             binding.etTelefono.setText(document.getString("telefono"));
                             binding.etDireccion.setText(document.getString("direccion"));
-                            binding.tvUserName.setText(document.getString("nombre") + " " + document.getString("apellido"));
+                            binding.tvUserName.setText(
+                                    document.getString("nombre") + " " + document.getString("apellido")
+                            );
                             binding.tvUserHandle.setText("Taxista Verificado");
+
+                            // Cargar foto desde Firebase (urlFotoPerfil)
+                            String fotoUrl = document.getString("urlFotoPerfil");
+                            if (fotoUrl != null && !fotoUrl.isEmpty()) {
+                                Glide.with(requireContext())
+                                        .load(fotoUrl)
+                                        .placeholder(R.drawable.default_profile)
+                                        .into(binding.ivProfileImage);
+                            } else {
+                                // Si no hay URL, buscar foto en almacenamiento interno
+                                File local = new File(requireContext().getFilesDir(), "foto_perfil.jpg");
+                                if (local.exists()) {
+                                    binding.ivProfileImage.setImageURI(Uri.fromFile(local));
+                                }
+                            }
                         }
                     })
                     .addOnFailureListener(e ->
@@ -90,71 +111,22 @@ public class TaxiPerfilFragment extends Fragment {
                     );
         }
 
-        // Editar perfil
+        // Resto de lógica de edición, cierre de sesión y vista de vehículo...
         binding.ivEditProfile.setOnClickListener(v -> {
             if (!enModoEdicion) {
                 enModoEdicion = true;
                 binding.ivEditProfile.setImageResource(R.drawable.save_icon);
-
-                binding.etNombre.setEnabled(true);
-                binding.etApellido.setEnabled(true);
-                binding.etDni.setEnabled(true);
-                binding.etTelefono.setEnabled(true);
-                binding.etDireccion.setEnabled(true);
+                habilitarCampos(true);
             } else {
-                String nombre = binding.etNombre.getText().toString().trim();
-                String apellido = binding.etApellido.getText().toString().trim();
-                String dni = binding.etDni.getText().toString().trim();
-                String telefono = binding.etTelefono.getText().toString().trim();
-                String direccion = binding.etDireccion.getText().toString().trim();
-
-                if (nombre.isEmpty() || apellido.isEmpty() || dni.isEmpty() ||
-                        telefono.isEmpty() || direccion.isEmpty()) {
-                    Toast.makeText(getContext(), "Completa todos los campos antes de guardar", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                db.collection("usuarios").document(usuarioActual.getUid())
-                        .update(
-                                "nombre", nombre,
-                                "apellido", apellido,
-                                "numeroDocumento", dni,
-                                "telefono", telefono,
-                                "direccion", direccion
-                        )
-                        .addOnSuccessListener(unused -> {
-                            Toast.makeText(getContext(), "Perfil actualizado", Toast.LENGTH_SHORT).show();
-                            enModoEdicion = false;
-                            binding.ivEditProfile.setImageResource(R.drawable.edit_icon);
-
-                            binding.etNombre.setEnabled(false);
-                            binding.etApellido.setEnabled(false);
-                            binding.etDni.setEnabled(false);
-                            binding.etTelefono.setEnabled(false);
-                            binding.etDireccion.setEnabled(false);
-                        })
-                        .addOnFailureListener(e ->
-                                Toast.makeText(getContext(), "Error al actualizar perfil", Toast.LENGTH_SHORT).show()
-                        );
+                guardarDatosPerfil();
             }
         });
 
-        // Foto perfil desde almacenamiento local
-        File file = new File(requireContext().getFilesDir(), "foto_perfil.jpg");
-        if (file.exists()) {
-            binding.ivProfileImage.setImageURI(Uri.fromFile(file));
-        }
-
-        // Cambiar foto
         binding.ivChangePhoto.setOnClickListener(v -> mostrarDialogoFoto());
-
-        // Abrir vista de datos del vehículo
         binding.llDatosVehiculo.setOnClickListener(v -> {
-            Intent intent = new Intent(requireContext(), VerDatosVehiculoTaxistaActivity.class);
-            startActivity(intent);
+            startActivity(new Intent(requireContext(), VerDatosVehiculoTaxistaActivity.class));
         });
 
-        // Cerrar sesión
         binding.btnCerrarSesion.setOnClickListener(v -> {
             FirebaseAuth.getInstance().signOut();
             Toast.makeText(getContext(), "Sesión cerrada", Toast.LENGTH_SHORT).show();
@@ -164,13 +136,54 @@ public class TaxiPerfilFragment extends Fragment {
         });
     }
 
+    private void habilitarCampos(boolean habilitar) {
+        binding.etNombre.setEnabled(habilitar);
+        binding.etApellido.setEnabled(habilitar);
+        binding.etDni.setEnabled(habilitar);
+        binding.etTelefono.setEnabled(habilitar);
+        binding.etDireccion.setEnabled(habilitar);
+    }
+
+    private void guardarDatosPerfil() {
+        String nombre = binding.etNombre.getText().toString().trim();
+        String apellido = binding.etApellido.getText().toString().trim();
+        String dni = binding.etDni.getText().toString().trim();
+        String telefono = binding.etTelefono.getText().toString().trim();
+        String direccion = binding.etDireccion.getText().toString().trim();
+
+        if (nombre.isEmpty() || apellido.isEmpty() || dni.isEmpty() ||
+                telefono.isEmpty() || direccion.isEmpty()) {
+            Toast.makeText(getContext(), "Completa todos los campos antes de guardar", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        db.collection("usuarios").document(usuarioActual.getUid())
+                .update(
+                        "nombre", nombre,
+                        "apellido", apellido,
+                        "numeroDocumento", dni,
+                        "telefono", telefono,
+                        "direccion", direccion
+                )
+                .addOnSuccessListener(unused -> {
+                    Toast.makeText(getContext(), "Perfil actualizado", Toast.LENGTH_SHORT).show();
+                    enModoEdicion = false;
+                    binding.ivEditProfile.setImageResource(R.drawable.edit_icon);
+                    habilitarCampos(false);
+                })
+                .addOnFailureListener(e ->
+                        Toast.makeText(getContext(), "Error al actualizar perfil", Toast.LENGTH_SHORT).show()
+                );
+    }
+
     private void mostrarDialogoFoto() {
-        View view = LayoutInflater.from(requireContext()).inflate(R.layout.superadmin_bottomsheet_foto, null);
-        final BottomSheetDialog dialog = new BottomSheetDialog(requireContext());
+        View view = LayoutInflater.from(requireContext())
+                .inflate(R.layout.superadmin_bottomsheet_foto, null);
+        BottomSheetDialog dialog = new BottomSheetDialog(requireContext());
         dialog.setContentView(view);
 
         view.findViewById(R.id.opcionGaleria).setOnClickListener(v -> {
-            Intent intent = new Intent(Intent.ACTION_PICK);
+            Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             intent.setType("image/*");
             pickImageLauncher.launch(intent);
             dialog.dismiss();
@@ -178,7 +191,9 @@ public class TaxiPerfilFragment extends Fragment {
 
         view.findViewById(R.id.opcionCamara).setOnClickListener(v -> {
             File imageFile = new File(requireContext().getFilesDir(), "foto_perfil.jpg");
-            cameraImageUri = FileProvider.getUriForFile(requireContext(), requireContext().getPackageName() + ".provider", imageFile);
+            cameraImageUri = FileProvider.getUriForFile(
+                    requireContext(), requireContext().getPackageName() + ".provider", imageFile
+            );
             Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, cameraImageUri);
             takePhotoLauncher.launch(cameraIntent);
@@ -189,10 +204,9 @@ public class TaxiPerfilFragment extends Fragment {
     }
 
     private void guardarImagenEnArchivosInternos(Uri uri) {
-        try {
-            InputStream inputStream = requireContext().getContentResolver().openInputStream(uri);
-            File file = new File(requireContext().getFilesDir(), "foto_perfil.jpg");
-            FileOutputStream outputStream = new FileOutputStream(file);
+        try (InputStream inputStream = requireContext().getContentResolver().openInputStream(uri);
+             FileOutputStream outputStream = new FileOutputStream(
+                     new File(requireContext().getFilesDir(), "foto_perfil.jpg"))) {
 
             byte[] buffer = new byte[1024];
             int length;
@@ -200,14 +214,37 @@ public class TaxiPerfilFragment extends Fragment {
                 outputStream.write(buffer, 0, length);
             }
 
-            inputStream.close();
-            outputStream.close();
-
+            File file = new File(requireContext().getFilesDir(), "foto_perfil.jpg");
             binding.ivProfileImage.setImageURI(Uri.fromFile(file));
+            uploadImageToStorage(file);
+
         } catch (Exception e) {
             e.printStackTrace();
             Toast.makeText(requireContext(), "Error al guardar imagen", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void uploadImageToStorage(File file) {
+        StorageReference ref = FirebaseStorage.getInstance()
+                .getReference("fotosPerfil/" + usuarioActual.getUid() + ".jpg");
+        Uri fileUri = Uri.fromFile(file);
+        ref.putFile(fileUri)
+                .addOnSuccessListener(task ->
+                        ref.getDownloadUrl().addOnSuccessListener(uri -> {
+                            String downloadUrl = uri.toString();
+                            db.collection("usuarios").document(usuarioActual.getUid())
+                                    .update("urlFotoPerfil", downloadUrl)
+                                    .addOnSuccessListener(a ->
+                                            Toast.makeText(getContext(), "Foto de perfil actualizada", Toast.LENGTH_SHORT).show()
+                                    )
+                                    .addOnFailureListener(e ->
+                                            Toast.makeText(getContext(), "Error actualizando URL en base de datos", Toast.LENGTH_SHORT).show()
+                                    );
+                        })
+                )
+                .addOnFailureListener(e ->
+                        Toast.makeText(requireContext(), "Error subiendo la imagen", Toast.LENGTH_SHORT).show()
+                );
     }
 
     @Override

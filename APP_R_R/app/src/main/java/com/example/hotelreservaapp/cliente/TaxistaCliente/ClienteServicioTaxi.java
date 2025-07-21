@@ -65,7 +65,7 @@ public class ClienteServicioTaxi extends AppCompatActivity implements OnMapReady
     private static final int REQUEST_CODE_LOCATION = 1001;
     private static final int REQUEST_CODE_PLACES   = 1002;
 
-    // Google Maps & Places
+    // Map & Places
     private GoogleMap mMap;
     private FusedLocationProviderClient fusedLocationClient;
     private PlacesClient placesClient;
@@ -79,32 +79,32 @@ public class ClienteServicioTaxi extends AppCompatActivity implements OnMapReady
 
     // Firebase
     private FirebaseAuth auth;
-    private FirebaseUser user;
+    private FirebaseUser usuarioActual;
     private FirebaseFirestore db;
 
-    // Perfil del cliente (se cargan desde Firestore)
+    // Perfil cliente
     private String nombreCliente;
     private String apellidoCliente;
     private String correoCliente;
     private String telefonoCliente;
-    private String fotoCliente;
     private String direccionCliente;
     private String dniCliente;
+    private String fotoUrlCliente;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cliente_servicio_taxi);
 
-        // Instancias Firebase
+        // Firebase
         auth = FirebaseAuth.getInstance();
-        user = auth.getCurrentUser();
-        db   = FirebaseFirestore.getInstance();
+        usuarioActual = auth.getCurrentUser();
+        db = FirebaseFirestore.getInstance();
 
-        // Carga datos de perfil
+        // cargar perfil
         cargarDatosPerfilCliente();
 
-        // Location & Places
+        // Places & Location
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         if (!Places.isInitialized()) {
             Places.initialize(getApplicationContext(), getString(R.string.google_maps_key));
@@ -120,19 +120,19 @@ public class ClienteServicioTaxi extends AppCompatActivity implements OnMapReady
         // Botón volver
         findViewById(R.id.btnVolver).setOnClickListener(v -> finish());
 
-        // Destino: Autocomplete
+        // Destino Autocomplete
         editTextDestination.setFocusable(false);
         editTextDestination.setCursorVisible(false);
         editTextDestination.setOnClickListener(v -> launchPlaceAutocomplete());
 
-        // Configura el mapa
+        // Inicializar mapa
         SupportMapFragment mapFrag = (SupportMapFragment)
                 getSupportFragmentManager().findFragmentById(R.id.map);
         if (mapFrag != null) mapFrag.getMapAsync(this);
 
-        // Botón SOLICITAR AHORA
+        // Solicitar ahora
         findViewById(R.id.btnRequestNow).setOnClickListener(v -> {
-            if (user == null) {
+            if (usuarioActual == null) {
                 Toast.makeText(this, "Debes iniciar sesión", Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -140,18 +140,18 @@ public class ClienteServicioTaxi extends AppCompatActivity implements OnMapReady
                 Toast.makeText(this, "Falta origen o destino", Toast.LENGTH_SHORT).show();
                 return;
             }
-            // Asegurarnos de que el perfil ya esté cargado
             if (nombreCliente == null) {
-                Toast.makeText(this, "Cargando datos de perfil, espera un momento...", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Cargando perfil, espera...", Toast.LENGTH_SHORT).show();
                 return;
             }
-            // Crear solicitud
+
             TarjetaModel solicitud = new TarjetaModel();
-            solicitud.setIdCliente(user.getUid());
-            solicitud.setNombreCliente(nombreCliente + " " + apellidoCliente);
+            solicitud.setIdCliente(usuarioActual.getUid());
+            solicitud.setNombreCliente(nombreCliente);
             solicitud.setCorreoCliente(correoCliente);
             solicitud.setTelefonoCliente(telefonoCliente);
-            solicitud.setFotoCliente(fotoCliente != null ? fotoCliente : "");
+            solicitud.setFotoCliente(fotoUrlCliente != null ? fotoUrlCliente : "");
+
             solicitud.setUbicacionOrigen(tvOrigin.getText().toString());
             solicitud.setDestino(editTextDestination.getText().toString());
 
@@ -184,22 +184,21 @@ public class ClienteServicioTaxi extends AppCompatActivity implements OnMapReady
         });
     }
 
-    /** Recupera los datos del perfil del cliente de Firestore */
+    /** Carga campos de perfil desde Firestore */
     private void cargarDatosPerfilCliente() {
-        if (user == null) return;
-        db.collection("usuarios").document(user.getUid()).get()
-                .addOnSuccessListener((DocumentSnapshot doc) -> {
-                    if (doc.exists()) {
-                        nombreCliente   = doc.getString("nombre");
-                        apellidoCliente = doc.getString("apellido");
-                        correoCliente   = user.getEmail();
-                        telefonoCliente = doc.getString("telefono");
-                        fotoCliente     = doc.getString("foto");        // o el campo que uses
-                        direccionCliente= doc.getString("direccion");
-                        dniCliente      = doc.getString("numeroDocumento");
-                    } else {
-                        Toast.makeText(this, "Perfil no encontrado", Toast.LENGTH_SHORT).show();
-                    }
+        if (usuarioActual == null) return;
+        db.collection("usuarios")
+                .document(usuarioActual.getUid())
+                .get()
+                .addOnSuccessListener(doc -> {
+                    if (!doc.exists()) return;
+                    nombreCliente   = doc.getString("nombre") + " " + doc.getString("apellido");
+                    apellidoCliente = doc.getString("apellido");
+                    correoCliente   = usuarioActual.getEmail();
+                    telefonoCliente = doc.getString("telefono");
+                    direccionCliente= doc.getString("direccion");
+                    dniCliente      = doc.getString("numeroDocumento");
+                    fotoUrlCliente  = doc.getString("urlFotoPerfil");
                 })
                 .addOnFailureListener(e ->
                         Toast.makeText(this, "Error cargando perfil", Toast.LENGTH_SHORT).show()
@@ -211,7 +210,9 @@ public class ClienteServicioTaxi extends AppCompatActivity implements OnMapReady
     public void onMapReady(@NonNull GoogleMap googleMap) {
         mMap = googleMap;
         if (ActivityCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+
             mMap.setMyLocationEnabled(true);
             fusedLocationClient.getLastLocation()
                     .addOnSuccessListener(loc -> {
@@ -235,17 +236,20 @@ public class ClienteServicioTaxi extends AppCompatActivity implements OnMapReady
                         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(originLatLng, 15));
                         fetchCurrentPlaceName();
                     });
+
         } else {
             ActivityCompat.requestPermissions(this,
-                    new String[]{ Manifest.permission.ACCESS_FINE_LOCATION },
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                     REQUEST_CODE_LOCATION);
         }
     }
 
     private void launchPlaceAutocomplete() {
         if (ActivityCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            RectangularBounds bounds = (originLatLng != null)
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+
+            RectangularBounds bounds = originLatLng != null
                     ? RectangularBounds.newInstance(
                     new LatLng(originLatLng.latitude - .1, originLatLng.longitude - .1),
                     new LatLng(originLatLng.latitude + .1, originLatLng.longitude + .1))
@@ -258,9 +262,10 @@ public class ClienteServicioTaxi extends AppCompatActivity implements OnMapReady
                     AutocompleteActivityMode.OVERLAY, fields);
             if (bounds != null) builder.setLocationBias(bounds);
             startActivityForResult(builder.build(this), REQUEST_CODE_PLACES);
+
         } else {
             ActivityCompat.requestPermissions(this,
-                    new String[]{ Manifest.permission.ACCESS_FINE_LOCATION },
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                     REQUEST_CODE_LOCATION);
         }
     }
@@ -306,7 +311,7 @@ public class ClienteServicioTaxi extends AppCompatActivity implements OnMapReady
 
             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(dest, 15));
 
-            // Trazar ruta y actualizar tiempo/distancia
+            // trazar ruta y actualizar
             if (originLatLng != null) {
                 trazarRuta(originLatLng, dest);
             } else {
@@ -335,8 +340,8 @@ public class ClienteServicioTaxi extends AppCompatActivity implements OnMapReady
                             throws IOException {
                         try {
                             if (!resp.isSuccessful()) return;
-                            JSONObject obj = new JSONObject(resp.body().string());
-                            JSONArray routes = obj.getJSONArray("routes");
+                            String body = resp.body().string();
+                            JSONArray routes = new JSONObject(body).getJSONArray("routes");
                             if (routes.length() == 0) return;
                             JSONObject leg = routes.getJSONObject(0)
                                     .getJSONArray("legs").getJSONObject(0);
@@ -374,7 +379,8 @@ public class ClienteServicioTaxi extends AppCompatActivity implements OnMapReady
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
-                                           @NonNull String[] perms, @NonNull int[] grantResults) {
+                                           @NonNull String[] perms,
+                                           @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, perms, grantResults);
         if (requestCode == REQUEST_CODE_LOCATION
                 && grantResults.length > 0

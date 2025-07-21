@@ -147,13 +147,13 @@
                     android:orientation="horizontal">
 
                     <com.google.android.material.imageview.ShapeableImageView
-                        android:id="@+id/imageFotoUsuario"
+                        android:id="@+id/ivFotoCliente"
                         android:layout_width="99dp"
                         android:layout_height="91dp"
                         android:layout_gravity="center_vertical"
                         android:layout_marginEnd="12dp"
                         android:scaleType="centerCrop"
-                        android:src="@drawable/coronado"
+                        android:src="@drawable/default_profile"
                         app:shapeAppearanceOverlay="@style/RoundedImageView" />
 
                     <LinearLayout

@@ -11,6 +11,8 @@ public class TarjetaModel {
     private String nombreCliente;
     private String correoCliente;
     private String telefonoCliente;
+
+    @PropertyName("urlFotoPerfil")
     private String fotoCliente;
 
     private String direccionHotel;  // <- campo que Firestore envía como "direccionHotel"
@@ -85,10 +87,12 @@ public class TarjetaModel {
         this.telefonoCliente = telefonoCliente;
     }
 
+    @PropertyName("urlFotoPerfil")
     public String getFotoCliente() {
         return fotoCliente;
     }
 
+    @PropertyName("urlFotoPerfil")
     public void setFotoCliente(String fotoCliente) {
         this.fotoCliente = fotoCliente;
     }
