@@ -2,6 +2,9 @@ package com.example.hotelreservaapp.AdminHotel.Adapter;
 
 
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,9 +17,11 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.hotelreservaapp.AdminHotel.DetalleHabitacionActivity;
 import com.example.hotelreservaapp.AdminHotel.Model.Servicio;
 import com.example.hotelreservaapp.R;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -53,24 +58,19 @@ public class ServicioAdapter extends RecyclerView.Adapter<com.example.hotelreser
         holder.tvPrecio.setText(String.format("Precio por persona: $" + servicio.getPrecio()));
 
         String nombreArchivo = servicio.getUrl(); // ej. "image1.png"
-        String rutaAsset = "file:///android_asset/" + nombreArchivo;
+        File f = new File(context.getFilesDir(), nombreArchivo);   // <-- aquí
 
-        try {
-            // Intenta abrir la imagen para ver si existe
-            context.getAssets().open(nombreArchivo);
-
-            // Si no lanza excepción, la imagen existe
-            Glide.with(context)
-                    .load(rutaAsset)
-                    .placeholder(R.drawable.bedroom_parent_24dp_black)
-                    .into(holder.tvImagen);
-
-        } catch (IOException e) {
-            // Si falla (no existe), carga imagen por defecto
-            Glide.with(context)
-                    .load(R.drawable.bedroom_parent_24dp_black)
-                    .into(holder.tvImagen);
+        if (f.exists()) {
+            Bitmap bmp = BitmapFactory.decodeFile(f.getAbsolutePath());
+            holder.tvImagen.setImageBitmap(bmp);
+        } else {
+            holder.tvImagen.setImageResource(R.drawable.bedroom_parent_24dp_black);
         }
+
+        holder.itemView.setOnClickListener(v -> {
+            Intent intent = new Intent(v.getContext(), DetalleHabitacionActivity.class);
+            v.getContext().startActivity(intent);
+        });
          /*
         if (habitacion.getSeleccionadas() > 0) {
             holder.btnSeleccionar.setVisibility(View.GONE);

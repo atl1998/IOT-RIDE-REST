@@ -3,8 +3,8 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <!--<color name="amarillo_dorado">#FFC107</color>-->
-    <color name="colorBotonInactivo">#CCCCCC</color>  <!-- gris claro -->
-    <color name="colorBotonActivo">#FF9800</color>    <!-- naranja -->
+    <color name="colorBotonInactivo">#F0F0F0</color>  <!-- gris claro -->
+    <color name="colorBotonActivo">#B3F0A60A</color>    <!-- naranja -->
 
     <color name="amarillo_dorado">#DEA90D</color>
     <color name="marron_oscuro">#452C06</color>

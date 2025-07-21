@@ -8,6 +8,7 @@
     android:background="@drawable/finalizacion_de_viaje"
     tools:context=".taxista.QrLecturaActivity">
 
+
     <!-- Encabezado -->
     <LinearLayout
         android:id="@+id/header"

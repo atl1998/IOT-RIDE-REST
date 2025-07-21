@@ -1,4 +1,4 @@
-package com.example.hotelreservaapp.AdminHotel;
+package com.example.hotelreservaapp.AdminHotel.Model;
 
 public class Notificacion {
 

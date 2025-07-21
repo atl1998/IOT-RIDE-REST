@@ -1,21 +1,17 @@
 package com.example.hotelreservaapp.AdminHotel;
 
 import android.os.Bundle;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.example.hotelreservaapp.AdminHotel.Fragments.HotelFragment;
+import com.example.hotelreservaapp.AdminHotel.Fragments.InicioFragment;
+import com.example.hotelreservaapp.AdminHotel.Fragments.PerfilFragment;
+import com.example.hotelreservaapp.AdminHotel.Fragments.ReportesFragment;
 import com.example.hotelreservaapp.R;
 import com.example.hotelreservaapp.adapter.UsuarioAdapter;
-import com.example.hotelreservaapp.cliente.Hotel;
 import com.example.hotelreservaapp.databinding.AdminhotelMainBinding;
 import com.example.hotelreservaapp.model.UsuarioListaSuperAdmin;
 import com.google.android.material.bottomnavigation.BottomNavigationView;

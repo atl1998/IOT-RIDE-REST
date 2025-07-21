@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.hotelreservaapp.AdminHotel.Adapter.NotificacionAdapter;
+import com.example.hotelreservaapp.AdminHotel.Model.Notificacion;
 import com.example.hotelreservaapp.R;
 import com.google.android.material.button.MaterialButton;
 
@@ -26,7 +27,6 @@ public class NotificacionesActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.adminhotel_activity_notificaciones);
 
         rvNotificaciones = findViewById(R.id.listaNotificaciones);

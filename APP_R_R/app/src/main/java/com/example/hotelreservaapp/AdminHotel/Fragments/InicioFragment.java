@@ -1,6 +1,5 @@
-package com.example.hotelreservaapp.AdminHotel;
+package com.example.hotelreservaapp.AdminHotel.Fragments;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -12,10 +11,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.hotelreservaapp.AdminHotel.NotificacionesActivity;
 import com.example.hotelreservaapp.R;
 import com.example.hotelreservaapp.adapter.Adminhotel_UsuarioAdapter;
-import com.example.hotelreservaapp.adapter.UsuarioAdapter;
-import com.example.hotelreservaapp.cliente.HomeCliente;
 import com.example.hotelreservaapp.databinding.AdminhotelFragmentInicioBinding;
 import com.example.hotelreservaapp.model.UsuarioListaSuperAdmin;
 import com.google.android.material.button.MaterialButton;

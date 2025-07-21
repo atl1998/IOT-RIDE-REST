@@ -6,15 +6,21 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.hotelreservaapp.AdminHotel.Adapter.HabitacionAdapter;
 import com.example.hotelreservaapp.AdminHotel.Model.Habitacion;
+import com.example.hotelreservaapp.AdminHotel.ViewModel.RegistroViewModel;
 import com.example.hotelreservaapp.R;
 import com.google.android.material.button.MaterialButton;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +30,11 @@ public class HotelHabitaciones extends AppCompatActivity {
     private RecyclerView rvHabitaciones;
     private HabitacionAdapter adapter;
     private List<Habitacion> listaHabitaciones;
+    private FirebaseFirestore db;
+    private FirebaseUser usuarioActual;
+    private String idHotel;
+
+    private RegistroViewModel registroViewModel;
 
     Button btnReservar;
 
@@ -36,17 +47,12 @@ public class HotelHabitaciones extends AppCompatActivity {
         rvHabitaciones.setLayoutManager(new LinearLayoutManager(this));
         rvHabitaciones.setHasFixedSize(true);
 
+        db = FirebaseFirestore.getInstance();
+        usuarioActual = FirebaseAuth.getInstance().getCurrentUser();
+        registroViewModel = new ViewModelProvider(this).get(RegistroViewModel.class);
+
         // Inicializar lista de habitaciones
         listaHabitaciones = new ArrayList<>();
-        listaHabitaciones.add(new Habitacion(
-                "Standar",
-                354.00,
-                16.5,
-                "Para dos personas",
-                "adminhotel_habitacion1.jpg"
-        ));
-
-
 
         //Inicializamos el adapter
         adapter = new HabitacionAdapter(listaHabitaciones,this,  new HabitacionAdapter.OnItemClickListener() {
@@ -63,6 +69,29 @@ public class HotelHabitaciones extends AppCompatActivity {
         });
 
         rvHabitaciones.setAdapter(adapter);
+
+        registroViewModel.getHotel().observe(this, hotel -> {
+            if (hotel == null) return;
+            listaHabitaciones.clear();
+            listaHabitaciones.addAll(hotel.getHabitaciones());
+            adapter.notifyDataSetChanged();
+        });
+
+        //Cargamos el id del hotel
+        if (usuarioActual != null) {
+            db.collection("usuarios").document(usuarioActual.getUid()).get()
+                    .addOnSuccessListener(document -> {
+                        if (document.exists()) {
+                            String idHotel = document.getString("idHotel");
+                            registroViewModel.loadHotelWithSubcollections(idHotel);
+                        }
+                    })
+                    .addOnFailureListener(e ->
+                            Toast.makeText(this, "Error al cargar datos", Toast.LENGTH_SHORT).show()
+                    );
+        }
+
+
         /*btnReservar = findViewById(R.id.btnReservarAhora);
 
         btnReservar.setOnClickListener(v -> {

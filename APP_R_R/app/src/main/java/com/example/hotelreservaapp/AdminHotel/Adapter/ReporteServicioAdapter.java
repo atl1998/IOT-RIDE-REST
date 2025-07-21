@@ -1,4 +1,4 @@
-package com.example.hotelreservaapp.AdminHotel;
+package com.example.hotelreservaapp.AdminHotel.Adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -9,13 +9,14 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.hotelreservaapp.AdminHotel.Model.Servicio;
 import com.example.hotelreservaapp.R;
 
 import java.util.List;
 
-public class ReporteServicioAdapter extends RecyclerView.Adapter<com.example.hotelreservaapp.AdminHotel.ReporteServicioAdapter.ServiciosViewHolder> {
+public class ReporteServicioAdapter extends RecyclerView.Adapter<ReporteServicioAdapter.ServiciosViewHolder> {
 
-    private List<ServiciosAdapter.Servicios> servicios;
+    private List<Servicio> servicios;
     private OnItemClickListener listener;
     private Context context;
     public interface OnItemClickListener {
@@ -23,25 +24,25 @@ public class ReporteServicioAdapter extends RecyclerView.Adapter<com.example.hot
         void onSeleccionCambio();
     }
 
-    public ReporteServicioAdapter(List<ServiciosAdapter.Servicios> Servicios, Context context) {
+    public ReporteServicioAdapter(List<Servicio> Servicios, Context context) {
         this.servicios = Servicios;
         this.context = context;
     }
 
     @NonNull
     @Override
-    public com.example.hotelreservaapp.AdminHotel.ReporteServicioAdapter.ServiciosViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public ReporteServicioAdapter.ServiciosViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.adminhotel_item_reporte_servicio, parent, false);
-        return new com.example.hotelreservaapp.AdminHotel.ReporteServicioAdapter.ServiciosViewHolder(view);
+        return new ReporteServicioAdapter.ServiciosViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull com.example.hotelreservaapp.AdminHotel.ReporteServicioAdapter.ServiciosViewHolder holder, int position) {
-        ServiciosAdapter.Servicios servicio = servicios.get(position);
+    public void onBindViewHolder(@NonNull ReporteServicioAdapter.ServiciosViewHolder holder, int position) {
+        Servicio servicio = servicios.get(position);
 
-        holder.tvTitulo.setText(servicio.getTitulo());
-        holder.tvPrecio.setText(servicio.getPrecio());
+        holder.tvTitulo.setText(servicio.getNombre());
+        holder.tvPrecio.setText(Double.toString(servicio.getPrecio()));
 
         /*
         String nombreArchivo = servicio.getUrl(); // ej. "image1.png"

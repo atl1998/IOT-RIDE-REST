@@ -1,5 +1,6 @@
 package com.example.hotelreservaapp.AdminHotel.Model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Hotel {
@@ -12,8 +13,8 @@ public class Hotel {
     private String urlImage;
     private double valoracion;
 
-    private List<Habitacion> habitaciones; // Lista de habitaciones
-    private List<Servicio> servicios; // Lista de servicios
+    private List<Habitacion> habitaciones = new ArrayList<>(); // Lista de habitaciones
+    private List<Servicio> servicios = new ArrayList<>(); // Lista de servicios
 
     public Hotel() {}
     public Hotel(String nombre, String descripcion, String departamento, String provincia, String distrito, String direccion, String urlImage, double valoracion, List<Habitacion> habitaciones, List<Servicio> servicios ) {

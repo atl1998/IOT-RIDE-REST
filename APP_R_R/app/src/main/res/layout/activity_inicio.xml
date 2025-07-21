@@ -18,7 +18,7 @@
         android:fontFamily="sans-serif-medium"
         android:text="No más obstáculos, descubre el mundo ahora\nhaciendo tu reserva con nosotros"
         android:textAlignment="center"
-        android:textColor="#B38A0B"
+        android:textColor="#E7B30C"
         android:textSize="14sp"
         android:textStyle="italic"
         app:layout_constraintEnd_toEndOf="parent"

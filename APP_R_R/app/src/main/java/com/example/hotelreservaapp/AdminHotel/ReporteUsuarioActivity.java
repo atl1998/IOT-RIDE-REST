@@ -6,15 +6,11 @@ import android.view.View;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.hotelreservaapp.R;
-import com.example.hotelreservaapp.AdminHotel.ReporteUsuarioAdapter;
-import com.example.hotelreservaapp.model.Usuario;
+import com.example.hotelreservaapp.AdminHotel.Adapter.ReporteUsuarioAdapter;
 import com.example.hotelreservaapp.model.UsuarioListaSuperAdmin;
 import com.google.android.material.button.MaterialButton;
 
@@ -25,6 +21,7 @@ public class ReporteUsuarioActivity extends AppCompatActivity {
 
     MaterialButton btnNotificaiones;
     MaterialButton btnBuscar;
+    MaterialButton testNotificaciones;
     
     ReporteUsuarioAdapter adapter;
     
@@ -34,7 +31,6 @@ public class ReporteUsuarioActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.adminhotel_activity_reporte_usuario);
         cargarUsuariosDeEjemplo();
 
@@ -63,6 +59,11 @@ public class ReporteUsuarioActivity extends AppCompatActivity {
             adapter = new ReporteUsuarioAdapter(this , lsitaUsuarios);
             recyclerView.setAdapter(adapter);
 
+        });
+        testNotificaciones = findViewById(R.id.testNotificaciones);
+        testNotificaciones.setOnClickListener(v -> {
+            Intent intent = new Intent(this, TestPushNotification.class);
+            startActivity(intent);
         });
 
 

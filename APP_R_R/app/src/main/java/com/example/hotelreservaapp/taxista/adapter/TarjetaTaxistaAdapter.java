@@ -25,6 +25,7 @@ import com.example.hotelreservaapp.taxista.MapaActividad;
 import com.example.hotelreservaapp.taxista.DetallesViajeActivity;
 import com.example.hotelreservaapp.taxista.TaxistaMain;
 import com.example.hotelreservaapp.taxista.model.TarjetaModel;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -43,12 +44,16 @@ public class TarjetaTaxistaAdapter extends RecyclerView.Adapter<TarjetaTaxistaAd
 
     private static final String CHANNEL_ID = "ride_and_rest_channel";
 
-    public TarjetaTaxistaAdapter(List<TarjetaModel> todas, Context context, OnNotificacionListener listener) {
+    private boolean esHistorial = false;
+
+    public TarjetaTaxistaAdapter(List<TarjetaModel> todas, Context context, OnNotificacionListener listener, boolean esHistorial) {
         this.context = context;
         this.notificacionListener = listener;
-        listaCompartida = ordenarPorPrioridad(todas);
+        this.esHistorial = esHistorial;
+        listaCompartida = esHistorial ? todas : ordenarPorPrioridad(todas); // si es historial, no ordenar ni filtrar
         createNotificationChannel();
     }
+
 
     private List<TarjetaModel> ordenarPorPrioridad(List<TarjetaModel> listaOriginal) {
         List<TarjetaModel> enProgreso = new ArrayList<>();
@@ -87,7 +92,6 @@ public class TarjetaTaxistaAdapter extends RecyclerView.Adapter<TarjetaTaxistaAd
     @SuppressLint("MissingPermission")
     private void sendNotification(String title, String message) {
         Intent intent = new Intent(context, TaxistaMain.class);
-        // Esto asegurará que no se creen múltiples instancias y que se abra la actividad desde cero
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
         PendingIntent pendingIntent = PendingIntent.getActivity(
@@ -98,20 +102,18 @@ public class TarjetaTaxistaAdapter extends RecyclerView.Adapter<TarjetaTaxistaAd
         );
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_launcher_round)  // Tu icono
+                .setSmallIcon(R.drawable.ic_launcher_round)
                 .setContentTitle(title)
                 .setContentText(message)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setAutoCancel(true)
                 .setDefaults(NotificationCompat.DEFAULT_ALL)
-                .setContentIntent(pendingIntent); // Asigna el PendingIntent aquí
+                .setContentIntent(pendingIntent);
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
-
         int notificationId = (int) (System.currentTimeMillis() % Integer.MAX_VALUE);
         notificationManager.notify(notificationId, builder.build());
     }
-
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -123,10 +125,10 @@ public class TarjetaTaxistaAdapter extends RecyclerView.Adapter<TarjetaTaxistaAd
     public void onBindViewHolder(ViewHolder holder, int position) {
         TarjetaModel item = listaCompartida.get(position);
 
-        holder.nombreUsuario.setText(item.getNombreUsuario());
+        holder.nombreUsuario.setText(item.getNombreCliente());
         holder.fecha.setText(item.getFecha());
         holder.hora.setText(item.getHora());
-        holder.ubicacion.setText(item.getUbicacion());
+        holder.ubicacion.setText(item.getUbicacionOrigen());
         holder.estado.setText(item.getEstado());
 
         switch (item.getEstado()) {
@@ -134,23 +136,28 @@ public class TarjetaTaxistaAdapter extends RecyclerView.Adapter<TarjetaTaxistaAd
                 holder.estado.setTextColor(context.getResources().getColor(R.color.verde_aceptar));
                 holder.btnAceptar.setVisibility(View.GONE);
                 holder.btnCancelar.setVisibility(View.VISIBLE);
+                holder.btnVerMapa.setVisibility(View.VISIBLE);
                 break;
             case "Solicitado":
                 holder.estado.setTextColor(context.getResources().getColor(R.color.azul));
                 holder.btnAceptar.setVisibility(View.VISIBLE);
                 holder.btnCancelar.setVisibility(View.GONE);
+                holder.btnVerMapa.setVisibility(View.VISIBLE);
                 break;
             case "Cancelado":
                 holder.estado.setTextColor(context.getResources().getColor(R.color.error_red));
                 holder.btnAceptar.setVisibility(View.GONE);
                 holder.btnCancelar.setVisibility(View.GONE);
+                holder.btnVerMapa.setVisibility(View.GONE);
                 break;
             case "Finalizado":
                 holder.estado.setTextColor(Color.GRAY);
                 holder.btnAceptar.setVisibility(View.GONE);
                 holder.btnCancelar.setVisibility(View.GONE);
+                holder.btnVerMapa.setVisibility(View.GONE);
                 break;
         }
+
 
         holder.btnAceptar.setOnClickListener(v -> {
             boolean yaEnCurso = false;
@@ -165,51 +172,67 @@ public class TarjetaTaxistaAdapter extends RecyclerView.Adapter<TarjetaTaxistaAd
                 Toast.makeText(context, "No puedes aceptar el viaje porque tienes uno en curso", Toast.LENGTH_SHORT).show();
             } else {
                 item.setEstado("En progreso");
-                listaCompartida = ordenarPorPrioridad(listaCompartida);
-                notifyDataSetChanged();
+                FirebaseFirestore.getInstance()
+                        .collection("servicios_taxi")
+                        .document(item.getIdCliente())
+                        .update("estado", "En progreso")
+                        .addOnSuccessListener(unused -> {
+                            listaCompartida = ordenarPorPrioridad(listaCompartida);
+                            notifyDataSetChanged();
+                        });
 
                 if (notificacionListener != null) {
                     notificacionListener.onViajeAceptado(item);
                 }
 
-                sendNotification("Solicitud aceptada", "Has aceptado el pedido de " + item.getNombreUsuario());
+                sendNotification("Solicitud aceptada", "Has aceptado el pedido de " + item.getNombreCliente());
 
                 Intent intent = new Intent(context, MapaActividad.class);
-                intent.putExtra("nombre", item.getNombreUsuario());
-                intent.putExtra("telefono", item.getTelefono());
+                intent.putExtra("nombre", item.getNombreCliente());
+                intent.putExtra("telefono", item.getTelefonoCliente());
                 context.startActivity(intent);
             }
         });
 
         holder.btnCancelar.setOnClickListener(v -> {
             item.setEstado("Cancelado");
-            listaCompartida.remove(position);
-            notifyDataSetChanged();
+            FirebaseFirestore.getInstance()
+                    .collection("servicios_taxi")
+                    .document(item.getIdCliente())
+                    .update("estado", "Cancelado")
+                    .addOnSuccessListener(unused -> {
+                        listaCompartida.remove(position);
+                        notifyDataSetChanged();
+                    });
 
             if (notificacionListener != null) {
                 notificacionListener.onViajeCancelado(item);
             }
 
-            sendNotification("Viaje cancelado", "Has cancelado el viaje con " + item.getNombreUsuario());
+            sendNotification("Viaje cancelado", "Has cancelado el viaje con " + item.getNombreCliente());
         });
 
         holder.btnVerMapa.setOnClickListener(v -> {
             Intent intent = new Intent(context, MapaActividad.class);
-            intent.putExtra("ubicacion", item.getUbicacion());
-            intent.putExtra("nombre", item.getNombreUsuario());
-            intent.putExtra("telefono", item.getTelefono());
+            intent.putExtra("nombre", item.getNombreCliente());
+            intent.putExtra("telefono", item.getTelefonoCliente());
+            intent.putExtra("latOrigen", item.getLatOrigen());
+            intent.putExtra("lngOrigen", item.getLngOrigen());
+            intent.putExtra("latDestino", item.getLatDestino());
+            intent.putExtra("lngDestino", item.getLngDestino());
             intent.putExtra("viajeEnCurso", "En progreso".equalsIgnoreCase(item.getEstado()));
             context.startActivity(intent);
         });
 
+
         holder.cardView.setOnClickListener(v -> {
             Intent intent = new Intent(context, DetallesViajeActivity.class);
-            intent.putExtra("nombre", item.getNombreUsuario());
-            intent.putExtra("correo", item.getCorreo());
-            intent.putExtra("telefono", item.getTelefono());
+            intent.putExtra("nombre", item.getNombreCliente());
+            intent.putExtra("correo", item.getCorreoCliente());
+            intent.putExtra("telefono", item.getTelefonoCliente());
             intent.putExtra("fecha", item.getFecha());
             intent.putExtra("hora", item.getHora());
-            intent.putExtra("ubicacion", item.getUbicacion());
+            intent.putExtra("ubicacion", item.getUbicacionOrigen());
             intent.putExtra("destino", item.getDestino());
             intent.putExtra("estado", item.getEstado());
             context.startActivity(intent);
@@ -225,7 +248,7 @@ public class TarjetaTaxistaAdapter extends RecyclerView.Adapter<TarjetaTaxistaAd
         TextView nombreUsuario, fecha, hora, ubicacion, estado;
         Button btnAceptar, btnCancelar;
         View btnVerMapa;
-        androidx.cardview.widget.CardView cardView;
+        CardView cardView;
 
         public ViewHolder(View itemView) {
             super(itemView);

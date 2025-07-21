@@ -25,7 +25,6 @@ public class DetallesViajeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.taxista_activity_detalles_viaje);
 
-        // Referencias a views
         status = findViewById(R.id.status);
         nombre = findViewById(R.id.tvNombreCompleto);
         correo = findViewById(R.id.correoviajero);
@@ -39,12 +38,11 @@ public class DetallesViajeActivity extends AppCompatActivity {
         btnAceptar = findViewById(R.id.btnAceptarSolicitud);
         abrirMapa = findViewById(R.id.abrirMapa);
 
-        // Obtener extras
         Intent intent = getIntent();
         String nombreExtra = intent.getStringExtra("nombre");
 
         for (TarjetaModel t : TarjetaTaxistaAdapter.listaCompartida) {
-            if (t.getNombreUsuario().equals(nombreExtra)) {
+            if (t.getNombreCliente().equals(nombreExtra)) {
                 modeloActual = t;
                 break;
             }
@@ -56,21 +54,21 @@ public class DetallesViajeActivity extends AppCompatActivity {
             return;
         }
 
-        // Mostrar datos
-        nombre.setText(modeloActual.getNombreUsuario());
-        correo.setText(modeloActual.getCorreo());
-        telefono.setText(modeloActual.getTelefono());
+        nombre.setText(modeloActual.getNombreCliente());
+        correo.setText(modeloActual.getCorreoCliente());
+        telefono.setText(modeloActual.getTelefonoCliente());
         fecha.setText(modeloActual.getFecha());
         hora.setText(modeloActual.getHora());
-        ubicacion.setText(modeloActual.getUbicacion());
+        ubicacion.setText(modeloActual.getUbicacionOrigen());
         destino.setText(modeloActual.getDestino());
         status.setText(modeloActual.getEstado());
+        horaFin.setText(modeloActual.getHoraFinalizacion() != null ? modeloActual.getHoraFinalizacion() : "-");
 
         actualizarVistaSegunEstado();
 
         abrirMapa.setOnClickListener(v -> {
             Intent mapaIntent = new Intent(this, MapaActividad.class);
-            mapaIntent.putExtra("ubicacion", modeloActual.getUbicacion());
+            mapaIntent.putExtra("ubicacion", modeloActual.getUbicacionOrigen());
             startActivity(mapaIntent);
         });
 
@@ -101,30 +99,38 @@ public class DetallesViajeActivity extends AppCompatActivity {
                 btnCancelar.setVisibility(View.VISIBLE);
 
                 Intent intentMapa = new Intent(this, MapaActividad.class);
-                intentMapa.putExtra("ubicacion", modeloActual.getUbicacion());
+                intentMapa.putExtra("ubicacion", modeloActual.getUbicacionOrigen());
                 startActivity(intentMapa);
             }
         });
 
-        // Botón volver (ícono atrás)
         findViewById(R.id.añadirfavoritos).setOnClickListener(v -> finish());
     }
 
     private void actualizarVistaSegunEstado() {
         String estado = modeloActual.getEstado();
 
-        if ("En progreso".equalsIgnoreCase(estado)) {
-            status.setTextColor(getResources().getColor(R.color.verde_aceptar));
-            btnCancelar.setVisibility(View.VISIBLE);
-            btnAceptar.setVisibility(View.GONE);
-        } else if ("Solicitado".equalsIgnoreCase(estado)) {
-            status.setTextColor(getResources().getColor(R.color.azul));
-            btnAceptar.setVisibility(View.VISIBLE);
-            btnCancelar.setVisibility(View.GONE);
-        } else if ("Cancelado".equalsIgnoreCase(estado)) {
-            status.setTextColor(getResources().getColor(R.color.error_red));
-            btnAceptar.setVisibility(View.GONE);
-            btnCancelar.setVisibility(View.GONE);
+        switch (estado) {
+            case "En progreso":
+                status.setTextColor(getResources().getColor(R.color.verde_aceptar));
+                btnCancelar.setVisibility(View.VISIBLE);
+                btnAceptar.setVisibility(View.GONE);
+                break;
+            case "Solicitado":
+                status.setTextColor(getResources().getColor(R.color.azul));
+                btnAceptar.setVisibility(View.VISIBLE);
+                btnCancelar.setVisibility(View.GONE);
+                break;
+            case "Cancelado":
+                status.setTextColor(getResources().getColor(R.color.error_red));
+                btnAceptar.setVisibility(View.GONE);
+                btnCancelar.setVisibility(View.GONE);
+                break;
+            case "Finalizado":
+                status.setTextColor(getResources().getColor(R.color.negro));
+                btnAceptar.setVisibility(View.GONE);
+                btnCancelar.setVisibility(View.GONE);
+                break;
         }
     }
 }

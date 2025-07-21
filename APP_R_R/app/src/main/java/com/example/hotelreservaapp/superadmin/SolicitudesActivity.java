@@ -44,7 +44,7 @@ public class SolicitudesActivity extends AppCompatActivity  {
                         if (result.getResultCode() == RESULT_OK) {
                             // La DetalleSolicitudActivity se cerró con éxito
                             // Aquí es donde actualizas tu lista
-                            Toast.makeText(this, "La lista se actualizará.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(this, "Cargando solicitudes :D", Toast.LENGTH_SHORT).show();
                             cargarSolicitudesDesdeFirestore();
                         }
                     });

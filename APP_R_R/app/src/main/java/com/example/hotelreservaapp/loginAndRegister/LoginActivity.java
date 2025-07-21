@@ -6,21 +6,17 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.View;
 import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
 
-import com.example.hotelreservaapp.AdminHotel.InicioFragment;
 import com.example.hotelreservaapp.AdminHotel.MainActivity;
 import com.example.hotelreservaapp.AdminHotel.RegistroHotelActivity;
 import com.example.hotelreservaapp.R;
 import com.example.hotelreservaapp.SuperAdminMainActivity;
 import com.example.hotelreservaapp.cliente.HomeCliente;
-import com.example.hotelreservaapp.model.DetallesTaxista;
 import com.example.hotelreservaapp.model.Usuario;
 import com.example.hotelreservaapp.taxista.TaxistaMain;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -37,8 +33,12 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
+import com.google.firebase.messaging.FirebaseMessaging;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -158,6 +158,25 @@ public class LoginActivity extends AppCompatActivity {
                                                 finish();
                                                 return;
                                             }
+                                            String rol = document.getString("rol");
+                                            if ("cliente".equals(rol)) {
+                                                // guardar token
+                                                FirebaseMessaging.getInstance().getToken()
+                                                        .addOnCompleteListener(tokenTask  -> {
+                                                            if (tokenTask .isSuccessful()) {
+                                                                String token = tokenTask .getResult();
+                                                                Map<String, Object> data = new HashMap<>();
+                                                                data.put("fcmToken", token);
+                                                                FirebaseFirestore.getInstance()
+                                                                        .collection("usuarios")
+                                                                        .document(user.getUid())
+                                                                        .set(data, SetOptions.merge())
+                                                                        .addOnSuccessListener(aVoid -> Log.d("FCM", "Token FCM guardado en login"))
+                                                                        .addOnFailureListener(e -> Log.w("FCM", "Error guardando token", e));
+                                                            }
+                                                        });
+                                            }
+                                            // Luego rediriges según rol:
                                             redirigirSegunRol(document.getString("rol"));
                                         } else {
                                             Toast.makeText(this, "No se encontró el perfil del usuario", Toast.LENGTH_SHORT).show();
@@ -201,8 +220,6 @@ public class LoginActivity extends AppCompatActivity {
                             Toast.makeText(this, "Error al verificar cuenta existente", Toast.LENGTH_SHORT).show();
                         });
             } catch (ApiException e) {
-                Log.e("GoogleLogin", "Error al iniciar sesión: " + e.getStatusCode(), e);
-
                 Toast.makeText(this, "Error al iniciar sesión con Google", Toast.LENGTH_SHORT).show();
             }
         }

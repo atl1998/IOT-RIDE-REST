@@ -126,6 +126,7 @@
                 android:textColor="@color/dorado_oscurobajo"
                 android:focusable="false" />
         </com.google.android.material.textfield.TextInputLayout>
+        <!--
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnBuscar"
             android:layout_width="wrap_content"
@@ -135,7 +136,40 @@
             android:layout_marginTop="12dp"
             android:textColor="@color/black"
             android:backgroundTint="@color/dorado_claro"
-            app:cornerRadius="8dp" />
+            app:cornerRadius="8dp" /> -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="12dp"
+            android:paddingHorizontal="16dp"
+            android:weightSum="2">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnBuscar"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Buscar"
+                android:textColor="@color/black"
+                android:backgroundTint="@color/dorado_claro"
+                app:cornerRadius="8dp"
+                android:layout_marginEnd="8dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/testNotificaciones"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="TestNoti"
+                android:textColor="@color/black"
+                android:backgroundTint="@color/dorado_claro"
+                app:cornerRadius="8dp"
+                android:layout_marginStart="8dp" />
+        </LinearLayout>
+
     </LinearLayout>
 
     <!-- 🟩 Lista sin fondo -->

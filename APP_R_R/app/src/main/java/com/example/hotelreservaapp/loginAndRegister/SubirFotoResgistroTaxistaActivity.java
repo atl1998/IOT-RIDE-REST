@@ -55,7 +55,7 @@ public class SubirFotoResgistroTaxistaActivity extends AppCompatActivity {
         correo = intent.getStringExtra("correo");
         telefono = intent.getStringExtra("telefono");
         direccion = intent.getStringExtra("direccion");
-        fotoPerfilUri = intent.getStringExtra("fotoPerfilUri"); // <- ✅ Foto del rostro
+        fotoPerfilUri = intent.getStringExtra("fotoPerfilUri");
 
         // Botón volver
         binding.btnBack.setOnClickListener(v -> onBackPressed());
@@ -137,7 +137,7 @@ public class SubirFotoResgistroTaxistaActivity extends AppCompatActivity {
                                         }))
                                         .addOnFailureListener(e -> Toast.makeText(this, "Error al subir foto del vehículo", Toast.LENGTH_SHORT).show());
                             }))
-                            .addOnFailureListener(e -> Toast.makeText(this, "Error al subir foto del rostro", Toast.LENGTH_SHORT).show());
+                            .addOnFailureListener(e -> Toast.makeText(this, "Error al subir foto de perfil", Toast.LENGTH_SHORT).show());
                 })
                 .addOnFailureListener(e -> {
                     Toast.makeText(this, "Error al iniciar postulación: " + e.getMessage(), Toast.LENGTH_LONG).show();
