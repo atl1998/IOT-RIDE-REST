@@ -200,7 +200,7 @@ public class Registro5Servicios_fragment extends Fragment {
                                         LogManager.registrarLogRegistro(
                                                 nombreCompleto,
                                                 "Registro de hotel",
-                                                "El administrador de hotel" + nombreCompleto + "registró el hotel " + hotel.getNombre()
+                                                "El administrador de hotel " + nombreCompleto + "registró el hotel " + hotel.getNombre()
                                         );
 
                                         Log.d("Firestore", "Proyecto guardado correctamente");

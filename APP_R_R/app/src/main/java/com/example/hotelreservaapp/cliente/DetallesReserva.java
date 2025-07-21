@@ -273,7 +273,21 @@ public class DetallesReserva extends AppCompatActivity {
                                         String contacto = hotelDoc.getString("contacto");
                                         String UrlFotoHotel = hotelDoc.getString("UrlFotoHotel");
 
-                                        historialItem = new HistorialItem(idReserva, estado, nombreHotelDoc, "📍 " + ubicacionDoc, solicitarTaxista, checkoutEnable, servicioTaxi, fechaInicioTS, fechaFinTS);
+                                        if (solicitarTaxista == null) {
+                                            if (servicioTaxi) {
+                                                String solicitarTaxistaowo = "No Solicitado";
+
+                                                historialItem = new HistorialItem(idReserva, estado, nombreHotelDoc, "📍 " + ubicacionDoc, solicitarTaxistaowo, checkoutEnable, servicioTaxi, fechaInicioTS, fechaFinTS);
+                                            } else {
+                                                String solicitarTaxistaowo = "No disponible";
+                                                historialItem = new HistorialItem(idReserva, estado, nombreHotelDoc, "📍 " + ubicacionDoc, solicitarTaxistaowo, checkoutEnable, servicioTaxi, fechaInicioTS, fechaFinTS);
+                                            }
+                                        }
+
+                                        if (solicitarTaxista != null){
+                                            historialItem = new HistorialItem(idReserva, estado, nombreHotelDoc, "📍 " + ubicacionDoc, solicitarTaxista, checkoutEnable, servicioTaxi, fechaInicioTS, fechaFinTS);
+                                        }
+
                                         historialItem.setPersonas(personas);
                                         historialItem.setValoracion(valoracionDoc);
                                         historialItem.setContacto(contacto);

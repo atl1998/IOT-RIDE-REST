@@ -10,6 +10,8 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.example.hotelreservaapp.Objetos.Notificaciones;
+import com.example.hotelreservaapp.room.AppDatabase;
 import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.badge.BadgeUtils;
 import android.text.Editable;
@@ -72,6 +74,7 @@ public class GestionUsuariosFragment extends Fragment {
         ImageView campana = binding.iconNotificaciones;  // o view.findViewById(...)
 
         campana.setOnClickListener(v -> {
+
             Intent intent = new Intent(requireContext(), NotificacionesSAActivity.class);
             startActivity(intent);
         });
@@ -124,6 +127,8 @@ public class GestionUsuariosFragment extends Fragment {
 
         // Cargar datos de prueba
         cargarUsuarios();
+        actualizarBadgeNotificaciones();
+
     }
 
     private void aplicarFiltros() {
@@ -169,5 +174,23 @@ public class GestionUsuariosFragment extends Fragment {
                 .addOnFailureListener(e ->
                         Toast.makeText(requireContext(), "Error al cargar usuarios", Toast.LENGTH_SHORT).show()
                 );
+    }
+    private void actualizarBadgeNotificaciones() {
+        int count = AppDatabase.getInstance(requireContext())
+                .notificacionDao()
+                .contarNoLeidas();
+        if (count > 0) {
+            binding.badgeNotificaciones.setVisibility(View.VISIBLE);
+            binding.badgeNotificaciones.setText(String.valueOf(count));
+        } else {
+            binding.badgeNotificaciones.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        cargarUsuarios();
+        actualizarBadgeNotificaciones();
     }
 }

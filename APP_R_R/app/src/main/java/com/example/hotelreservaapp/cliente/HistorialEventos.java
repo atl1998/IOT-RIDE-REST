@@ -21,7 +21,6 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -29,16 +28,12 @@ import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-import androidx.work.OneTimeWorkRequest;
-import androidx.work.WorkManager;
-import androidx.work.WorkRequest;
 
-import com.example.hotelreservaapp.ClienteServicioTaxi;
+import com.example.hotelreservaapp.cliente.TaxistaCliente.ClienteServicioTaxi;
 import com.example.hotelreservaapp.Objetos.Notificaciones;
 import com.example.hotelreservaapp.Objetos.NotificacionesStorageHelper;
 import com.example.hotelreservaapp.Objetos.NotificationManagerNoAPP;
 import com.example.hotelreservaapp.R;
-import com.example.hotelreservaapp.workers.NotificacionCheckoutWorker;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -46,7 +41,6 @@ import com.google.android.material.button.MaterialButton;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
@@ -60,7 +54,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -477,13 +470,13 @@ public class HistorialEventos extends AppCompatActivity implements HistorialItem
 
                 // Obtener la hora actual en formato "HH:mm"
                 String horaActual = new SimpleDateFormat("HH:mm", Locale.getDefault()).format(new Date());
-                String checkin = "No especificado";
+                //String checkin = "No especificado";
 
                 // Crear mapa con los campos a actualizar
                 Map<String, Object> updates = new HashMap<>();
                 updates.put("checkoutSolicitado", true);
-                updates.put("CheckOutHora", horaActual);  // <-- esto será tipo String
-                updates.put("CheckInHora", checkin);
+                //updates.put("CheckOutHora", horaActual);  // <-- esto será tipo String
+                //updates.put("CheckInHora", checkin);
 
                 db.collection("usuarios")
                         .document(userId)
@@ -614,10 +607,11 @@ public class HistorialEventos extends AppCompatActivity implements HistorialItem
         if (ActivityCompat.checkSelfPermission(this, POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
             notificationManagerCompat.notify(1, builder.build());
         }
-
+        /*
         WorkRequest notificacionRetrasada = new OneTimeWorkRequest.Builder(NotificacionCheckoutWorker.class)
                 .setInitialDelay(15, TimeUnit.SECONDS)
                 .build();
         WorkManager.getInstance(this).enqueue(notificacionRetrasada);
+        */
     }
 }

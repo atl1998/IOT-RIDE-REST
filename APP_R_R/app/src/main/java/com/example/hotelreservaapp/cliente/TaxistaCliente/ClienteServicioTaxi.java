@@ -1,4 +1,4 @@
-package com.example.hotelreservaapp;
+package com.example.hotelreservaapp.cliente.TaxistaCliente;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,6 +9,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.hotelreservaapp.R;
 import com.example.hotelreservaapp.cliente.ClienteNotificaciones;
 import com.google.android.material.button.MaterialButton;
 

@@ -1,5 +1,6 @@
 package com.example.hotelreservaapp.superadmin;
 
+import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
 
@@ -68,28 +69,25 @@ public class HistorialReservasActivity extends AppCompatActivity {
         binding.btnBack.setOnClickListener(v -> finish());
 
         binding.etFecha.setOnClickListener(v -> {
-            CalendarConstraints.DateValidator dateValidator =
-                    DateValidatorPointBackward.before(MaterialDatePicker.todayInUtcMilliseconds());
+            final java.util.Calendar calendar = java.util.Calendar.getInstance();
+            int year = calendar.get(java.util.Calendar.YEAR);
+            int month = calendar.get(java.util.Calendar.MONTH);
+            int day = calendar.get(java.util.Calendar.DAY_OF_MONTH);
 
-            CalendarConstraints constraints = new CalendarConstraints.Builder()
-                    .setValidator(dateValidator)
-                    .build();
+            DatePickerDialog datePickerDialog = new DatePickerDialog(
+                    HistorialReservasActivity.this,
+                    (view, selectedYear, selectedMonth, selectedDay) -> {
+                        String fechaFormateada = String.format(Locale.getDefault(), "%02d/%02d/%04d",
+                                selectedDay, selectedMonth + 1, selectedYear);
+                        binding.etFecha.setText(fechaFormateada);
+                        filtrarResultados();
+                    },
+                    year, month, day
+            );
 
-            MaterialDatePicker<Long> datePicker = MaterialDatePicker.Builder.datePicker()
-                    .setTitleText("Selecciona una fecha")
-                    .setCalendarConstraints(constraints)
-                    .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
-                    .build();
+            datePickerDialog.getDatePicker().setMaxDate(System.currentTimeMillis());
 
-            datePicker.show(getSupportFragmentManager(), "MATERIAL_DATE_PICKER");
-
-            datePicker.addOnPositiveButtonClickListener(selection -> {
-                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-                sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
-                String fechaFormateada = sdf.format(new Date(selection));
-                binding.etFecha.setText(fechaFormateada);
-                filtrarResultados();
-            });
+            datePickerDialog.show();
         });
 
         binding.spinnerHotel.setOnItemClickListener((parent, view, position, id) -> filtrarResultados());

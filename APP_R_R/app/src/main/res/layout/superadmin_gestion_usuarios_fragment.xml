@@ -42,6 +42,20 @@
             app:layout_constraintTop_toTopOf="@id/tvTituloApp"
             app:layout_constraintBottom_toBottomOf="@id/tvTituloApp"
             android:layout_marginEnd="16dp"/>
+        <TextView
+            android:id="@+id/badgeNotificaciones"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_gravity="end|top"
+            android:background="@drawable/circle_background"
+            android:textColor="#000000"
+            android:textSize="10sp"
+            android:gravity="center"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="@id/iconNotificaciones"
+            app:layout_constraintTop_toTopOf="@id/iconNotificaciones"
+            android:text="0"
+            android:fontFamily="sans-serif-medium" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     <View

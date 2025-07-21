@@ -1,38 +1,63 @@
 package com.example.hotelreservaapp.AdminHotel;
 
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.functions.FirebaseFunctions;
+import android.util.Log;
 
-import java.util.HashMap;
-import java.util.Map;
+import com.google.firebase.auth.FirebaseAuth;
+
+import java.io.IOException;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class FirebaseFunctionsHelper {
-    private FirebaseFunctions functions;
 
-    public FirebaseFunctionsHelper() {
-        functions = FirebaseFunctions.getInstance();
-    }
+    private static final OkHttpClient client = new OkHttpClient();
+    private static final String TAG = "FirebaseFunctionsHelper";
 
-    public Task<String> enviarNotificacion(String token, String titulo, String cuerpo) {
-        Map<String, Object> data = new HashMap<>();
-        data.put("token", token);
-        data.put("titulo", titulo);
-        data.put("cuerpo", cuerpo);
+    public void enviarNotificacion(
+            String tokenNotificacion,
+            String tipo,
+            String titulo,
+            String tituloAmigable,
+            String mensaje,
+            String mensajeExtra,
+            Callback callback
+    ) {
+        String url = "https://us-central1-riderest-baf4e.cloudfunctions.net/enviarNotificacion";
 
-        return functions
-                .getHttpsCallable("enviarNotificacion")
-                .call(data)
-                .continueWith(task -> {
-                    if (!task.isSuccessful()) {
-                        throw task.getException();
-                    }
-                    Map<String, Object> result = (Map<String, Object>) task.getResult().getData();
-                    Boolean success = (Boolean) result.get("success");
-                    if (success) {
-                        return "Notificación enviada correctamente";
-                    } else {
-                        throw new Exception("Error al enviar notificación");
-                    }
+        String jsonPayload = "{"
+                + "\"token\":\"" + tokenNotificacion + "\","
+                + "\"tipo\":\"" + tipo + "\","
+                + "\"titulo\":\"" + titulo + "\","
+                + "\"tituloAmigable\":\"" + tituloAmigable + "\","
+                + "\"mensaje\":\"" + mensaje + "\","
+                + "\"mensajeExtra\":\"" + mensajeExtra + "\""
+                + "}";
+
+        // Obtener token ID Firebase de forma asíncrona
+        FirebaseAuth.getInstance().getCurrentUser().getIdToken(true)
+                .addOnSuccessListener(getTokenResult -> {
+                    String idToken = getTokenResult.getToken();
+                    // Imprimir el idToken en el log para depuración
+                    Log.d(TAG, "ID Token Firebase: " + idToken);
+                    RequestBody body = RequestBody.create(jsonPayload, MediaType.parse("application/json"));
+
+                    Request request = new Request.Builder()
+                            .url(url)
+                            .addHeader("Authorization", "Bearer " + idToken)
+                            .post(body)
+                            .build();
+
+                    // Ejecutar llamada HTTP asincrónica
+                    client.newCall(request).enqueue(callback);
+                })
+                .addOnFailureListener(e -> {
+                    Log.e(TAG, "Error obteniendo token ID Firebase", e);
                 });
     }
 }
