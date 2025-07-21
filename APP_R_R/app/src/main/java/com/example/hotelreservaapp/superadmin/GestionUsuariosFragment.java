@@ -190,6 +190,7 @@ public class GestionUsuariosFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        cargarUsuarios();
         actualizarBadgeNotificaciones();
     }
 }
