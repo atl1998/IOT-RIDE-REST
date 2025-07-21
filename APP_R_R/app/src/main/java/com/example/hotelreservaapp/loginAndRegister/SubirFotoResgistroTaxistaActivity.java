@@ -5,6 +5,8 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -25,6 +27,8 @@ public class SubirFotoResgistroTaxistaActivity extends AppCompatActivity {
     private static final int PICK_IMAGE_REQUEST = 1;
 
     private ActivitySubirFotoResgistroTaxistaBinding binding;
+    //Dialog cargando :'v
+    private android.app.AlertDialog progressDialog;
     private Uri imageUri;
 
     // Datos recibidos
@@ -66,6 +70,7 @@ public class SubirFotoResgistroTaxistaActivity extends AppCompatActivity {
         // Registrar postulación
         binding.btnRegistrarVehiculo.setOnClickListener(v -> {
             if (validarFormulario()) {
+                mostrarCargando("Enviando postulación...");
                 enviarPostulacionTaxista();
             }
         });
@@ -116,7 +121,6 @@ public class SubirFotoResgistroTaxistaActivity extends AppCompatActivity {
     // Crear objeto y enviarlo a Firestore
     private void enviarPostulacionTaxista() {
 
-        Toast.makeText(this, "Enviando postulación...", Toast.LENGTH_SHORT).show();
 // Crear documento en blanco para obtener el ID
         firestore.collection("postulacionesTaxistas")
                 .add(new PostulacionTaxista()) // temporal
@@ -164,11 +168,14 @@ public class SubirFotoResgistroTaxistaActivity extends AppCompatActivity {
         firestore.collection("postulacionesTaxistas")
                 .document(uid)
                 .set(postulacion)
-                .addOnSuccessListener(unused -> mostrarDialogoRegistroExitosoTaxista(
-                        nombres, apellidos, tipoDocumento, numeroDocumento,
-                        fechaNacimiento, correo, telefono, direccion,
-                        placa, urlFotoPlaca
-                ))
+                .addOnSuccessListener(unused -> {
+                    ocultarCargando();
+                    mostrarDialogoRegistroExitosoTaxista(
+                            nombres, apellidos, tipoDocumento, numeroDocumento,
+                            fechaNacimiento, correo, telefono, direccion,
+                            placa, urlFotoPlaca
+                    );
+                })
                 .addOnFailureListener(e -> Toast.makeText(this, "Error al guardar postulación final: " + e.getMessage(), Toast.LENGTH_LONG).show());
     }
     private void mostrarDialogoRegistroExitosoTaxista(String nombres, String apellidos, String tipoDocumento, String numeroDocumento,
@@ -188,6 +195,24 @@ public class SubirFotoResgistroTaxistaActivity extends AppCompatActivity {
             startActivity(new Intent(SubirFotoResgistroTaxistaActivity.this, InicioActivity.class));
             finish();
         }, 3500); // 2.5 segundos
+    }
+
+    private void mostrarCargando(String mensaje) {
+        binding.btnRegistrarVehiculo.setEnabled(false);
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
+        View view = getLayoutInflater().inflate(R.layout.dialog_cargando, null);
+        builder.setView(view);
+        builder.setCancelable(false);
+        ((TextView) view.findViewById(R.id.tvMensajeCarga)).setText(mensaje);
+        progressDialog = builder.create();
+        progressDialog.show();
+    }
+
+    private void ocultarCargando() {
+        binding.btnRegistrarVehiculo.setEnabled(true);
+        if (progressDialog != null && progressDialog.isShowing()) {
+            progressDialog.dismiss();
+        }
     }
 
 }

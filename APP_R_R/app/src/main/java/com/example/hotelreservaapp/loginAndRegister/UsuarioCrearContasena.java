@@ -133,7 +133,6 @@ public class UsuarioCrearContasena extends AppCompatActivity {
                                         guardarUsuario(firebaseUser, uri.toString());
                                     }))
                                     .addOnFailureListener(e -> Toast.makeText(this, "Error al subir la foto", Toast.LENGTH_SHORT).show());
-                            ocultarCargando();
 
                         } else {
                             guardarUsuario(firebaseUser, "");
@@ -170,6 +169,7 @@ public class UsuarioCrearContasena extends AppCompatActivity {
                 .document(firebaseUser.getUid())
                 .set(usuario)
                 .addOnSuccessListener(unused -> {
+                    ocultarCargando();
                     String nombreCompleto = nombres + " " + apellidos;
                     LogManager.registrarLogRegistro(
                             nombreCompleto,
@@ -181,6 +181,7 @@ public class UsuarioCrearContasena extends AppCompatActivity {
                     mostrarDialogoRegistroExitoso();
                 })
                 .addOnFailureListener(e -> {
+                    ocultarCargando();
                     Toast.makeText(this, "Error al guardar datos: " + e.getMessage(), Toast.LENGTH_LONG).show();
                 });
     }
