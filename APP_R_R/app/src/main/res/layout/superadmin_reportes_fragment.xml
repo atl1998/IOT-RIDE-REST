@@ -7,7 +7,6 @@
     android:layout_height="match_parent"
     android:background="@color/white">
 
-    <!-- 🟨 Encabezado con fila de categorías tipo Booking -->
     <LinearLayout
         android:id="@+id/header"
         android:layout_width="0dp"
@@ -19,7 +18,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- 🟨 Título y ayuda -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -46,7 +44,6 @@
                 app:tint="@android:color/white" />
         </LinearLayout>
 
-        <!-- 🟨 Fila estilo Booking -->
         <HorizontalScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -60,7 +57,6 @@
                 android:orientation="horizontal"
                 android:gravity="center_vertical">
 
-                <!-- Opción Reportes -->
                 <LinearLayout
                     android:id="@+id/opcionReportes"
                     android:layout_width="wrap_content"
@@ -76,8 +72,7 @@
                     <ImageView
                         android:layout_width="20dp"
                         android:layout_height="20dp"
-                        android:src="@drawable/report_icon"
-                        />
+                        android:src="@drawable/report_icon" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -88,7 +83,6 @@
                         android:layout_marginStart="8dp"/>
                 </LinearLayout>
 
-                <!-- Opción Logs -->
                 <LinearLayout
                     android:id="@+id/opcionLogs"
                     android:layout_width="wrap_content"
@@ -116,48 +110,199 @@
             </LinearLayout>
         </HorizontalScrollView>
     </LinearLayout>
-    <TextView
-        android:id="@+id/tvTituloGrafico"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Top 3 hoteles con más reservas registradas"
-        android:textStyle="bold"
-        android:textSize="16sp"
-        android:textColor="@color/marron_oscuro"
+
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         app:layout_constraintTop_toBottomOf="@id/header"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp"/>
-    <!-- BarChart -->
-    <com.github.mikephil.charting.charts.BarChart
-        android:id="@+id/barChartTop3"
-        android:layout_width="0dp"
-        android:layout_height="300dp"
-        android:layout_marginTop="24dp"
-        app:layout_constraintTop_toBottomOf="@id/tvTituloGrafico"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintBottom_toBottomOf="parent">
 
-    <!-- Botón para ir a historial -->
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnVerHistorial"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:backgroundTint="@color/white"
-        android:text="Ver historial de reservas"
-        android:textColor="@color/black"
-        app:cornerRadius="8dp"
-        app:icon="@drawable/historial_icon"
-        app:iconTint="@color/black"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.169"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/barChartTop3"
-        app:layout_constraintVertical_bias="0.05"
-        app:strokeColor="@color/amarillo_dorado"
-        app:strokeWidth="1dp" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="16dp">
 
+                <androidx.cardview.widget.CardView
+                    android:layout_width="0dp"
+                    android:layout_height="80dp"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="8dp"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="4dp"
+                    android:backgroundTint="@color/amarillo_dorado">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:padding="12dp">
+
+                        <TextView
+                            android:id="@+id/tvTotalReservas"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="1,247"
+                            android:textStyle="bold"
+                            android:textSize="20sp"
+                            android:textColor="@android:color/black" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Total reservas"
+                            android:textSize="12sp"
+                            android:textColor="@color/marron_oscuro" />
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="0dp"
+                    android:layout_height="80dp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="8dp"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="4dp"
+                    android:backgroundTint="@color/white">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:padding="12dp">
+
+                        <TextView
+                            android:id="@+id/tvHotelesRegistrados"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="89%"
+                            android:textStyle="bold"
+                            android:textSize="20sp"
+                            android:textColor="@color/marron_oscuro" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Hoteles registrados"
+                            android:textSize="12sp"
+                            android:textColor="@color/marron_oscuro" />
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+            </LinearLayout>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="6dp"
+                android:backgroundTint="@color/white">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Top 3 hoteles con más reservas"
+                        android:textStyle="bold"
+                        android:textSize="16sp"
+                        android:textColor="@color/marron_oscuro"
+                        android:layout_marginBottom="12dp" />
+
+                    <com.github.mikephil.charting.charts.BarChart
+                        android:id="@+id/barChartTop3"
+                        android:layout_width="match_parent"
+                        android:layout_height="280dp" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="6dp"
+                android:backgroundTint="@color/white">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Reservas por mes"
+                        android:textStyle="bold"
+                        android:textSize="16sp"
+                        android:textColor="@color/marron_oscuro"
+                        android:layout_marginBottom="12dp" />
+
+                    <com.github.mikephil.charting.charts.LineChart
+                        android:id="@+id/lineChartMensual"
+                        android:layout_width="match_parent"
+                        android:layout_height="240dp" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="6dp"
+                android:backgroundTint="@color/white">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Distribución por tipo de habitación"
+                        android:textStyle="bold"
+                        android:textSize="16sp"
+                        android:textColor="@color/marron_oscuro"
+                        android:layout_marginBottom="12dp" />
+
+                    <com.github.mikephil.charting.charts.PieChart
+                        android:id="@+id/pieChartHabitaciones"
+                        android:layout_width="match_parent"
+                        android:layout_height="200dp" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnVerHistorial"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                android:backgroundTint="@color/white"
+                android:text="Ver historial de reservas"
+                android:textColor="@color/marron_oscuro"
+                app:cornerRadius="12dp"
+                app:icon="@drawable/historial_icon"
+                app:iconTint="@color/marron_oscuro"
+                app:strokeColor="@color/amarillo_dorado"
+                app:strokeWidth="2dp" />
+        </LinearLayout>
+    </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

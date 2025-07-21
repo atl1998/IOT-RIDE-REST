@@ -34,6 +34,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -173,7 +174,7 @@ public class RegistrarAdmHotelActivity extends AppCompatActivity {
                                         String uriText = "mailto:" + Uri.encode(correo) +
                                                 "?subject=" + Uri.encode("Acceso a la plataforma HotelReservaApp") +
                                                 "&body=" + Uri.encode(
-                                                "Hola " + nombres + apellidos +",\n\n" +
+                                                "Hola " + nombres + " " + apellidos +",\n\n" +
                                                         "Has sido registrado como administrador de hotel.\n\n" +
                                                         "📧 Correo: " + correo + "\n" +
                                                         "🔐 Contraseña temporal: " + contrasenaTemporal + "\n\n" +
@@ -279,31 +280,27 @@ public class RegistrarAdmHotelActivity extends AppCompatActivity {
     // Lógica de campo Fecha de Nacimiento
     private void configurarCampoFechaNacimiento() {
         binding.etFechaNacimiento.setOnClickListener(v -> {
-            // ✅ Crea un validador que solo permite fechas hasta hoy
-            CalendarConstraints.DateValidator dateValidator =
-                    DateValidatorPointBackward.before(MaterialDatePicker.todayInUtcMilliseconds());
+            final Calendar calendar = Calendar.getInstance();
+            int year = calendar.get(Calendar.YEAR);
+            int month = calendar.get(Calendar.MONTH);
+            int day = calendar.get(Calendar.DAY_OF_MONTH);
 
-            CalendarConstraints constraints = new CalendarConstraints.Builder()
-                    .setValidator(dateValidator)
-                    .build();
+            DatePickerDialog datePickerDialog = new DatePickerDialog(
+                    RegistrarAdmHotelActivity.this,
+                    R.style.CustomDatePickerDialog,  // si tienes estilo personalizado
+                    (view, selectedYear, selectedMonth, selectedDay) -> {
+                        String fechaFormateada = String.format(Locale.getDefault(), "%02d/%02d/%04d",
+                                selectedDay, selectedMonth + 1, selectedYear);
+                        binding.etFechaNacimiento.setText(fechaFormateada);
+                    },
+                    year, month, day
+            );
 
-            MaterialDatePicker<Long> datePicker = MaterialDatePicker.Builder.datePicker()
-                    .setTitleText("Selecciona tu fecha de nacimiento")
-                    .setCalendarConstraints(constraints)
-                    .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
-                    .build();
+            // Limitar a fechas hasta hoy
+            datePickerDialog.getDatePicker().setMaxDate(System.currentTimeMillis());
 
-            datePicker.show(getSupportFragmentManager(), "MATERIAL_DATE_PICKER");
-
-            datePicker.addOnPositiveButtonClickListener(selection -> {
-                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-                sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
-                String fechaFormateada = sdf.format(new Date(selection));
-                binding.etFechaNacimiento.setText(fechaFormateada);
-            });
+            datePickerDialog.show();
         });
-
-
     }
 
     // Subir foto desde galería
