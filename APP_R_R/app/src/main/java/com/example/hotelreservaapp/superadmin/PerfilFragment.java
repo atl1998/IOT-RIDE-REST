@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -165,9 +167,13 @@ public class PerfilFragment extends Fragment {
                             etTelefono.setText(document.getString("telefono"));
                             etDireccion.setText(document.getString("direccion"));
                             String urlFoto = document.getString("urlFotoPerfil");
-                            if (urlFoto != null && !urlFoto.isEmpty()) {
+                            File file = new File(requireContext().getFilesDir(), "foto_perfil.jpg");
+                            if (file.exists()) {
+                                // ✅ Prioriza la imagen local si existe
+                                binding.ivProfileImage.setImageURI(Uri.fromFile(file));
+                            } else if (urlFoto != null && !urlFoto.isEmpty()) {
+                                // 🌐 Si no hay imagen local, carga desde Storage
                                 progressBar.setVisibility(View.VISIBLE);
-
                                 Glide.with(this)
                                         .load(urlFoto)
                                         .placeholder(R.drawable.default_user_icon)
@@ -178,11 +184,22 @@ public class PerfilFragment extends Fragment {
                                             public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
                                                 binding.ivProfileImage.setImageDrawable(resource);
                                                 progressBar.setVisibility(View.GONE);
+
+                                                // 💡 Guardar imagen descargada como `foto_perfil.jpg` para próxima carga offline:
+                                                try {
+                                                    // Convertir Drawable a Bitmap:
+                                                    Bitmap bitmap = ((BitmapDrawable) resource).getBitmap();
+                                                    FileOutputStream fos = new FileOutputStream(file);
+                                                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+                                                    fos.close();
+                                                } catch (Exception e) {
+                                                    e.printStackTrace();
+                                                }
                                             }
 
                                             @Override
                                             public void onLoadCleared(@Nullable Drawable placeholder) {
-
+                                                // Nada especial aquí
                                             }
 
                                             @Override
@@ -193,6 +210,7 @@ public class PerfilFragment extends Fragment {
                                             }
                                         });
                             } else {
+                                // Fallback
                                 binding.ivProfileImage.setImageResource(R.drawable.default_user_icon);
                             }
                         }
@@ -332,6 +350,14 @@ public class PerfilFragment extends Fragment {
         //Ponemos nombres únicos a los jpg
         StorageReference storageRef = storage.getReference().child("fotos_perfil/" + usuarioActual.getUid() + ".jpg");
 
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireContext());
+        builder.setTitle("Subiendo imagen");
+        builder.setMessage("Por favor espera…");
+        builder.setCancelable(false); // Evita que lo puedan cerrar
+
+        final androidx.appcompat.app.AlertDialog progressDialog = builder.create();
+        progressDialog.show();
+
         storageRef.putFile(uri)
                 .addOnSuccessListener(taskSnapshot -> {
                     storageRef.getDownloadUrl().addOnSuccessListener(downloadUri -> {
@@ -339,16 +365,19 @@ public class PerfilFragment extends Fragment {
                         db.collection("usuarios").document(usuarioActual.getUid())
                                 .update("urlFotoPerfil", downloadUri.toString())
                                 .addOnSuccessListener(aVoid -> {
-                                    Toast.makeText(getContext(), "Foto actualizada", Toast.LENGTH_SHORT).show();
-
-                                    File file = new File(requireContext().getFilesDir(), "foto_perfil.jpg");
-                                    if (file.exists()) {
-                                        file.delete();
+                                    if (isAdded() && getContext() != null) {
+                                        Toast.makeText(getContext(), "Foto actualizada", Toast.LENGTH_SHORT).show();
                                     }
 
+                                    File file = new File(requireContext().getFilesDir(), "foto_perfil.jpg");
+
+                                    progressDialog.dismiss();
                                 })
                                 .addOnFailureListener(e -> {
-                                    Toast.makeText(getContext(), "Error al guardar la foto", Toast.LENGTH_SHORT).show();
+                                    if (isAdded() && getContext() != null) {
+                                        Toast.makeText(getContext(), "Error al guardar la foto", Toast.LENGTH_SHORT).show();
+                                    }
+                                    progressDialog.dismiss();
                                 });
                     });
                 });

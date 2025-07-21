@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.TextView;
@@ -200,6 +201,8 @@ public class LoginActivity extends AppCompatActivity {
                             Toast.makeText(this, "Error al verificar cuenta existente", Toast.LENGTH_SHORT).show();
                         });
             } catch (ApiException e) {
+                Log.e("GoogleLogin", "Error al iniciar sesión: " + e.getStatusCode(), e);
+
                 Toast.makeText(this, "Error al iniciar sesión con Google", Toast.LENGTH_SHORT).show();
             }
         }
