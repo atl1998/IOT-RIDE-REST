@@ -21,6 +21,7 @@ public class ReporteUsuarioActivity extends AppCompatActivity {
 
     MaterialButton btnNotificaiones;
     MaterialButton btnBuscar;
+    MaterialButton testNotificaciones;
     
     ReporteUsuarioAdapter adapter;
     
@@ -58,6 +59,11 @@ public class ReporteUsuarioActivity extends AppCompatActivity {
             adapter = new ReporteUsuarioAdapter(this , lsitaUsuarios);
             recyclerView.setAdapter(adapter);
 
+        });
+        testNotificaciones = findViewById(R.id.testNotificaciones);
+        testNotificaciones.setOnClickListener(v -> {
+            Intent intent = new Intent(this, TestPushNotification.class);
+            startActivity(intent);
         });
 
 
