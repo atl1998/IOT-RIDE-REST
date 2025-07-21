@@ -19,9 +19,11 @@ import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.example.hotelreservaapp.R;
+import com.google.firebase.firestore.SetOptions;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -149,6 +151,14 @@ public class ValidacionTarjeta extends AppCompatActivity {
                             habitacionesReserva.add(h);
                         }
 
+                        // 🟢 AQUÍ CALCULAS el total del pago:
+                        final double[] pagoTotal = {0};
+                        for (Map<String, Object> h : habitacionesReserva) {
+                            int cantidad = (int) h.get("cantidad");
+                            double precio = (double) h.get("precioUnidad");
+                            pagoTotal[0] += cantidad * precio;
+                        }
+
                         // Crear la reserva
                         Map<String, Object> reserva = new HashMap<>();
                         reserva.put("fechaIni", new Timestamp(new Date(fechaInicioMillis)));
@@ -167,6 +177,19 @@ public class ValidacionTarjeta extends AppCompatActivity {
                                 .add(reserva)
                                 .addOnSuccessListener(docRef -> {
                                     Toast.makeText(this, "Reserva confirmada", Toast.LENGTH_SHORT).show();
+
+                                    // 👉 Guardar también en reservas/{hotelId}/idusuario1
+                                    Map<String, Object> reservaSimplificada = new HashMap<>();
+                                    reservaSimplificada.put("idreserva", docRef.getId());
+                                    reservaSimplificada.put("fechainiciocheckin", new Timestamp(new Date(fechaInicioMillis)));
+                                    reservaSimplificada.put("pagohabitacion", pagoTotal[0]);
+
+                                    db.collection("reservas")
+                                            .document(hotelId)
+                                            .set(Collections.singletonMap(userId, FieldValue.arrayUnion(reservaSimplificada)), SetOptions.merge())
+                                            .addOnSuccessListener(aVoid -> Log.d("Firestore", "Reserva replicada correctamente"))
+                                            .addOnFailureListener(e -> Log.e("Firestore", "Error replicando reserva", e));
+
                                     Intent intent2 = new Intent(this, CreacionReserva.class);
                                     intent2.putExtra("reservaId", docRef.getId());
                                     startActivity(intent2);
