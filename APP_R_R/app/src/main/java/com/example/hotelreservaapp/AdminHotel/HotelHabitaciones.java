@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.hotelreservaapp.AdminHotel.Adapter.HabitacionAdapter;
+import com.example.hotelreservaapp.AdminHotel.Adapter.HabitacionRegistradaAdapter;
 import com.example.hotelreservaapp.AdminHotel.Model.Habitacion;
 import com.example.hotelreservaapp.AdminHotel.ViewModel.RegistroViewModel;
 import com.example.hotelreservaapp.R;
@@ -28,7 +29,7 @@ import java.util.List;
 public class HotelHabitaciones extends AppCompatActivity {
 
     private RecyclerView rvHabitaciones;
-    private HabitacionAdapter adapter;
+    private HabitacionRegistradaAdapter adapter;
     private List<Habitacion> listaHabitaciones;
     private FirebaseFirestore db;
     private FirebaseUser usuarioActual;
@@ -55,7 +56,7 @@ public class HotelHabitaciones extends AppCompatActivity {
         listaHabitaciones = new ArrayList<>();
 
         //Inicializamos el adapter
-        adapter = new HabitacionAdapter(listaHabitaciones,this,  new HabitacionAdapter.OnItemClickListener() {
+        adapter = new HabitacionRegistradaAdapter(listaHabitaciones,this,  new HabitacionRegistradaAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
                 Habitacion habitacion = listaHabitaciones.get(position);
