@@ -477,13 +477,13 @@ public class HistorialEventos extends AppCompatActivity implements HistorialItem
 
                 // Obtener la hora actual en formato "HH:mm"
                 String horaActual = new SimpleDateFormat("HH:mm", Locale.getDefault()).format(new Date());
-                String checkin = "No especificado";
+                //String checkin = "No especificado";
 
                 // Crear mapa con los campos a actualizar
                 Map<String, Object> updates = new HashMap<>();
                 updates.put("checkoutSolicitado", true);
-                updates.put("CheckOutHora", horaActual);  // <-- esto será tipo String
-                updates.put("CheckInHora", checkin);
+                //updates.put("CheckOutHora", horaActual);  // <-- esto será tipo String
+                //updates.put("CheckInHora", checkin);
 
                 db.collection("usuarios")
                         .document(userId)
@@ -614,10 +614,11 @@ public class HistorialEventos extends AppCompatActivity implements HistorialItem
         if (ActivityCompat.checkSelfPermission(this, POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
             notificationManagerCompat.notify(1, builder.build());
         }
-
+        /*
         WorkRequest notificacionRetrasada = new OneTimeWorkRequest.Builder(NotificacionCheckoutWorker.class)
                 .setInitialDelay(15, TimeUnit.SECONDS)
                 .build();
         WorkManager.getInstance(this).enqueue(notificacionRetrasada);
+        */
     }
 }
