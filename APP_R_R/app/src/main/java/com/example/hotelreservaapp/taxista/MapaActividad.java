@@ -18,6 +18,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.example.hotelreservaapp.R;
+import com.example.hotelreservaapp.taxista.fragments.TaxiInicioFragment;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -94,15 +95,8 @@ public class MapaActividad extends AppCompatActivity implements OnMapReadyCallba
         }
 
         btnVolver.setOnClickListener(v -> {
-            Intent i = new Intent(this, ViajeEnCursoActivity.class);
-            i.putExtra("nombre", nombre);
-            i.putExtra("telefono", telefono);
-            i.putExtra("latOrigen", clienteLat);
-            i.putExtra("lngOrigen", clienteLng);
-            i.putExtra("latDestino", destinoLat);
-            i.putExtra("lngDestino", destinoLng);
-            i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(i);
+            startActivity(new Intent(this, TaxistaMain.class));
+            finish();
         });
 
 
