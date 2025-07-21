@@ -3,7 +3,7 @@ package com.example.hotelreservaapp.AdminHotel.Model;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Hotel {
+public class HotelSinListas {
     private String Nombre;
     private String Descripcion;
     private String Departamento;
@@ -12,33 +12,15 @@ public class Hotel {
     private String Direccion;
     private String UrlFotoHotel;
     private String contacto;
-
-    private String idAdminHotel;
     private double precioMin;
     private double valoracion = 0.0;
     private boolean servicioTaxi;
 
-    private List<Habitacion> habitaciones = new ArrayList<>(); // Lista de habitaciones
-    private List<Servicio> servicios = new ArrayList<>(); // Lista de servicios
+    private String idAdminHotel;
 
-    public Hotel() {}
-    public Hotel(String nombre, String descripcion, String departamento, String provincia, String distrito, String direccion, String UrlFotoHotel, double valoracion, List<Habitacion> habitaciones, List<Servicio> servicios, String contacto, double precioMin, boolean servicioTaxi ) {
-        this.setNombre(nombre);
-        this.setDescripcion(descripcion);
-        this.setDepartamento(departamento);
-        this.setProvincia(provincia);
-        this.setDistrito(distrito);
-        this.setDireccion(direccion);
-        this.setUrlFotoHotel(UrlFotoHotel);
-        this.setValoracion(valoracion);
-        this.setHabitaciones(habitaciones);
-        this.setServicios(servicios);
-        this.setContacto(contacto);
-        this.setPrecioMin(precioMin);
-        this.setServicioTaxi(servicioTaxi);
-    }
 
-    public Hotel(String nombre, String descripcion, String departamento, String provincia, String distrito, String direccion, String UrlFotoHotel, double valoracion, String contacto, double precioMin, boolean servicioTaxi, List<Habitacion> habitaciones, List<Servicio> servicios ) {
+
+    public HotelSinListas(String nombre, String descripcion, String departamento, String provincia, String distrito, String direccion, String UrlFotoHotel, double valoracion, String contacto, double precioMin, boolean servicioTaxi, String idAdminHotel ) {
         this.setNombre(nombre);
         this.setDescripcion(descripcion);
         this.setDepartamento(departamento);
@@ -50,8 +32,7 @@ public class Hotel {
         this.setContacto(contacto);
         this.setPrecioMin(precioMin);
         this.setServicioTaxi(servicioTaxi);
-        this.setHabitaciones(habitaciones);
-        this.setServicios(servicios);
+        this.setIdAdminHotel(idAdminHotel);
     }
 
     public String getNombre() {
@@ -110,28 +91,12 @@ public class Hotel {
         this.UrlFotoHotel = UrlFotoHotel;
     }
 
-    public List<Habitacion> getHabitaciones() {
-        return habitaciones;
-    }
-
-    public void setHabitaciones(List<Habitacion> habitaciones) {
-        this.habitaciones = habitaciones;
-    }
-
     public double getValoracion() {
         return valoracion;
     }
 
     public void setValoracion(double valoracion) {
         this.valoracion = valoracion;
-    }
-
-    public List<Servicio> getServicios() {
-        return servicios;
-    }
-
-    public void setServicios(List<Servicio> servicios) {
-        this.servicios = servicios;
     }
 
     public String getContacto() {

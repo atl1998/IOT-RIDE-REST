@@ -26,4 +26,20 @@
     <string-array name="tipos_habitacion">
         <item>Standar</item><item>Matrimonial</item><item>Doble</item><item>Familiar</item><item>Escolar</item>
     </string-array>
+
+    <!-- tipos de servicios -->
+    <string-array name="servicios_hotel">
+        <item>Recepción 24 horas</item>
+        <item>Wi-Fi gratuito</item>
+        <item>Desayuno buffet</item>
+        <item>Servicio de habitaciones</item>
+        <item>Gimnasio y centro fitness</item>
+        <item>Spa y bienestar</item>
+        <item>Piscina</item>
+        <item>Lavandería y tintorería</item>
+        <item>Traslado al aeropuerto</item>
+        <item>Centro de negocios y salas de reuniones</item>
+    </string-array>
+
+
 </resources>

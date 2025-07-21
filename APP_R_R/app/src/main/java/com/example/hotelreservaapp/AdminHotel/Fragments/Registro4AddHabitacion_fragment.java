@@ -9,6 +9,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
@@ -19,7 +20,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.hotelreservaapp.AdminHotel.Model.Habitacion;
@@ -30,6 +33,7 @@ import com.example.hotelreservaapp.R;
 import com.example.hotelreservaapp.databinding.AdminhotelRegistro4FragmentBinding;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -52,6 +56,9 @@ public class Registro4AddHabitacion_fragment extends Fragment {
     
     private String FILE_INT;
     private int num_hab;
+
+    private int cantidadAdultos = 0;
+    private int cantidadNinos = 0;
     private final ActivityResultLauncher<Intent> takePhotoLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
@@ -81,15 +88,8 @@ public class Registro4AddHabitacion_fragment extends Fragment {
         FILE_INT = "foto_habitacion_" + num_hab + ".jpg";
 
         final boolean[] enModoEdicion = {false};
-        
 
-        // Mostrar imagen si ya está guardada
-        File file = new File(requireContext().getFilesDir(), FILE_INT);
-        if (file.exists()) {
-            binding.ivProfileImage.setImageURI(Uri.fromFile(file));
-            binding.buttonOpenCamera.setIcon(ContextCompat.getDrawable(requireContext(), R.drawable.edit_square_24dp_black));
-            binding.buttonOpenCamera.setText("Editar foto");
-        }
+        actualizarCantidadVisitantes();
 
         // Inicializar pickImageLauncher
         pickImageLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
@@ -127,6 +127,51 @@ public class Registro4AddHabitacion_fragment extends Fragment {
             } else {
                 Toast.makeText(getContext(), "Ingresa los datos correctamente", Toast.LENGTH_SHORT).show();
             }
+        });
+
+        //Capacidad
+        binding.etCapacidad.setOnClickListener(v -> {
+            View visitorDialogView = LayoutInflater.from(getContext()).inflate(R.layout.dialog_visitors, null);
+            TextView tvAdultos = visitorDialogView.findViewById(R.id.tvAdultos);
+            TextView tvNinos = visitorDialogView.findViewById(R.id.tvNinos);
+            Button btnMenosAdultos = visitorDialogView.findViewById(R.id.btnMenosAdultos);
+            Button btnMasAdultos = visitorDialogView.findViewById(R.id.btnMasAdultos);
+            Button btnMenosNinos = visitorDialogView.findViewById(R.id.btnMenosNinos);
+            Button btnMasNinos = visitorDialogView.findViewById(R.id.btnMasNinos);
+            Button btnAceptar = visitorDialogView.findViewById(R.id.btnAceptar);
+
+            tvAdultos.setText(String.valueOf(cantidadAdultos));
+            tvNinos.setText(String.valueOf(cantidadNinos));
+
+            btnMenosAdultos.setOnClickListener(btn -> {
+                if (cantidadAdultos > 1) cantidadAdultos--;
+                tvAdultos.setText(String.valueOf(cantidadAdultos));
+            });
+            btnMasAdultos.setOnClickListener(btn -> {
+                cantidadAdultos++;
+                tvAdultos.setText(String.valueOf(cantidadAdultos));
+            });
+            btnMenosNinos.setOnClickListener(btn -> {
+                if (cantidadNinos > 0) cantidadNinos--;
+                tvNinos.setText(String.valueOf(cantidadNinos));
+            });
+            btnMasNinos.setOnClickListener(btn -> {
+                cantidadNinos++;
+                tvNinos.setText(String.valueOf(cantidadNinos));
+            });
+
+            AlertDialog dialog = new MaterialAlertDialogBuilder(getContext())
+                    .setTitle("Cantidad de visitantes")
+                    .setView(visitorDialogView)
+                    .setCancelable(true)
+                    .create();
+
+            btnAceptar.setOnClickListener(btn -> {
+                actualizarCantidadVisitantes();
+                dialog.dismiss();
+            });
+
+            dialog.show();
         });
 
         //Ir para atrás
@@ -249,5 +294,11 @@ public class Registro4AddHabitacion_fragment extends Fragment {
             valido = false;
         }
         return valido;
+    }
+
+    private void actualizarCantidadVisitantes() {
+        String visitantes = (cantidadAdultos == 0 ? "" : cantidadAdultos + " adultos");
+        if (cantidadNinos > 0) visitantes += cantidadNinos == 1 ? ", 1 niño" : ", " + cantidadNinos + " niños";
+        binding.etCapacidad.setText(visitantes);
     }
 }

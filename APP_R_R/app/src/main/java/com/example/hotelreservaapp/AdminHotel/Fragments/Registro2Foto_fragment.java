@@ -99,7 +99,7 @@ public class Registro2Foto_fragment extends Fragment {
             if (file.exists()) {
                 // Guardar los datos en el ViewModelregistroViewModel.setNombre(nombre);
                 Hotel hotel = registroViewModel.getHotel().getValue();
-                hotel.setUrlImage("foto_hotel.jpg");
+                hotel.setUrlFotoHotel("foto_hotel.jpg");
                 registroViewModel.setHotel(hotel);
 
                 // Navegar al siguiente fragmento

@@ -93,6 +93,30 @@
             android:textColorHint="#BDBDBD" />
     </com.google.android.material.textfield.TextInputLayout>
 
+    <!-- Contacto -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tilContacto"
+        style="@style/EstiloFormularioMarron"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tilDescripcion">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etContacto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:digits="0123456789"
+            android:hint="Número de contacto"
+            android:inputType="phone"
+            android:maxLength="9"
+            android:textColor="#452C06"
+            android:textColorHint="#BDBDBD" />
+    </com.google.android.material.textfield.TextInputLayout>
+
 
     <!-- Spinner documento
     <androidx.appcompat.widget.AppCompatSpinner
@@ -114,7 +138,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
         app:endIconMode="dropdown_menu"
-        app:layout_constraintTop_toBottomOf="@id/tilDescripcion"
+        app:layout_constraintTop_toBottomOf="@id/tilContacto"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
@@ -200,6 +224,18 @@
             android:textColorHint="#BDBDBD" />
     </com.google.android.material.textfield.TextInputLayout>
 
+    <CheckBox
+        android:id="@+id/checkboxTaxi"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Incluir servicio de taxi"
+        android:textColor="#452C06"
+        android:layout_marginTop="12dp"
+        app:layout_constraintTop_toBottomOf="@id/tilDireccion"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+
     <!-- Botón Continuar -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnContinuar1"
@@ -211,7 +247,7 @@
         android:textColor="@android:color/white"
         app:cornerRadius="50dp"
         android:layout_marginTop="24dp"
-        app:layout_constraintTop_toBottomOf="@id/tilDireccion"
+        app:layout_constraintTop_toBottomOf="@id/checkboxTaxi"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginBottom="48dp" />

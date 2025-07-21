@@ -27,7 +27,7 @@ import com.google.android.material.textfield.TextInputEditText;
 
 public class Registro1Datos_fragment extends Fragment {
 
-    TextInputEditText etNombre, etDescripcion,  etDireccion;
+    TextInputEditText etNombre, etDescripcion,  etDireccion, etContacto;
     AutoCompleteTextView etDepartamento, etProvincia, etDistrito;
     MaterialButton btnContinuar1;
     private RegistroViewModel registroViewModel;
@@ -59,6 +59,7 @@ public class Registro1Datos_fragment extends Fragment {
         etProvincia = binding.etProvincia;
         etDistrito = binding.etDistrito;
         etDireccion = binding.etDireccion;
+        etContacto = binding.etContacto;
         btnContinuar1 = binding.btnContinuar1;
 
         depCodes = getResources().getStringArray(R.array.dep_codigos);
@@ -70,6 +71,7 @@ public class Registro1Datos_fragment extends Fragment {
                 android.R.layout.simple_list_item_1,
                 depNames);
         etDepartamento.setAdapter(depAdapter);
+
 
         /* ----- ViewModel ----- */
         vm = new ViewModelProvider(this).get(UbigeoViewModel.class);
@@ -106,6 +108,8 @@ public class Registro1Datos_fragment extends Fragment {
             etDistrito.setAdapter(distAd);
         });
 
+
+
         btnContinuar1.setOnClickListener(v -> {
             String nombre = etNombre.getText().toString().trim();
             String descripcion = etDescripcion.getText().toString().trim();
@@ -113,6 +117,8 @@ public class Registro1Datos_fragment extends Fragment {
             String provincia = etProvincia.getText().toString().trim();
             String distrito = etDistrito.getText().toString().trim();
             String direccion = etDireccion.getText().toString().trim();
+            String contacto = etContacto.getText().toString().trim();
+            boolean incluyeTaxi = binding.checkboxTaxi.isChecked();
 
             //Logica para instanciar el viewmodel
             registroViewModel = new ViewModelProvider(requireActivity()).get(RegistroViewModel.class);
@@ -126,6 +132,8 @@ public class Registro1Datos_fragment extends Fragment {
                 hotel.setProvincia(provincia);
                 hotel.setDistrito(distrito);
                 hotel.setDireccion(direccion);
+                hotel.setContacto(contacto);
+                hotel.setServicioTaxi(incluyeTaxi);
 
                 // Guardar los datos en el ViewModel
                 registroViewModel.setHotel(hotel);
@@ -156,6 +164,7 @@ public class Registro1Datos_fragment extends Fragment {
         String provincia = etProvincia.getText().toString().trim();
         String distrito = etDistrito.getText().toString().trim();
         String direccion = etDireccion.getText().toString().trim();
+        String contacto = etContacto.getText().toString().trim();
 
         if (nombre.isEmpty()) {
             binding.tilNombres.setError("Campo obligatorio");
@@ -187,6 +196,16 @@ public class Registro1Datos_fragment extends Fragment {
             valido = false;
         } else binding.tilDireccion.setError(null);
 
+        if (contacto.isEmpty()) {
+            binding.tilContacto.setError("Campo obligatorio");
+            valido = false;
+        } else if (!contacto.matches("^9\\d{8}$")) {
+            // Regex: 9 seguido de 8 dígitos más (total 9 dígitos)
+            binding.tilContacto.setError("Ingresa un celular válido (9 dígitos, inicia con 9)");
+            valido = false;
+        } else {
+            binding.tilContacto.setError(null);
+        }
 
 
         return valido;

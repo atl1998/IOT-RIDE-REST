@@ -53,7 +53,7 @@ public class Registro3Habitaciones_fragment extends Fragment {
         db = FirebaseFirestore.getInstance();
         usuarioActual = FirebaseAuth.getInstance().getCurrentUser();
 
-        listaHabitaciones = new ArrayList<>(); // inicial vac
+        listaHabitaciones = new ArrayList<>(); // inicial vacia
 
         // Configurar el RecyclerView
         rvHabitaciones = binding.listaHabitaciones;
@@ -83,13 +83,6 @@ public class Registro3Habitaciones_fragment extends Fragment {
         });
 
 
-        // Si está vacío, carga datos iniciales (solo una vez)
-        if (registroViewModel.getHotel().getValue().getHabitaciones() == null || registroViewModel.getHotel().getValue().getHabitaciones().isEmpty()) {
-            Hotel hotel =  registroViewModel.getHotel().getValue();
-            hotel.setHabitaciones(cargarData());
-            registroViewModel.setHotel(hotel);
-        }
-
         //logica para pasar a otro fragmento
         btnContinuar3 = binding.btnContinuar3;
         btnContinuar3.setOnClickListener(v -> {
@@ -111,16 +104,5 @@ public class Registro3Habitaciones_fragment extends Fragment {
         return binding.getRoot();
     }
 
-    private List<Habitacion> cargarData() {
-        List<Habitacion> listaHa = new ArrayList<>();
-        listaHa.add(new Habitacion(
-                "Standar",
-                354.00,
-                16.5,
-                "Para dos personas",
-                "adminhotel_habitacion1.jpg"
-        ));
-        return listaHa;
-    }
 
 }
