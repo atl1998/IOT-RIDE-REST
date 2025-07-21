@@ -75,7 +75,13 @@ public class HomeCliente extends AppCompatActivity {
         btnNotificaciones = findViewById(R.id.notificaciones_cliente);
         bottomNav = findViewById(R.id.bottonNavigationView);
         ofertasRecyclerView = findViewById(R.id.ofertasRecyclerView);
+
         btntaxi = findViewById(R.id.btntaxi);
+        btntaxi.setOnClickListener(v -> {
+            Intent intent = new Intent(HomeCliente.this,
+                    ClienteServicioTaxi.class);
+            startActivity(intent);
+        });
 
         configurarBottomNav();
 
