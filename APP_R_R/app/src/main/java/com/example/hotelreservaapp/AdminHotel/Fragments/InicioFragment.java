@@ -11,6 +11,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.hotelreservaapp.AdminHotel.Adapter.ReservaAdapter;
+import com.example.hotelreservaapp.AdminHotel.Model.ReservaInicio;
 import com.example.hotelreservaapp.AdminHotel.NotificacionesActivity;
 import com.example.hotelreservaapp.R;
 import com.example.hotelreservaapp.adapter.Adminhotel_UsuarioAdapter;
@@ -24,51 +26,36 @@ import java.util.List;
 
 public class InicioFragment extends Fragment {
 
-     private AdminhotelFragmentInicioBinding binding;
-     private RecyclerView recyclerView;
-    private Adminhotel_UsuarioAdapter adapter;
-    private List<UsuarioListaSuperAdmin> listaOriginal = new ArrayList<>();
-
-    MaterialButton btnListaChats;
+    private AdminhotelFragmentInicioBinding binding;
+    private RecyclerView recyclerView;
+    private ReservaAdapter adapter;
+    private MaterialButton btnListaChats;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.adminhotel_fragment_inicio, container, false);
-        cargarUsuariosDeEjemplo();
+        binding = AdminhotelFragmentInicioBinding.inflate(inflater, container, false);
+        View view = binding.getRoot();
 
-        //Para ir los chats
-        btnListaChats = view.findViewById(R.id.NotificacionesAdminHotel);
+        // Para ir a los chats
+        btnListaChats = binding.NotificacionesAdminHotel;
         btnListaChats.setOnClickListener(v -> {
-            Fragment chatFragment = new ChatFragment(); // O el nombre real de tu fragmento de chat
+            Fragment chatFragment = new ChatFragment();
             requireActivity().getSupportFragmentManager()
                     .beginTransaction()
-                    .replace(R.id.adminhotel_container_view, chatFragment) // Aquí usas el id de tu FragmentContainerView
-                    .addToBackStack(null) // Opcional, para que puedas volver atrás
+                    .replace(R.id.adminhotel_container_view, chatFragment)
+                    .addToBackStack(null)
                     .commit();
         });
 
-
-
         // Configurar el RecyclerView
-        recyclerView = view.findViewById(R.id.recyclerUsuarios);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext())); // Usa un LinearLayoutManager
-        adapter = new Adminhotel_UsuarioAdapter(getContext() , listaOriginal);
+        recyclerView = binding.recyclerUsuarios; // ó el id correcto de tu RV
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        //  ⇨ Aquí solo pasamos el Context, el Adapter se auto-carga
+        adapter = new ReservaAdapter(getContext());
         recyclerView.setAdapter(adapter);
 
         return view;
-
-    }
-
-    private void cargarUsuariosDeEjemplo() {
-        listaOriginal.add(new UsuarioListaSuperAdmin("Jorge Coronado", "maxwell@pucp.edu.pe", "Vier 12","coronado.png" , true));
-        listaOriginal.add(new UsuarioListaSuperAdmin("Lucía Quispe", "lucia@email.com", "Mar 14", "", true));
-        listaOriginal.add(new UsuarioListaSuperAdmin("Ana Pérez", "ana@email.com", "uwu 18", "", true));
-        listaOriginal.add(new UsuarioListaSuperAdmin("Giorgio Maxwell", "gmaxwell@gmail.com", "sab 1", "coronado.png", true));
-        listaOriginal.add(new UsuarioListaSuperAdmin("Nilo Cori", "nilocori@pucp.edu.pe", "mier 14", "", true));
-        listaOriginal.add(new UsuarioListaSuperAdmin("Juan Pérez", "juanexample@hotmail.com", "uwu 18", "", true));
-        listaOriginal.add(new UsuarioListaSuperAdmin("Adrian Tipo", "adriantipo@pucp.edu.pe", "uwu 18", "", true));
-        listaOriginal.add(new UsuarioListaSuperAdmin("Adrian López", "adrianlopez@pucp.edu.pe", "uwu 18", "", true));
-        listaOriginal.add(new UsuarioListaSuperAdmin("Pedro BM", "pedro@pucp.edu.pe", "uwu 18", "pedro.png", true));
     }
 }
