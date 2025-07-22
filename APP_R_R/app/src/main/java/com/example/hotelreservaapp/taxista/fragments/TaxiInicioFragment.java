@@ -117,7 +117,7 @@ public class TaxiInicioFragment extends Fragment implements TarjetaTaxistaAdapte
                         Log.d("FIREBASE", "DOC ID: " + document.getId() + " → " + document.getData());
                         TarjetaModel solicitud = document.toObject(TarjetaModel.class);
                         if (solicitud != null) {
-                            solicitud.setIdCliente(document.getId());
+                            solicitud.setIdDocument(document.getId());
                             datos.add(solicitud);
                         } else {
                             Log.w("FIREBASE", "Documento inválido: " + document.getId());

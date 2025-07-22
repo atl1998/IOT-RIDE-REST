@@ -129,6 +129,9 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService{
         } else if ("03".equals(tipo)) {
             Bitmap largeIconBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.taxi);
             builder.setLargeIcon(largeIconBitmap);
+        } else if ("04".equals(tipo)) {
+            Bitmap largeIconBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.taxi);
+            builder.setLargeIcon(largeIconBitmap);
         }
         NotificationManagerCompat notificationManagerCompat  = NotificationManagerCompat.from(this);
         if (ActivityCompat.checkSelfPermission(this, POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {

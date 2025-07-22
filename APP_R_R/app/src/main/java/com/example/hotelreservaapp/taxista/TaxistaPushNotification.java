@@ -1,5 +1,7 @@
 package com.example.hotelreservaapp.taxista;
 
+import android.util.Log;
+
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.MediaType;
@@ -28,6 +30,7 @@ public class TaxistaPushNotification {
         FirebaseAuth.getInstance().getCurrentUser().getIdToken(true)
                 .addOnSuccessListener(getTokenResult -> {
                     String idToken = getTokenResult.getToken();
+                    Log.d("TaxistaFCM", "El token de autenticación es: " + idToken);
                     try {
                         JSONObject jsonBody = new JSONObject();
                         jsonBody.put("tokenCliente", tokenCliente);
@@ -53,7 +56,7 @@ public class TaxistaPushNotification {
                                 try (ResponseBody responseBody = response.body()) {
                                     if (response.isSuccessful() && responseBody != null) {
                                         String respuesta = responseBody.string();
-                                        System.out.println("Notificación enviada: " + respuesta);
+                                        Log.d("Notificacion", "Notificación enviada: " + respuesta);
                                     } else {
                                         System.err.println("Error al enviar notificación: " + response.code());
                                     }

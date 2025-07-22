@@ -181,33 +181,6 @@ public class TarjetaTaxistaAdapter extends RecyclerView.Adapter<TarjetaTaxistaAd
             for (TarjetaModel t : listaCompartida) {
                 if ("En progreso".equalsIgnoreCase(t.getEstado())) {
                     yaEnCurso = true;
-                    String idCliente = t.getIdCliente();
-
-                    if (idCliente == null || idCliente.isEmpty()) {
-                        Log.w("FCM_TOKEN", "idCliente es null o vacío, no se puede enviar notificación");
-                        break; // o return si quieres salir completamente del onClick
-                    }
-
-                    FirebaseFirestore db = FirebaseFirestore.getInstance();
-                    db.collection("usuarios")
-                            .document(idCliente)
-                            .get()
-                            .addOnSuccessListener(documentSnapshot -> {
-                                if (documentSnapshot.exists()) {
-                                    String fcmTokenCliente = documentSnapshot.getString("fcmToken");
-                                    if (fcmTokenCliente != null) {
-                                        TaxistaPushNotification tn = new TaxistaPushNotification();
-                                        tn.enviarNotificacionAlCliente(fcmTokenCliente, "Nilo Cori");
-                                    } else {
-                                        Log.w("FCM_TOKEN", "El cliente no tiene token FCM guardado");
-                                    }
-                                } else {
-                                    Log.w("FCM_TOKEN", "Documento de cliente no existe");
-                                }
-                            })
-                            .addOnFailureListener(e -> {
-                                Log.e("FCM_TOKEN", "Error al obtener token FCM", e);
-                            });
                     break;
                 }
             }
@@ -219,7 +192,7 @@ public class TarjetaTaxistaAdapter extends RecyclerView.Adapter<TarjetaTaxistaAd
                 item.setEstado("En progreso");
                 FirebaseFirestore.getInstance()
                         .collection("servicios_taxi")
-                        .document(item.getIdCliente())
+                        .document(item.getIdDocument())
                         .update("estado", "En progreso")
                         .addOnSuccessListener(unused -> {
                             listaCompartida = ordenarPorPrioridad(listaCompartida);
@@ -229,6 +202,33 @@ public class TarjetaTaxistaAdapter extends RecyclerView.Adapter<TarjetaTaxistaAd
                     notificacionListener.onViajeAceptado(item);
                 sendNotification("Solicitud aceptada",
                         "Has aceptado el pedido de " + item.getNombreCliente());
+
+                //
+                String idCliente = item.getIdCliente();
+                String ola = "ola";
+
+                FirebaseFirestore db = FirebaseFirestore.getInstance();
+                db.collection("usuarios")
+                        .document(idCliente)
+                        .get()
+                        .addOnSuccessListener(documentSnapshot -> {
+                            if (documentSnapshot.exists()) {
+                                String fcmTokenCliente = documentSnapshot.getString("fcmToken");
+                                if (fcmTokenCliente != null) {
+                                    TaxistaPushNotification tn = new TaxistaPushNotification();
+                                    tn.enviarNotificacionAlCliente(fcmTokenCliente, "Nilo Cori");
+                                } else {
+                                    Log.w("FCM_TOKEN", "El cliente no tiene token FCM guardado");
+                                }
+                            } else {
+                                Log.w("FCM_TOKEN", "Documento de cliente no existe");
+                            }
+                        })
+                        .addOnFailureListener(e -> {
+                            Log.e("FCM_TOKEN", "Error al obtener token FCM", e);
+                        });
+                //
+
                 Intent i = new Intent(context, MapaActividad.class);
                 i.putExtra("latOrigen",  item.getLatOrigen());
                 i.putExtra("lngOrigen",  item.getLngOrigen());
