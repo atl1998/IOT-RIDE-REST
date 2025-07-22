@@ -42,13 +42,6 @@ public class ReportesFragment extends Fragment {
             startActivity(new Intent(getActivity(), ReporteServicioActivity.class));
         });
 
-        //Para ir a notificaciones
-        MaterialButton btnNotificaiones = view.findViewById(R.id.NotificacionesAdminHotel);
-        btnNotificaiones.setOnClickListener(v -> {
-            //por ahora directamente al mio bala
-            startActivity(new Intent(getActivity(), NotificacionesActivity.class));
-        });
-
         return view;
     }
 }

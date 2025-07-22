@@ -22,6 +22,7 @@ import com.google.firebase.firestore.Query;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -111,7 +112,6 @@ public class ReporteServicioActivity extends AppCompatActivity {
             return;
         }
         Date start = calendarInicio.getTime();
-        // Asegurar inclusión del día final
         Calendar c = (Calendar) calendarFin.clone();
         c.add(Calendar.DAY_OF_MONTH, 1);
         Date end = c.getTime();
@@ -134,7 +134,7 @@ public class ReporteServicioActivity extends AppCompatActivity {
                             totales.put(nombre, totales.getOrDefault(nombre, 0.0) + val);
                         }
                     }
-                    // Construir lista de Servicio
+                    // Reconstruir lista de Servicio
                     serviciosList.clear();
                     for (var entry : totales.entrySet()) {
                         Servicio srv = new Servicio();
@@ -142,6 +142,12 @@ public class ReporteServicioActivity extends AppCompatActivity {
                         srv.setPrecio(entry.getValue());
                         serviciosList.add(srv);
                     }
+
+                    // **Ordenar por precio de menor a mayor**
+                    Collections.sort(serviciosList, (a, b) ->
+                            Double.compare(a.getPrecio(), b.getPrecio())
+                    );
+
                     adapter.notifyDataSetChanged();
                 })
                 .addOnFailureListener(e ->
@@ -150,4 +156,5 @@ public class ReporteServicioActivity extends AppCompatActivity {
                                 Toast.LENGTH_LONG).show()
                 );
     }
+
 }
