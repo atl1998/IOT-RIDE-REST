@@ -22,6 +22,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.bumptech.glide.Glide;
+import com.example.hotelreservaapp.LogManager;
 import com.example.hotelreservaapp.R;
 import com.example.hotelreservaapp.databinding.SuperadminDetalleSolicitudActivityBinding;
 import com.example.hotelreservaapp.model.DetallesTaxista;
@@ -135,6 +136,9 @@ public class DetalleSolicitudActivity extends AppCompatActivity  {
         String email = postulacion.getCorreo();
         final String contrasenaTemporal = UUID.randomUUID().toString().substring(0, 12);
 
+        //Datos superadmin
+        String uidSuperadmin = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
         firebaseAuth.createUserWithEmailAndPassword(email, contrasenaTemporal)
                 .addOnCompleteListener(authTask -> {
                     if (authTask.isSuccessful()) {
@@ -190,6 +194,23 @@ public class DetalleSolicitudActivity extends AppCompatActivity  {
                                                     batch.commit().addOnSuccessListener(aVoid -> {
                                                         pDialog.dismissWithAnimation();
                                                         mostrarSweetDialogExito("Taxista habilitado exitosamente", "habilitado");
+
+                                                        firestore.collection("usuarios").document(uidSuperadmin).get()
+                                                                .addOnSuccessListener(doc -> {
+                                                                    if (doc.exists()) {
+                                                                        String nombreSuperadmin = doc.getString("nombre");
+                                                                        String apellidoSuperadmin = doc.getString("apellido");
+                                                                        String nombreCompletoSuperadmin = nombreSuperadmin + " " + apellidoSuperadmin;
+
+                                                                        String nombreTaxista = postulacion.getNombres() + " " + postulacion.getApellidos();
+
+                                                                        com.example.hotelreservaapp.LogManager.registrarLogRegistro(
+                                                                                nombreCompletoSuperadmin,
+                                                                                "Aprobación de solicitud",
+                                                                                "La solicitud del taxista " + nombreTaxista + " ha sido aprobada"
+                                                                        );
+                                                                    }
+                                                                });
 
                                                         Notificacion nueva = new Notificacion(
                                                                 "Nuevo taxista habilitado",
@@ -296,8 +317,27 @@ public class DetalleSolicitudActivity extends AppCompatActivity  {
         postulacionDocRef.update(updates)
                 .addOnSuccessListener(aVoid -> {
                     pDialog.dismissWithAnimation();
-                    mostrarSweetDialogExito("Solicitud rechazada exitosamente", "rechazado");
-                    regresarALista("rechazado"); // Regresa a la lista de solicitudes
+                    // 🔥 Recuperar nombre y apellido del superadmin para el log
+                    firestore.collection("usuarios").document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                            .get()
+                            .addOnSuccessListener(doc -> {
+                                if (doc.exists()) {
+                                    String nombreSuperadmin = doc.getString("nombre");
+                                    String apellidoSuperadmin = doc.getString("apellido");
+                                    String nombreCompletoSuperadmin = (nombreSuperadmin != null ? nombreSuperadmin : "") + " " + (apellidoSuperadmin != null ? apellidoSuperadmin : "");
+
+                                    String nombreTaxista = postulacion.getNombres() + " " + postulacion.getApellidos();
+
+                                    LogManager.registrarLogRegistro(
+                                            nombreCompletoSuperadmin,
+                                            "Rechazo de solicitud",
+                                            "La solicitud del taxista " + nombreTaxista + " ha sido rechazada"
+                                    );
+                                }
+                                mostrarSweetDialogExito("Solicitud rechazada exitosamente", "rechazado");
+                                regresarALista("rechazado"); // Regresa a la lista de solicitudes
+                            });
+
                 })
                 .addOnFailureListener(e -> {
                     pDialog.dismissWithAnimation();

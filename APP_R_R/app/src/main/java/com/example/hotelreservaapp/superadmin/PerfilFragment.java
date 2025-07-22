@@ -34,6 +34,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
+import com.example.hotelreservaapp.LogManager;
 import com.example.hotelreservaapp.R;
 import com.example.hotelreservaapp.adapter.LogsAdapter;
 import com.example.hotelreservaapp.databinding.SuperadminPerfilFragmentBinding;
@@ -167,6 +168,7 @@ public class PerfilFragment extends Fragment {
                             etTelefono.setText(document.getString("telefono"));
                             etDireccion.setText(document.getString("direccion"));
                             String urlFoto = document.getString("urlFotoPerfil");
+                            if (!isAdded() || getContext() == null) return;
                             File file = new File(requireContext().getFilesDir(), "foto_perfil.jpg");
                             if (file.exists()) {
                                 // ✅ Prioriza la imagen local si existe
@@ -182,6 +184,7 @@ public class PerfilFragment extends Fragment {
                                         .into(new CustomTarget<Drawable>() {
                                             @Override
                                             public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
+                                                if (!isAdded() || getContext() == null) return;
                                                 binding.ivProfileImage.setImageDrawable(resource);
                                                 progressBar.setVisibility(View.GONE);
 
@@ -256,7 +259,11 @@ public class PerfilFragment extends Fragment {
                             )
                             .addOnSuccessListener(unused -> {
                                 Toast.makeText(getContext(), "Perfil actualizado", Toast.LENGTH_SHORT).show();
-
+                                LogManager.registrarLogRegistro(
+                                        nombre + " " + apellido,
+                                        "Actualización de perfil",
+                                        "El usuario actualizó sus datos personales."
+                                );
                                 // Desactivar modo edición
                                 enModoEdicion = false;
                                 btnEditar.setImageResource(R.drawable.edit_icon);
@@ -324,6 +331,7 @@ public class PerfilFragment extends Fragment {
     private void guardarImagenEnArchivosInternos(Uri uri) {
         try {
             InputStream inputStream = requireContext().getContentResolver().openInputStream(uri);
+            if (!isAdded() || getContext() == null) return;
             File file = new File(requireContext().getFilesDir(), "foto_perfil.jpg");
             FileOutputStream outputStream = new FileOutputStream(file);
 
@@ -368,9 +376,23 @@ public class PerfilFragment extends Fragment {
                                     if (isAdded() && getContext() != null) {
                                         Toast.makeText(getContext(), "Foto actualizada", Toast.LENGTH_SHORT).show();
                                     }
-
+                                    if (!isAdded() || getContext() == null) return;
                                     File file = new File(requireContext().getFilesDir(), "foto_perfil.jpg");
+                                    // 🔥 Consulta a Firestore para obtener nombre + apellido antes de registrar el log
+                                    db.collection("usuarios").document(usuarioActual.getUid()).get()
+                                            .addOnSuccessListener(document -> {
+                                                if (document.exists()) {
+                                                    String nombre = document.getString("nombre");
+                                                    String apellido = document.getString("apellido");
+                                                    String nombreCompleto = (nombre != null ? nombre : "") + " " + (apellido != null ? apellido : "");
 
+                                                    LogManager.registrarLogRegistro(
+                                                            nombreCompleto,
+                                                            "Actualización de foto",
+                                                            "El usuario " + nombreCompleto + " actualizó su foto de perfil."
+                                                    );
+                                                }
+                                            });
                                     progressDialog.dismiss();
                                 })
                                 .addOnFailureListener(e -> {
