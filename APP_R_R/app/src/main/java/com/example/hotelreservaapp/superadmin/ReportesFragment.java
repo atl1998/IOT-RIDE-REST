@@ -228,47 +228,40 @@ public class ReportesFragment extends Fragment {
     }
 
     private void setupPieChartWithNewData(List<Map<String, Object>> reservas) {
-        Map<String, Integer> tipoHabitacionCounts = new HashMap<>();
-        List<Task<Void>> tasks = new ArrayList<>();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        List<Task<DocumentSnapshot>> tareas = new ArrayList<>();
 
         for (Map<String, Object> reserva : reservas) {
             String idUsuario = (String) reserva.get("idusuario");
             String idReserva = (String) reserva.get("idreserva");
 
             if (idUsuario != null && idReserva != null) {
-                Log.d(TAG, "Consultando usuario: " + idUsuario + ", reserva: " + idReserva);
-                Task<Void> task = db.collection("usuarios")
+                Task<DocumentSnapshot> tarea = db.collection("usuarios")
                         .document(idUsuario)
                         .collection("Reservas")
                         .document(idReserva)
-                        .get()
-                        .continueWith(reservaTask -> {
-                            if (reservaTask.isSuccessful()) {
-                                DocumentSnapshot doc = reservaTask.getResult();
-                                if (doc.exists()) {
-                                    List<Map<String, Object>> habitaciones = (List<Map<String, Object>>) doc.get("habitaciones");
-                                    if (habitaciones != null) {
-                                        for (Map<String, Object> habitacion : habitaciones) {
-                                            String nombre = (String) habitacion.get("nombreHabitacion");
-                                            if (nombre != null) {
-                                                synchronized (tipoHabitacionCounts) {
-                                                    tipoHabitacionCounts.put(nombre, tipoHabitacionCounts.getOrDefault(nombre, 0) + 1);
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                            return null;
-                        });
-
-                tasks.add(task);
+                        .get();
+                tareas.add(tarea);
             }
         }
 
-        Tasks.whenAllComplete(tasks).addOnCompleteListener(t -> {
+        Tasks.whenAllComplete(tareas).addOnCompleteListener(task -> {
+            Map<String, Integer> conteoTipoHab = new HashMap<>();
+
+            for (Task<?> t : tareas) {
+                if (t.isSuccessful()) {
+                    DocumentSnapshot doc = ((Task<DocumentSnapshot>) t).getResult();
+                    if (doc.exists()) {
+                        String tipoHab = doc.getString("tipoHab");
+                        if (tipoHab != null && !tipoHab.isEmpty()) {
+                            conteoTipoHab.put(tipoHab, conteoTipoHab.getOrDefault(tipoHab, 0) + 1);
+                        }
+                    }
+                }
+            }
+
             List<PieEntry> entries = new ArrayList<>();
-            for (Map.Entry<String, Integer> entry : tipoHabitacionCounts.entrySet()) {
+            for (Map.Entry<String, Integer> entry : conteoTipoHab.entrySet()) {
                 entries.add(new PieEntry(entry.getValue(), entry.getKey()));
             }
 

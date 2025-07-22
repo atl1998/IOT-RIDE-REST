@@ -20,6 +20,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -28,10 +29,13 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import okhttp3.Call;
+import okhttp3.Response;
+
 public class ResumenReservaActivity extends AppCompatActivity {
 
     public static final String EXTRA_RESERVA = "extra_reserva";
-
+    private static final String TAG = "FirebaseFunctionsHelper";
     private AdminhotelActivityResumenreservaBinding binding;
     private FirebaseFirestore db;
     private String uid;
@@ -106,6 +110,74 @@ public class ResumenReservaActivity extends AppCompatActivity {
                                         Toast.makeText(this, "Error al crear reporte: " + e.getMessage(),
                                                 Toast.LENGTH_LONG).show()
                                 );
+
+                        //Obteniendo FCM Token
+
+                        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+                        db.collection("usuarios").document(usuarioId)
+                                .get()
+                                .addOnSuccessListener(documentSnapshot -> {
+                                    if (documentSnapshot.exists()) {
+                                        String fcmToken = documentSnapshot.getString("fcmToken");
+                                        if (fcmToken != null) {
+                                            Log.d("Firestore", "FCM Token del usuario: " + fcmToken);
+                                            // Aquí puedes usar el token para notificación
+
+                                            // Enviar checkout finalizado
+                                            FirebaseFunctionsHelper functionsHelper = new FirebaseFunctionsHelper();
+                                            //EnviarNotiTaxi
+                                            functionsHelper.enviarNotificacionTaxi(fcmToken);
+                                            functionsHelper.enviarNotificacionChecjout(fcmToken, new okhttp3.Callback() {
+                                                @Override
+                                                public void onFailure(Call call, IOException e) {
+                                                    runOnUiThread(() -> {
+                                                        Log.e(TAG, "❌ Error enviando notificación", e);
+                                                        Toast.makeText(ResumenReservaActivity.this, "Error al enviar", Toast.LENGTH_SHORT).show();
+                                                    });
+                                                }
+
+                                                @Override
+                                                public void onResponse(Call call, Response response) throws IOException {
+                                                    runOnUiThread(() -> {
+                                                        if (response.isSuccessful()) {
+                                                            Toast.makeText(ResumenReservaActivity.this, "✅ Notificación enviada", Toast.LENGTH_SHORT).show();
+
+                                                            //Necesito que coloques la hora en la base de datos para que pueda ver el registro de pago, pasa la
+                                                            //ID de la reserva y el ID del usuario tmb, quitar lo hardcodeado
+
+                                                            FirebaseFirestore db = FirebaseFirestore.getInstance();
+                                                            String horaActual = new SimpleDateFormat("HH:mm", Locale.getDefault()).format(new Date());
+
+                                                            Map<String, Object> updates = new HashMap<>();
+                                                            updates.put("CheckOutHora", horaActual);
+
+                                                            db.collection("usuarios")
+                                                                    .document(usuarioId)
+                                                                    .collection("Reservas")
+                                                                    .document(reserva.getIdreserva())
+                                                                    .update(updates)
+                                                                    .addOnSuccessListener(aVoid -> Log.d("Firestore", "Reserva actualizada correctamente"))
+                                                                    .addOnFailureListener(e -> Log.e("Firestore", "Error al actualizar reserva", e));
+                                                            Log.d(TAG, "Notificación enviada correctamente");
+                                                        } else {
+                                                            Toast.makeText(ResumenReservaActivity.this, "Error al enviar: código " + response.code(), Toast.LENGTH_SHORT).show();
+                                                            Log.e(TAG, "Error HTTP: " + response.code());
+                                                        }
+                                                    });
+                                                }
+                                            });
+
+                                        } else {
+                                            Log.w("Firestore", "⚠️ El campo fcmToken no está presente");
+                                        }
+                                    } else {
+                                        Log.e("Firestore", "❌ No se encontró el documento del usuario");
+                                    }
+                                })
+                                .addOnFailureListener(e -> {
+                                    Log.e("Firestore", "❌ Error al obtener el documento", e);
+                                });
 
                         db.collection("usuarios").document(uid).get()
                                 .addOnSuccessListener(doc -> {
@@ -291,4 +363,6 @@ public class ResumenReservaActivity extends AppCompatActivity {
             return 0.0;
         }
     }
+
+
 }
