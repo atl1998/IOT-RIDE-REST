@@ -11,9 +11,11 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.hotelreservaapp.R;
 
 import java.util.List;
+import java.util.Locale;
 
 public class OfertaHotelAdapter extends RecyclerView.Adapter<OfertaHotelAdapter.OfertaViewHolder> {
 
@@ -46,26 +48,21 @@ public class OfertaHotelAdapter extends RecyclerView.Adapter<OfertaHotelAdapter.
     public void onBindViewHolder(@NonNull OfertaViewHolder holder, int position) {
         OfertaHotel oferta = listaOfertas.get(position);
 
-        holder.imgHotel.setImageResource(oferta.getImagenResourceId());
         holder.tvNombreHotel.setText(oferta.getNombre());
-        holder.tvPuntuacion.setText(oferta.getPuntuacion());
-        holder.tvCalificacion.setText(oferta.getCalificacionCompleta());
-        holder.tvUbicacion.setText(oferta.getUbicacion());
-        holder.tvDuracion.setText(oferta.getDuracion());
-        holder.tvPrecioOriginal.setText(oferta.getPrecioOriginal());
-        holder.tvPrecioFinal.setText(oferta.getPrecioFinal());
+        holder.tvValoracion.setText(String.format(Locale.getDefault(), "%.1f ★", oferta.getValoracion()));
+        holder.tvDepartamento.setText(oferta.getDepartamento());
+        holder.tvPrecioMin.setText(String.format("Desde S/ %.2f", oferta.getPrecioMin()));
 
-        // Mostrar u ocultar la etiqueta de oferta escapada según corresponda
-        if (oferta.isTieneOfertaEscapada()) {
-            holder.tvOfertaEscapada.setVisibility(View.VISIBLE);
-        } else {
-            holder.tvOfertaEscapada.setVisibility(View.GONE);
-        }
-
+        // Cargar imagen desde URL con Glide
+        Glide.with(context)
+                .load(oferta.getUrlFotoHotel())
+                .placeholder(R.drawable.ic_launcher_background)
+                .into(holder.imgHotel);
 
         holder.itemView.setOnClickListener(v -> {
-            Intent intent = new Intent(v.getContext(), DetallesHotel.class);
-            v.getContext().startActivity(intent);
+            if (listener != null) {
+                listener.onItemClick(oferta, position);
+            }
         });
     }
 
@@ -76,20 +73,15 @@ public class OfertaHotelAdapter extends RecyclerView.Adapter<OfertaHotelAdapter.
 
     public static class OfertaViewHolder extends RecyclerView.ViewHolder {
         ImageView imgHotel;
-        TextView tvNombreHotel, tvPuntuacion, tvCalificacion, tvUbicacion;
-        TextView tvOfertaEscapada, tvDuracion, tvPrecioOriginal, tvPrecioFinal;
+        TextView tvNombreHotel, tvValoracion, tvDepartamento, tvPrecioMin;
 
         public OfertaViewHolder(@NonNull View itemView) {
             super(itemView);
             imgHotel = itemView.findViewById(R.id.imgHotel);
             tvNombreHotel = itemView.findViewById(R.id.tvNombreHotel);
-            tvPuntuacion = itemView.findViewById(R.id.tvPuntuacion);
-            tvCalificacion = itemView.findViewById(R.id.tvCalificacion);
-            tvUbicacion = itemView.findViewById(R.id.tvUbicacion);
-            tvOfertaEscapada = itemView.findViewById(R.id.tvOfertaEscapada);
-            tvDuracion = itemView.findViewById(R.id.tvDuracion);
-            tvPrecioOriginal = itemView.findViewById(R.id.tvPrecioOriginal);
-            tvPrecioFinal = itemView.findViewById(R.id.tvPrecioFinal);
+            tvValoracion = itemView.findViewById(R.id.tvPuntuacion);
+            tvDepartamento = itemView.findViewById(R.id.tvUbicacion);
+            tvPrecioMin = itemView.findViewById(R.id.tvPrecioFinal);
         }
     }
 }

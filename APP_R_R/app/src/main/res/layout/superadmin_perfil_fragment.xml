@@ -267,35 +267,7 @@
                 android:layout_height="1dp"
                 android:background="#808080" />
 
-            <!-- Verificar correo -->
-            <LinearLayout
-                android:id="@+id/ll_verificar_correo"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingTop="16dp"
-                android:paddingBottom="16dp">
 
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/mail_icon"/>
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginStart="16dp"
-                    android:layout_weight="1"
-                    android:text="Verificar correo"
-                    android:textColor="@color/black"
-                    android:textSize="16sp" />
-            </LinearLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="#808080" />
 
         </LinearLayout>
         <com.google.android.material.button.MaterialButton

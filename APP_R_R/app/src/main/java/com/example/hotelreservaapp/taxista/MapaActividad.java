@@ -9,6 +9,7 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Looper;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -37,6 +38,8 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.material.button.MaterialButton;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.maps.android.PolyUtil;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -64,6 +67,8 @@ public class MapaActividad extends AppCompatActivity implements OnMapReadyCallba
     private static final String EST_CANCELADO  = "Cancelado";
     private static final String EST_FINALIZADO = "Finalizado";
 
+    private String estado;
+
     // Views
     private ImageView ivFotoCliente;
     private TextView tvNombreCliente, tvTelefonoCliente;
@@ -73,6 +78,8 @@ public class MapaActividad extends AppCompatActivity implements OnMapReadyCallba
     private GoogleMap mMap;
     private Marker markerTaxi, markerCliente;
     private Polyline rutaPolyline;
+    private TextView tvHeader;
+
 
     // Ubicaciones
     private double clienteLat, clienteLng;
@@ -86,17 +93,24 @@ public class MapaActividad extends AppCompatActivity implements OnMapReadyCallba
     private FusedLocationProviderClient fusedLocationClient;
     private DatabaseReference rideRef;
     private ValueEventListener taxiLocationListener;
+    private MaterialButton btnAccion, btnSecundario;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.taxista_activity_mapa);
 
+        tvHeader = findViewById(R.id.actividad3);
+
+
         // 1) Bind vistas
         ivFotoCliente      = findViewById(R.id.ivFotoCliente);
         tvNombreCliente    = findViewById(R.id.txtNombreCliente);
         tvTelefonoCliente  = findViewById(R.id.telefonoviajero);
-        btnConfirmarRecojo = findViewById(R.id.btnConfirmarRecojo);
+
+        // Bind de vistas
+        btnAccion     = findViewById(R.id.btnAccion);
+        btnSecundario = findViewById(R.id.btnSecundario);
 
         // 2) Leer extras
         Intent intent = getIntent();
@@ -122,6 +136,7 @@ public class MapaActividad extends AppCompatActivity implements OnMapReadyCallba
             ivFotoCliente.setImageResource(R.drawable.default_profile);
         }
 
+
         // 4) Inicializar Location & DB
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         rideRef = FirebaseDatabase.getInstance()
@@ -131,69 +146,125 @@ public class MapaActividad extends AppCompatActivity implements OnMapReadyCallba
         // 5) Configurar botón dinámico
         setupButtonsForState(estadoActual);
 
-        // 6) Inicializar mapa
-        SupportMapFragment mapFrag = (SupportMapFragment)
+        // inicializa mapa + RealtimeDB
+        SupportMapFragment mf = (SupportMapFragment)
                 getSupportFragmentManager().findFragmentById(R.id.map);
-        if (mapFrag != null) mapFrag.getMapAsync(this);
+        if (mf != null) mf.getMapAsync(this);
+        rideRef = FirebaseDatabase.getInstance()
+                .getReference("servicios_taxi")
+                .child(serviceId);
+
+        MaterialButton btnVolver = findViewById(R.id.btnVolver);
+        btnVolver.setOnClickListener(v -> {
+            // Devolvemos RESULT_OK para que el fragmento sepa que debe recargar
+            setResult(RESULT_OK);
+            finish();
+        });
+
     }
 
+
     private void setupButtonsForState(String estado) {
-        btnConfirmarRecojo.setVisibility(android.view.View.GONE);
+        btnAccion.setVisibility(View.GONE);
+        btnSecundario.setVisibility(View.GONE);
 
         switch (estado) {
             case EST_SOLICITADO:
-                btnConfirmarRecojo.setText("Aceptar Solicitud");
-                btnConfirmarRecojo.setVisibility(android.view.View.VISIBLE);
-                btnConfirmarRecojo.setOnClickListener(v -> transitionState(EST_ACEPTADO));
-                break;
-
+                tvHeader.setText("Solicitud de viaje");
+                btnAccion.setText("Aceptar Solicitud");
+                btnAccion.setVisibility(View.VISIBLE);
+                btnAccion.setOnClickListener(v -> {
+                    FirebaseFirestore.getInstance()
+                            .collection("servicios_taxi")
+                            .whereIn("estado", List.of(EST_ACEPTADO, EST_EN_CURSO))
+                            .get()
+                            .addOnSuccessListener(q -> {
+                                if (q.isEmpty()) {
+                                    transitionState(EST_ACEPTADO);
+                                } else {
+                                    Toast.makeText(this, "Ya tienes un viaje activo", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                });
+            break;
             case EST_ACEPTADO:
-                btnConfirmarRecojo.setText("Confirmar Recojo");
-                btnConfirmarRecojo.setVisibility(android.view.View.VISIBLE);
-                btnConfirmarRecojo.setOnClickListener(v -> transitionState(EST_EN_CURSO));
+                tvHeader.setText("Recoge al Cliente");
+                btnAccion.setText("Confirmar Recojo");
+                btnSecundario.setText("Cancelar Solicitud");
+                btnAccion.setVisibility(View.VISIBLE);
+                btnSecundario.setVisibility(View.VISIBLE);
+                btnAccion.setOnClickListener(v -> transitionState(EST_EN_CURSO));
+                btnSecundario.setOnClickListener(v -> transitionState(EST_CANCELADO));
                 break;
-
             case EST_EN_CURSO:
-                btnConfirmarRecojo.setText("Finalizar Viaje");
-                btnConfirmarRecojo.setVisibility(android.view.View.VISIBLE);
-                btnConfirmarRecojo.setOnClickListener(v -> transitionState(EST_FINALIZADO));
+                tvHeader.setText("En ruta al Destino");
+                btnAccion.setText("Finalizar Viaje");
+                btnSecundario.setText("Cancelar Viaje");
+                btnAccion.setVisibility(View.VISIBLE);
+                btnSecundario.setVisibility(View.VISIBLE);
+                btnAccion.setOnClickListener(v -> {
+                    // en lugar de transitionState:
+                    Intent qr = new Intent(this, QrLecturaActivity.class);
+                    qr.putExtra("serviceId", serviceId);
+                    startActivity(qr);
+                });
+                btnSecundario.setOnClickListener(v -> transitionState(EST_CANCELADO));
+                break;
+            case EST_CANCELADO:
+                tvHeader.setText("Viaje Cancelado");
                 break;
 
-            default: // Cancelado o Finalizado
-                btnConfirmarRecojo.setVisibility(android.view.View.GONE);
+            case EST_FINALIZADO:
+                tvHeader.setText("Viaje Finalizado");
                 break;
         }
     }
 
+
     private void transitionState(String nuevoEstado) {
-        rideRef.child("estado").setValue(nuevoEstado)
-                .addOnSuccessListener(_unused -> {
+        // 1) Actualiza Firestore
+        FirebaseFirestore.getInstance()
+                .collection("servicios_taxi")
+                .document(serviceId)
+                .update("estado", nuevoEstado)
+                .addOnSuccessListener(u -> {
                     estadoActual = nuevoEstado;
                     setupButtonsForState(nuevoEstado);
-                    Toast.makeText(this, "Estado → " + nuevoEstado, Toast.LENGTH_SHORT).show();
-
-                    // Forzar primer redraw de ruta con el nuevo target
-                    if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                        // TODO: Consider calling
-                        //    ActivityCompat#requestPermissions
-                        // here to request the missing permissions, and then overriding
-                        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                        //                                          int[] grantResults)
-                        // to handle the case where the user grants the permission. See the documentation
-                        // for ActivityCompat#requestPermissions for more details.
-                        return;
+                    Toast.makeText(this, "Estado: " + nuevoEstado, Toast.LENGTH_SHORT).show();
+                    // 2) Redibuja ruta con el nuevo target
+                    if (mMap != null) {
+                        drawRouteToCurrentTarget();
                     }
-                    fusedLocationClient.getLastLocation()
-                            .addOnSuccessListener(loc -> {
-                                if (loc == null) return;
-                                LatLng taxiPos = new LatLng(loc.getLatitude(), loc.getLongitude());
-                                LatLng target = estadoActual.equals(EST_EN_CURSO)
-                                        ? new LatLng(destinoLat, destinoLng)
-                                        : new LatLng(clienteLat, clienteLng);
-                                drawRoute(taxiPos, target);
-                            });
                 });
     }
+
+    private void drawRouteToCurrentTarget() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        fusedLocationClient.getLastLocation()
+                .addOnSuccessListener(loc -> {
+                    if (loc == null) return;
+                    LatLng taxiPos = new LatLng(loc.getLatitude(), loc.getLongitude());
+                    LatLng target;
+                    if (EST_EN_CURSO.equals(estadoActual)) {
+                        // ruta cliente → destino
+                        target = new LatLng(destinoLat, destinoLng);
+                    } else {
+                        // ruta taxi → cliente
+                        target = new LatLng(clienteLat, clienteLng);
+                    }
+                    drawRoute(taxiPos, target);
+                });
+    }
+
 
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
@@ -224,51 +295,74 @@ public class MapaActividad extends AppCompatActivity implements OnMapReadyCallba
 
         // 1) Primera ruta estática
         fusedLocationClient.getLastLocation().addOnSuccessListener(loc -> {
-            if (loc == null) {
-                Toast.makeText(this, "Ubicación no disponible", Toast.LENGTH_SHORT).show();
-                return;
-            }
+            if (loc == null) return;
             LatLng taxiPos = new LatLng(loc.getLatitude(), loc.getLongitude());
-            LatLng target = estadoActual.equals(EST_EN_CURSO)
-                    ? new LatLng(destinoLat, destinoLng)
-                    : new LatLng(clienteLat, clienteLng);
-            drawRoute(taxiPos, target);
+            if (EST_SOLICITADO.equals(estadoActual)) {
+                // solo marcadores
+                placeMarkers(taxiPos, new LatLng(clienteLat, clienteLng));
+            } else {
+                LatLng target = EST_EN_CURSO.equals(estadoActual)
+                        ? new LatLng(destinoLat, destinoLng)
+                        : new LatLng(clienteLat, clienteLng);
+                drawRoute(taxiPos, target);
+            }
         });
 
-        // 2) Publicar ubicación del taxi cada 5s
+        // Publica tu posición cada 2s
         LocationRequest req = LocationRequest.create()
-                .setInterval(5000)
+                .setInterval(2000)
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+
         fusedLocationClient.requestLocationUpdates(req, new LocationCallback(){
             @Override
-            public void onLocationResult(LocationResult result) {
-                if (result == null) return;
-                double lat = result.getLastLocation().getLatitude();
-                double lng = result.getLastLocation().getLongitude();
-                // publicar en Realtime DB
-                Map<String,Object> m = new HashMap<>();
-                m.put("lat", lat);
-                m.put("lng", lng);
-                rideRef.child("taxiLocation").setValue(m);
+            public void onLocationResult(LocationResult lr) {
+                double lat = lr.getLastLocation().getLatitude();
+                double lng = lr.getLastLocation().getLongitude();
+                rideRef.child("taxiLocation").setValue(Map.of("lat", lat, "lng", lng));
             }
         }, Looper.getMainLooper());
 
-        // 3) Escuchar cambios en taxiLocation y redibujar
-        taxiLocationListener = rideRef.child("taxiLocation")
+        rideRef.child("taxiLocation")
                 .addValueEventListener(new ValueEventListener() {
-                    @Override public void onDataChange(DataSnapshot snap) {
-                        if (!snap.exists()) return;
-                        double lat = snap.child("lat").getValue(Double.class);
-                        double lng = snap.child("lng").getValue(Double.class);
+                    @Override public void onDataChange(DataSnapshot ds) {
+                        double lat = ds.child("lat").getValue(Double.class);
+                        double lng = ds.child("lng").getValue(Double.class);
                         LatLng taxiPos = new LatLng(lat, lng);
-                        LatLng target = estadoActual.equals(EST_EN_CURSO)
-                                ? new LatLng(destinoLat, destinoLng)
-                                : new LatLng(clienteLat, clienteLng);
-                        drawRoute(taxiPos, target);
+                        if (EST_SOLICITADO.equals(estadoActual)) {
+                            placeMarkers(taxiPos, new LatLng(clienteLat, clienteLng));
+                        } else {
+                            LatLng target = EST_EN_CURSO.equals(estadoActual)
+                                    ? new LatLng(destinoLat, destinoLng)
+                                    : new LatLng(clienteLat, clienteLng);
+                            drawRoute(taxiPos, target);
+                        }
                     }
-                    @Override public void onCancelled(DatabaseError e) { }
+                    @Override public void onCancelled(DatabaseError e){}
                 });
+
+
     }
+
+    private void placeMarkers(LatLng taxiPos, LatLng clientePos) {
+        if (markerTaxi    != null) markerTaxi.remove();
+        if (markerCliente != null) markerCliente.remove();
+
+        Bitmap bmpTaxi = BitmapFactory.decodeResource(getResources(), R.drawable.icono_auto);
+        Bitmap iconTaxi = Bitmap.createScaledBitmap(bmpTaxi, 80, 80, false);
+        Bitmap bmpCli  = BitmapFactory.decodeResource(getResources(), R.drawable.icono_cliente);
+        Bitmap iconCli = Bitmap.createScaledBitmap(bmpCli, 80, 80, false);
+
+        markerTaxi = mMap.addMarker(new MarkerOptions()
+                .position(taxiPos)
+                .title("Taxi")
+                .icon(BitmapDescriptorFactory.fromBitmap(iconTaxi)));
+
+        markerCliente = mMap.addMarker(new MarkerOptions()
+                .position(clientePos)
+                .title("Cliente")
+                .icon(BitmapDescriptorFactory.fromBitmap(iconCli)));
+    }
+
 
     private void drawRoute(LatLng origen, LatLng destino) {
         // limpiar anteriores
@@ -287,11 +381,19 @@ public class MapaActividad extends AppCompatActivity implements OnMapReadyCallba
                 .title("Taxi")
                 .icon(BitmapDescriptorFactory.fromBitmap(smallTaxi)));
 
-        String title = estadoActual.equals(EST_EN_CURSO) ? "Destino" : "Cliente";
+        String title = EST_EN_CURSO.equals(estadoActual) ? "Destino" : "Cliente";
+        Bitmap bmpOther = BitmapFactory.decodeResource(
+                getResources(),
+                EST_EN_CURSO.equals(estadoActual)
+                        ? R.drawable.icono_bandera_llegada
+                        : R.drawable.icono_cliente
+        );
+        Bitmap iconOther = Bitmap.createScaledBitmap(bmpOther,80,80,false);
+
         markerCliente = mMap.addMarker(new MarkerOptions()
                 .position(destino)
                 .title(title)
-                .icon(BitmapDescriptorFactory.fromBitmap(smallCli)));
+                .icon(BitmapDescriptorFactory.fromBitmap(iconOther)));
 
         // Directions API
         String url = "https://maps.googleapis.com/maps/api/directions/json"
@@ -355,4 +457,5 @@ public class MapaActividad extends AppCompatActivity implements OnMapReadyCallba
             onMapReady(mMap);
         }
     }
+
 }

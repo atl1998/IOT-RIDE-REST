@@ -43,6 +43,9 @@ import com.google.android.material.datepicker.DateValidatorPointForward;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -131,7 +134,20 @@ public class HomeCliente extends AppCompatActivity {
 
         // Cargar ofertas demo
         ofertasRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-        cargarOfertasEjemplo();
+        // ✅ INICIALIZACIÓN NECESARIA
+        listaOfertas = new ArrayList<>();
+
+        ofertasAdapter = new OfertaHotelAdapter(this, listaOfertas);
+        ofertasRecyclerView.setAdapter(ofertasAdapter);
+
+        // Listener de clics
+        ofertasAdapter.setOnItemClickListener((oferta, position) ->
+                Toast.makeText(HomeCliente.this, "Seleccionaste: " + oferta.getNombre(), Toast.LENGTH_SHORT).show()
+        );
+
+        // Luego carga los datos
+        cargarOfertasDesdeFirestore();
+
         ofertasAdapter = new OfertaHotelAdapter(this, listaOfertas);
         ofertasRecyclerView.setAdapter(ofertasAdapter);
         ofertasAdapter.setOnItemClickListener((oferta, position) ->
@@ -187,7 +203,6 @@ public class HomeCliente extends AppCompatActivity {
             if (nombre != null) etDestino.setText(nombre);
             tipoDestinoSeleccionado = tipo != null ? tipo : "";
 
-            Log.d("Destino", "Seleccionado: " + nombre + " (Tipo: " + tipoDestinoSeleccionado + ")");
             Log.d("Destino", "Seleccionado: " + nombre + " (Tipo: " + tipoDestinoSeleccionado + ")");
         }
     }
@@ -361,11 +376,35 @@ public class HomeCliente extends AppCompatActivity {
         etCantidad.setText(visitantes);
     }
 
-    private void cargarOfertasEjemplo() {
-        listaOfertas = new ArrayList<>();
-        listaOfertas.add(new OfertaHotel("Cusco Rooms", "Cuzco", "8.3", "Muy bien", "454 comentarios", "2 noches:", "S/ 286", "S/ 158", R.drawable.hotel1, true));
-        listaOfertas.add(new OfertaHotel("Hotel Maison Du Soleil", "Arequipa", "8.2", "Muy bien", "350 comentarios", "2 noches:", "S/ 470", "S/ 320", R.drawable.hotel1, true));
-        listaOfertas.add(new OfertaHotel("Lima Luxury Suites", "Lima", "8.5", "Fantástico", "210 comentarios", "2 noches:", "S/ 350", "S/ 280", R.drawable.hotel1, true));
-        listaOfertas.add(new OfertaHotel("Playa Resort", "Máncora", "8.7", "Excelente", "325 comentarios", "2 noches:", "S/ 520", "S/ 390", R.drawable.hotel1, true));
+    private void cargarOfertasDesdeFirestore() {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        db.collection("Hoteles")
+                .orderBy("precioMin", Query.Direction.ASCENDING)
+                .limit(4)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    listaOfertas.clear();
+                    for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                        // Carga solo los atributos necesarios
+                        String nombre = doc.getString("nombre");
+                        double valoracion = doc.contains("valoracion") ? doc.getDouble("valoracion") : 0.0;
+                        String urlFoto = doc.getString("UrlFotoHotel");
+                        String departamento = doc.getString("departamento");
+                        double precioMin = doc.contains("precioMin") ? doc.getDouble("precioMin") : 0.0;
+
+                        // Crear objeto directamente con constructor
+                        OfertaHotel oferta = new OfertaHotel(nombre, valoracion, urlFoto, departamento, precioMin);
+                        listaOfertas.add(oferta);
+                    }
+                    ofertasAdapter.notifyDataSetChanged();
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(HomeCliente.this, "Error al cargar ofertas", Toast.LENGTH_SHORT).show();
+                    Log.e("Firestore", "Error al obtener ofertas", e);
+                });
     }
+
+
+
 }
