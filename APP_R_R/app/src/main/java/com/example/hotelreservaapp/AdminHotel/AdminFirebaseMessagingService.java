@@ -105,7 +105,8 @@ public class AdminFirebaseMessagingService extends FirebaseMessagingService {
         }
         NotificationManagerCompat notificationManagerCompat  = NotificationManagerCompat.from(this);
         if (ActivityCompat.checkSelfPermission(this, POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
-            notificationManagerCompat.notify(1, builder.build());
+            Log.d("FCM", "Mostrando notificación ahora");
+            notificationManagerCompat.notify(1001, builder.build());
         }
     }
 }
