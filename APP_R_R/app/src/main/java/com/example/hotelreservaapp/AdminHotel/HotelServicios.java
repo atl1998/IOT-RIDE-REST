@@ -85,14 +85,7 @@ public class HotelServicios extends AppCompatActivity {
         }
 
         //MaterialButton btnDetalles = findViewById(R.id.btnAgregar);
-
-
-        //Para ir a notificaciones
-        MaterialButton btnNotificaiones = findViewById(R.id.NotificacionesAdminHotel);
-        btnNotificaiones.setOnClickListener(v -> {
-            //por ahora directamente al mio bala
-            startActivity(new Intent(this, NotificacionesActivity.class));
-        });
+        
 
         // Usamos un OnClickListener estándar
         MaterialButton backButton = findViewById(R.id.backBottom);

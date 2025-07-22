@@ -257,7 +257,7 @@ public class Registro5Servicios_fragment extends Fragment {
                 })
                 .addOnSuccessListener(url -> {
                     db.collection("Hoteles").document(hotelId)
-                            .update("urlFotoHotel", url.toString())
+                            .update("UrlFotoHotel", url.toString())
                             .addOnSuccessListener(v -> {
                                 foto.delete();      // limpia la copia interna
                                 Toast.makeText(ctx, "Hotel creado correctamente", Toast.LENGTH_SHORT).show();
