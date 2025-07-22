@@ -123,7 +123,7 @@ public class ListaHabitaciones extends AppCompatActivity {
         btnVolver = findViewById(R.id.volverHotel);
         btnVolver.setOnClickListener(v -> {
             //por ahora directamente al mio bala
-            startActivity(new Intent(this, DetallesHotel.class));
+            finish();
         });
 
     }
