@@ -342,9 +342,21 @@ public class HistorialEventos extends AppCompatActivity implements HistorialItem
                                     // Verificación del estado según fecha actual
                                     String estadoEsperado;
 
-                                    if (ahora.before(fechaInicioTS.toDate())) {
+                                    Calendar ahoraCal = Calendar.getInstance();
+                                    Calendar fechaInicioCal = Calendar.getInstance();
+                                    fechaInicioCal.setTime(fechaInicioTS.toDate());
+                                    Calendar fechaFinCal = Calendar.getInstance();
+                                    fechaFinCal.setTime(fechaFinTS.toDate());
+
+                                    // Limpiar horas, minutos, segundos y milisegundos para comparar solo fechas
+                                    limpiarHora(ahoraCal);
+                                    limpiarHora(fechaInicioCal);
+                                    limpiarHora(fechaFinCal);
+
+                                    // Ahora comparas solo fechas (sin horas)
+                                    if (ahoraCal.before(fechaInicioCal)) {
                                         estadoEsperado = "Pendiente";
-                                    } else if (ahora.after(fechaFinTS.toDate())) {
+                                    } else if (ahoraCal.after(fechaFinCal)) {
                                         estadoEsperado = "Terminado";
                                     } else {
                                         estadoEsperado = "En Progreso";
@@ -387,6 +399,12 @@ public class HistorialEventos extends AppCompatActivity implements HistorialItem
                     }
                 })
                 .addOnFailureListener(e -> Log.e("Firestore", "Error al cargar reservas", e));
+    }
+    private void limpiarHora(Calendar cal) {
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
     }
 
     @Override
