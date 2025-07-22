@@ -28,7 +28,6 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.hotelreservaapp.R;
-import com.example.hotelreservaapp.cliente.ClienteChat;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.Timestamp;
@@ -87,7 +86,7 @@ public class DetallesChatActivity extends AppCompatActivity {
         // Botón para volver
         btnVolver = findViewById(R.id.btnVolverChatCliente);
         btnVolver.setOnClickListener(v -> {
-            startActivity(new Intent(this, ClienteChat.class));
+            finish();
         });
 
         db = FirebaseFirestore.getInstance();
