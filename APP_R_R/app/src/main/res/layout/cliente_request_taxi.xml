@@ -1,68 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".cliente.TaxistaCliente.RequestTaxi">
+    android:background="@color/blanco">
 
+    <!-- 1. Texto principal en la parte superior -->
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+    <!-- 2. Animación justo debajo del texto principal -->
 
-        <com.airbnb.lottie.LottieAnimationView
-            android:id="@+id/animation"
-            android:layout_width="wrap_content"
-            android:layout_height="200dp"
-            app:lottie_imageAssetsFolder="assets"
-            app:lottie_fileName="3532-car.json"
-            android:layout_gravity="center"
-            app:lottie_loop="true"
-            android:scaleType="centerCrop"
-            app:lottie_autoPlay="true"
-            android:layout_margin="30dp"/>
+    <!-- 3. Texto secundario debajo de la animación -->
 
+    <!-- 4. Botón debajo del texto secundario -->
+    <TextView
+        android:id="@+id/textViewLookingFor"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="92dp"
+        android:fontFamily="sans-serif-medium"
+        android:text="BUSCANDO CONDUCTOR..."
+        android:textAlignment="center"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/textViewLookingFor"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAlignment="center"
-            android:text="BUSCANDO CONDUCTOR..."
-            android:textSize="18sp"
-            />
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/animation"
+        android:layout_width="400dp"
+        android:layout_height="400dp"
+        android:layout_marginTop="52dp"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_max="300dp"
+        app:layout_constraintHorizontal_bias="0.495"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textViewLookingFor"
+        app:layout_constraintWidth_max="500dp"
+        app:lottie_autoPlay="true"
+        app:lottie_fileName="3532-car.json"
+        app:lottie_loop="true" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:orientation="vertical"
-            android:layout_weight="1"
-            android:gravity="bottom"
-            >
+    <TextView
+        android:id="@+id/textViewNotification"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="36dp"
+        android:layout_marginEnd="20dp"
+        android:fontFamily="sans-serif"
+        android:text="Se te notificará cuando un taxista de nuestra aplicación acepte tu solicitud, no suele tardar mucho."
+        android:textAlignment="center"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/animation" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnCancelRequest"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="30dp"
-                android:text="CANCELAR VIAJE"
-                android:textColor="@color/blanco"
-                android:backgroundTint="@color/negro"
-                app:cornerRadius="16dp"
-                app:iconGravity="textStart"
-                app:iconPadding="8dp" />
-
-
-        </LinearLayout>
-
-
-    </LinearLayout>
-
-
-
-
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnCancelRequest"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="20dp"
+        android:backgroundTint="@color/negro"
+        android:text="CANCELAR VIAJE"
+        android:textColor="@color/blanco"
+        android:textSize="16sp"
+        app:cornerRadius="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textViewNotification" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
