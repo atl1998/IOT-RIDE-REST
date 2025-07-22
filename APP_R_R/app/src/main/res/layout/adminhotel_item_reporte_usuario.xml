@@ -15,15 +15,6 @@
         android:gravity="center_vertical"
         android:padding="12dp">
 
-        <!-- 📷 Foto -->
-        <ImageView
-            android:id="@+id/tvFoto"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_marginEnd="12dp"
-            android:scaleType="centerCrop"
-            android:src="@drawable/default_user_icon"
-            android:background="@drawable/circle_bg"/>
 
         <!-- 📋 Info -->
         <LinearLayout
@@ -48,16 +39,18 @@
                 android:textSize="14sp"
                 android:textColor="#888888"/>
 
+            <!-- 🟢 Switch -->
+            <TextView
+                android:id="@+id/tvCosto"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Costo:  100.00"
+                android:textSize="14sp"
+                android:textColor="#555555"/>
+
 
         </LinearLayout>
 
-        <!-- 🟢 Switch -->
-        <TextView
-            android:id="@+id/tvFecha"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Vier 11"
-            android:textSize="14sp"
-            android:textColor="#555555"/>
+
     </LinearLayout>
 </androidx.cardview.widget.CardView>

@@ -97,6 +97,7 @@ public class ResumenReservaActivity extends AppCompatActivity {
                         reporte.put("nombre", nombre);
                         reporte.put("totalGastado", precioHab + servExt + cargos);
                         reporte.put("creadoEn", FieldValue.serverTimestamp());
+                        reporte.put("idAdminHotel", uid);
 
                         // 3) Guardar en ReporteUsuarios con ID = reservaId
                         String reservaId = reserva.getIdreserva();
