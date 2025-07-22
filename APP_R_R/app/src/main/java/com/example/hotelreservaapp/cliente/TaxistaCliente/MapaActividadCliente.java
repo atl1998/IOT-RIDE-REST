@@ -131,6 +131,7 @@ public class MapaActividadCliente extends AppCompatActivity implements OnMapRead
 
             String estado = snap.getString("estado");
             GeoPoint gp = snap.getGeoPoint("ubicacionTaxista");
+            String ola = "ola";
             if (gp == null || mMap == null) return;
 
             LatLng taxiPos = new LatLng(gp.getLatitude(), gp.getLongitude());

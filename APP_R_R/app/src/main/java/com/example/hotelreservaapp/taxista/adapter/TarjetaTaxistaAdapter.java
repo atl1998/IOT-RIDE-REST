@@ -270,6 +270,7 @@ public class TarjetaTaxistaAdapter extends RecyclerView.Adapter<TarjetaTaxistaAd
                         .addOnSuccessListener(u -> {
                             item.setEstado(EST_EN_CURSO);
                             notifyItemChanged(position);
+                            // Aceptado taxista asignado
                             sendNotification("Viaje en curso", "Recojo confirmado: " + item.getNombreCliente());
                         });
             }
@@ -285,6 +286,7 @@ public class TarjetaTaxistaAdapter extends RecyclerView.Adapter<TarjetaTaxistaAd
                         item.setEstado(EST_CANCELADO);
                         listaCompartida.remove(position);
                         notifyItemRemoved(position);
+                        // Viaje cancelado:(
                         sendNotification("Viaje cancelado", "Has cancelado el viaje con " + item.getNombreCliente());
                     });
         });

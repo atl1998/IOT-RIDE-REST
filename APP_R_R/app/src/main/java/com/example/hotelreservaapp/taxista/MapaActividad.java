@@ -174,6 +174,7 @@ public class MapaActividad extends AppCompatActivity implements OnMapReadyCallba
                 btnAccion.setText("Aceptar Solicitud");
                 btnAccion.setVisibility(View.VISIBLE);
                 btnAccion.setOnClickListener(v -> {
+                    //Aceptado (Taxista asignado)
                     FirebaseFirestore.getInstance()
                             .collection("servicios_taxi")
                             .whereIn("estado", List.of(EST_ACEPTADO, EST_EN_CURSO))
@@ -193,7 +194,9 @@ public class MapaActividad extends AppCompatActivity implements OnMapReadyCallba
                 btnSecundario.setText("Cancelar Solicitud");
                 btnAccion.setVisibility(View.VISIBLE);
                 btnSecundario.setVisibility(View.VISIBLE);
+                //Notificacion En curso (Iniciado tipo 08)
                 btnAccion.setOnClickListener(v -> transitionState(EST_EN_CURSO));
+                //Notificacion Cancelado
                 btnSecundario.setOnClickListener(v -> transitionState(EST_CANCELADO));
                 break;
             case EST_EN_CURSO:
@@ -204,10 +207,12 @@ public class MapaActividad extends AppCompatActivity implements OnMapReadyCallba
                 btnSecundario.setVisibility(View.VISIBLE);
                 btnAccion.setOnClickListener(v -> {
                     // en lugar de transitionState:
+                    // notificacion FINALIZADOOO tipo 09
                     Intent qr = new Intent(this, QrLecturaActivity.class);
                     qr.putExtra("serviceId", serviceId);
                     startActivity(qr);
                 });
+                //Notificacion Cancelado
                 btnSecundario.setOnClickListener(v -> transitionState(EST_CANCELADO));
                 break;
             case EST_CANCELADO:
