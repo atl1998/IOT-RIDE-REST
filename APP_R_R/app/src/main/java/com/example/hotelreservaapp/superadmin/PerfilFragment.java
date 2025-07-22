@@ -38,6 +38,7 @@ import com.example.hotelreservaapp.LogManager;
 import com.example.hotelreservaapp.R;
 import com.example.hotelreservaapp.adapter.LogsAdapter;
 import com.example.hotelreservaapp.databinding.SuperadminPerfilFragmentBinding;
+import com.example.hotelreservaapp.loginAndRegister.BottomSheetCambiarContrasena;
 import com.example.hotelreservaapp.loginAndRegister.LoginActivity;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -135,6 +136,11 @@ public class PerfilFragment extends Fragment {
                 .build();
 
         googleSignInClient = GoogleSignIn.getClient(requireActivity(), gso);
+
+        binding.llSeguridad.setOnClickListener(v -> {
+            BottomSheetCambiarContrasena bottomSheet = new BottomSheetCambiarContrasena();
+            bottomSheet.show(getParentFragmentManager(), "CambiarContrasena");
+        });
 
         // Detectar si ya está vinculado con Google
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
