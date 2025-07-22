@@ -193,11 +193,9 @@ public class MapaActividad extends AppCompatActivity implements OnMapReadyCallba
                 btnAccion.setText("Aceptar Solicitud");
                 btnAccion.setVisibility(View.VISIBLE);
                 btnAccion.setOnClickListener(v -> {
-<<<<<<< HEAD
-                    // Primero comprobamos que no haya otros viajes activos...
-=======
+// Primero comprobamos que no haya otros viajes activos...
+
                     //Aceptado (Taxista asignado)
->>>>>>> 836103e0219d9e574eb694df064185a976c99525
                     FirebaseFirestore.getInstance()
                             .collection("servicios_taxi")
                             .whereIn("estado", List.of(EST_ACEPTADO, EST_EN_CURSO))
