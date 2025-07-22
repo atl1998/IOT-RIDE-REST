@@ -80,4 +80,5 @@ dependencies {
     implementation 'com.journeyapps:zxing-android-embedded:4.3.0'
     implementation 'com.google.firebase:firebase-messaging:24.0.0'
     implementation 'com.google.firebase:firebase-functions:20.2.1'
+    implementation "com.airbnb.android:lottie:5.0.3"
 }
