@@ -74,6 +74,17 @@ public class ListaHabitaciones extends AppCompatActivity {
         adapter = new HabitacionAdapter(listaHabitaciones, new HabitacionAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
+                // 🔁 Deseleccionar todas las demás habitaciones
+                for (int i = 0; i < listaHabitaciones.size(); i++) {
+                    if (i != position) {
+                        listaHabitaciones.get(i).setSeleccionadas(0);
+                    }
+                }
+
+                // Actualizar el adapter para reflejar los cambios visualmente
+                adapter.notifyDataSetChanged();
+
+                // Mostrar el popup solo para la habitación seleccionada
                 Habitacion habitacion = listaHabitaciones.get(position);
                 mostrarPopupSeleccion(habitacion);
             }
@@ -84,6 +95,7 @@ public class ListaHabitaciones extends AppCompatActivity {
             }
         });
 
+
         rvHabitaciones.setAdapter(adapter);
         btnReservar = findViewById(R.id.btnReservarAhora);
         btnReservar.setOnClickListener(v -> {
@@ -93,17 +105,20 @@ public class ListaHabitaciones extends AppCompatActivity {
                 return;
             }
 
-            ArrayList<Habitacion> habitacionesSeleccionadas = new ArrayList<>();
+            Habitacion habitacionSeleccionada = null;
             for (Habitacion habitacion : listaHabitaciones) {
                 if (habitacion.getSeleccionadas() > 0) {
-                    habitacionesSeleccionadas.add(habitacion);
+                    habitacionSeleccionada = habitacion;
+                    break;
                 }
             }
 
-            if (habitacionesSeleccionadas.isEmpty()) {
+
+            if (habitacionSeleccionada==null) {
                 Toast.makeText(this, "Selecciona al menos una habitación", Toast.LENGTH_SHORT).show();
                 return;
             }
+
 
             Intent intent = new Intent(this, ValidacionTarjeta.class);
             intent.putExtra("hotelId", getIntent().getStringExtra("hotelId"));
@@ -111,14 +126,10 @@ public class ListaHabitaciones extends AppCompatActivity {
             intent.putExtra("fechaFin", getIntent().getLongExtra("fechaFin", -1));
             intent.putExtra("adultos", getIntent().getIntExtra("adultos", 0));
             intent.putExtra("ninos", getIntent().getIntExtra("ninos", 0));
-            intent.putExtra("habitacionesSeleccionadas", habitacionesSeleccionadas); // Serializable
+            intent.putExtra("habitacionSeleccionada", habitacionSeleccionada);
 
             startActivity(intent);
         });
-
-
-
-
 
         btnVolver = findViewById(R.id.volverHotel);
         btnVolver.setOnClickListener(v -> {
@@ -167,10 +178,17 @@ public class ListaHabitaciones extends AppCompatActivity {
 
         confirmar.setOnClickListener(v -> {
             Toast.makeText(this, "Reservaste " + cantidad[0] + " habitación(es)", Toast.LENGTH_SHORT).show();
+            // ✅ Deseleccionar las demás habitaciones
+            for (Habitacion h : listaHabitaciones) {
+                h.setSeleccionadas(0);
+            }
+
+            // ✅ Seleccionar solo la actual
             habitacion.setSeleccionadas(cantidad[0]);
+
             adapter.notifyDataSetChanged();
             dialog.dismiss();
-            verificarSeleccion(); // <-- Nueva llamada aquí
+            verificarSeleccion();
         });
     }
     private void verificarSeleccion() {
@@ -212,7 +230,4 @@ public class ListaHabitaciones extends AppCompatActivity {
                     }
                 });
     }
-
-
-
 }
