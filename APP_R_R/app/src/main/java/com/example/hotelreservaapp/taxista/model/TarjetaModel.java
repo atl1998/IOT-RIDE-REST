@@ -39,6 +39,7 @@ public class TarjetaModel {
     private double lngDestino;
     private String idReserva;
     private String idHotel;
+    private String idDocument;
 
     public TarjetaModel() {
         // Requerido por Firestore
@@ -46,6 +47,15 @@ public class TarjetaModel {
 
     // Getters y Setters
     // Getters & setters
+
+
+    public String getIdDocument() {
+        return idDocument;
+    }
+
+    public void setIdDocument(String idDocument) {
+        this.idDocument = idDocument;
+    }
 
     public String getIdReserva() {
         return idReserva;
