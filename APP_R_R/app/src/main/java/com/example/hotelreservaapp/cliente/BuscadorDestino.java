@@ -165,16 +165,24 @@ public class BuscadorDestino extends AppCompatActivity {
                         for (int i = 0; i < data.length(); i++) {
                             JSONObject lugar = data.getJSONObject(i);
                             String displayName = lugar.getString("display_name");
-                            String tipo = lugar.optString("type", "");
+                            String tipo = lugar.optString("addresstype", "");
 
-                            // Solo mostramos ciudades y regiones relevantes
-                            List<String> tiposValidos = Arrays.asList("city", "town", "village", "state", "region", "administrative", "district");
+                            List<String> tiposValidos = Arrays.asList("city","region","town");
 
                             if (tiposValidos.contains(tipo)) {
-                                String tipoLegible = traducirTipoLugar(tipo);
-                                nombresCiudades.add(displayName + " (" + tipoLegible + ")");
-                                datosCiudades.add(lugar);
+
+                                JSONObject address = lugar.optJSONObject("address");
+                                // ✅ Filtro: mostrar solo si tiene "region" explícito en address
+                                if (address != null && address.has("region")) {
+                                    String tipoLegible = traducirTipoLugar(tipo);
+                                    nombresCiudades.add(displayName + " (" + tipoLegible + ")");
+                                    datosCiudades.add(lugar);
+                                }
+
                             }
+
+
+
                         }
 
                         runOnUiThread(() -> adapter.notifyDataSetChanged());
@@ -201,13 +209,8 @@ public class BuscadorDestino extends AppCompatActivity {
 
     private String traducirTipoLugar(String tipo) {
         switch (tipo) {
-            case "city": return "Ciudad";
-            case "town": return "Pueblo";
-            case "village": return "Villa";
-            case "state": return "Departamento";
-            case "province": return "Provincia";
-            case "district": return "Distrito";
-            case "administrative": return "Región";
+            case "city", "town": return "Ciudad";
+            case "region": return "Departamento";
             default: return tipo;
         }
     }
