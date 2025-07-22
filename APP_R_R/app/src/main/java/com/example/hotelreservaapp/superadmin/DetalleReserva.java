@@ -16,10 +16,28 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 public class DetalleReserva extends BottomSheetDialogFragment {
 
-    private final Reporte reporte;
+    private static final String ARG_HOTEL = "hotel";
+    private static final String ARG_CLIENTE = "cliente";
+    private static final String ARG_FECHA = "fecha";
+    private static final String ARG_ESTADO = "estado";
+    private static final String ARG_IMAGEN = "imagenResId";
+    private static final String ARG_CHECKIN = "checkIn";
+    private static final String ARG_CHECKOUT = "checkOut";
+    private static final String ARG_HABITACION = "habitacion";
 
-    public DetalleReserva(Reporte reporte) {
-        this.reporte = reporte;
+    public static DetalleReserva newInstance(Reporte reporte) {
+        DetalleReserva fragment = new DetalleReserva();
+        Bundle args = new Bundle();
+        args.putString(ARG_HOTEL, reporte.getHotel());
+        args.putString(ARG_CLIENTE, reporte.getCliente());
+        args.putString(ARG_FECHA, reporte.getFecha());
+        args.putString(ARG_ESTADO, reporte.getEstado());
+        args.putInt(ARG_IMAGEN, reporte.getImagenResId());
+        args.putString(ARG_CHECKIN, reporte.getCheckIn());
+        args.putString(ARG_CHECKOUT, reporte.getCheckOut());
+        args.putString(ARG_HABITACION, reporte.getHabitacion());
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Nullable
@@ -30,32 +48,46 @@ public class DetalleReserva extends BottomSheetDialogFragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        Bundle args = getArguments();
+        if (args == null) return;
+
+        String hotel = args.getString(ARG_HOTEL);
+        String cliente = args.getString(ARG_CLIENTE);
+        String fecha = args.getString(ARG_FECHA);
+        String estado = args.getString(ARG_ESTADO);
+        int imagenResId = args.getInt(ARG_IMAGEN);
+        String checkIn = args.getString(ARG_CHECKIN);
+        String checkOut = args.getString(ARG_CHECKOUT);
+        String habitacion = args.getString(ARG_HABITACION);
+
         TextView tvTituloHotel = view.findViewById(R.id.tvTituloHotel);
         ImageView ivFotoHotel = view.findViewById(R.id.ivFotoHotel);
-        ivFotoHotel.setImageResource(reporte.getImagenResId());
         TextView tvCliente = view.findViewById(R.id.tvCliente);
         TextView tvFechaReserva = view.findViewById(R.id.tvFechaReserva);
         TextView tvCheckIn = view.findViewById(R.id.tvCheckIn);
         TextView tvCheckOut = view.findViewById(R.id.tvCheckOut);
         TextView tvHabitacion = view.findViewById(R.id.tvHabitacion);
         TextView tvEstado = view.findViewById(R.id.tvEstado);
-        String estado = reporte.getEstado();
 
-        tvTituloHotel.setText(reporte.getHotel());
-        tvCliente.setText("Cliente: " + reporte.getCliente());
-        tvFechaReserva.setText("Fecha de reserva: " + reporte.getFecha());
-        tvCheckIn.setText("Check-in: 12/05/2025");
-        tvCheckOut.setText("Check-out: 14/05/2025");
-        tvHabitacion.setText("Habitación: Doble superior");
+        tvTituloHotel.setText(hotel);
+        ivFotoHotel.setImageResource(imagenResId);
+        tvCliente.setText("Cliente: " + cliente);
+        tvFechaReserva.setText("Fecha de reserva: " + fecha);
+        tvCheckIn.setText("Check-in: " + checkIn);
+        tvCheckOut.setText("Check-out: " + checkOut);
+        tvHabitacion.setText("Habitación: " + habitacion);
         tvEstado.setText("Estado: " + estado);
 
-        if (estado.equalsIgnoreCase("Confirmada")) {
-            tvEstado.setTextColor(getResources().getColor(R.color.estado_confirmado));
-        } else if (estado.equalsIgnoreCase("Cancelada")) {
-            tvEstado.setTextColor(getResources().getColor(R.color.estado_cancelado));
-        } else {
-            tvEstado.setTextColor(getResources().getColor(android.R.color.darker_gray));
+        int color = R.color.black;
+        if (estado != null) {
+            if (estado.equalsIgnoreCase("Confirmada")) {
+                color = R.color.estado_confirmado;
+            } else if (estado.equalsIgnoreCase("Cancelada")) {
+                color = R.color.estado_cancelado;
+            }
         }
+        tvEstado.setTextColor(requireContext().getColor(color));
     }
 }
-

@@ -20,9 +20,14 @@ import java.util.List;
 public class ReportesAdapter extends RecyclerView.Adapter<ReportesAdapter.ReporteViewHolder> {
 
     private List<Reporte> listaReportes;
+    private final OnItemClickListener listener;
 
-    public ReportesAdapter(List<Reporte> listaReportes) {
+    public interface OnItemClickListener {
+        void onItemClick(Reporte reporte);
+    }
+    public ReportesAdapter(List<Reporte> listaReportes, OnItemClickListener listener) {
         this.listaReportes = listaReportes;
+        this.listener = listener;
     }
 
     @NonNull
@@ -52,10 +57,8 @@ public class ReportesAdapter extends RecyclerView.Adapter<ReportesAdapter.Report
                 break;
         }
         holder.ivHotel.setImageResource(r.getImagenResId());
-        holder.itemView.setOnClickListener(v -> {
-            DetalleReserva bottomSheet = new DetalleReserva(r);
-            bottomSheet.show(((AppCompatActivity)v.getContext()).getSupportFragmentManager(), "detalleReserva");
-        });
+        holder.itemView.setOnClickListener(v -> listener.onItemClick(r));
+
     }
 
     @Override
