@@ -38,7 +38,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class TarjetaTaxistaAdapter extends RecyclerView.Adapter<TarjetaTaxistaAdapter.ViewHolder> {
 
@@ -59,6 +61,10 @@ public class TarjetaTaxistaAdapter extends RecyclerView.Adapter<TarjetaTaxistaAd
     private final OnNotificacionListener notificacionListener;
     private final boolean esHistorial;
     private static final String CHANNEL_ID = "ride_and_rest_channel";
+
+    String uidTaxista    = FirebaseAuth.getInstance().getCurrentUser().getUid();
+    String nombreTaxista = FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
+
 
     public TarjetaTaxistaAdapter(List<TarjetaModel> todas,
                                  Context context,
@@ -194,86 +200,138 @@ public class TarjetaTaxistaAdapter extends RecyclerView.Adapter<TarjetaTaxistaAd
                 break;
         }
 
-        // 4) btnAceptar: cambiar Solicitud→Aceptado, luego Aceptado→EnCurso
+
         holder.btnAceptar.setOnClickListener(v -> {
             String est = item.getEstado();
             FirebaseFirestore db = FirebaseFirestore.getInstance();
 
             if (EST_SOLICITADO.equals(est)) {
-                // Solo si no hay otra solicitud Aceptada/EnCurso
+                // 1) Comprueba que no haya otra carrera activa
                 boolean conflicto = false;
                 for (TarjetaModel t : listaCompartida) {
                     if (EST_ACEPTADO.equalsIgnoreCase(t.getEstado()) ||
                             EST_EN_CURSO.equalsIgnoreCase(t.getEstado())) {
-                        conflicto = true; break;
+                        conflicto = true;
+                        break;
                     }
                 }
                 if (conflicto) {
-                    Toast.makeText(context, "Ya tienes un viaje aceptado o en curso", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context,
+                            "Ya tienes un viaje aceptado o en curso",
+                            Toast.LENGTH_SHORT).show();
                     return;
                 }
-                db.collection("servicios_taxi")
-                        .document(item.getIdDocument())
-                        .update("estado", EST_ACEPTADO)
-                        .addOnSuccessListener(u -> {
-                            item.setEstado(EST_ACEPTADO);
-                            notifyItemChanged(position);
-                            sendNotification("Solicitud aceptada", "Has aceptado el viaje de " + item.getNombreCliente());
+
+                // 2) Lee el perfil del taxista que acepta
+                FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+                if (currentUser == null) return;
+                String uidTaxista = currentUser.getUid();
+
+                db.collection("usuarios")
+                        .document(uidTaxista)
+                        .get()
+                        .addOnSuccessListener(doc -> {
+                            if (!doc.exists()) return;
+
+                            // 3) Extrae los campos que necesitas
+                            String nombre    = doc.getString("nombre");
+                            String apellido  = doc.getString("apellido");
+                            String telefono  = doc.getString("telefono");
+                            String fotoUrl   = doc.getString("urlFotoPerfil");
+                            String nombreCompleto = ((nombre != null? nombre:"") + " " +
+                                    (apellido != null? apellido:"")).trim();
+
+                            // 4) Prepara todo el mapa de actualizaciones
+                            Map<String,Object> updates = new HashMap<>();
+                            updates.put("estado",          EST_ACEPTADO);
+                            updates.put("taxistaId",       uidTaxista);
+                            updates.put("taxistaNombre",   nombreCompleto);
+                            updates.put("taxistaTelefono", telefono != null? telefono:"");
+                            updates.put("taxistaFotoUrl",  fotoUrl != null? fotoUrl:"");
+
+                            // 5) Aplica la actualización
+                            db.collection("servicios_taxi")
+                                    .document(item.getIdDocument())
+                                    .update(updates)
+                                    .addOnSuccessListener(u -> {
+                                        // 6) Refleja el cambio en la UI
+                                        item.setEstado(EST_ACEPTADO);
+                                        notifyItemChanged(position);
+                                        sendNotification(
+                                                "Solicitud aceptada",
+                                                "Has aceptado el viaje de " + item.getNombreCliente()
+                                        );
+
+                                        // 7) Ahora envía la push al cliente
+                                        obtenerFCMTokenUsuario(item.getIdCliente(), new FCMTokenCallback() {
+                                            @Override
+                                            public void onTokenObtenido(String fcmToken) {
+                                                Log.d("FCM", "El token es: " + fcmToken);
+                                                FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+                                                if (currentUser == null) {
+                                                    Log.e("FCM", "❌ Usuario no autenticado");
+                                                    return;
+                                                }
+
+                                                String uidTaxista = currentUser.getUid(); // ← Aquí obtengo el UID directamente
+
+                                                FirebaseFirestore.getInstance().collection("usuarios").document(uidTaxista)
+                                                        .get()
+                                                        .addOnSuccessListener(documentSnapshot -> {
+                                                            if (documentSnapshot.exists()) {
+                                                                String nombre = documentSnapshot.getString("nombre");
+                                                                String apellido = documentSnapshot.getString("apellido");
+
+                                                                if (nombre != null && apellido != null) {
+                                                                    String nombreCompleto = nombre + " " + apellido;
+                                                                    Log.d("FCM", "✅ Nombre del taxista: " + nombreCompleto);
+
+                                                                    TaxistaPushNotification taxistaPushNotification = new TaxistaPushNotification();
+                                                                    taxistaPushNotification.enviarNotificacionAlCliente(fcmToken, nombreCompleto);
+                                                                } else {
+                                                                    Log.w("FCM", "⚠️ Nombre o apellido faltante");
+                                                                }
+                                                            } else {
+                                                                Log.e("FCM", "❌ Documento de taxista no encontrado");
+                                                            }
+                                                        })
+                                                        .addOnFailureListener(e -> Log.e("FCM", "❌ Error al obtener datos del taxista", e));
+                                            }
+
+                                            @Override
+                                            public void onError(Exception e) {
+                                                Log.e("FCM", "Error al obtener token", e);
+                                            }
+                                        });
+                                    })
+                                    .addOnFailureListener(e -> {
+                                        Toast.makeText(context,
+                                                "Error al aceptar la solicitud",
+                                                Toast.LENGTH_SHORT).show();
+                                    });
+                        })
+                        .addOnFailureListener(e -> {
+                            Toast.makeText(context,
+                                    "Error cargando perfil del taxista",
+                                    Toast.LENGTH_SHORT).show();
                         });
-
-
-                obtenerFCMTokenUsuario(item.getIdCliente(), new FCMTokenCallback() {
-                    @Override
-                    public void onTokenObtenido(String fcmToken) {
-                        Log.d("FCM", "El token es: " + fcmToken);
-                        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-                        if (currentUser == null) {
-                            Log.e("FCM", "❌ Usuario no autenticado");
-                            return;
-                        }
-
-                        String uidTaxista = currentUser.getUid(); // ← Aquí obtengo el UID directamente
-
-                        FirebaseFirestore.getInstance().collection("usuarios").document(uidTaxista)
-                                .get()
-                                .addOnSuccessListener(documentSnapshot -> {
-                                    if (documentSnapshot.exists()) {
-                                        String nombre = documentSnapshot.getString("nombre");
-                                        String apellido = documentSnapshot.getString("apellido");
-
-                                        if (nombre != null && apellido != null) {
-                                            String nombreCompleto = nombre + " " + apellido;
-                                            Log.d("FCM", "✅ Nombre del taxista: " + nombreCompleto);
-
-                                            TaxistaPushNotification taxistaPushNotification = new TaxistaPushNotification();
-                                            taxistaPushNotification.enviarNotificacionAlCliente(fcmToken, nombreCompleto);
-                                        } else {
-                                            Log.w("FCM", "⚠️ Nombre o apellido faltante");
-                                        }
-                                    } else {
-                                        Log.e("FCM", "❌ Documento de taxista no encontrado");
-                                    }
-                                })
-                                .addOnFailureListener(e -> Log.e("FCM", "❌ Error al obtener datos del taxista", e));
-                    }
-
-                    @Override
-                    public void onError(Exception e) {
-                        Log.e("FCM", "Error al obtener token", e);
-                    }
-                });
             }
             else if (EST_ACEPTADO.equals(est)) {
+                // Aquí tu código para Aceptado → EnCurso, igual que antes...
                 db.collection("servicios_taxi")
                         .document(item.getIdDocument())
                         .update("estado", EST_EN_CURSO)
                         .addOnSuccessListener(u -> {
                             item.setEstado(EST_EN_CURSO);
                             notifyItemChanged(position);
-                            sendNotification("Viaje en curso", "Recojo confirmado: " + item.getNombreCliente());
+                            sendNotification(
+                                    "Viaje en curso",
+                                    "Recojo confirmado: " + item.getNombreCliente()
+                            );
                         });
             }
         });
+
 
         // 5) btnCancelar: cancelar Solicitud, Aceptado o EnCurso
         holder.btnCancelar.setOnClickListener(v -> {

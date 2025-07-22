@@ -39,6 +39,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.material.button.MaterialButton;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.maps.android.PolyUtil;
 import com.google.firebase.database.DataSnapshot;
@@ -73,6 +74,10 @@ public class MapaActividad extends AppCompatActivity implements OnMapReadyCallba
     private ImageView ivFotoCliente;
     private TextView tvNombreCliente, tvTelefonoCliente;
     private com.google.android.material.button.MaterialButton btnConfirmarRecojo;
+
+    // Datos taxista sacados de Auth+Perfil
+    private String taxistaUid;
+    private String taxistaNombre, taxistaTelefono, taxistaPlaca;
 
     // Mapa
     private GoogleMap mMap;
@@ -124,6 +129,20 @@ public class MapaActividad extends AppCompatActivity implements OnMapReadyCallba
         destinoLat      = intent.getDoubleExtra("latDestino", 0);
         destinoLng      = intent.getDoubleExtra("lngDestino", 0);
 
+        // 0) Obtener UID de taxista y cargar su perfil
+        taxistaUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        FirebaseFirestore.getInstance()
+                .collection("taxistas")
+                .document(taxistaUid)
+                .get()
+                .addOnSuccessListener(doc -> {
+                    if (doc.exists()) {
+                        taxistaNombre   = doc.getString("nombre");
+                        taxistaTelefono = doc.getString("telefono");
+                        taxistaPlaca    = doc.getString("placa");
+                    }
+                });
+
         // 3) Mostrar datos
         tvNombreCliente.setText("Nombre: " + nombreCliente);
         tvTelefonoCliente.setText("Contacto: " + telefonoCliente);
@@ -174,19 +193,48 @@ public class MapaActividad extends AppCompatActivity implements OnMapReadyCallba
                 btnAccion.setText("Aceptar Solicitud");
                 btnAccion.setVisibility(View.VISIBLE);
                 btnAccion.setOnClickListener(v -> {
+                    // Primero comprobamos que no haya otros viajes activos...
                     FirebaseFirestore.getInstance()
                             .collection("servicios_taxi")
                             .whereIn("estado", List.of(EST_ACEPTADO, EST_EN_CURSO))
                             .get()
                             .addOnSuccessListener(q -> {
                                 if (q.isEmpty()) {
+                                    // 1) Transicionamos
                                     transitionState(EST_ACEPTADO);
+                                    // Aquí escribimos en Firestore el perfil del taxista:
+                                    FirebaseFirestore.getInstance()
+                                            .collection("servicios_taxi")
+                                            .document(serviceId)
+                                            .update(Map.of(
+                                                    "taxistaNombre",   taxistaNombre,
+                                                    "taxistaTelefono", taxistaTelefono,
+                                                    "taxistaPlaca",    taxistaPlaca
+                                            ));
+
+                                    // Publicar ubicación inicial en Realtime DB
+                                    if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                                        // TODO: Consider calling
+                                        //    ActivityCompat#requestPermissions
+                                        // here to request the missing permissions, and then overriding
+                                        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                                        //                                          int[] grantResults)
+                                        // to handle the case where the user grants the permission. See the documentation
+                                        // for ActivityCompat#requestPermissions for more details.
+                                        return;
+                                    }
+                                    fusedLocationClient.getLastLocation().addOnSuccessListener(loc -> {
+                                        if (loc != null) {
+                                            rideRef.child("taxiLocation")
+                                                    .setValue(Map.of("lat", loc.getLatitude(), "lng", loc.getLongitude()));
+                                        }
+                                    });
                                 } else {
                                     Toast.makeText(this, "Ya tienes un viaje activo", Toast.LENGTH_SHORT).show();
                                 }
                             });
                 });
-            break;
+                break;
             case EST_ACEPTADO:
                 tvHeader.setText("Recoge al Cliente");
                 btnAccion.setText("Confirmar Recojo");
@@ -232,7 +280,7 @@ public class MapaActividad extends AppCompatActivity implements OnMapReadyCallba
                     setupButtonsForState(nuevoEstado);
                     Toast.makeText(this, "Estado: " + nuevoEstado, Toast.LENGTH_SHORT).show();
                     // 2) Redibuja ruta con el nuevo target
-                    if (mMap != null) {
+                    if (mMap != null && !EST_SOLICITADO.equals(nuevoEstado)) {
                         drawRouteToCurrentTarget();
                     }
                 });
@@ -325,9 +373,8 @@ public class MapaActividad extends AppCompatActivity implements OnMapReadyCallba
         rideRef.child("taxiLocation")
                 .addValueEventListener(new ValueEventListener() {
                     @Override public void onDataChange(DataSnapshot ds) {
-                        double lat = ds.child("lat").getValue(Double.class);
-                        double lng = ds.child("lng").getValue(Double.class);
-                        LatLng taxiPos = new LatLng(lat, lng);
+                        LatLng taxiPos = new LatLng(ds.child("lat").getValue(Double.class),
+                                ds.child("lng").getValue(Double.class));
                         if (EST_SOLICITADO.equals(estadoActual)) {
                             placeMarkers(taxiPos, new LatLng(clienteLat, clienteLng));
                         } else {
@@ -337,7 +384,7 @@ public class MapaActividad extends AppCompatActivity implements OnMapReadyCallba
                             drawRoute(taxiPos, target);
                         }
                     }
-                    @Override public void onCancelled(DatabaseError e){}
+                    @Override public void onCancelled(DatabaseError e) { }
                 });
 
 
