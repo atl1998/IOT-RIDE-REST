@@ -75,10 +75,10 @@ public class ViajeEnCursoActivity extends AppCompatActivity implements OnMapRead
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
-        nombre = getIntent().getStringExtra("nombre");
-        telefono = getIntent().getStringExtra("telefono");
-        latOrigen = getIntent().getDoubleExtra("latOrigen", 0.0);
-        lngOrigen = getIntent().getDoubleExtra("lngOrigen", 0.0);
+        nombre     = getIntent().getStringExtra("nombreCliente");
+        telefono   = getIntent().getStringExtra("telefonoCliente");
+        latOrigen  = getIntent().getDoubleExtra("latOrigen",  0.0);
+        lngOrigen  = getIntent().getDoubleExtra("lngOrigen",  0.0);
         latDestino = getIntent().getDoubleExtra("latDestino", 0.0);
         lngDestino = getIntent().getDoubleExtra("lngDestino", 0.0);
 
@@ -98,14 +98,15 @@ public class ViajeEnCursoActivity extends AppCompatActivity implements OnMapRead
 
         btnFinalizarViaje.setOnClickListener(v -> {
             Intent intent = new Intent(this, QrLecturaActivity.class);
-            intent.putExtra("nombre", nombre);
-            intent.putExtra("telefono", telefono);
-            intent.putExtra("latOrigen", latOrigen);
-            intent.putExtra("lngOrigen", lngOrigen);
-            intent.putExtra("latDestino", latDestino);
-            intent.putExtra("lngDestino", lngDestino);
+            intent.putExtra("nombreCliente",   nombre);
+            intent.putExtra("telefonoCliente", telefono);
+            intent.putExtra("latOrigen",       latOrigen);
+            intent.putExtra("lngOrigen",       lngOrigen);
+            intent.putExtra("latDestino",      latDestino);
+            intent.putExtra("lngDestino",      lngDestino);
             startActivity(intent);
         });
+
 
 
         btnCancelarViaje.setOnClickListener(v -> {

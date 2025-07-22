@@ -28,7 +28,7 @@
                 android:id="@+id/titulo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Ride &amp; Rest / Asturias"
+                android:text="Ride &amp; Rest / Instalaciones"
                 android:textColor="#282828"
                 android:textSize="20sp"
                 android:textStyle="bold"
@@ -38,7 +38,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"/>
 
-            <!-- Notificaciones -->
+            <!-- Notificaciones
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/NotificacionesAdminHotel"
                 android:layout_width="48dp"
@@ -54,7 +54,7 @@
                 android:contentDescription="Notificaciones"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"/>
+                app:layout_constraintBottom_toBottomOf="parent"/>-->
 
 
 

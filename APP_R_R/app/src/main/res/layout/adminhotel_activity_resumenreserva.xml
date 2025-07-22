@@ -57,23 +57,6 @@
                 app:layout_constraintBottom_toBottomOf="parent"/>
 
 
-            <!-- Notificaciones -->
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/NotificacionesAdminHotel"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:backgroundTint="@color/transparente"
-                app:icon="@drawable/ic_message"
-                app:iconTint="@color/marron_oscuro"
-                app:iconGravity="textStart"
-                app:iconPadding="0dp"
-                android:padding="15dp"
-                android:minWidth="0dp"
-                android:minHeight="0dp"
-                android:contentDescription="Notificaciones"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </LinearLayout>
@@ -113,6 +96,7 @@
                     android:padding="16dp">
 
                     <ImageView
+                        android:id="@+id/ivProfileImage"
                         android:layout_width="80dp"
                         android:layout_height="80dp"
                         android:layout_gravity="center_horizontal"
@@ -266,14 +250,49 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:padding="16dp">
-                    <!-- Sección de Reserva -->
-                    <TextView
-                        android:layout_width="wrap_content"
+                    <!-- Cabecera con título + botones alineados horizontalmente -->
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="0dp"
-                        android:text="Tu reserva"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
+                        android:padding="6dp">
+
+                        <!-- Título -->
+                        <TextView
+                            android:id="@+id/tvSectionTitle"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:text="Tu reserva"
+                            android:textSize="18sp"
+                            android:textStyle="bold"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toStartOf="@+id/btnRefresh"
+                            app:layout_constraintHorizontal_chainStyle="spread_inside" />
+
+                        <!-- Botón Refrescar -->
+                        <Button
+                            android:id="@+id/btnRefresh"
+                            style="?attr/materialIconButtonFilledTonalStyle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            app:icon="@drawable/adminhotel_refresh"
+                            app:layout_constraintBaseline_toBaselineOf="@id/tvSectionTitle"
+                            app:layout_constraintEnd_toStartOf="@+id/btnEditarPago"
+                            android:layout_marginEnd="8dp" />
+
+                        <!-- Botón editar pago -->
+                        <Button
+                            android:id="@+id/btnEditarPago"
+                            style="?attr/materialIconButtonFilledTonalStyle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            app:icon="@drawable/edit_icon"
+                            app:layout_constraintBaseline_toBaselineOf="@id/tvSectionTitle"
+                            app:layout_constraintEnd_toEndOf="parent" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -500,8 +519,44 @@
                             android:paddingStart="0dp"
                             android:paddingEnd="16dp">
 
+                            <RelativeLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1">
+
+                                <TextView
+                                    android:id="@+id/labelCargos"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="match_parent"
+                                    android:layout_alignParentStart="true"
+                                    android:text="Cargos por daño:"
+                                    android:textColor="#000000"
+                                    android:textSize="16sp" />
+
+                                <TextView
+                                    android:id="@+id/valorCargos"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentEnd="true"
+                                    android:text="S/. 200"
+                                    android:textColor="#444444"
+                                    android:textSize="16sp" />
+                            </RelativeLayout>
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="5dp"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:paddingStart="0dp"
+                            android:paddingEnd="16dp">
+
 
                         </LinearLayout>
+
+
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -622,15 +677,17 @@
                         android:textColor="#555"
                         android:textSize="14sp" />
 
+
                     <!-- Botón de Pago -->
                     <Button
-                        android:id="@+id/btn_historial_reservas"
+                        android:id="@+id/btn_confirmar_checkout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
                         android:backgroundTint="@color/dorado"
                         android:text="Confirmar Check out"
-                        android:textColor="#FFFFFF" />
+                        android:textColor="#FFFFFF"
+                        android:enabled="false"/>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 

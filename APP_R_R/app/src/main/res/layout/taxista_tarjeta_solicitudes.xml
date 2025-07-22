@@ -138,7 +138,7 @@
                 android:layout_weight="1"
                 android:layout_marginEnd="6dp"
                 android:backgroundTint="@color/crema"
-                android:text="Ver en el Mapa"
+                android:text="Ver Mapa"
                 android:textColor="@color/black"
                 android:textSize="13sp"
                 android:gravity="center" />

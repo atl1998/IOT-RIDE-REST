@@ -2,72 +2,43 @@ package com.example.hotelreservaapp.cliente;
 
 public class OfertaHotel {
     private String nombre;
-    private String ubicacion;
-    private String puntuacion;
-    private String calificacion;
-    private String comentarios;
-    private String duracion;
-    private String precioOriginal;
-    private String precioFinal;
-    private int imagenResourceId;
-    private boolean tieneOfertaEscapada;
+    private double valoracion;
+    private String urlFotoHotel;
+    private String departamento;
+    private double precioMin;
 
-    public OfertaHotel(String nombre, String ubicacion, String puntuacion, String calificacion,
-                       String comentarios, String duracion, String precioOriginal,
-                       String precioFinal, int imagenResourceId, boolean tieneOfertaEscapada) {
-        this.nombre = nombre;
-        this.ubicacion = ubicacion;
-        this.puntuacion = puntuacion;
-        this.calificacion = calificacion;
-        this.comentarios = comentarios;
-        this.duracion = duracion;
-        this.precioOriginal = precioOriginal;
-        this.precioFinal = precioFinal;
-        this.imagenResourceId = imagenResourceId;
-        this.tieneOfertaEscapada = tieneOfertaEscapada;
+    public OfertaHotel() {
+        // Constructor vacío necesario para Firestore
     }
+
+    public OfertaHotel(String nombre, double valoracion, String urlFotoHotel, String departamento, double precioMin) {
+        this.nombre = nombre;
+        this.valoracion = valoracion;
+        this.urlFotoHotel = urlFotoHotel;
+        this.departamento = departamento;
+        this.precioMin = precioMin;
+    }
+
 
     public String getNombre() {
         return nombre;
     }
 
-    public String getUbicacion() {
-        return ubicacion;
+    public double getValoracion() {
+        return valoracion;
     }
 
-    public String getPuntuacion() {
-        return puntuacion;
+    public String getUrlFotoHotel() {
+        return urlFotoHotel;
     }
 
-    public String getCalificacion() {
-        return calificacion;
+    public String getDepartamento() {
+        return departamento;
     }
 
-    public String getComentarios() {
-        return comentarios;
+    public double getPrecioMin() {
+        return precioMin;
     }
 
-    public String getDuracion() {
-        return duracion;
-    }
-
-    public String getPrecioOriginal() {
-        return precioOriginal;
-    }
-
-    public String getPrecioFinal() {
-        return precioFinal;
-    }
-
-    public int getImagenResourceId() {
-        return imagenResourceId;
-    }
-
-    public boolean isTieneOfertaEscapada() {
-        return tieneOfertaEscapada;
-    }
-
-    public String getCalificacionCompleta() {
-        return getCalificacion() + " • " + getComentarios();
-    }
+    // Puedes agregar setters si necesitas modificarlos manualmente
 }

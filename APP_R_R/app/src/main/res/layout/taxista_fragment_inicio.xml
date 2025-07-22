@@ -65,7 +65,7 @@
                 app:layout_constraintEnd_toEndOf="parent">
 
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/notificaciones_cliente"
+                    android:id="@+id/notificacionesTaxista"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:backgroundTint="@color/transparente"
@@ -157,13 +157,18 @@
     <!-- RecyclerView para mostrar tarjetas -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerTaxista"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_width="386dp"
+        android:layout_height="564dp"
+        android:clipToPadding="false"
         android:padding="16dp"
-        app:layout_constraintTop_toBottomOf="@id/headerLayout"
+        android:paddingBottom="72dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.485"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/headerLayout"
+        app:layout_constraintVertical_bias="0.0"
         tools:listitem="@layout/taxista_tarjeta_solicitudes" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -93,7 +93,7 @@
                 android:layout_height="60dp"
                 android:layout_marginEnd="12dp"
                 android:scaleType="centerCrop"
-                android:src="@drawable/coronado" />
+                android:src="@drawable/default_profile" />
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -125,7 +125,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
-                    android:backgroundTint="@color/estado_confirmado"
+                    android:backgroundTint="@color/dorado_oscuro"
                     android:text="Finalizar Viaje"
                     android:textColor="@android:color/white"
                     app:cornerRadius="12dp" />
@@ -134,7 +134,7 @@
                     android:id="@+id/btnCancelarViaje"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:backgroundTint="@color/estado_cancelado"
+                    android:backgroundTint="@color/black"
                     android:text="Cancelar viaje"
                     android:textColor="@android:color/white"
                     app:cornerRadius="12dp" />

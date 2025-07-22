@@ -17,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -44,6 +45,13 @@ public class TarjetaTaxistaAdapter extends RecyclerView.Adapter<TarjetaTaxistaAd
         void onViajeCancelado(TarjetaModel tarjeta);
     }
 
+    // Estados canonizados
+    private static final String EST_SOLICITADO = "Solicitado";
+    private static final String EST_ACEPTADO    = "Aceptado";
+    private static final String EST_EN_CURSO    = "EnCurso";
+    private static final String EST_CANCELADO   = "Cancelado";
+    private static final String EST_FINALIZADO  = "Finalizado";
+
     public static List<TarjetaModel> listaCompartida = new ArrayList<>();
     private final Context context;
     private final OnNotificacionListener notificacionListener;
@@ -64,18 +72,24 @@ public class TarjetaTaxistaAdapter extends RecyclerView.Adapter<TarjetaTaxistaAd
     }
 
     private List<TarjetaModel> ordenarPorPrioridad(List<TarjetaModel> listaOriginal) {
-        List<TarjetaModel> enProgreso = new ArrayList<>();
-        List<TarjetaModel> solicitados  = new ArrayList<>();
+        List<TarjetaModel> top       = new ArrayList<>();
+        List<TarjetaModel> resto     = new ArrayList<>();
+
         for (TarjetaModel item : listaOriginal) {
-            if ("En progreso".equalsIgnoreCase(item.getEstado()))
-                enProgreso.add(item);
-            else if ("Solicitado".equalsIgnoreCase(item.getEstado()))
-                solicitados.add(item);
+            String st = item.getEstado();
+            if (EST_ACEPTADO.equals(st) || EST_EN_CURSO.equals(st)) {
+                top.add(item);
+            } else {
+                resto.add(item);
+            }
         }
-        Collections.reverse(solicitados);
-        List<TarjetaModel> resultado = new ArrayList<>();
-        resultado.addAll(enProgreso);
-        resultado.addAll(solicitados);
+
+        // Ordenar el resto por timestamp ascendente (la más nueva al final)
+        Collections.sort(resto, (a, b) -> Long.compare(a.getTimestamp(), b.getTimestamp()));
+
+        List<TarjetaModel> resultado = new ArrayList<>(top.size() + resto.size());
+        resultado.addAll(top);
+        resultado.addAll(resto);
         return resultado;
     }
 
@@ -121,18 +135,17 @@ public class TarjetaTaxistaAdapter extends RecyclerView.Adapter<TarjetaTaxistaAd
         return new ViewHolder(v);
     }
 
+
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         TarjetaModel item = listaCompartida.get(position);
 
-        // Textos
+        // 1) Textos y foto
         holder.nombreUsuario.setText(item.getNombreCliente());
         holder.fecha.setText(item.getFecha());
         holder.hora.setText(item.getHora());
         holder.ubicacion.setText(item.getUbicacionOrigen());
         holder.estado.setText(item.getEstado());
-
-        // Foto de perfil cliente
         String urlFoto = item.getFotoCliente();
         if (urlFoto != null && !urlFoto.isEmpty()) {
             Glide.with(context)
@@ -144,127 +157,99 @@ public class TarjetaTaxistaAdapter extends RecyclerView.Adapter<TarjetaTaxistaAd
             holder.ivFotoCliente.setImageResource(R.drawable.default_profile);
         }
 
-        // Estados de botones
+        // 2) Reset visibilidad botones
+        holder.btnAceptar.setVisibility(View.GONE);
+        holder.btnCancelar.setVisibility(View.GONE);
+        holder.btnVerMapa.setVisibility(View.GONE);
+
+        // 3) Configuración según estado
         switch (item.getEstado()) {
-            case "En progreso":
-                holder.estado.setTextColor(
-                        context.getResources().getColor(R.color.verde_aceptar));
-                holder.btnAceptar.setVisibility(View.GONE);
-                holder.btnCancelar.setVisibility(View.VISIBLE);
-                holder.btnVerMapa.setVisibility(View.VISIBLE);
-                break;
-            case "Solicitado":
-                holder.estado.setTextColor(
-                        context.getResources().getColor(R.color.azul));
+            case EST_SOLICITADO:
+                holder.estado.setTextColor(context.getResources().getColor(R.color.azul));
                 holder.btnAceptar.setVisibility(View.VISIBLE);
-                holder.btnCancelar.setVisibility(View.GONE);
+                holder.btnAceptar.setText("Aceptar Solicitud");
                 holder.btnVerMapa.setVisibility(View.VISIBLE);
                 break;
-            case "Cancelado":
-                holder.estado.setTextColor(
-                        context.getResources().getColor(R.color.error_red));
-                holder.btnAceptar.setVisibility(View.GONE);
-                holder.btnCancelar.setVisibility(View.GONE);
-                holder.btnVerMapa.setVisibility(View.GONE);
+            case EST_ACEPTADO:
+                holder.estado.setTextColor(context.getResources().getColor(R.color.verde_aceptar));
+                holder.btnAceptar.setVisibility(View.VISIBLE);
+                holder.btnAceptar.setText("Confirmar Recojo");
+                holder.btnCancelar.setVisibility(View.VISIBLE);
+                holder.btnCancelar.setText("Cancelar Solicitud");
+                holder.btnVerMapa.setVisibility(View.VISIBLE);
                 break;
-            case "Finalizado":
+            case EST_EN_CURSO:
+                holder.estado.setTextColor(context.getResources().getColor(R.color.verde_aceptar));
+                holder.btnCancelar.setVisibility(View.VISIBLE);
+                holder.btnCancelar.setText("Cancelar Viaje");
+                holder.btnVerMapa.setVisibility(View.VISIBLE);
+                break;
+            case EST_CANCELADO:
+                holder.estado.setTextColor(context.getResources().getColor(R.color.error_red));
+                break;
+            case EST_FINALIZADO:
                 holder.estado.setTextColor(Color.GRAY);
-                holder.btnAceptar.setVisibility(View.GONE);
-                holder.btnCancelar.setVisibility(View.GONE);
-                holder.btnVerMapa.setVisibility(View.GONE);
                 break;
         }
 
-        // Aceptar viaje
+        // 4) btnAceptar: cambiar Solicitud→Aceptado, luego Aceptado→EnCurso
         holder.btnAceptar.setOnClickListener(v -> {
-            boolean yaEnCurso = false;
-            for (TarjetaModel t : listaCompartida) {
-                if ("En progreso".equalsIgnoreCase(t.getEstado())) {
-                    yaEnCurso = true;
-                    break;
+            String est = item.getEstado();
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+            if (EST_SOLICITADO.equals(est)) {
+                // Solo si no hay otra solicitud Aceptada/EnCurso
+                boolean conflicto = false;
+                for (TarjetaModel t : listaCompartida) {
+                    if (EST_ACEPTADO.equalsIgnoreCase(t.getEstado()) ||
+                            EST_EN_CURSO.equalsIgnoreCase(t.getEstado())) {
+                        conflicto = true; break;
+                    }
                 }
-            }
-            if (yaEnCurso) {
-                Toast.makeText(context,
-                        "No puedes aceptar el viaje porque tienes uno en curso",
-                        Toast.LENGTH_SHORT).show();
-            } else {
-                item.setEstado("En progreso");
-                FirebaseFirestore.getInstance()
-                        .collection("servicios_taxi")
+                if (conflicto) {
+                    Toast.makeText(context, "Ya tienes un viaje aceptado o en curso", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                db.collection("servicios_taxi")
                         .document(item.getIdDocument())
-                        .update("estado", "En progreso")
-                        .addOnSuccessListener(unused -> {
-                            listaCompartida = ordenarPorPrioridad(listaCompartida);
-                            notifyDataSetChanged();
+                        .update("estado", EST_ACEPTADO)
+                        .addOnSuccessListener(u -> {
+                            item.setEstado(EST_ACEPTADO);
+                            notifyItemChanged(position);
+                            sendNotification("Solicitud aceptada", "Has aceptado el viaje de " + item.getNombreCliente());
                         });
-                if (notificacionListener != null)
-                    notificacionListener.onViajeAceptado(item);
-                sendNotification("Solicitud aceptada",
-                        "Has aceptado el pedido de " + item.getNombreCliente());
-
-                //
-                String idCliente = item.getIdCliente();
-                String ola = "ola";
-
-                FirebaseFirestore db = FirebaseFirestore.getInstance();
-                db.collection("usuarios")
-                        .document(idCliente)
-                        .get()
-                        .addOnSuccessListener(documentSnapshot -> {
-                            if (documentSnapshot.exists()) {
-                                String fcmTokenCliente = documentSnapshot.getString("fcmToken");
-                                if (fcmTokenCliente != null) {
-                                    TaxistaPushNotification tn = new TaxistaPushNotification();
-                                    tn.enviarNotificacionAlCliente(fcmTokenCliente, "Nilo Cori");
-                                } else {
-                                    Log.w("FCM_TOKEN", "El cliente no tiene token FCM guardado");
-                                }
-                            } else {
-                                Log.w("FCM_TOKEN", "Documento de cliente no existe");
-                            }
-                        })
-                        .addOnFailureListener(e -> {
-                            Log.e("FCM_TOKEN", "Error al obtener token FCM", e);
+            }
+            else if (EST_ACEPTADO.equals(est)) {
+                db.collection("servicios_taxi")
+                        .document(item.getIdDocument())
+                        .update("estado", EST_EN_CURSO)
+                        .addOnSuccessListener(u -> {
+                            item.setEstado(EST_EN_CURSO);
+                            notifyItemChanged(position);
+                            sendNotification("Viaje en curso", "Recojo confirmado: " + item.getNombreCliente());
                         });
-                //
-
-                Intent i = new Intent(context, MapaActividad.class);
-                i.putExtra("latOrigen",  item.getLatOrigen());
-                i.putExtra("lngOrigen",  item.getLngOrigen());
-                i.putExtra("latDestino", item.getLatDestino());
-                i.putExtra("lngDestino", item.getLngDestino());
-                context.startActivity(i);
             }
         });
 
-        // Cancelar viaje
+        // 5) btnCancelar: cancelar Solicitud, Aceptado o EnCurso
         holder.btnCancelar.setOnClickListener(v -> {
-            item.setEstado("Cancelado");
             FirebaseFirestore.getInstance()
                     .collection("servicios_taxi")
-                    .document(item.getIdCliente())
-                    .update("estado", "Cancelado")
-                    .addOnSuccessListener(unused -> {
+                    .document(item.getIdDocument())
+                    .update("estado", EST_CANCELADO)
+                    .addOnSuccessListener(u -> {
+                        item.setEstado(EST_CANCELADO);
                         listaCompartida.remove(position);
-                        notifyDataSetChanged();
+                        notifyItemRemoved(position);
+                        sendNotification("Viaje cancelado", "Has cancelado el viaje con " + item.getNombreCliente());
                     });
-            if (notificacionListener != null)
-                notificacionListener.onViajeCancelado(item);
-            sendNotification("Viaje cancelado",
-                    "Has cancelado el viaje con " + item.getNombreCliente());
         });
 
+        // 6) btnVerMapa: abre MapaActividad con todos los extras, incluyendo estado
         holder.btnVerMapa.setOnClickListener(v -> {
-            String est = item.getEstado();
-            Intent intent;
-            if ("En progreso".equalsIgnoreCase(est)) {
-                intent = new Intent(context, ViajeEnCursoActivity.class);
-            } else {
-                intent = new Intent(context, MapaActividad.class);
-            }
-
-            // **Muy importante:** usar siempre la misma clave al poner y al leer
+            Intent intent = new Intent(context, MapaActividad.class);
+            intent.putExtra("serviceId", item.getIdDocument());
+            intent.putExtra("estado",          item.getEstado());
             intent.putExtra("nombreCliente",   item.getNombreCliente());
             intent.putExtra("telefonoCliente", item.getTelefonoCliente());
             intent.putExtra("fotoCliente",     item.getFotoCliente());
@@ -272,28 +257,29 @@ public class TarjetaTaxistaAdapter extends RecyclerView.Adapter<TarjetaTaxistaAd
             intent.putExtra("lngOrigen",       item.getLngOrigen());
             intent.putExtra("latDestino",      item.getLatDestino());
             intent.putExtra("lngDestino",      item.getLngDestino());
-
             context.startActivity(intent);
         });
 
-
-        // Detalles completos
+        // 7) cardView → DetallesViajeActivity (igual que antes)
         holder.cardView.setOnClickListener(v -> {
             Intent intent = new Intent(context, DetallesViajeActivity.class);
-            intent.putExtra("nombreCliente",       item.getNombreCliente());
-            intent.putExtra("correo",       item.getCorreoCliente());
-            intent.putExtra("telefono",     item.getTelefonoCliente());
-            intent.putExtra("fotoCliente",  item.getFotoCliente());
-            intent.putExtra("fecha",        item.getFecha());
-            intent.putExtra("hora",         item.getHora());
-            intent.putExtra("ubicacionText",item.getUbicacionOrigen());
-            intent.putExtra("destinoText",  item.getDestino());
-            intent.putExtra("estado",       item.getEstado());
-            intent.putExtra("origen",       new LatLng(item.getLatOrigen(),  item.getLngOrigen()));
-            intent.putExtra("destino",      new LatLng(item.getLatDestino(), item.getLngDestino()));
+            intent.putExtra("idDocument", item.getIdDocument());
+            intent.putExtra("nombreCliente",   item.getNombreCliente());
+            intent.putExtra("correo",          item.getCorreoCliente());
+            intent.putExtra("telefono",        item.getTelefonoCliente());
+            intent.putExtra("fotoCliente",     item.getFotoCliente());
+            intent.putExtra("fecha",           item.getFecha());
+            intent.putExtra("hora",            item.getHora());
+            intent.putExtra("ubicacionText",   item.getUbicacionOrigen());
+            intent.putExtra("destinoText",     item.getDestino());
+            intent.putExtra("estado",          item.getEstado());
+            intent.putExtra("origen",   new LatLng(item.getLatOrigen(),  item.getLngOrigen()));
+            intent.putExtra("destino",  new LatLng(item.getLatDestino(), item.getLngDestino()));
             context.startActivity(intent);
         });
     }
+
+
 
     @Override
     public int getItemCount() {

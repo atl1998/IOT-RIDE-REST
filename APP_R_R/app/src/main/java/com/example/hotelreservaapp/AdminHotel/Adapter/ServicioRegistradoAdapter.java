@@ -69,12 +69,12 @@ public class ServicioRegistradoAdapter extends RecyclerView.Adapter<com.example.
             holder.tvImagen.setImageResource(R.drawable.bedroom_parent_24dp_black);
         }
 
-
+         /*
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(v.getContext(), DetalleHabitacionActivity.class);
             v.getContext().startActivity(intent);
         });
-         /*
+
         if (habitacion.getSeleccionadas() > 0) {
             holder.btnSeleccionar.setVisibility(View.GONE);
             holder.layoutSeleccion.setVisibility(View.VISIBLE);

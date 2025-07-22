@@ -12,9 +12,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.hotelreservaapp.Objetos.Notificaciones;
+import com.example.hotelreservaapp.R;
 import com.example.hotelreservaapp.taxista.TaxistaMain;
 import com.example.hotelreservaapp.taxista.adapter.NotificacionesAdapter;
-import com.example.hotelreservaapp.R;
 import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
@@ -40,7 +40,6 @@ public class TaxistaNotificacionesFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         cargarListaGlobal();
-
         adapter = new NotificacionesAdapter(getContext(), listaNotificaciones);
         recyclerView.setAdapter(adapter);
 
@@ -62,6 +61,7 @@ public class TaxistaNotificacionesFragment extends Fragment {
         }
     }
 
+    /** Refresca la lista y notifica al adapter. */
     public void refrescarListaNotificaciones() {
         cargarListaGlobal();
         if (adapter != null) {
@@ -69,36 +69,14 @@ public class TaxistaNotificacionesFragment extends Fragment {
         }
     }
 
-    public void agregarNotificacionEvento(String tipo, String titulo, String tituloAmigable,
-                                          String mensaje, String mensajeExtra, long fecha) {
-        if (getActivity() instanceof TaxistaMain) {
-            TaxistaMain main = (TaxistaMain) getActivity();
-
-            int nuevoId = main.getListaGlobalNotificaciones().size() > 0
-                    ? main.getListaGlobalNotificaciones().get(main.getListaGlobalNotificaciones().size() - 1).getId() + 1
-                    : 1;
-
-            Notificaciones nueva = new Notificaciones(nuevoId, tipo, titulo, tituloAmigable, mensaje, mensajeExtra, fecha);
-            main.agregarNotificacionGlobal(nueva);
-
-            refrescarListaNotificaciones();
-        }
-    }
-
-
     @Override
     public void onResume() {
         super.onResume();
-
+        // Al entrar, marcamos todo como leído y actualizamos badge/lista
         if (getActivity() instanceof TaxistaMain) {
             TaxistaMain main = (TaxistaMain) getActivity();
             main.marcarNotificacionesComoLeidas();
-
-            // Refrescar lista y UI
             refrescarListaNotificaciones();
-
-            // También podrías avisar al fragmento inicio para que actualice badge si quieres
         }
     }
-
 }

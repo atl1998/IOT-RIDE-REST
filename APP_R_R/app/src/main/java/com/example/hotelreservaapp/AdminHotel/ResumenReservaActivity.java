@@ -1,38 +1,229 @@
 package com.example.hotelreservaapp.AdminHotel;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.widget.TextView;
+import android.util.Log;
+import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
+import com.bumptech.glide.Glide;
 import com.example.hotelreservaapp.AdminHotel.Model.ReservaInicio;
 import com.example.hotelreservaapp.R;
+import com.example.hotelreservaapp.databinding.AdminhotelActivityResumenreservaBinding;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class ResumenReservaActivity extends AppCompatActivity {
 
     public static final String EXTRA_RESERVA = "extra_reserva";
 
-    ResumenReservaActivity binding;
+    private AdminhotelActivityResumenreservaBinding binding;
+    private FirebaseFirestore db;
+    private String uid;
+    private ReservaInicio reserva;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.adminhotel_activity_resumenreserva);
+        binding = AdminhotelActivityResumenreservaBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
-        // 1) Recupera el objeto ReservaInicio (debe implementar Serializable o Parcelable)
-        ReservaInicio reserva = (ReservaInicio) getIntent().getSerializableExtra(EXTRA_RESERVA);
+        // 1) Instancias básicas
+        db  = FirebaseFirestore.getInstance();
+        uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
+        // 2) Recuperar reserva
+        reserva = (ReservaInicio) getIntent().getSerializableExtra(EXTRA_RESERVA);
+        if (reserva == null) {
+            Toast.makeText(this, "Error al cargar datos de la reserva", Toast.LENGTH_LONG).show();
+            finish();
+            return;
+        }
 
-        System.out.println("Reserva Id Usario " + reserva.getIdUsuario());
-        System.out.println("Reserva Nombre Completo " + reserva.getNombreCompleto());
+        // luego de binding = …
+        binding.btnRefresh.setOnClickListener(v -> {
+            // Opcional: mostrar un indicador de carga
+            Toast.makeText(this, "Actualizando datos…", Toast.LENGTH_SHORT).show();
+            refreshAll();
+        });
 
-        // …
+        // 3) Botones
+        binding.backBottom.setOnClickListener(v -> onBackPressed());
+        binding.btnEditarPago.setOnClickListener(v -> {
+            Intent intent = new Intent(this, EditarPagoActivity.class);
+            intent.putExtra(EXTRA_RESERVA, reserva);
+            startActivity(intent);
+        });
+
+        // 4) Primera carga de datos
+        refreshAll();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Cada vez que vuelve a primer plano, recargar datos
+        refreshAll();
+    }
+
+    /** Orquesta todas las lecturas/creaciones de Firestore */
+    private void refreshAll() {
+        ensureCostosDocument();
+        loadImagenUsuario();
+        loadDatosUsuario();
+        loadDatosReserva();
+        loadPago();
+    }
+
+    /** Crea el documento de costos si no existía */
+    private void ensureCostosDocument() {
+        String reservaId = reserva.getIdreserva();
+        DocumentReference costosRef = db.collection("costos").document(reservaId);
+
+        Log.d("ResumenReserva", "Verificando costos/" + reservaId);
+        costosRef.get().addOnSuccessListener(costSnap -> {
+            if (costSnap.exists()) {
+                Log.d("ResumenReserva", "Ya existe costos/" + reservaId);
+                return;
+            }
+            Log.d("ResumenReserva", "No existe costos/" + reservaId + ", creando…");
+
+            // Obtener idHotel del usuario
+            db.collection("usuarios").document(uid)
+                    .get().addOnSuccessListener(userSnap -> {
+                        if (!userSnap.exists()) {
+                            Log.e("ResumenReserva", "Usuario adminhotel no encontrado");
+                            return;
+                        }
+                        String idHotel = userSnap.getString("idHotel");
+                        if (idHotel == null) {
+                            Log.e("ResumenReserva", "Usuario sin idHotel asignado");
+                            return;
+                        }
+                        Log.d("ResumenReserva", "idHotel=" + idHotel);
+
+                        // Leer servicios con precio > 0
+                        CollectionReference servsRef = db
+                                .collection("Hoteles")
+                                .document(idHotel)
+                                .collection("servicios");
+
+                        servsRef.whereGreaterThan("precio", 0)
+                                .get()
+                                .addOnSuccessListener(query -> {
+                                    Log.d("ResumenReserva", "Servicios encontrados: " + query.size());
+                                    List<Map<String,Object>> lista = new ArrayList<>();
+                                    for (DocumentSnapshot s : query) {
+                                        String nombre = s.getString("nombre");
+                                        if (nombre != null) {
+                                            Map<String,Object> item = new HashMap<>();
+                                            item.put("nombre", nombre);
+                                            item.put("costo", 0);
+                                            lista.add(item);
+                                        }
+                                    }
+                                    // Añadir cargo por daños al final
+                                    Map<String,Object> danos = new HashMap<>();
+                                    danos.put("nombre", "Costo por daños");
+                                    danos.put("costo", 0);
+                                    lista.add(danos);
+
+                                    Map<String,Object> datos = new HashMap<>();
+                                    datos.put("servicios", lista);
+                                    datos.put("creadoEn", FieldValue.serverTimestamp());
+
+                                    costosRef.set(datos)
+                                            .addOnSuccessListener(a -> Log.d("ResumenReserva", "Costos iniciales creados"))
+                                            .addOnFailureListener(e -> Log.e("ResumenReserva", "Error creando costos", e));
+                                })
+                                .addOnFailureListener(e -> Log.e("ResumenReserva", "Error leyendo servicios", e));
+                    }).addOnFailureListener(e -> Log.e("ResumenReserva", "Error leyendo usuario", e));
+        }).addOnFailureListener(e -> Log.e("ResumenReserva", "Error verificando costos", e));
+    }
+
+    /** Carga la foto del usuario que reservó */
+    private void loadImagenUsuario() {
+        String url = reserva.getUrlFoto();
+        if (url != null && !url.isEmpty()) {
+            Glide.with(this)
+                    .load(url)
+                    .placeholder(R.drawable.default_user_icon)
+                    .error(R.drawable.default_user_icon)
+                    .into(binding.ivProfileImage);
+        } else {
+            binding.ivProfileImage.setImageResource(R.drawable.default_user_icon);
+        }
+    }
+
+    /** Carga datos del usuario (nombre, DNI, teléfono…) */
+    private void loadDatosUsuario() {
+        db.collection("usuarios")
+                .document(reserva.getIdUsuario())
+                .get()
+                .addOnSuccessListener(doc -> {
+                    if (!doc.exists()) return;
+                    binding.valorNombre.setText(doc.getString("nombre") + " " + doc.getString("apellido"));
+                    binding.valorDni.setText(doc.getString("numeroDocumento"));
+                    binding.valorNacimiento.setText(doc.getString("fechaNacimiento"));
+                    binding.valorCorreo.setText(doc.getString("correo"));
+                    binding.valorTelefono.setText(doc.getString("telefono"));
+                })
+                .addOnFailureListener(e -> Log.e("ResumenReserva", "Error cargando usuario", e));
+    }
+
+    /** Carga datos de la reserva en sí (fechas, personas, habitación) */
+    private void loadDatosReserva() {
+        db.collection("usuarios")
+                .document(reserva.getIdUsuario())
+                .collection("Reservas")
+                .document(reserva.getIdreserva())
+                .get()
+                .addOnSuccessListener(resDoc -> {
+                    if (!resDoc.exists()) return;
+                    Date ini = resDoc.getDate("fechaIni");
+                    Date fin = resDoc.getDate("fechaFin");
+                    SimpleDateFormat f1 = new SimpleDateFormat("d MMM", new Locale("es","ES"));
+                    SimpleDateFormat f2 = new SimpleDateFormat("d MMM yyyy", new Locale("es","ES"));
+                    binding.valorFecha.setText(f1.format(ini) + " – " + f2.format(fin));
+                    binding.valorHabitacion.setText(resDoc.getString("tipoHab"));
+                    binding.valorPersonas.setText(resDoc.getLong("personas") + " personas");
+                })
+                .addOnFailureListener(e -> Log.e("ResumenReserva", "Error cargando reserva", e));
+    }
+
+    /** Carga los datos de pago y actualiza los TextViews correspondientes */
+    private void loadPago() {
+        db.collection("usuarios")
+                .document(reserva.getIdUsuario())
+                .collection("Reservas")
+                .document(reserva.getIdreserva())
+                .collection("PagosRealizados")
+                .document("Pago")
+                .get()
+                .addOnSuccessListener(pagoSnap -> {
+                    if (!pagoSnap.exists()) return;
+                    double precioHab = pagoSnap.getDouble("PrecioHabitacion");
+                    double servExt   = pagoSnap.getDouble("ServiciosExtras");
+                    double cargos    = pagoSnap.getDouble("CargosPorDanhos");
+                    binding.valorPrecioHabitacion.setText("S/. " + precioHab);
+                    binding.valorServiciosExtras .setText("S/. " + servExt);
+                    binding.valorCargos          .setText("S/. " + cargos);
+                    binding.valorPrecioTotal     .setText("S/. " + (precioHab + servExt + cargos));
+                })
+                .addOnFailureListener(e -> Log.e("ResumenReserva", "Error cargando pago", e));
     }
 }

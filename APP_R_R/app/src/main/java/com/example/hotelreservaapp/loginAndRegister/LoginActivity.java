@@ -159,7 +159,7 @@ public class LoginActivity extends AppCompatActivity {
                                                 return;
                                             }
                                             String rol = document.getString("rol");
-                                            if ("cliente".equals(rol)) {
+                                            if ("cliente".equals(rol) || "adminHotel".equals(rol)) {
                                                 // guardar token
                                                 FirebaseMessaging.getInstance().getToken()
                                                         .addOnCompleteListener(tokenTask  -> {
