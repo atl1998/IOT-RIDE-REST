@@ -46,7 +46,7 @@ public class ValidacionTarjeta extends AppCompatActivity {
         btnConfirmarPago = findViewById(R.id.btnConfirmarPago);
 
         btnVolver.setOnClickListener(v -> {
-            startActivity(new Intent(this, DetallesHotel.class));
+            finish();
         });
         etNumeroTarjeta = findViewById(R.id.etNumeroTarjeta);
         etCVV = findViewById(R.id.etCVV);

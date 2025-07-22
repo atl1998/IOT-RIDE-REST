@@ -78,7 +78,7 @@ public class DetallesHotel extends AppCompatActivity {
         // Botón para volver
         btnVolver = findViewById(R.id.volverAnterior);
         btnVolver.setOnClickListener(v -> {
-            startActivity(new Intent(this, ListaHotelesCliente.class));
+            finish();
         });
 
         // --- CONFIGURAR COMENTARIOS ---
