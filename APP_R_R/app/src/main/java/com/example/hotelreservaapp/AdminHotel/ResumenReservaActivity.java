@@ -323,6 +323,8 @@ public class ResumenReservaActivity extends AppCompatActivity {
                     if (!resDoc.exists()) return;
                     Date ini = resDoc.getDate("fechaIni");
                     Date fin = resDoc.getDate("fechaFin");
+                    Boolean estado = resDoc.getBoolean("checkoutSolicitado");
+                    binding.btnConfirmarCheckout.setEnabled(Boolean.TRUE.equals(estado));
                     SimpleDateFormat f1 = new SimpleDateFormat("d MMM", new Locale("es","ES"));
                     SimpleDateFormat f2 = new SimpleDateFormat("d MMM yyyy", new Locale("es","ES"));
                     binding.valorFecha.setText(f1.format(ini) + " – " + f2.format(fin));
