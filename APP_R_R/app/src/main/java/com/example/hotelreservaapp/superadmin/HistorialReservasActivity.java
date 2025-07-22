@@ -94,8 +94,8 @@ public class HistorialReservasActivity extends AppCompatActivity {
         hoteles.add("Todos");
 
         db.collection("Hoteles").get().addOnSuccessListener(snapshot -> {
-            hoteles.clear();  // <-- Limpia antes
-            hoteles.add("Todos");  // <-- Siempre incluye "Todos" como primera opción
+            hoteles.clear();
+            hoteles.add("Todos");
             for (DocumentSnapshot doc : snapshot) {
                 String nombre = doc.getString("nombre");
                 if (nombre != null && !nombre.isEmpty()) {
@@ -114,10 +114,11 @@ public class HistorialReservasActivity extends AppCompatActivity {
                 String idHotel = hotelDoc.getId();
                 List<?> listaReservas = (List<?>) hotelDoc.get("listareservas");
 
+
                 db.collection("Hoteles").document(idHotel).get().addOnSuccessListener(hotelInfo -> {
                     String nombreHotel = hotelInfo.getString("nombre");
                     if (nombreHotel == null) nombreHotel = "Hotel desconocido";
-                    final String nombreHotelFinal = nombreHotel;  // FIX aquí
+                    final String nombreHotelFinal = nombreHotel;
                     int imagenHotel = R.drawable.hotel1;
 
                     if (listaReservas != null) {
@@ -126,6 +127,19 @@ public class HistorialReservasActivity extends AppCompatActivity {
                                 Map<String, Object> reservaMap = (Map<String, Object>) obj;
                                 String idUsuario = (String) reservaMap.get("idusuario");
                                 String idReserva = (String) reservaMap.get("idreserva");
+
+                                // ✅ FECHA DESDE RESERVA MAP
+                                Object fechaInicioObj = reservaMap.get("fechainiciocheckin");
+                                final String fechaStr;
+                                if (fechaInicioObj instanceof com.google.firebase.Timestamp) {
+                                    Date fechaReserva = ((com.google.firebase.Timestamp) fechaInicioObj).toDate();
+                                    fechaStr = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(fechaReserva);
+                                } else {
+                                    fechaStr = "Sin fecha";
+                                }
+
+                                final String finalNombreHotel = nombreHotelFinal;
+                                final int finalImagenHotel = imagenHotel;
 
                                 db.collection("usuarios").document(idUsuario).get().addOnSuccessListener(userDoc -> {
                                     String clienteNombre =
@@ -138,15 +152,8 @@ public class HistorialReservasActivity extends AppCompatActivity {
                                                 String estado = reservaDoc.getString("estado");
                                                 if (estado == null) estado = "Desconocido";
 
-                                                String fechaStr = "Sin fecha";
                                                 String checkInStr = "Sin fecha";
                                                 String checkOutStr = "Sin fecha";
-
-                                                Object fechaReservaObj = reservaDoc.get("fechaReserva");
-                                                if (fechaReservaObj instanceof com.google.firebase.Timestamp) {
-                                                    Date fechaReserva = ((com.google.firebase.Timestamp) fechaReservaObj).toDate();
-                                                    fechaStr = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(fechaReserva);
-                                                }
 
                                                 Object fechaIniObj = reservaDoc.get("fechaIni");
                                                 if (fechaIniObj instanceof com.google.firebase.Timestamp) {
@@ -160,17 +167,14 @@ public class HistorialReservasActivity extends AppCompatActivity {
                                                     checkOutStr = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(fechaFin);
                                                 }
 
-                                                String nombreHabitacion = "Desconocida";
-                                                List<Map<String, Object>> habitaciones = (List<Map<String, Object>>) reservaDoc.get("habitaciones");
-                                                if (habitaciones != null && !habitaciones.isEmpty()) {
-                                                    String nh = (String) habitaciones.get(0).get("nombreHabitacion");
-                                                    if (nh != null) nombreHabitacion = nh;
-                                                }
+                                                // ✅ NUEVO: tipoHab en lugar de nombreHabitacion
+                                                String tipoHab = reservaDoc.getString("tipoHab");
+                                                if (tipoHab == null || tipoHab.isEmpty()) tipoHab = "Desconocida";
 
-                                                Reporte reporte = new Reporte(nombreHotelFinal, clienteNombre.trim(), fechaStr, estado, imagenHotel);
+                                                Reporte reporte = new Reporte(finalNombreHotel, clienteNombre.trim(), fechaStr, estado, finalImagenHotel);
                                                 reporte.setCheckIn(checkInStr);
                                                 reporte.setCheckOut(checkOutStr);
-                                                reporte.setHabitacion(nombreHabitacion);
+                                                reporte.setHabitacion(tipoHab);
 
                                                 todosLosReportes.add(reporte);
                                                 adapter.actualizarLista(new ArrayList<>(todosLosReportes));

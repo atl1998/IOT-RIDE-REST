@@ -70,7 +70,24 @@ public class BottomSheetCambiarContrasena extends BottomSheetDialogFragment {
         String nueva = etNueva.getText().toString().trim();
         String confirmar = etConfirmar.getText().toString().trim();
 
-        btnGuardar.setEnabled(!actual.isEmpty() && nueva.length() >= 8 && nueva.equals(confirmar));
+        boolean camposValidos = true;
+
+        if (actual.isEmpty()) {
+            etActual.setError("Ingresa tu contraseña actual");
+            camposValidos = false;
+        }
+
+        if (nueva.length() < 8) {
+            etNueva.setError("Debe tener al menos 8 caracteres");
+            camposValidos = false;
+        }
+
+        if (!nueva.equals(confirmar)) {
+            etConfirmar.setError("La contraseña no coincide");
+            camposValidos = false;
+        }
+
+        btnGuardar.setEnabled(camposValidos);
     }
 
     private void cambiarContrasena() {

@@ -70,6 +70,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Map;
 import java.util.TimeZone;
 
 public class PerfilFragment extends Fragment {
@@ -154,10 +155,18 @@ public class PerfilFragment extends Fragment {
                 btnVincularGoogle.setVisibility(yaVinculado ? View.GONE : View.VISIBLE);
 
         // Botón de vincular
-                btnVincularGoogle.setOnClickListener(v -> {
-                    Intent signInIntent = googleSignInClient.getSignInIntent();
-                    startActivityForResult(signInIntent, RC_GOOGLE_LINK);
-                });
+        btnVincularGoogle.setOnClickListener(v -> {
+            new MaterialAlertDialogBuilder(requireContext())
+                    .setTitle("Vincular con Google")
+                    .setMessage("¿Estás seguro que deseas vincular esta cuenta con Google?\n\nTu cuenta actual con correo será eliminada y solo podrás acceder con tu cuenta de Google.")
+                    .setPositiveButton("Sí, continuar", (dialog, which) -> {
+                        // Iniciar flujo de Google Sign-In
+                        Intent signInIntent = googleSignInClient.getSignInIntent();
+                        startActivityForResult(signInIntent, RC_GOOGLE_LINK);
+                    })
+                    .setNegativeButton("Cancelar", null)
+                    .show();
+        });
         // Cargar datos del usuario desde Firestore
         if (usuarioActual != null) {
             db.collection("usuarios").document(usuarioActual.getUid()).get()
@@ -424,25 +433,65 @@ public class PerfilFragment extends Fragment {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             try {
                 GoogleSignInAccount account = task.getResult(ApiException.class);
-                AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
+                String idToken = account.getIdToken();
 
-                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                user.linkWithCredential(credential)
-                        .addOnCompleteListener(linkTask -> {
-                            if (linkTask.isSuccessful()) {
-                                Toast.makeText(getContext(), "Cuenta vinculada con Google exitosamente", Toast.LENGTH_SHORT).show();
-                                btnVincularGoogle.setVisibility(View.GONE); // Oculta el botón
-                            } else {
-                                String mensaje = linkTask.getException().getMessage();
-                                if (mensaje != null && mensaje.contains("already linked")) {
-                                    Toast.makeText(getContext(), "Esta cuenta de Google ya está vinculada a otro usuario", Toast.LENGTH_LONG).show();
-                                } else {
-                                    Toast.makeText(getContext(), "Error al vincular: " + mensaje, Toast.LENGTH_LONG).show();
-                                }
+                if (idToken == null) {
+                    Toast.makeText(getContext(), "No se pudo obtener el token de Google", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                AuthCredential googleCredential = GoogleAuthProvider.getCredential(idToken, null);
+                FirebaseFirestore db = FirebaseFirestore.getInstance();
+                FirebaseUser usuarioActual = FirebaseAuth.getInstance().getCurrentUser();
+
+                if (usuarioActual == null) {
+                    Toast.makeText(getContext(), "No hay sesión activa", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                String uidAntiguo = usuarioActual.getUid();
+
+                db.collection("usuarios").document(uidAntiguo).get()
+                        .addOnSuccessListener(snapshot -> {
+                            if (!snapshot.exists()) {
+                                Toast.makeText(getContext(), "No se encontraron datos del usuario", Toast.LENGTH_SHORT).show();
+                                return;
                             }
+
+                            Map<String, Object> datos = snapshot.getData();
+
+                            // Autenticarse con Google
+                            FirebaseAuth.getInstance().signInWithCredential(googleCredential)
+                                    .addOnSuccessListener(authResult -> {
+                                        FirebaseUser nuevoUsuario = authResult.getUser();
+                                        if (nuevoUsuario == null) {
+                                            Toast.makeText(getContext(), "Error al iniciar sesión con Google", Toast.LENGTH_SHORT).show();
+                                            return;
+                                        }
+
+                                        String nuevoUid = nuevoUsuario.getUid();
+
+                                        db.collection("usuarios").document(nuevoUid).set(datos)
+                                                .addOnSuccessListener(unused -> {
+                                                    Toast.makeText(getContext(), "Cuenta migrada a Google correctamente", Toast.LENGTH_LONG).show();
+                                                    btnVincularGoogle.setVisibility(View.GONE);
+                                                })
+                                                .addOnFailureListener(e -> {
+                                                    Toast.makeText(getContext(), "Fallo al restaurar datos: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                });
+
+                                    })
+                                    .addOnFailureListener(e -> {
+                                        Toast.makeText(getContext(), "Error al iniciar sesión con Google: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                    });
+                        })
+                        .addOnFailureListener(e -> {
+                            Toast.makeText(getContext(), "Error al obtener datos del usuario", Toast.LENGTH_SHORT).show();
                         });
+
             } catch (ApiException e) {
                 Toast.makeText(getContext(), "Error al procesar cuenta de Google", Toast.LENGTH_SHORT).show();
+                Log.e("GOOGLE_LINK", "Error: ", e);
             }
         }
     }
