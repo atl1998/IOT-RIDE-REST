@@ -25,7 +25,7 @@ public class ReservaInicio implements Serializable {
     public ReservaInicio(String idusuario, Date fechainiciocheckin, String idreserva, double pagohabitacion) {
         this.idusuario = idusuario;
         this.fechainiciocheckin = fechainiciocheckin;
-        this.idreserva = idreserva;
+        this.setIdreserva(idreserva);
         this.pagohabitacion = pagohabitacion;
     }
 
@@ -43,14 +43,6 @@ public class ReservaInicio implements Serializable {
 
     public void setFechaInicioCheckIn(Date fechainiciocheckin) {
         this.fechainiciocheckin = fechainiciocheckin;
-    }
-
-    public String getId() {
-        return idreserva;
-    }
-
-    public void setId(String idreserva) {
-        this.idreserva = idreserva;
     }
 
     public double getPago() {
@@ -76,5 +68,13 @@ public class ReservaInicio implements Serializable {
 
     public void setUrlFoto(String urlFoto) {
         this.urlFoto = urlFoto;
+    }
+
+    public String getIdreserva() {
+        return idreserva;
+    }
+
+    public void setIdreserva(String idreserva) {
+        this.idreserva = idreserva;
     }
 }

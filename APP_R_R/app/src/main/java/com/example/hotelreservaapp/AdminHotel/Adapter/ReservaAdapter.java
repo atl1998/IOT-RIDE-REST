@@ -93,6 +93,8 @@ public class ReservaAdapter extends RecyclerView.Adapter<ReservaAdapter.ReservaV
                                                 r.setNombreCompleto(nombre + " " + apellido);
                                                 r.setUrlFoto(url);
                                                 System.out.println("ReservaAdapter – Nombre completo seteado: " + r.getNombreCompleto());
+                                                System.out.println("ReservaAdapter – Foto: " + r.getUrlFoto());
+                                                System.out.println("ReservaAdapter - IdReserva: " + r.getIdreserva());
                                                 notifyDataSetChanged();
                                             })
                                             .addOnFailureListener(e -> {
