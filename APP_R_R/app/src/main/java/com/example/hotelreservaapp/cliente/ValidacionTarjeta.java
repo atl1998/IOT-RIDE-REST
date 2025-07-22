@@ -233,17 +233,40 @@ public class ValidacionTarjeta extends AppCompatActivity {
                                 .addOnSuccessListener(docRef -> {
                                     Toast.makeText(this, "Reserva confirmada", Toast.LENGTH_SHORT).show();
 
-                                    // 👉 Guardar también en reservas/{hotelId}/idusuario1
-                                    Map<String, Object> reservaSimplificada = new HashMap<>();
-                                    reservaSimplificada.put("idreserva", docRef.getId());
-                                    reservaSimplificada.put("fechainiciocheckin", new Timestamp(new Date(fechaInicioMillis)));
-                                    reservaSimplificada.put("pagohabitacion", pagoTotal[0]);
 
-                                    db.collection("reservas")
+                                    Map<String, Object> reservaSimplificadav2 = new HashMap<>();
+                                    reservaSimplificadav2.put("fechainiciocheckin", new Timestamp(new Date(fechaInicioMillis)));
+                                    reservaSimplificadav2.put("idreserva", docRef.getId()); // Puedes usar docRef.getId() si deseas
+                                    reservaSimplificadav2.put("idusuario", userId);
+                                    reservaSimplificadav2.put("pagohabitacion", pagoTotal[0]);
+
+                                    db.collection("reservaas")
                                             .document(hotelId)
-                                            .set(Collections.singletonMap(userId, FieldValue.arrayUnion(reservaSimplificada)), SetOptions.merge())
-                                            .addOnSuccessListener(aVoid -> Log.d("Firestore", "Reserva replicada correctamente"))
-                                            .addOnFailureListener(e -> Log.e("Firestore", "Error replicando reserva", e));
+                                            .get()
+                                            .addOnSuccessListener(documentSnapshot -> {
+                                                List<Map<String, Object>> listaExistente;
+
+                                                if (documentSnapshot.exists() && documentSnapshot.contains("listareservas")) {
+                                                    // Ya hay una lista, la obtenemos y le agregamos la nueva reserva
+                                                    listaExistente = (List<Map<String, Object>>) documentSnapshot.get("listareservas");
+                                                } else {
+                                                    // No hay lista, creamos una nueva
+                                                    listaExistente = new ArrayList<>();
+                                                }
+
+                                                listaExistente.add(reservaSimplificadav2);
+
+                                                // Subimos la lista actualizada
+                                                Map<String, Object> dataFinal = new HashMap<>();
+                                                dataFinal.put("listareservas", listaExistente);
+
+                                                db.collection("reservaas")
+                                                        .document(hotelId)
+                                                        .set(dataFinal)
+                                                        .addOnSuccessListener(aVoid -> Log.d("Firestore", "Reserva agregada como índice " + (listaExistente.size() - 1)))
+                                                        .addOnFailureListener(e -> Log.e("Firestore", "Error guardando la reserva", e));
+                                            })
+                                            .addOnFailureListener(e -> Log.e("Firestore", "Error obteniendo el documento", e));
 
                                     Intent intent2 = new Intent(this, CreacionReserva.class);
                                     intent2.putExtra("reservaId", docRef.getId());

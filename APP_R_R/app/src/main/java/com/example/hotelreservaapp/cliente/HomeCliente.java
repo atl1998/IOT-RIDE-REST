@@ -1,11 +1,18 @@
 package com.example.hotelreservaapp.cliente;
 
+import static android.Manifest.permission.POST_NOTIFICATIONS;
+
 import android.app.DatePickerDialog;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
 import androidx.core.util.Pair;
 
 import android.util.Log;
@@ -25,6 +32,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.hotelreservaapp.MainActivity;
 import com.example.hotelreservaapp.R;
 import com.example.hotelreservaapp.cliente.TaxistaCliente.ClienteServicioTaxi;
 import com.example.hotelreservaapp.taxista.TaxistaMain;
@@ -45,6 +53,7 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 public class HomeCliente extends AppCompatActivity {
+    String channelId = "ChannelRideAndRest";
     MaterialButton btnBusqueda;
     BottomNavigationView bottomNav;
     private EditText etFecha, etCantidad;
@@ -67,6 +76,8 @@ public class HomeCliente extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.cliente_activity_home);
+
+        createNotificationChannel();
 
         etDestino = findViewById(R.id.etDestino);
         etFecha = findViewById(R.id.etFecha);
@@ -138,6 +149,32 @@ public class HomeCliente extends AppCompatActivity {
         //String[] destinos = {"Lima", "Arequipa", "Cusco", "Trujillo", "Piura", "Chiclayo", "Iquitos", "Tacna", "Puno", "Huancayo"};
         //ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, destinos);
         //etDestino.setAdapter(adapter);
+    }
+
+    public void createNotificationChannel() {
+        //android.os.Build.VERSION_CODES.O == 26
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(channelId,
+                    "RideAndRest",
+                    NotificationManager.IMPORTANCE_HIGH);
+            channel.setDescription("Canal para notificaciones con prioridad high");
+            channel.setShowBadge(true);
+
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+            askPermission();
+        }
+    }
+
+    public void askPermission(){
+        //android.os.Build.VERSION_CODES.TIRAMISU == 33
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+                ActivityCompat.checkSelfPermission(this, POST_NOTIFICATIONS) ==
+                        PackageManager.PERMISSION_DENIED) {
+            ActivityCompat.requestPermissions(HomeCliente.this,
+                    new String[]{POST_NOTIFICATIONS},
+                    101);
+        }
     }
 
     @Override

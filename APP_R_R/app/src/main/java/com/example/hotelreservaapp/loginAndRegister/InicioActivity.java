@@ -21,7 +21,7 @@ import com.example.hotelreservaapp.room.AppDatabase;
 import com.google.android.material.button.MaterialButton;
 
 public class InicioActivity extends AppCompatActivity {
-    String channelId = "ChannelRideAndRest";
+    //String channelId = "ChannelRideAndRest";
     MaterialButton btnLogIn;
     TextView tvRegistro, tvPostula;
 
@@ -35,8 +35,8 @@ public class InicioActivity extends AppCompatActivity {
         tvRegistro = findViewById(R.id.tvRegistro);
         tvPostula = findViewById(R.id.tvPostula);
 
-        createNotificationChannel();
-        insertarNotificacionesEstaticas();
+        //createNotificationChannel();
+        //insertarNotificacionesEstaticas();
 
         // Acción del botón de login
         btnLogIn.setOnClickListener(v -> {
@@ -58,6 +58,7 @@ public class InicioActivity extends AppCompatActivity {
         });
 
     }
+    /*
     public void createNotificationChannel() {
         //android.os.Build.VERSION_CODES.O == 26
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
@@ -113,5 +114,5 @@ public class InicioActivity extends AppCompatActivity {
 
             prefs.edit().putBoolean("notis_insertadas", true).apply(); // 👈 Marcar como insertado
         }
-    }
+    }*/
 }

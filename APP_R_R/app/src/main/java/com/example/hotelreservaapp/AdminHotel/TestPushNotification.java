@@ -31,7 +31,7 @@ import okhttp3.Response;
 public class TestPushNotification extends AppCompatActivity {
 
     private static final String TAG = "NOTIFICACIÓN";
-    private static final String TOKEN_HARDCODEADO = "ebcrJ1avQTOVMf3V6_2Kve:APA91bHIMk5eEFBvHAE5FBGJ1ZxqJXnHRcwZUKpYMgNkYEmfbMuw6Wv1fcqK2ofiBVKb0CWl9wceoRk6BeWo9glTS7Uysa8g3mzBzoopCZoATAdV0CgoWDs";
+    private static final String TOKEN_HARDCODEADO = "ct2YIV-5T3OkvQo7ThsOoc:APA91bEizExvSUgvldqG7eRZvn4qBERFkLPl4LP-kSG3ENXBdbzElYoSI7trLEDE6cFOfffp_PeptqHBdUIfROx_jZ0EdyYesIJBMu2XG9eSoCllbcflwts";
     private static final String USER_ID_HARDCODEADO = "o60eTvckH0OpIkS29izDulVrsdC2";
     private static final String RESERVA_ID_HARDCODEADA = "1bd40SSn5iSnoUgB3KEx";
     @Override

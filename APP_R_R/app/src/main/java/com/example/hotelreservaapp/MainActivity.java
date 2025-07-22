@@ -32,7 +32,7 @@ import com.example.hotelreservaapp.loginAndRegister.SplashActivity;
 import com.google.android.material.button.MaterialButton;
 
 public class MainActivity extends AppCompatActivity {
-    String channelId = "ChannelRideAndRest";
+    //String channelId = "ChannelRideAndRest";
 
     // Declaración de botones
     MaterialButton btnCliente, btnTaxista, btnAdminHotel, btnSuperadmin, btnInicio;
@@ -49,8 +49,8 @@ public class MainActivity extends AppCompatActivity {
         btnSuperadmin = findViewById(R.id.btnSuperadmin);
         btnInicio = findViewById(R.id.btnInicio);
 
-        createNotificationChannel();
-        insertarNotificacionesEstaticas();
+        //createNotificationChannel();
+        //insertarNotificacionesEstaticas();
 
         // Acciones por botón (por ahora sin abrir otra Activity)
         btnCliente.setOnClickListener(v -> {
@@ -75,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
     // Para crear el canal uwu, esto es al incio de la app q creo q es esta c:
+    /*
     public void createNotificationChannel() {
         //android.os.Build.VERSION_CODES.O == 26
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
@@ -131,4 +132,6 @@ public class MainActivity extends AppCompatActivity {
             prefs.edit().putBoolean("notis_insertadas", true).apply(); // 👈 Marcar como insertado
         }
     }
+    */
+
 }
