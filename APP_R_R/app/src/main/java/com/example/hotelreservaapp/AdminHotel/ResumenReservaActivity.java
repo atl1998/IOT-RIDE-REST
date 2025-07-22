@@ -195,7 +195,7 @@ public class ResumenReservaActivity extends AppCompatActivity {
                     }).addOnFailureListener(e -> Log.e("ResumenReserva", "Error cargando pago", e));
             finish();
         });
-
+        binding.btnConfirmarCheckout.setEnabled(false);
         // 4) Primera carga de datos
         refreshAll();
     }
