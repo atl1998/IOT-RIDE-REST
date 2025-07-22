@@ -17,11 +17,15 @@ import com.example.hotelreservaapp.taxista.TaxistaMain;
 import com.example.hotelreservaapp.taxista.adapter.TarjetaTaxistaAdapter;
 import com.example.hotelreservaapp.taxista.model.TarjetaModel;
 import com.google.android.material.button.MaterialButton;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.ListenerRegistration;
+import com.google.firebase.firestore.EventListener;
 import java.util.ArrayList;
 import java.util.List;
-
 
 public class TaxiInicioFragment extends Fragment implements TarjetaTaxistaAdapter.OnNotificacionListener {
 
@@ -30,6 +34,8 @@ public class TaxiInicioFragment extends Fragment implements TarjetaTaxistaAdapte
     private List<TarjetaModel> datos;
     private View btnSolicitudes, btnHistorial;
     private TextView badgeNotificaciones;
+    private boolean mostrandoHistorial = false;
+    private ListenerRegistration registroSolicitudes;
 
     public TaxiInicioFragment() {}
 
@@ -51,12 +57,17 @@ public class TaxiInicioFragment extends Fragment implements TarjetaTaxistaAdapte
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         datos = new ArrayList<>();
 
-        btnSolicitudes.setOnClickListener(v -> filtrarSolicitudesActivas());
-        btnHistorial.setOnClickListener(v -> filtrarHistorial());
+        btnSolicitudes.setOnClickListener(v -> {
+            mostrandoHistorial = false;
+            filtrarSolicitudesActivas();
+        });
+        btnHistorial.setOnClickListener(v -> {
+            mostrandoHistorial = true;
+            filtrarHistorial();
+        });
 
-        // Botón de notificaciones en el header
-        MaterialButton btnNotificaciones = requireActivity().findViewById(R.id.notificacionesTaxista);
-        btnNotificaciones.setOnClickListener(v -> {
+        MaterialButton btnNotifs = requireActivity().findViewById(R.id.notificacionesTaxista);
+        btnNotifs.setOnClickListener(v -> {
             if (getActivity() instanceof TaxistaMain) {
                 TaxistaMain main = (TaxistaMain) getActivity();
                 main.marcarNotificacionesComoLeidas();
@@ -66,7 +77,7 @@ public class TaxiInicioFragment extends Fragment implements TarjetaTaxistaAdapte
         });
 
         actualizarBadge();
-        cargarSolicitudesDesdeFirebase();
+        escucharSolicitudesFirebase();
     }
 
     private void actualizarBadge() {
@@ -102,7 +113,6 @@ public class TaxiInicioFragment extends Fragment implements TarjetaTaxistaAdapte
                 historial.add(item);
             }
         }
-        // Orden descendente por timestamp: más recientes primero
         historial.sort((a, b) -> Long.compare(b.getTimestamp(), a.getTimestamp()));
         adapter = new TarjetaTaxistaAdapter(historial, getContext(), this, true);
         recyclerView.setAdapter(adapter);
@@ -111,26 +121,38 @@ public class TaxiInicioFragment extends Fragment implements TarjetaTaxistaAdapte
         btnHistorial.setBackgroundColor(getResources().getColor(R.color.crema));
     }
 
-    private void cargarSolicitudesDesdeFirebase() {
+    private void escucharSolicitudesFirebase() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        db.collection("servicios_taxi")
+        registroSolicitudes = db.collection("servicios_taxi")
                 .orderBy("timestamp", Query.Direction.DESCENDING)
-                .get()
-                .addOnSuccessListener(querySnapshot -> {
-                    datos.clear();
-                    for (var doc : querySnapshot.getDocuments()) {
-                        Log.d("FIREBASE", "DOC ID: " + doc.getId() + " → " + doc.getData());
-                        TarjetaModel sol = doc.toObject(TarjetaModel.class);
-                        if (sol != null) {
-                            sol.setIdDocument(doc.getId());
-                            datos.add(sol);
-                        } else {
-                            Log.w("FIREBASE", "Documento inválido: " + doc.getId());
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot snaps,
+                                        @Nullable FirebaseFirestoreException e) {
+                        if (e != null) {
+                            Log.e("FIRESTORE_LISTEN", "Error en la escucha", e);
+                            return;
                         }
+                        datos.clear();
+                        for (DocumentSnapshot doc : snaps.getDocuments()) {
+                            TarjetaModel sol = doc.toObject(TarjetaModel.class);
+                            if (sol != null) {
+                                sol.setIdDocument(doc.getId());
+                                datos.add(sol);
+                            }
+                        }
+                        // Re-aplica el filtro actual
+                        if (mostrandoHistorial) filtrarHistorial();
+                        else filtrarSolicitudesActivas();
                     }
-                    filtrarSolicitudesActivas();  // Muestra activas por defecto
-                })
-                .addOnFailureListener(e -> Log.e("FIREBASE", "Error al cargar datos", e));
+                });
+
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (registroSolicitudes != null) registroSolicitudes.remove();
     }
 
     @Override
@@ -147,7 +169,7 @@ public class TaxiInicioFragment extends Fragment implements TarjetaTaxistaAdapte
                     System.currentTimeMillis()
             ));
             actualizarBadge();
-            cargarSolicitudesDesdeFirebase();
+            // la escucha ya refresca automáticamente
         }
     }
 
@@ -165,11 +187,9 @@ public class TaxiInicioFragment extends Fragment implements TarjetaTaxistaAdapte
                     System.currentTimeMillis()
             ));
             actualizarBadge();
-            cargarSolicitudesDesdeFirebase();
         }
     }
 
-    /** Si en algún punto deseas notificar “viaje concluido” desde aquí: **/
     public void onViajeConcluido(String nombreUsuario, String ubicacion) {
         if (getActivity() instanceof TaxistaMain) {
             TaxistaMain main = (TaxistaMain) getActivity();

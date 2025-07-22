@@ -16,6 +16,7 @@ import com.bumptech.glide.Glide;
 import com.example.hotelreservaapp.R;
 import com.example.hotelreservaapp.taxista.model.MiniMapaFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.material.button.MaterialButton;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
@@ -102,6 +103,13 @@ public class DetallesViajeActivity extends AppCompatActivity {
         // 7) Listeners
         btnAceptar.setOnClickListener(v -> onAceptarClicked());
         btnCancelar.setOnClickListener(v -> onCancelarClicked());
+
+        MaterialButton btnVolver = findViewById(R.id.btnVolver);
+        btnVolver.setOnClickListener(v -> {
+            // Devolvemos RESULT_OK para que el fragmento sepa que debe recargar
+            setResult(RESULT_OK);
+            finish();
+        });
     }
 
     private void actualizarVistaSegunEstado() {

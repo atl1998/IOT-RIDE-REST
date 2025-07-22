@@ -1,15 +1,17 @@
 package com.example.hotelreservaapp.taxista;
+
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.hotelreservaapp.R;
 import com.example.hotelreservaapp.taxista.CaptureActivityPortrait;
-import com.example.hotelreservaapp.taxista.TaxistaMain;
+import com.example.hotelreservaapp.taxista.fragments.TaxiInicioFragment;
 import com.google.android.material.button.MaterialButton;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
@@ -18,21 +20,25 @@ import com.google.firebase.firestore.FirebaseFirestore;
 public class QrLecturaActivity extends AppCompatActivity {
 
     private MaterialButton btnLeerQR, btnVolver;
-    private String nombreCliente, telefonoCliente;
+    private String serviceId;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.taxista_activity_qr_lectura);
 
         btnLeerQR = findViewById(R.id.btnLeerQR);
         btnVolver = findViewById(R.id.btnVolver);
 
-        nombreCliente = getIntent().getStringExtra("nombre");
-        telefonoCliente = getIntent().getStringExtra("telefono");
+        // Recibimos el ID del documento de Firestore desde la Activity anterior
+        serviceId = getIntent().getStringExtra("serviceId");
 
         btnLeerQR.setOnClickListener(v -> iniciarEscaneo());
-        btnVolver.setOnClickListener(v -> volverAlInicio());
+        btnVolver.setOnClickListener(v -> {
+            // Volvemos a la lista sin cambiar nada
+            setResult(RESULT_CANCELED);
+            finish();
+        });
     }
 
     private void iniciarEscaneo() {
@@ -40,16 +46,17 @@ public class QrLecturaActivity extends AppCompatActivity {
         integrator.setPrompt("Escanea el código QR del pasajero");
         integrator.setBeepEnabled(true);
         integrator.setOrientationLocked(false);
-        integrator.setCaptureActivity(CaptureActivityPortrait.class); // opcional si deseas forzar portrait
+        integrator.setCaptureActivity(CaptureActivityPortrait.class);
         integrator.initiateScan();
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
         if (result != null) {
             if (result.getContents() != null) {
-                confirmarFinalizacion(result.getContents());
+                // Solo si realmente leyó algo, procedemos
+                actualizarEstadoFinalizado(result.getContents());
             } else {
                 Toast.makeText(this, "Escaneo cancelado", Toast.LENGTH_SHORT).show();
             }
@@ -58,47 +65,39 @@ public class QrLecturaActivity extends AppCompatActivity {
         }
     }
 
-    private void confirmarFinalizacion(String codigo) {
-        // Validación opcional: puedes revisar el formato del QR escaneado
-
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        db.collection("servicios_taxi")
-                .whereEqualTo("nombreCliente", nombreCliente)
-                .whereEqualTo("telefonoCliente", telefonoCliente)
-                .get()
-                .addOnSuccessListener(querySnapshot -> {
-                    if (!querySnapshot.isEmpty()) {
-                        querySnapshot.getDocuments().get(0).getReference()
-                                .update("estado", "Finalizado")
-                                .addOnSuccessListener(unused -> mostrarDialogoConfirmacion());
-                    } else {
-                        Toast.makeText(this, "No se encontró el servicio en Firebase", Toast.LENGTH_SHORT).show();
-                    }
-                });
+    private void actualizarEstadoFinalizado(String qr) {
+        // Aquí podrías validar el valor de `qr` si quieres (p.ej. equals(serviceId))
+        FirebaseFirestore.getInstance()
+                .collection("servicios_taxi")
+                .document(serviceId)
+                .update("estado", "Finalizado")
+                .addOnSuccessListener(unused -> mostrarDialogoConfirmacion())
+                .addOnFailureListener(e ->
+                        Toast.makeText(this,
+                                "Error al finalizar. Intenta de nuevo.",
+                                Toast.LENGTH_SHORT).show()
+                );
     }
 
     private void mostrarDialogoConfirmacion() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.CustomDatePickerDialog);
-        View dialogView = getLayoutInflater().inflate(R.layout.taxista_dialog_qr_confirmado, null);
+        View dialogView = getLayoutInflater()
+                .inflate(R.layout.taxista_dialog_qr_confirmado, null);
         builder.setView(dialogView);
 
-        MaterialButton btnVolverInicio = dialogView.findViewById(R.id.btnVolverInicio);
         AlertDialog dialog = builder.create();
+        dialog.setCancelable(false);
 
+        MaterialButton btnVolverInicio = dialogView.findViewById(R.id.btnVolverInicio);
         btnVolverInicio.setOnClickListener(v -> {
             dialog.dismiss();
+            // Limpiamos todo el stack y volvemos al Fragmento de inicio
             Intent intent = new Intent(this, TaxistaMain.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
+            finish();
         });
 
-        dialog.setCancelable(false);
         dialog.show();
-    }
-
-    private void volverAlInicio() {
-        Intent intent = new Intent(this, TaxistaMain.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
     }
 }

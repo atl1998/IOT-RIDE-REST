@@ -43,7 +43,7 @@
             <!-- Botón de Notificaciones -->
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/añadirfavoritos"
+                android:id="@+id/btnVolver"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:layout_marginEnd="56dp"
@@ -61,22 +61,6 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="1.0" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/notificaciones_cliente"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:backgroundTint="@color/transparente"
-                app:icon="@drawable/notifications_24dp_e3e3e3_fill0_wght400_grad0_opsz24"
-                app:iconTint="@color/marron_oscuro"
-                app:iconGravity="textStart"
-                app:iconPadding="0dp"
-                android:padding="15dp"
-                android:minWidth="0dp"
-                android:minHeight="0dp"
-                android:contentDescription="Ver notificaciones nuevas"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </LinearLayout>
     <!-- Línea negra abajo -->
