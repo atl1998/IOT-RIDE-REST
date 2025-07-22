@@ -3,6 +3,7 @@ package com.example.hotelreservaapp.taxista;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
@@ -21,23 +22,28 @@ public class TaxistaMain extends AppCompatActivity {
     private final ArrayList<Notificaciones> listaGlobalNotificaciones = new ArrayList<>();
     private int contadorNotificacionesNoLeidas = 0;
 
+    private BottomNavigationView bottomNav;
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.taxista_activity_main);
 
-        BottomNavigationView bottomNav = findViewById(R.id.bottomNavigationTaxista);
+        // Sólo buscamos el BottomNavigationView aquí:
+        bottomNav = findViewById(R.id.bottomNavigationTaxista);
         bottomNav.setOnItemSelectedListener(navListener);
 
         if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
+            getSupportFragmentManager()
+                    .beginTransaction()
                     .replace(R.id.fragmentContainerTaxista, new TaxiInicioFragment())
                     .commit();
         }
-        // Chequear si esta activity fue lanzada con notificación de viaje concluido
-        Intent intent = getIntent();
-        procesarIntentNotificacion(intent);
+
+        // Si la Activity arrancó por una notificación de "viaje concluido":
+        procesarIntentNotificacion(getIntent());
     }
+
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
@@ -47,80 +53,88 @@ public class TaxistaMain extends AppCompatActivity {
     private void procesarIntentNotificacion(Intent intent) {
         if (intent != null && intent.getBooleanExtra("notificacion_viaje_concluido", false)) {
             String nombreUsuario = intent.getStringExtra("nombre_usuario");
-            String ubicacion = intent.getStringExtra("ubicacion");
+            String ubicacion     = intent.getStringExtra("ubicacion");
 
-            agregarNotificacionGlobal(new com.example.hotelreservaapp.Objetos.Notificaciones(
+            Notificaciones n = new Notificaciones(
                     listaGlobalNotificaciones.size() + 1,
                     "pedido",
                     "Viaje concluido",
                     "Viaje concluido",
                     "Has concluido el viaje con " + (nombreUsuario != null ? nombreUsuario : ""),
-                    "Lugar: " + (ubicacion != null ? ubicacion : ""),
+                    "Lugar: " + (ubicacion    != null ? ubicacion    : ""),
                     System.currentTimeMillis()
-            ));
+            );
+            agregarNotificacionGlobal(n);
         }
     }
 
-    private final BottomNavigationView.OnItemSelectedListener navListener =
-            item -> {
-                Fragment selectedFragment = null;
+    @SuppressWarnings("NonConstantResourceId")
+    private final BottomNavigationView.OnItemSelectedListener navListener = item -> {
+        Fragment selected = null;
+        int id = item.getItemId();
+        if (id == R.id.inicioTaxista) {
+            selected = new TaxiInicioFragment();
+        } else if (id == R.id.mapaTaxista) {
+            selected = new TaxiMapaFragment();
+        } else if (id == R.id.perfilTaxista) {
+            selected = new TaxiPerfilFragment();
+        }
+        if (selected != null) {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragmentContainerTaxista, selected)
+                    .commit();
+            return true;
+        }
+        return false;
+    };
 
-                int itemId = item.getItemId();
-                if (itemId == R.id.inicioTaxista) {
-                    selectedFragment = new TaxiInicioFragment();
-                } else if (itemId == R.id.mapaTaxista) {
-                    selectedFragment = new TaxiMapaFragment();
-                } else if (itemId == R.id.perfilTaxista) {
-                    selectedFragment = new TaxiPerfilFragment();
-                }
-
-                if (selectedFragment != null) {
-                    getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.fragmentContainerTaxista, selectedFragment)
-                            .commit();
-                    return true;
-                }
-                return false;
-            };
-
+    /**
+     * Desde el fragmento de inicio llamaremos a este método
+     * cuando el usuario pulse el icono del header de notificaciones.
+     */
     public void abrirFragmentoNotificaciones() {
         TaxistaNotificacionesFragment frag = new TaxistaNotificacionesFragment();
         getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.fragmentContainerTaxista, frag, "FRAG_NOTIFICACIONES")
+                .replace(R.id.fragmentContainerTaxista, frag, "FRAG_NOTIF")
                 .addToBackStack(null)
                 .commit();
     }
 
-    public TaxistaNotificacionesFragment obtenerFragmentoNotificaciones() {
-        Fragment frag = getSupportFragmentManager().findFragmentByTag("FRAG_NOTIFICACIONES");
-        if (frag instanceof TaxistaNotificacionesFragment) {
-            return (TaxistaNotificacionesFragment) frag;
+    /**
+     * Agrega una notificación nueva, incrementa el contador,
+     * y si el fragmento de notificaciones está abierto, le pide refrescar.
+     */
+    public void agregarNotificacionGlobal(Notificaciones notificacion) {
+        listaGlobalNotificaciones.add(0, notificacion);
+        if (!notificacion.isLeido()) {
+            contadorNotificacionesNoLeidas++;
         }
-        return null;
+        // Si ya estamos viendo el fragmento de notifs, que se refresque:
+        Fragment f = getSupportFragmentManager().findFragmentByTag("FRAG_NOTIF");
+        if (f instanceof TaxistaNotificacionesFragment) {
+            ((TaxistaNotificacionesFragment) f).refrescarListaNotificaciones();
+        }
     }
 
+    /**
+     * Marca todas las notificaciones como leídas y resetea el contador.
+     * Debe llamarse cuando el usuario abra el fragmento de notificaciones.
+     */
+    public void marcarNotificacionesComoLeidas() {
+        for (Notificaciones n : listaGlobalNotificaciones) {
+            n.setLeido(true);
+        }
+        contadorNotificacionesNoLeidas = 0;
+    }
+
+    /** Getters para uso en los fragments **/
     public ArrayList<Notificaciones> getListaGlobalNotificaciones() {
         return listaGlobalNotificaciones;
     }
 
     public int getContadorNotificacionesNoLeidas() {
         return contadorNotificacionesNoLeidas;
-    }
-
-    public void agregarNotificacionGlobal(Notificaciones notificacion) {
-        listaGlobalNotificaciones.add(0, notificacion);
-        if (!notificacion.isLeido()) {
-            contadorNotificacionesNoLeidas++;
-        }
-    }
-
-    public void marcarNotificacionesComoLeidas() {
-        for (Notificaciones n : listaGlobalNotificaciones) {
-            if (!n.isLeido()) {
-                n.setLeido(true);
-            }
-        }
-        contadorNotificacionesNoLeidas = 0;
     }
 }
