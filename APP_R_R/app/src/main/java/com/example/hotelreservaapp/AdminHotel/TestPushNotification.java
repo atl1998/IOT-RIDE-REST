@@ -73,15 +73,12 @@ public class TestPushNotification extends AppCompatActivity {
             if (currentUser == null) {
                 Toast.makeText(this, "Debes iniciar sesión para enviar la notificación", Toast.LENGTH_SHORT).show();
             } else {
+
+                // Enviar checkout finalizado
                 FirebaseFunctionsHelper functionsHelper = new FirebaseFunctionsHelper();
-
-                String tipo = "02";
-                String titulo = "Checkout Finalizado";
-                String tituloAmigable = "¡Checkout finalizado correctamente!";
-                String mensaje = "El checkout ha finalizado. Por favor dirígete a la opción 'Detalles' en el hotel seleccionado y busca el botón 'Revisar el pago realizado'.";
-                String mensajeExtra = "En ese apartado verás un resumen del pago antes de la reserva, los cobros extras, y si cuentas con servicio de taxi.";
-
-                functionsHelper.enviarNotificacion(token, tipo, titulo, tituloAmigable, mensaje, mensajeExtra, new okhttp3.Callback() {
+                //EnviarNotiTaxi
+                functionsHelper.enviarNotificacionTaxi(token);
+                functionsHelper.enviarNotificacionChecjout(token, new okhttp3.Callback() {
                     @Override
                     public void onFailure(Call call, IOException e) {
                         runOnUiThread(() -> {
