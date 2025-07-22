@@ -71,32 +71,39 @@ public class ClienteChat extends AppCompatActivity {
         adapter = new ChatAdapter(mensajeList);
         recyclerView.setAdapter(adapter);
 
-        // Cargar chats donde el usuario participa
         db.collection("chats")
-                .whereArrayContains("participantes", currentUserId)
+                .whereEqualTo("idUsuario", currentUserId)
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     mensajeList.clear();
 
                     for (DocumentSnapshot doc : queryDocumentSnapshots.getDocuments()) {
                         String chatId = doc.getId();
-                        List<String> participantes = (List<String>) doc.get("participantes");
+                        String idHotel = doc.getString("idHotel");
+                        String idAdmin = doc.getString("idAdminHotel");
 
-                        // Obtener el ID del otro participante
-                        String otroUsuarioId = participantes.stream()
-                                .filter(id -> !id.equals(currentUserId))
-                                .findFirst()
-                                .orElse("Desconocido");
+                        // Nombre temporal hasta consultar hotel
+                        String nombreChat = "Hotel desconocido";
 
-                        // Nombre temporal por defecto
-                        String nombreChat = "Chat con otro usuario";
-
-                        // Inicializar chat con mensaje vacío, lo actualizaremos después
                         Chat chat = new Chat(nombreChat, "", "Cargando...", false, false, false);
                         chat.setChatId(chatId);
                         mensajeList.add(chat);
 
-                        // Obtener el último mensaje de ese chat
+                        // 🔍 Consultar el nombre del hotel
+                        db.collection("Hoteles")
+                                .document(idHotel)
+                                .get()
+                                .addOnSuccessListener(hotelDoc -> {
+                                    if (hotelDoc.exists()) {
+                                        String nombreHotel = hotelDoc.getString("nombre");
+                                        if (nombreHotel != null) {
+                                            chat.setNombreHotel(nombreHotel);
+                                            adapter.notifyDataSetChanged();
+                                        }
+                                    }
+                                });
+
+                        // 🔁 Obtener el último mensaje
                         db.collection("chats")
                                 .document(chatId)
                                 .collection("mensajes")
@@ -120,10 +127,8 @@ public class ClienteChat extends AppCompatActivity {
                                 });
                     }
 
-
                     mensajeListFull = new ArrayList<>(mensajeList);
 
-                    // Ordenar chats (si lo deseas, por ejemplo: no leídos primero)
                     Collections.sort(mensajeList, (c1, c2) -> Boolean.compare(c1.isLeidoPorMi(), c2.isLeidoPorMi()));
 
                     adapter.updateList(mensajeList);
@@ -134,15 +139,16 @@ public class ClienteChat extends AppCompatActivity {
                 });
 
 
+
         // Crear una copia de la lista original para realizar el filtrado
-        mensajeListFull = new ArrayList<>(mensajeList);
+        /*mensajeListFull = new ArrayList<>(mensajeList);
 
         // Ordenar: los no leídos primero
         Collections.sort(mensajeList, (c1, c2) -> Boolean.compare(c1.isLeidoPorMi(), c2.isLeidoPorMi()));
 
         // Crear y configurar el adaptador
         adapter = new ChatAdapter(mensajeList);
-        recyclerView.setAdapter(adapter);
+        recyclerView.setAdapter(adapter);*/
 
         // Configurar la barra de búsqueda
         EditText searchInput = findViewById(R.id.search_input);

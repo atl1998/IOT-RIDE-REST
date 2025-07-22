@@ -1,0 +1,391 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="#FFFFFF"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context=".cliente.DetalleChat">
+    <!-- Encabezado amarillo -->
+    <LinearLayout
+        android:id="@+id/headerLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@color/amarillo_dorado"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- Título + Chat + Notificaciones -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="12dp">
+
+            <!-- Botón de Búsqueda -->
+
+            <TextView
+                android:id="@+id/actividad3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="Chat"
+                android:textColor="#282828"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.472"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.523" />
+
+            <!-- Botón de Notificaciones -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnVolver"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginEnd="108dp"
+                android:backgroundTint="@color/transparente"
+                android:contentDescription="Abrir chat de soporte"
+                android:minWidth="0dp"
+                android:minHeight="0dp"
+                android:padding="15dp"
+                app:icon="@drawable/outline_arrow_back_24"
+                app:iconGravity="textStart"
+                app:iconPadding="0dp"
+                app:iconTint="@color/marron_oscuro"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/actividad3"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/notificaciones"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:backgroundTint="@color/transparente"
+                app:icon="@drawable/notifications_24dp_e3e3e3_fill0_wght400_grad0_opsz24"
+                app:iconTint="@color/marron_oscuro"
+                app:iconGravity="textStart"
+                app:iconPadding="0dp"
+                android:padding="15dp"
+                android:minWidth="0dp"
+                android:minHeight="0dp"
+                android:contentDescription="Ver notificaciones nuevas"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- Línea negra abajo -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#000000"
+            app:layout_constraintTop_toBottomOf="@id/headerLayout"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+    </LinearLayout>
+
+    <!-- Información del contacto -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/contactInfoLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        app:layout_constraintTop_toBottomOf="@id/headerLayout">
+
+        <ImageView
+            android:id="@+id/profileImage"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="8dp"
+            android:src="@drawable/profile_placeholder"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <TextView
+            android:id="@+id/contactName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:text="Nilo Cori"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="#000000"
+            app:layout_constraintStart_toEndOf="@id/profileImage"
+            app:layout_constraintTop_toTopOf="@id/profileImage"/>
+
+        <TextView
+            android:id="@+id/contactStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:text="En Linea"
+            android:textSize="12sp"
+            android:textColor="@color/amarillo_dorado"
+            app:layout_constraintStart_toEndOf="@id/profileImage"
+            app:layout_constraintTop_toBottomOf="@id/contactName"/>
+
+
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- Línea divisoria azul -->
+    <View
+        android:id="@+id/dividerLine"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#000000"
+        app:layout_constraintTop_toBottomOf="@id/contactInfoLayout"/>
+
+    <!-- Contenedor de mensajes (ScrollView) -->
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/messageInputLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/dividerLine">
+
+        <!-- Contenedor de mensajes -->
+        <LinearLayout
+            android:id="@+id/messagesContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Información del hotel -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/hotelInfoCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="8dp"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="2dp">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:id="@+id/hotelImage"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/hotel1"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"/>
+
+                    <TextView
+                        android:id="@+id/hotelName"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="8dp"
+                        android:text="The Aston Vill Hotel"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="#000000"
+                        app:layout_constraintStart_toEndOf="@id/hotelImage"
+                        app:layout_constraintEnd_toStartOf="@id/ratingText"
+                        app:layout_constraintTop_toTopOf="parent"/>
+
+                    <TextView
+                        android:id="@+id/ratingText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginTop="8dp"
+                        android:text="4.7"
+                        android:textColor="#FFC107"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        />
+
+                    <TextView
+                        android:id="@+id/hotelLocation"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="4dp"
+                        android:text="Veum Point, Michikoton"
+                        android:textSize="12sp"
+                        android:textColor="#757575"
+                        app:layout_constraintStart_toEndOf="@id/hotelImage"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/hotelName"/>
+
+                    <TextView
+                        android:id="@+id/hotelPrice"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginBottom="8dp"
+                        android:text="$120/noche"
+                        android:textSize="14sp"
+                        android:textColor="@color/dorado"
+                        android:textStyle="bold"
+                        app:layout_constraintStart_toEndOf="@id/hotelImage"
+                        app:layout_constraintTop_toBottomOf="@id/hotelLocation"
+                        app:layout_constraintBottom_toBottomOf="parent"/>
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Mensaje enviado por el usuario -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="8dp">
+
+                <TextView
+                    android:id="@+id/sentMessage1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/sent_message_background"
+                    android:padding="12dp"
+                    android:text="Hola buenas tardes, hay habitaciones deluxe disponibles?"
+                    android:textColor="#FFFFFF"
+                    android:maxWidth="280dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"/>
+
+                <TextView
+                    android:id="@+id/sentTime1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="10.15 AM"
+                    android:textSize="10sp"
+                    android:textColor="#9E9E9E"
+                    app:layout_constraintEnd_toEndOf="@id/sentMessage1"
+                    app:layout_constraintTop_toBottomOf="@id/sentMessage1"/>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <!-- Mensaje recibido -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="8dp">
+
+                <TextView
+                    android:id="@+id/receivedMessage1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/received_message_background"
+                    android:padding="12dp"
+                    android:text="Hola Fabricio"
+                    android:textColor="#000000"
+                    android:maxWidth="280dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"/>
+
+                <TextView
+                    android:id="@+id/receivedTime1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="10.30 AM"
+                    android:textSize="10sp"
+                    android:textColor="#9E9E9E"
+                    app:layout_constraintStart_toStartOf="@id/receivedMessage1"
+                    app:layout_constraintTop_toBottomOf="@id/receivedMessage1"/>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <!-- Segundo mensaje recibido -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="8dp">
+
+                <TextView
+                    android:id="@+id/receivedMessage2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/received_message_background"
+                    android:padding="12dp"
+                    android:text="Si, hay habitaciones disponibles, deseas realizar una reservación."
+                    android:textColor="#000000"
+                    android:maxWidth="280dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"/>
+
+                <TextView
+                    android:id="@+id/receivedTime2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="10.31 AM"
+                    android:textSize="10sp"
+                    android:textColor="#9E9E9E"
+                    app:layout_constraintStart_toStartOf="@id/receivedMessage2"
+                    app:layout_constraintTop_toBottomOf="@id/receivedMessage2"/>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- Área de entrada de mensaje -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/messageInputLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:background="#F5F5F5"
+        app:layout_constraintTop_toBottomOf="@+id/scrollView"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf= "parent">
+
+        <ImageButton
+            android:id="@+id/attachmentButton"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_attachment"
+            android:contentDescription="Attach file"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <EditText
+            android:id="@+id/messageEditText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="8dp"
+            android:background="@drawable/input_message_background"
+            android:hint="Escribir mensaje"
+            android:padding="12dp"
+            android:textSize="14sp"
+            android:inputType="textMultiLine"
+            android:maxLines="4"
+            app:layout_constraintStart_toEndOf="@id/attachmentButton"
+            app:layout_constraintEnd_toStartOf="@id/sendButton"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/sendButton"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:backgroundTint="@color/dorado"
+            app:fabCustomSize="40dp"
+            android:src="@drawable/ic_send"
+            app:tint="#FFFFFF"
+            android:contentDescription="Send message"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

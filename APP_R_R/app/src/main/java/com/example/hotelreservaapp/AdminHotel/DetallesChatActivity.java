@@ -1,4 +1,15 @@
-package com.example.hotelreservaapp.cliente;
+package com.example.hotelreservaapp.AdminHotel;
+
+import android.os.Bundle;
+
+import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+
+import com.example.hotelreservaapp.AdminHotel.Fragments.ChatFragment;
+import com.example.hotelreservaapp.R;
 
 import android.content.Intent;
 import android.graphics.Color;
@@ -15,6 +26,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.hotelreservaapp.R;
+import com.example.hotelreservaapp.cliente.ClienteChat;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
@@ -39,7 +51,7 @@ import android.widget.Toast;
 import org.json.JSONArray;
 import org.json.JSONException;
 
-public class DetalleChat extends AppCompatActivity {
+public class DetallesChatActivity extends AppCompatActivity {
 
     private LinearLayout messagesContainer;
     private EditText messageEditText;
@@ -48,24 +60,22 @@ public class DetalleChat extends AppCompatActivity {
 
     private FirebaseFirestore db;
     private FirebaseUser currentUser;
-    private String chatId;
-
     private MaterialButton btnVolver;
+    private String chatId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.cliente_activity_detalle_chat);
+        setContentView(R.layout.adminhotel_activity_detalles_chat);
 
         messagesContainer = findViewById(R.id.messagesContainer);
         messageEditText = findViewById(R.id.messageEditText);
         sendButton = findViewById(R.id.sendButton);
         scrollView = findViewById(R.id.scrollView);
 
-        // Botón para volver
-        btnVolver = findViewById(R.id.btnVolverChatCliente);
+        btnVolver = findViewById(R.id.btnVolver);
         btnVolver.setOnClickListener(v -> {
-            startActivity(new Intent(this, ClienteChat.class));
+            finish(); // ← Esto te devuelve al ChatFragment
         });
 
         db = FirebaseFirestore.getInstance();
@@ -153,4 +163,3 @@ public class DetalleChat extends AppCompatActivity {
         messagesContainer.addView(textView);
     }
 }
-
