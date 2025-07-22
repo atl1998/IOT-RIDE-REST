@@ -113,6 +113,7 @@ public class MapaActividad extends AppCompatActivity implements OnMapReadyCallba
             i.putExtra("fotoCliente",     fotoUrlCliente);
             i.putExtra("latOrigen", clienteLat);
             i.putExtra("lngOrigen", clienteLng);
+            //OLA
             startActivity(i);
         });
     }

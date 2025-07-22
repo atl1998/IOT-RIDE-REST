@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +27,7 @@ import com.example.hotelreservaapp.R;
 import com.example.hotelreservaapp.taxista.MapaActividad;
 import com.example.hotelreservaapp.taxista.DetallesViajeActivity;
 import com.example.hotelreservaapp.taxista.TaxistaMain;
+import com.example.hotelreservaapp.taxista.TaxistaPushNotification;
 import com.example.hotelreservaapp.taxista.ViajeEnCursoActivity;
 import com.example.hotelreservaapp.taxista.model.TarjetaModel;
 import com.google.android.gms.maps.model.LatLng;
@@ -179,6 +181,33 @@ public class TarjetaTaxistaAdapter extends RecyclerView.Adapter<TarjetaTaxistaAd
             for (TarjetaModel t : listaCompartida) {
                 if ("En progreso".equalsIgnoreCase(t.getEstado())) {
                     yaEnCurso = true;
+                    String idCliente = t.getIdCliente();
+
+                    if (idCliente == null || idCliente.isEmpty()) {
+                        Log.w("FCM_TOKEN", "idCliente es null o vacío, no se puede enviar notificación");
+                        break; // o return si quieres salir completamente del onClick
+                    }
+
+                    FirebaseFirestore db = FirebaseFirestore.getInstance();
+                    db.collection("usuarios")
+                            .document(idCliente)
+                            .get()
+                            .addOnSuccessListener(documentSnapshot -> {
+                                if (documentSnapshot.exists()) {
+                                    String fcmTokenCliente = documentSnapshot.getString("fcmToken");
+                                    if (fcmTokenCliente != null) {
+                                        TaxistaPushNotification tn = new TaxistaPushNotification();
+                                        tn.enviarNotificacionAlCliente(fcmTokenCliente, "Nilo Cori");
+                                    } else {
+                                        Log.w("FCM_TOKEN", "El cliente no tiene token FCM guardado");
+                                    }
+                                } else {
+                                    Log.w("FCM_TOKEN", "Documento de cliente no existe");
+                                }
+                            })
+                            .addOnFailureListener(e -> {
+                                Log.e("FCM_TOKEN", "Error al obtener token FCM", e);
+                            });
                     break;
                 }
             }
