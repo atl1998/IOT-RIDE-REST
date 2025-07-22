@@ -49,7 +49,7 @@ public class LogsAdapter extends RecyclerView.Adapter<LogsAdapter.LogViewHolder>
         } else if (accion.toLowerCase().contains("modificación") || accion.toLowerCase()
                 .contains("actualización")) {
             holder.imgIcono.setImageResource(R.drawable.edit_icon);
-        } else if (accion.toLowerCase().contains("check-out") || accion.toLowerCase().contains("aprobación")) {
+        } else if (accion.toLowerCase().contains("check-out") || accion.toLowerCase().contains("aprobación")|| accion.toLowerCase().contains("iniciado")) {
             holder.imgIcono.setImageResource(R.drawable.checkout_icon);
         } else if (accion.toLowerCase().contains("finalizado") ) {
             holder.imgIcono.setImageResource(R.drawable.finish_icon);

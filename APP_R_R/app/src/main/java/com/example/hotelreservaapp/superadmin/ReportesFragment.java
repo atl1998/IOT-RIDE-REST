@@ -119,76 +119,49 @@ public class ReportesFragment extends Fragment {
     }
 
     private void loadDataFromFirestore() {
-        db.collection("reservas")
-                .whereNotEqualTo("estado", "Cancelado")
-                .get()
-                .addOnCompleteListener(task -> {
-                    showLoadingState(false);
+        db.collection("reservaas").get().addOnCompleteListener(task -> {
+            showLoadingState(false);
 
-                    if (task.isSuccessful() && task.getResult() != null) {
-                        List<Map<String, Object>> reservas = new ArrayList<>();
+            if (task.isSuccessful() && task.getResult() != null) {
+                int totalReservas = 0;
+                Map<String, Integer> reservasPorHotel = new HashMap<>();
+                List<Map<String, Object>> todasLasReservas = new ArrayList<>();
 
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            Map<String, Object> data = document.getData();
-                            if (data != null) {
-                                reservas.add(data);
-                            }
+                for (DocumentSnapshot doc : task.getResult()) {
+                    String idHotel = doc.getId();
+                    List<Map<String, Object>> listareservas = (List<Map<String, Object>>) doc.get("listareservas");
+                    int count = (listareservas != null) ? listareservas.size() : 0;
+
+                    totalReservas += count;
+                    reservasPorHotel.put(idHotel, count);
+
+                    if (listareservas != null) {
+                        for (Map<String, Object> reserva : listareservas) {
+                            reserva.put("idHotel", idHotel);
+                            todasLasReservas.add(reserva);
                         }
-
-                        if (reservas.isEmpty()) {
-                            Log.w(TAG, "No se encontraron reservas");
-                            setupChartsWithEmptyData();
-                            return;
-                        }
-
-                        processReservationsData(reservas);
-                        binding.tvTotalReservas.setText(String.valueOf(reservas.size()));
-
-                    } else {
-                        Log.e(TAG, "Error obteniendo reservas", task.getException());
-                        setupChartsWithEmptyData();
                     }
-                });
-    }
+                }
 
-    private void processReservationsData(List<Map<String, Object>> reservas) {
-        try {
-            // Procesar gráficos que no necesitan consultas adicionales
-            setupBarChartWithData(reservas);
-            setupLineChartWithData(reservas);
+                binding.tvTotalReservas.setText(String.valueOf(totalReservas));
 
-            // Procesar gráfico de habitaciones (requiere consultas optimizadas)
-            setupPieChartWithDataOptimized(reservas);
+                // TOP 3 HOTELES CON NOMBRES REALES
+                List<Map.Entry<String, Integer>> sorted = new ArrayList<>(reservasPorHotel.entrySet());
+                sorted.sort((a, b) -> b.getValue() - a.getValue());
+                List<Map.Entry<String, Integer>> top3 = sorted.subList(0, Math.min(3, sorted.size()));
+                consultarNombresHotelesYCrearBarChart(top3);
 
-        } catch (Exception e) {
-            Log.e(TAG, "Error procesando datos de reservas", e);
-            setupChartsWithEmptyData();
-        }
-    }
+                // RESERVAS POR MES
+                setupLineChartWithNewData(todasLasReservas);
 
-    private void setupBarChartWithData(List<Map<String, Object>> reservas) {
-        Map<String, Integer> conteoHoteles = new HashMap<>();
+                // DISTRIBUCIÓN TIPO HABITACIÓN
+                setupPieChartWithNewData(todasLasReservas);
 
-        for (Map<String, Object> reserva : reservas) {
-            String idHotel = (String) reserva.get("IdHotel");
-            if (idHotel != null && !idHotel.trim().isEmpty()) {
-                conteoHoteles.put(idHotel, conteoHoteles.getOrDefault(idHotel, 0) + 1);
+            } else {
+                Log.e(TAG, "Error obteniendo reservas", task.getException());
+                setupChartsWithEmptyData();
             }
-        }
-
-        if (conteoHoteles.isEmpty()) {
-            Log.w(TAG, "No hay datos de hoteles para mostrar");
-            createBarChart(Collections.singletonList(new BarEntry(0, 0)), Collections.singletonList("Sin datos"));
-            return;
-        }
-
-        List<Map.Entry<String, Integer>> topHoteles = new ArrayList<>(conteoHoteles.entrySet());
-        Collections.sort(topHoteles, (a, b) -> b.getValue() - a.getValue());
-
-        int limit = Math.min(3, topHoteles.size());
-        List<Map.Entry<String, Integer>> top3 = topHoteles.subList(0, limit);
-
-        consultarNombresHotelesYCrearBarChart(top3);
+        });
     }
 
     private void consultarNombresHotelesYCrearBarChart(List<Map.Entry<String, Integer>> top3) {
@@ -223,21 +196,88 @@ public class ReportesFragment extends Fragment {
         });
     }
 
-
-    private void setupLineChartWithData(List<Map<String, Object>> reservas) {
+    private void setupLineChartWithNewData(List<Map<String, Object>> reservas) {
         Map<String, Integer> reservasPorMes = initializeLastSixMonths();
 
         for (Map<String, Object> reserva : reservas) {
-            String fechaFin = (String) reserva.get("fechaFin");
-            if (fechaFin != null && !fechaFin.trim().isEmpty()) {
-                String mesKey = parseDateToMonthKey(fechaFin);
-                if (mesKey != null && reservasPorMes.containsKey(mesKey)) {
+            Object fechaObj = reserva.get("fechainiciocheckin");
+            if (fechaObj instanceof com.google.firebase.Timestamp) {
+                com.google.firebase.Timestamp timestamp = (com.google.firebase.Timestamp) fechaObj;
+                Date date = timestamp.toDate();
+
+                // Convertimos directamente a clave "yyyy-MM"
+                SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy-MM", Locale.getDefault());
+                String mesKey = outputFormat.format(date);
+
+                if (reservasPorMes.containsKey(mesKey)) {
                     reservasPorMes.put(mesKey, reservasPorMes.get(mesKey) + 1);
+                } else {
+                    reservasPorMes.put(mesKey, 1);
+                }
+            } else if (fechaObj instanceof String) {
+                String fechaStr = (String) fechaObj;
+                String mesKey = parseDateToMonthKey(fechaStr);
+
+                if (mesKey != null) {
+                    reservasPorMes.put(mesKey, reservasPorMes.getOrDefault(mesKey, 0) + 1);
                 }
             }
         }
 
         createLineChartFromMonthlyData(reservasPorMes);
+    }
+
+    private void setupPieChartWithNewData(List<Map<String, Object>> reservas) {
+        Map<String, Integer> tipoHabitacionCounts = new HashMap<>();
+        List<Task<Void>> tasks = new ArrayList<>();
+
+        for (Map<String, Object> reserva : reservas) {
+            String idUsuario = (String) reserva.get("idusuario");
+            String idReserva = (String) reserva.get("idreserva");
+
+            if (idUsuario != null && idReserva != null) {
+                Log.d(TAG, "Consultando usuario: " + idUsuario + ", reserva: " + idReserva);
+                Task<Void> task = db.collection("usuarios")
+                        .document(idUsuario)
+                        .collection("Reservas")
+                        .document(idReserva)
+                        .get()
+                        .continueWith(reservaTask -> {
+                            if (reservaTask.isSuccessful()) {
+                                DocumentSnapshot doc = reservaTask.getResult();
+                                if (doc.exists()) {
+                                    List<Map<String, Object>> habitaciones = (List<Map<String, Object>>) doc.get("habitaciones");
+                                    if (habitaciones != null) {
+                                        for (Map<String, Object> habitacion : habitaciones) {
+                                            String nombre = (String) habitacion.get("nombreHabitacion");
+                                            if (nombre != null) {
+                                                synchronized (tipoHabitacionCounts) {
+                                                    tipoHabitacionCounts.put(nombre, tipoHabitacionCounts.getOrDefault(nombre, 0) + 1);
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            return null;
+                        });
+
+                tasks.add(task);
+            }
+        }
+
+        Tasks.whenAllComplete(tasks).addOnCompleteListener(t -> {
+            List<PieEntry> entries = new ArrayList<>();
+            for (Map.Entry<String, Integer> entry : tipoHabitacionCounts.entrySet()) {
+                entries.add(new PieEntry(entry.getValue(), entry.getKey()));
+            }
+
+            if (entries.isEmpty()) {
+                entries.add(new PieEntry(1, "Sin datos"));
+            }
+
+            createPieChart(entries);
+        });
     }
 
     private Map<String, Integer> initializeLastSixMonths() {
