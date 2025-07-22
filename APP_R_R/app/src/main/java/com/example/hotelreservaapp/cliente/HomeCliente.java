@@ -78,13 +78,13 @@ public class HomeCliente extends AppCompatActivity {
 
         btntaxi = findViewById(R.id.btntaxi);
 
-        /*
+
         btntaxi.setOnClickListener(v -> {
             Intent intent = new Intent(HomeCliente.this,
                     ClienteServicioTaxi.class);
             startActivity(intent);
         });
-        */
+
         configurarBottomNav();
 
         // Abrir BuscadorDestino personalizado
