@@ -137,7 +137,9 @@ public class DetalleSolicitudActivity extends AppCompatActivity  {
         final String contrasenaTemporal = UUID.randomUUID().toString().substring(0, 12);
 
         //Datos superadmin
-        String uidSuperadmin = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        String uidSuperadmin = firebaseAuth.getCurrentUser() != null
+                ? firebaseAuth.getCurrentUser().getUid()
+                : null;
 
         firebaseAuth.createUserWithEmailAndPassword(email, contrasenaTemporal)
                 .addOnCompleteListener(authTask -> {
@@ -204,7 +206,7 @@ public class DetalleSolicitudActivity extends AppCompatActivity  {
 
                                                                         String nombreTaxista = postulacion.getNombres() + " " + postulacion.getApellidos();
 
-                                                                        com.example.hotelreservaapp.LogManager.registrarLogRegistro(
+                                                                        LogManager.registrarLogRegistro(
                                                                                 nombreCompletoSuperadmin,
                                                                                 "Aprobación de solicitud",
                                                                                 "La solicitud del taxista " + nombreTaxista + " ha sido aprobada"
@@ -303,6 +305,10 @@ public class DetalleSolicitudActivity extends AppCompatActivity  {
         pDialog.setCancelable(false);
         pDialog.show();
 
+        String uidSuperadmin = FirebaseAuth.getInstance().getCurrentUser() != null
+                ? FirebaseAuth.getInstance().getCurrentUser().getUid()
+                : null;
+
         // Referencia al documento de la postulación
         // Aquí es donde el campo 'id' de PostulacionTaxista es crucial.
         DocumentReference postulacionDocRef = firestore.collection("postulacionesTaxistas").document(solicitudActual.getId());
@@ -318,8 +324,7 @@ public class DetalleSolicitudActivity extends AppCompatActivity  {
                 .addOnSuccessListener(aVoid -> {
                     pDialog.dismissWithAnimation();
                     // 🔥 Recuperar nombre y apellido del superadmin para el log
-                    firestore.collection("usuarios").document(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                            .get()
+                    firestore.collection("usuarios").document(uidSuperadmin).get()
                             .addOnSuccessListener(doc -> {
                                 if (doc.exists()) {
                                     String nombreSuperadmin = doc.getString("nombre");

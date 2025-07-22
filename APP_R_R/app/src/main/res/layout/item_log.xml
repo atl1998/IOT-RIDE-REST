@@ -2,23 +2,39 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp"
-    app:cardElevation="2dp"
-    app:cardCornerRadius="12dp">
+    android:layout_marginTop="1dp"
+    android:layout_marginBottom="1dp"
+    app:cardElevation="8dp"
+    app:cardCornerRadius="16dp"
+    android:backgroundTint="#FFFFFF"
+    app:cardUseCompatPadding="true">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="12dp">
 
-        <ImageView
-            android:id="@+id/imgIcono"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
+        <!-- Barra de acento lateral -->
+        <View
+            android:id="@+id/accentBar"
+            android:layout_width="4dp"
+            android:layout_height="60dp"
             android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
+            android:background="@color/amarillo_dorado"
+            android:layout_marginEnd="12dp" />
+
+        <ImageView
+            android:id="@+id/imgIcono"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_toEndOf="@id/accentBar"
+            android:layout_centerVertical="true"
             android:src="@drawable/info_icon"
-            android:contentDescription="Tipo de log" />
+            android:contentDescription="Tipo de log"
+            android:background="#FFFFFF"
+            android:padding="10dp"
+            android:scaleType="centerInside" />
 
         <!-- Contenedor de textos a la derecha del icono -->
         <LinearLayout
@@ -26,8 +42,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_toEndOf="@id/imgIcono"
-            android:layout_marginStart="12dp"
-            android:orientation="vertical">
+            android:layout_marginStart="16dp"
+            android:orientation="vertical"
+            android:layout_centerVertical="true">
 
             <TextView
                 android:id="@+id/tvAccion"
@@ -35,24 +52,27 @@
                 android:layout_height="wrap_content"
                 android:text="Reserva eliminada"
                 android:textStyle="bold"
-                android:textColor="#333"
-                android:textSize="16sp" />
+                android:textColor="#1A202C"
+                android:textSize="18sp"
+                android:letterSpacing="0.01" />
 
             <TextView
                 android:id="@+id/tvUsuario"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Por: Jorge Coronado"
-                android:textColor="#666"
-                android:textSize="14sp" />
+                android:textColor="#4A5568"
+                android:textSize="15sp"
+                android:layout_marginTop="4dp" />
 
             <TextView
                 android:id="@+id/tvFechaHora"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="10/05/2025 - 10:45 AM"
-                android:textColor="#888"
-                android:textSize="13sp" />
+                android:textColor="#718096"
+                android:textSize="13sp"
+                android:layout_marginTop="2dp" />
 
             <TextView
                 android:id="@+id/tvDetalle"
@@ -61,9 +81,16 @@
                 android:text="Detalle del log..."
                 android:maxLines="2"
                 android:ellipsize="end"
-                android:textColor="#666"
-                android:textSize="13sp"
-                android:layout_marginTop="4dp"/>
+                android:textColor="#4A5568"
+                android:textSize="14sp"
+                android:layout_marginTop="8dp"
+                android:background="#F8F9FA"
+                android:padding="8dp"
+                android:lineSpacingExtra="2dp" />
+
         </LinearLayout>
+
+
     </RelativeLayout>
+
 </androidx.cardview.widget.CardView>
