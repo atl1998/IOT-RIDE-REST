@@ -250,22 +250,36 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:padding="16dp">
-                    <!-- Cabecera con título + botón editar -->
+                    <!-- Cabecera con título + botones alineados horizontalmente -->
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
+                        android:layout_height="wrap_content"
+                        android:padding="6dp">
 
                         <!-- Título -->
                         <TextView
                             android:id="@+id/tvSectionTitle"
-                            android:layout_width="wrap_content"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:text="Tu reserva"
                             android:textSize="18sp"
                             android:textStyle="bold"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
-                            app:layout_constraintBottom_toBottomOf="parent"/>
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toStartOf="@+id/btnRefresh"
+                            app:layout_constraintHorizontal_chainStyle="spread_inside" />
+
+                        <!-- Botón Refrescar -->
+                        <Button
+                            android:id="@+id/btnRefresh"
+                            style="?attr/materialIconButtonFilledTonalStyle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            app:icon="@drawable/adminhotel_refresh"
+                            app:layout_constraintBaseline_toBaselineOf="@id/tvSectionTitle"
+                            app:layout_constraintEnd_toStartOf="@+id/btnEditarPago"
+                            android:layout_marginEnd="8dp" />
 
                         <!-- Botón editar pago -->
                         <Button
@@ -274,9 +288,11 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             app:icon="@drawable/edit_icon"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
+                            app:layout_constraintBaseline_toBaselineOf="@id/tvSectionTitle"
+                            app:layout_constraintEnd_toEndOf="parent" />
+
                     </androidx.constraintlayout.widget.ConstraintLayout>
+
 
                     <LinearLayout
                         android:layout_width="match_parent"

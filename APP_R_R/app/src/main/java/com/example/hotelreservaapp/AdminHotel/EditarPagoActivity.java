@@ -1,8 +1,10 @@
 package com.example.hotelreservaapp.AdminHotel;
 
+import android.content.Intent;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.hotelreservaapp.AdminHotel.Model.ReservaInicio;
 import com.example.hotelreservaapp.R;
 
 import android.view.LayoutInflater;
@@ -18,9 +20,15 @@ import com.example.hotelreservaapp.databinding.AdminhotelActivityResumenreservaB
 import com.example.hotelreservaapp.databinding.SuperadminActivityEditarPagoBinding;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class EditarPagoActivity extends AppCompatActivity {
     private LinearLayout llServicesContainer;
@@ -28,8 +36,15 @@ public class EditarPagoActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private String hotelId;
 
-    private SuperadminActivityEditarPagoBinding binding;
+    private String reservaId;
 
+    private SuperadminActivityEditarPagoBinding binding;
+    public static final String EXTRA_RESERVA = "extra_reserva";
+
+    double sumaServiciosExtras = 0.0;
+    double cargosPorDanhos = 0.0;
+
+    private ReservaInicio reserva;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,101 +62,184 @@ public class EditarPagoActivity extends AppCompatActivity {
             }
         });
 
+        // listener de guardar
+        binding.btnGuardar.setOnClickListener(v -> saveUpdatedCosts());
+
+        // Recuperar el objeto ReservaInicio
+        reserva = (ReservaInicio) getIntent()
+                .getSerializableExtra(EXTRA_RESERVA);
+        if (reserva == null) {
+            Toast.makeText(this, "No se recibió la reserva", Toast.LENGTH_LONG).show();
+            finish();
+            return;
+        }
+
+
+
 
         // Cargar hotelId y luego los servicios
-        loadHotelId();
+        loadServices();
+
     }
 
-    private void loadHotelId() {
-        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        db.collection("usuarios")
-                .document(uid)
-                .get()
-                .addOnSuccessListener(this::onUserDoc)
-                .addOnFailureListener(e ->
-                        Toast.makeText(this, "Error cargando usuario", Toast.LENGTH_SHORT).show()
-                );
-    }
-
-    private void onUserDoc(DocumentSnapshot userDoc) {
-        if (userDoc.exists() && userDoc.contains("idHotel")) {
-            hotelId = userDoc.getString("idHotel");
-            loadServices();
-        } else {
-            Toast.makeText(this, "No tienes hotel asignado", Toast.LENGTH_SHORT).show();
-        }
-    }
 
     private void loadServices() {
-        db.collection("Hoteles")
-                .document(hotelId)
-                .collection("servicios")
+        String reservaId = reserva.getIdreserva();
+        db.collection("costos")
+                .document(reservaId)
                 .get()
-                .addOnSuccessListener(this::populateServiceFields)
+                .addOnSuccessListener(this::onCostosDoc)
                 .addOnFailureListener(e ->
-                        Toast.makeText(this, "Error cargando servicios", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, "Error cargando costos", Toast.LENGTH_SHORT).show()
                 );
     }
 
-    private void populateServiceFields(QuerySnapshot snapshot) {
+    private void onCostosDoc(DocumentSnapshot doc) {
+        if (!doc.exists() || !doc.contains("servicios")) {
+            Toast.makeText(this, "No hay costos iniciales", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Obtenemos la lista de mapas [{ nombre: String, costo: Number }, ...]
+        List<Map<String,Object>> listaCostos =
+                (List<Map<String,Object>>) doc.get("servicios");
+
+        populateServiceFields(listaCostos);
+    }
+
+    private void populateServiceFields(List<Map<String,Object>> listaCostos) {
         LayoutInflater inflater = LayoutInflater.from(this);
         llServicesContainer.removeAllViews();
-        View item = inflater.inflate(R.layout.adminhotel_item_costo_servicio, llServicesContainer, false);
-        TextView tvName  = item.findViewById(R.id.tvServiceName);
-        EditText etCost  = item.findViewById(R.id.etServiceCost);
-        tvName.setText("Costos por Daños");
-        etCost.setText("0");
-        item.setTag("0");
-        llServicesContainer.addView(item);
 
+        for (Map<String,Object> itemMap : listaCostos) {
+            String nombre = (String) itemMap.get("nombre");
+            // Firestore suele devolver los números como Long o Double
+            Number costoNum = (Number) itemMap.get("costo");
+            String costoStr = costoNum != null ? costoNum.toString() : "0";
 
-        for (DocumentSnapshot doc : snapshot.getDocuments()) {
-            Servicio srv = doc.toObject(Servicio.class);
+            View itemView = inflater.inflate(
+                    R.layout.adminhotel_item_costo_servicio,
+                    llServicesContainer,
+                    false
+            );
+            TextView tvName  = itemView.findViewById(R.id.tvServiceName);
+            EditText etCost  = itemView.findViewById(R.id.etServiceCost);
 
-            View item2 = inflater.inflate(R.layout.adminhotel_item_costo_servicio, llServicesContainer, false);
-            TextView tvName2 = item2.findViewById(R.id.tvServiceName);
-            EditText etCost2  = item2.findViewById(R.id.etServiceCost);
-
-            if (tvName2 == null || etCost2 == null) {
+            if (tvName == null || etCost == null) {
                 throw new IllegalStateException(
-                        "Revisa item_service_cost.xml: faltan tvServiceName o etServiceCost"
+                        "Revisa adminhotel_item_costo_servicio.xml: faltan tvServiceName o etServiceCost"
                 );
             }
-            String serviceId   = doc.getId();
-            System.out.println("nombre del servicio: " + srv.getNombre());
 
-            tvName2.setText(srv.getNombre());
-            etCost2.setText(String.valueOf(srv.getPrecio()));
-            item2.setTag(serviceId);
+            tvName.setText(nombre);
+            etCost.setText(costoStr);
+            // opcional: guardar el nombre como tag para luego saber cuál editar
+            itemView.setTag(nombre);
 
-            llServicesContainer.addView(item2);
+            llServicesContainer.addView(itemView);
         }
     }
 
-    private void saveCostsAndFinish() {
-        int count = llServicesContainer.getChildCount();
-        for (int i = 0; i < count; i++) {
-            View item  = llServicesContainer.getChildAt(i);
-            String serviceId = (String) item.getTag();
-            EditText etCost  = item.findViewById(R.id.etServiceCost);
+    private void saveUpdatedCosts() {
+        String reservaId = reserva.getIdreserva();
+        List<Map<String,Object>> nuevosCostos = new ArrayList<>();
 
-            String text = etCost.getText().toString().trim();
-            double newCost;
+        // Recorre cada item inflado en llServicesContainer
+        for (int i = 0; i < llServicesContainer.getChildCount(); i++) {
+            View itemView = llServicesContainer.getChildAt(i);
+            TextView tvName = itemView.findViewById(R.id.tvServiceName);
+            EditText etCost = itemView.findViewById(R.id.etServiceCost);
+
+            String nombre = tvName.getText().toString();
+            String costoStr = etCost.getText().toString().trim();
+            double costo;
             try {
-                newCost = Double.parseDouble(text);
+                costo = Double.parseDouble(costoStr);
             } catch (NumberFormatException e) {
-                Toast.makeText(this, "Costo inválido en servicio " + (i+1), Toast.LENGTH_SHORT).show();
+                Toast.makeText(this,
+                        "Costo inválido en “" + nombre + "”",
+                        Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            // Actualizar en Firestore
-            db.collection("Hoteles")
-                    .document(hotelId)
-                    .collection("servicios")
-                    .document(serviceId)
-                    .update("precio", newCost);
+            Map<String,Object> map = new HashMap<>();
+            map.put("nombre", nombre);
+            map.put("costo", costo);
+            nuevosCostos.add(map);
+
+            if(i == llServicesContainer.getChildCount() - 1) {
+                cargosPorDanhos = costo;
+                continue;
+            }
+            sumaServiciosExtras += costo;
         }
-        Toast.makeText(this, "Costos actualizados", Toast.LENGTH_SHORT).show();
+
+        // Actualiza el array “servicios” en costos/{reservaId}
+        db.collection("costos")
+                .document(reservaId)
+                .update("servicios", nuevosCostos)
+                .addOnSuccessListener(aVoid -> {
+                    updatePagoDocument(sumaServiciosExtras, cargosPorDanhos);
+                    Toast.makeText(this,
+                            "Costos actualizados correctamente",
+                            Toast.LENGTH_SHORT).show();
+                })
+                .addOnFailureListener(e ->
+                        Toast.makeText(this,
+                                "Error al guardar costos: " + e.getMessage(),
+                                Toast.LENGTH_LONG).show()
+                );
         finish();
     }
+
+    private void updatePagoDocument(double serviciosExtras, double cargosPorDanhos) {
+        String uidUsuario = reserva.getIdUsuario();
+        String reservaId = reserva.getIdreserva();
+
+        // Ruta al doc Pago
+        DocumentReference pagoRef = db.collection("usuarios")
+                .document(uidUsuario)
+                .collection("Reservas")
+                .document(reservaId)
+                .collection("PagosRealizados")
+                .document("Pago");
+
+        // Primero leemos el PrecioHabitacion para recalcular el total
+        pagoRef.get()
+                .addOnSuccessListener(pagoSnap -> {
+                    if (!pagoSnap.exists()) {
+                        Toast.makeText(this,
+                                "Documento de Pago no encontrado",
+                                Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    Double precioHab = pagoSnap.getDouble("PrecioHabitacion");
+                    if (precioHab == null) precioHab = 0.0;
+
+                    double nuevoTotal = precioHab + serviciosExtras + cargosPorDanhos;
+
+                    // Preparamos el map de campos a actualizar
+                    Map<String,Object> updates = new HashMap<>();
+                    updates.put("ServiciosExtras", serviciosExtras);
+                    updates.put("CargosPorDanhos", cargosPorDanhos);
+                    updates.put("PrecioTotal", nuevoTotal);
+
+                    // Actualizamos el documento Pago
+                    pagoRef.update(updates)
+                            .addOnSuccessListener(a -> Toast.makeText(this,
+                                    "Pago actualizado correctamente",
+                                    Toast.LENGTH_SHORT).show()
+                            )
+                            .addOnFailureListener(e -> Toast.makeText(this,
+                                    "Error al actualizar Pago: " + e.getMessage(),
+                                    Toast.LENGTH_LONG).show()
+                            );
+                })
+                .addOnFailureListener(e -> Toast.makeText(this,
+                        "Error al leer PrecioHabitacion: " + e.getMessage(),
+                        Toast.LENGTH_LONG).show()
+                );
+    }
+
+
 }
