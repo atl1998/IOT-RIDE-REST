@@ -32,6 +32,8 @@ import com.example.hotelreservaapp.taxista.TaxistaPushNotification;
 import com.example.hotelreservaapp.taxista.ViajeEnCursoActivity;
 import com.example.hotelreservaapp.taxista.model.TarjetaModel;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
@@ -218,6 +220,48 @@ public class TarjetaTaxistaAdapter extends RecyclerView.Adapter<TarjetaTaxistaAd
                             notifyItemChanged(position);
                             sendNotification("Solicitud aceptada", "Has aceptado el viaje de " + item.getNombreCliente());
                         });
+
+
+                obtenerFCMTokenUsuario(item.getIdCliente(), new FCMTokenCallback() {
+                    @Override
+                    public void onTokenObtenido(String fcmToken) {
+                        Log.d("FCM", "El token es: " + fcmToken);
+                        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+                        if (currentUser == null) {
+                            Log.e("FCM", "❌ Usuario no autenticado");
+                            return;
+                        }
+
+                        String uidTaxista = currentUser.getUid(); // ← Aquí obtengo el UID directamente
+
+                        FirebaseFirestore.getInstance().collection("usuarios").document(uidTaxista)
+                                .get()
+                                .addOnSuccessListener(documentSnapshot -> {
+                                    if (documentSnapshot.exists()) {
+                                        String nombre = documentSnapshot.getString("nombre");
+                                        String apellido = documentSnapshot.getString("apellido");
+
+                                        if (nombre != null && apellido != null) {
+                                            String nombreCompleto = nombre + " " + apellido;
+                                            Log.d("FCM", "✅ Nombre del taxista: " + nombreCompleto);
+
+                                            TaxistaPushNotification taxistaPushNotification = new TaxistaPushNotification();
+                                            taxistaPushNotification.enviarNotificacionAlCliente(fcmToken, nombreCompleto);
+                                        } else {
+                                            Log.w("FCM", "⚠️ Nombre o apellido faltante");
+                                        }
+                                    } else {
+                                        Log.e("FCM", "❌ Documento de taxista no encontrado");
+                                    }
+                                })
+                                .addOnFailureListener(e -> Log.e("FCM", "❌ Error al obtener datos del taxista", e));
+                    }
+
+                    @Override
+                    public void onError(Exception e) {
+                        Log.e("FCM", "Error al obtener token", e);
+                    }
+                });
             }
             else if (EST_ACEPTADO.equals(est)) {
                 db.collection("servicios_taxi")
@@ -307,4 +351,31 @@ public class TarjetaTaxistaAdapter extends RecyclerView.Adapter<TarjetaTaxistaAd
             cardView      = itemView.findViewById(R.id.cardCompleto);
         }
     }
+
+    public void obtenerFCMTokenUsuario(String idUsuario, FCMTokenCallback callback) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        db.collection("usuarios").document(idUsuario)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        String fcmToken = documentSnapshot.getString("fcmToken");
+                        if (fcmToken != null) {
+                            Log.d("Firestore", "✅ FCM Token: " + fcmToken);
+                            callback.onTokenObtenido(fcmToken);
+                        } else {
+                            Log.w("Firestore", "⚠️ El campo fcmToken no está presente");
+                            callback.onError(new Exception("Token vacío"));
+                        }
+                    } else {
+                        callback.onError(new Exception("Documento no encontrado"));
+                    }
+                })
+                .addOnFailureListener(callback::onError);
+    }
+    public interface FCMTokenCallback {
+        void onTokenObtenido(String fcmToken);
+        void onError(Exception e);
+    }
+
 }

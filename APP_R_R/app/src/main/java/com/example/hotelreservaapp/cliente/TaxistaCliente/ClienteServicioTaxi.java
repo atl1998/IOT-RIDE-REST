@@ -228,7 +228,7 @@ public class ClienteServicioTaxi extends AppCompatActivity implements OnMapReady
                                 .document(usuarioActual.getUid())
                                 .collection("Reservas")
                                 .document(idReserva)
-                                .update("solicitarTaxista", "En progreso");
+                                .update("solicitarTaxista", "En progreso"); //OLA
 
                         // Lanzar la pantalla de carga
                         Intent i = new Intent(this, RequestTaxi.class);
