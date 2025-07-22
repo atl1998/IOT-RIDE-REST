@@ -170,6 +170,7 @@ public class TaxiInicioFragment extends Fragment implements TarjetaTaxistaAdapte
             ));
             actualizarBadge();
             // la escucha ya refresca automáticamente
+            //ds
         }
     }
 

@@ -28,15 +28,12 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.io.Serializable;
 
 public class ValidacionTarjeta extends AppCompatActivity {
-
     private MaterialButton btnVolver, btnConfirmarPago;
 
     private TextInputEditText etNumeroTarjeta,etFechaVencimiento,etCVV,etNombreTitular;
-
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -181,39 +178,35 @@ public class ValidacionTarjeta extends AppCompatActivity {
                         long fechaFinMillis = intent.getLongExtra("fechaFin", -1);
                         int adultos = intent.getIntExtra("adultos", 0);
                         int ninos = intent.getIntExtra("ninos", 0);
-                        ArrayList<Habitacion> habitacionesSeleccionadas = (ArrayList<Habitacion>) intent.getSerializableExtra("habitacionesSeleccionadas");
+                        Habitacion habitacionSeleccionada = (Habitacion) intent.getSerializableExtra("habitacionSeleccionada");
 
-                        if (habitacionesSeleccionadas == null || habitacionesSeleccionadas.isEmpty()) {
+                        if (habitacionSeleccionada == null) {
                             Toast.makeText(this, "No hay habitaciones seleccionadas", Toast.LENGTH_SHORT).show();
                             return;
                         }
 
-                        // Construir lista de habitaciones y actualizar stock
+                        int nuevaCantidad = habitacionSeleccionada.getCantDisponible() - habitacionSeleccionada.getSeleccionadas();
+
+                        db.collection("Hoteles")
+                                .document(hotelId)
+                                .collection("habitaciones")
+                                .document(habitacionSeleccionada.getIdDocumento())
+                                .update("cantidadDisponible", nuevaCantidad);
+
                         List<Map<String, Object>> habitacionesReserva = new ArrayList<>();
-                        for (Habitacion hab : habitacionesSeleccionadas) {
-                            int nuevaCantidad = hab.getCantDisponible() - hab.getSeleccionadas();
 
-                            db.collection("Hoteles")
-                                    .document(hotelId)
-                                    .collection("habitaciones")
-                                    .document(hab.getIdDocumento())
-                                    .update("cantidadDisponible", nuevaCantidad);
+                        Map<String, Object> h = new HashMap<>();
+                        h.put("habitacionId", habitacionSeleccionada.getIdDocumento());
+                        h.put("nombreHabitacion", habitacionSeleccionada.getNombre());
+                        h.put("cantidad", habitacionSeleccionada.getSeleccionadas());
+                        h.put("precioUnidad", habitacionSeleccionada.getPrecio());
 
-                            Map<String, Object> h = new HashMap<>();
-                            h.put("habitacionId", hab.getIdDocumento());
-                            h.put("nombreHabitacion", hab.getNombre());
-                            h.put("cantidad", hab.getSeleccionadas());
-                            h.put("precioUnidad", hab.getPrecio());
-                            habitacionesReserva.add(h);
-                        }
+                        habitacionesReserva.add(h);
+
 
                         // 🟢 AQUÍ CALCULAS el total del pago:
-                        final double[] pagoTotal = {0};
-                        for (Map<String, Object> h : habitacionesReserva) {
-                            int cantidad = (int) h.get("cantidad");
-                            double precio = (double) h.get("precioUnidad");
-                            pagoTotal[0] += cantidad * precio;
-                        }
+                        double pagoTotal = habitacionSeleccionada.getSeleccionadas() * habitacionSeleccionada.getPrecio();
+
 
                         // Crear la reserva
                         Map<String, Object> reserva = new HashMap<>();
@@ -221,10 +214,21 @@ public class ValidacionTarjeta extends AppCompatActivity {
                         reserva.put("fechaFin", new Timestamp(new Date(fechaFinMillis)));
                         reserva.put("hotelId", hotelId);
                         reserva.put("personas", adultos + ninos);
-                        reserva.put("checkoutSolicitado", false);
-                        reserva.put("estado", "En Progreso");
-                        reserva.put("habitaciones", habitacionesReserva);
-                        reserva.put("fechaReserva", FieldValue.serverTimestamp());
+                        reserva.put("tipoHab",habitacionSeleccionada.getNombre());
+
+                        Map<String, Object> habitacionMap = new HashMap<>();
+                        habitacionMap.put("nombreHabitacion", habitacionSeleccionada.getNombre());
+                        habitacionMap.put("precioUnidad", habitacionSeleccionada.getPrecio());
+                        habitacionMap.put("cantidad", habitacionSeleccionada.getSeleccionadas());
+
+                        reserva.put("habitacion", habitacionMap);
+
+                        reserva.put("estado", "En Progreso"); // o "En Progreso" si aún no ha concluido
+                        reserva.put("CheckInHora", "No especificado");
+                        reserva.put("CheckOutHora", "No especificado"); // Método auxiliar abajo
+                        reserva.put("checkoutSolicitado", false); // si aplica
+                        reserva.put("solicitarTaxista", "No Solicitado");
+
 
                         db.collection("usuarios")
                                 .document(userId)
@@ -237,8 +241,26 @@ public class ValidacionTarjeta extends AppCompatActivity {
                                     Map<String, Object> reservaSimplificadav2 = new HashMap<>();
                                     reservaSimplificadav2.put("fechainiciocheckin", new Timestamp(new Date(fechaInicioMillis)));
                                     reservaSimplificadav2.put("idreserva", docRef.getId()); // Puedes usar docRef.getId() si deseas
+
+                                    Map<String, Object> pago = new HashMap<>();
+                                    pago.put("PrecioHabitacion", pagoTotal);
+                                    pago.put("CargosPorDanhos", 0); // si hay lógica para calcularlo, cámbialo
+                                    pago.put("ServiciosExtras", 0); // si corresponde
+                                    pago.put("PrecioTotal", pagoTotal); // sumar otros campos si aplica
+
+                                    db.collection("usuarios")
+                                            .document(userId)
+                                            .collection("Reservas")
+                                            .document(docRef.getId())
+                                            .collection("PagosRealizados")
+                                            .document("Pago")
+                                            .set(pago)
+                                            .addOnSuccessListener(aVoid -> Log.d("Firestore", "Pago guardado"))
+                                            .addOnFailureListener(e -> Log.e("Firestore", "Error guardando pago", e));
+
+
                                     reservaSimplificadav2.put("idusuario", userId);
-                                    reservaSimplificadav2.put("pagohabitacion", pagoTotal[0]);
+                                    reservaSimplificadav2.put("pagohabitacion", pagoTotal);
 
                                     db.collection("reservaas")
                                             .document(hotelId)
@@ -288,9 +310,4 @@ public class ValidacionTarjeta extends AppCompatActivity {
                     Toast.makeText(this, "Error de conexión", Toast.LENGTH_SHORT).show();
                 });
     }
-
-
-
-
-
 }

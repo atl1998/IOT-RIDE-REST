@@ -687,7 +687,7 @@
                         android:backgroundTint="@color/dorado"
                         android:text="Confirmar Check out"
                         android:textColor="#FFFFFF"
-                        android:enabled="false"/>
+                        android:enabled="true"/>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 

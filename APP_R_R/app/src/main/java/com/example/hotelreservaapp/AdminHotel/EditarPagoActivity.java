@@ -5,8 +5,10 @@ import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.hotelreservaapp.AdminHotel.Model.ReservaInicio;
+import com.example.hotelreservaapp.LogManager;
 import com.example.hotelreservaapp.R;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -20,8 +22,10 @@ import com.example.hotelreservaapp.databinding.AdminhotelActivityResumenreservaB
 import com.example.hotelreservaapp.databinding.SuperadminActivityEditarPagoBinding;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -45,6 +49,7 @@ public class EditarPagoActivity extends AppCompatActivity {
     double cargosPorDanhos = 0.0;
 
     private ReservaInicio reserva;
+    private String uid;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,6 +70,7 @@ public class EditarPagoActivity extends AppCompatActivity {
         // listener de guardar
         binding.btnGuardar.setOnClickListener(v -> saveUpdatedCosts());
 
+        uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         // Recuperar el objeto ReservaInicio
         reserva = (ReservaInicio) getIntent()
                 .getSerializableExtra(EXTRA_RESERVA);
@@ -183,12 +189,24 @@ public class EditarPagoActivity extends AppCompatActivity {
                     Toast.makeText(this,
                             "Costos actualizados correctamente",
                             Toast.LENGTH_SHORT).show();
-                })
-                .addOnFailureListener(e ->
-                        Toast.makeText(this,
-                                "Error al guardar costos: " + e.getMessage(),
-                                Toast.LENGTH_LONG).show()
-                );
+
+                    // Obtener idHotel del usuario
+                    db.collection("usuarios").document(uid)
+                            .get().addOnSuccessListener(userSnap -> {
+                                String idHotel = userSnap.getString("idHotel");
+                                db.collection("Hoteles").document(idHotel)
+                                        .get().addOnSuccessListener(ga -> {
+                                            String nombre = ga.getString("nombre");
+                                            LogManager.registrarLogRegistro(
+                                                    nombre,
+                                                    "Actualización de precios",
+                                                    "Se han actualizado los precios del hotel " + nombre
+                                            );
+
+                                        }).addOnFailureListener(e -> Log.e("ResumenReserva", "Error leyendo usuario", e));
+                            }).addOnFailureListener(e -> Log.e("ResumenReserva", "Error leyendo usuario", e));
+                }).addOnFailureListener(e -> Log.e("ResumenReserva", "Error verificando costos", e));
+
         finish();
     }
 
