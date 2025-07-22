@@ -22,6 +22,7 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
 
+import com.example.hotelreservaapp.LogManager;
 import com.example.hotelreservaapp.R;
 import com.example.hotelreservaapp.databinding.SuperadminRegistrarAdmHotelActivityBinding;
 import com.example.hotelreservaapp.model.Notificacion;
@@ -107,6 +108,8 @@ public class RegistrarAdmHotelActivity extends AppCompatActivity {
         binding.btnRegistrar.setOnClickListener(v -> {
             if (!validarFormulario()) return;
 
+            String uidSuperadmin = FirebaseAuth.getInstance().getCurrentUser().getUid();  // 👉 Guardar UID antes de crear usuario
+
             // 1. Obtener datos del formulario
             String nombres = binding.etNombres.getText().toString().trim();
             String apellidos = binding.etApellidos.getText().toString().trim();
@@ -151,6 +154,22 @@ public class RegistrarAdmHotelActivity extends AppCompatActivity {
                         firestore.collection("usuarios").document(uid)
                                 .set(usuario)
                                 .addOnSuccessListener(unused -> {
+                                    String nombreCompleto = nombres + " " + apellidos;
+                                    firestore.collection("usuarios").document(uidSuperadmin).get()
+                                            .addOnSuccessListener(doc -> {
+                                                if (doc.exists()) {
+                                                    String nombreSuperadmin = doc.getString("nombre");
+                                                    String apellidoSuperadmin = doc.getString("apellido");
+                                                    String nombreCompletoSuperadmin = nombreSuperadmin + " " + apellidoSuperadmin;
+
+                                                    LogManager.registrarLogRegistro(
+                                                            nombreCompletoSuperadmin,
+                                                            "Registro de administrador de hotel",
+                                                            "El administrador de hotel " + nombreCompleto + " fue registrado en la plataforma"
+                                                    );
+                                                }
+                                            });
+
                                     // 4. Notificación local
                                     Notificacion nueva = new Notificacion("Nuevo admin de hotel registrado",
                                             "Se ha registrado correctamente un nuevo administrador de hotel.",

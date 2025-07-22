@@ -104,6 +104,27 @@ public class UsuarioAdapter extends RecyclerView.Adapter<UsuarioAdapter.UsuarioV
                                     for (com.google.firebase.firestore.DocumentSnapshot doc : query) {
                                         doc.getReference().update("estado", nuevoEstado);
                                     }
+                                    // Registrar log 🔥
+                                    String uidAdmin = com.google.firebase.auth.FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+                                    com.google.firebase.firestore.FirebaseFirestore.getInstance()
+                                            .collection("usuarios")
+                                            .document(uidAdmin)
+                                            .get()
+                                            .addOnSuccessListener(docAdmin -> {
+                                                if (docAdmin.exists()) {
+                                                    String nombreAdmin = docAdmin.getString("nombre");
+                                                    String apellidoAdmin = docAdmin.getString("apellido");
+                                                    String nombreCompletoAdmin = nombreAdmin + " " + apellidoAdmin;
+
+                                                    com.example.hotelreservaapp.LogManager.registrarLogRegistro(
+                                                            nombreCompletoAdmin,
+                                                            "Cambio de estado",
+                                                            "El estado del usuario " + usuario.getNombre() +
+                                                                    " fue cambiado a " + (nuevoEstado ? "Activo" : "Inactivo")
+                                                    );
+                                                }
+                                            });
                                     // Actualizar modelo y vista
                                     usuario.setActivo(nuevoEstado);
                                     holder.switchActivo.setChecked(nuevoEstado);
