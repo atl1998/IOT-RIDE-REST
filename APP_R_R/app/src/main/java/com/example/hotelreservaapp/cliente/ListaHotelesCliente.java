@@ -62,7 +62,7 @@ public class ListaHotelesCliente extends AppCompatActivity {
         tvDestinoSeleccionado = findViewById(R.id.tvDestinoSeleccionado);
         tvFechasSeleccionadas = findViewById(R.id.tvFechasSeleccionadas);
         // Mostrar destino
-        String destinoTexto = (tipo != null && tipo.equals("state")) ? "Región: " : "Ciudad: ";
+        String destinoTexto = (tipo != null && tipo.equals("region")) ? "Departamento: " : "Ciudad: ";
         tvDestinoSeleccionado.setText(destinoTexto + destino);
 
         // Mostrar fechas

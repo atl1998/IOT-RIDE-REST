@@ -1,6 +1,7 @@
 package com.example.hotelreservaapp.cliente;
 
 public class OfertaHotel {
+    private String hotelId;
     private String nombre;
     private double valoracion;
     private String urlFotoHotel;
@@ -11,12 +12,17 @@ public class OfertaHotel {
         // Constructor vacío necesario para Firestore
     }
 
-    public OfertaHotel(String nombre, double valoracion, String urlFotoHotel, String departamento, double precioMin) {
+    public OfertaHotel(String hotelId, String nombre, double valoracion, String urlFotoHotel, String departamento, double precioMin) {
+        this.hotelId = hotelId;
         this.nombre = nombre;
         this.valoracion = valoracion;
         this.urlFotoHotel = urlFotoHotel;
         this.departamento = departamento;
         this.precioMin = precioMin;
+    }
+
+    public String getHotelId() {
+        return hotelId;
     }
 
 

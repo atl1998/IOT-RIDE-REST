@@ -282,7 +282,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Ahorra en estancias en estas fechas: 9 de mayo - 11 de mayo"
+                    android:text="Fechas: 25 de julio - 27 de julio"
                     android:textSize="14sp"
                     android:textColor="#666666"
                     android:layout_marginBottom="16dp"/>

@@ -140,19 +140,32 @@ public class HomeCliente extends AppCompatActivity {
         ofertasAdapter = new OfertaHotelAdapter(this, listaOfertas);
         ofertasRecyclerView.setAdapter(ofertasAdapter);
 
-        // Listener de clics
-        ofertasAdapter.setOnItemClickListener((oferta, position) ->
-                Toast.makeText(HomeCliente.this, "Seleccionaste: " + oferta.getNombre(), Toast.LENGTH_SHORT).show()
-        );
-
         // Luego carga los datos
         cargarOfertasDesdeFirestore();
 
         ofertasAdapter = new OfertaHotelAdapter(this, listaOfertas);
         ofertasRecyclerView.setAdapter(ofertasAdapter);
-        ofertasAdapter.setOnItemClickListener((oferta, position) ->
-                Toast.makeText(HomeCliente.this, "Seleccionaste: " + oferta.getNombre(), Toast.LENGTH_SHORT).show()
-        );
+        int numAdultos=2;
+        int numNinos=0;
+
+        ofertasAdapter.setOnItemClickListener((oferta, position) -> {
+            Intent intent = new Intent(HomeCliente.this, DetallesHotel.class);
+            intent.putExtra("hotelId", oferta.getHotelId());
+
+            // Establecer fechas fijas: del 25 al 27 de julio (2025 por defecto)
+            Calendar inicio = Calendar.getInstance();
+            inicio.set(2025, Calendar.JULY, 25, 14, 0, 0); // 25 julio 2025, 2:00 p.m.
+            Calendar fin = Calendar.getInstance();
+            fin.set(2025, Calendar.JULY, 27, 12, 0, 0); // 27 julio 2025, 12:00 p.m.
+
+            intent.putExtra("fechaInicio", inicio.getTimeInMillis());
+            intent.putExtra("fechaFin", fin.getTimeInMillis());
+            intent.putExtra("adultos", numAdultos);
+            intent.putExtra("ninos", numNinos);
+            startActivity(intent);
+        });
+
+
 
         btnNotificaciones.setOnClickListener(v -> startActivity(new Intent(this, ClienteNotificaciones.class)));
         /*
@@ -198,14 +211,14 @@ public class HomeCliente extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1001 && resultCode == RESULT_OK && data != null) {
             String nombre = data.getStringExtra("name");
-            String tipo = data.getStringExtra("tipo"); // <- tipo: "city", "state", etc.
+            String tipo = data.getStringExtra("tipo");
+            Log.d("DEBUG", "Destino seleccionado: " + nombre + " (Tipo: " + tipo + ")");
 
             if (nombre != null) etDestino.setText(nombre);
             tipoDestinoSeleccionado = tipo != null ? tipo : "";
-
-            Log.d("Destino", "Seleccionado: " + nombre + " (Tipo: " + tipoDestinoSeleccionado + ")");
         }
     }
+
 
     private void realizarBusqueda() {
         String destino = etDestino.getText().toString().trim();
@@ -394,7 +407,8 @@ public class HomeCliente extends AppCompatActivity {
                         double precioMin = doc.contains("precioMin") ? doc.getDouble("precioMin") : 0.0;
 
                         // Crear objeto directamente con constructor
-                        OfertaHotel oferta = new OfertaHotel(nombre, valoracion, urlFoto, departamento, precioMin);
+                        String hotelId = doc.getId();
+                        OfertaHotel oferta = new OfertaHotel(hotelId,nombre, valoracion, urlFoto, departamento, precioMin);
                         listaOfertas.add(oferta);
                     }
                     ofertasAdapter.notifyDataSetChanged();
@@ -404,7 +418,4 @@ public class HomeCliente extends AppCompatActivity {
                     Log.e("Firestore", "Error al obtener ofertas", e);
                 });
     }
-
-
-
 }
