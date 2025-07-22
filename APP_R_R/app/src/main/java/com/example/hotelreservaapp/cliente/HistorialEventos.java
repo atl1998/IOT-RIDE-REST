@@ -444,7 +444,7 @@ public class HistorialEventos extends AppCompatActivity implements HistorialItem
     }
     @Override
     public void onCheckoutClicked(HistorialItem item) {
-        mostrarDialogoCheckout(item.getIdReserva()); // ya lo tienes implementado
+        mostrarDialogoCheckout(item.getIdReserva(),item.getHotelId()); // ya lo tienes implementado
     }
 
     public String getFechaBonitaDesdeTimestamp(Timestamp timestamp) {
@@ -453,7 +453,7 @@ public class HistorialEventos extends AppCompatActivity implements HistorialItem
         SimpleDateFormat sdf = new SimpleDateFormat("d 'de' MMMM", new Locale("es", "ES"));
         return sdf.format(date);
     }
-    private void mostrarDialogoCheckout(String IdReserva) {
+    private void mostrarDialogoCheckout(String IdReserva, String idHotel) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setView(R.layout.cliente_dialog_checkout);
         AlertDialog dialog = builder.create();
@@ -474,11 +474,11 @@ public class HistorialEventos extends AppCompatActivity implements HistorialItem
             }
 
             // Llamar al método para abrir el nuevo modal "cliente_consumosextras"
-            mostrarClienteConsumoExtras(IdReserva);
+            mostrarClienteConsumoExtras(IdReserva, idHotel);
         });
     }
     // Método para mostrar el nuevo modal
-    private void mostrarClienteConsumoExtras(String IdReserva) {
+    private void mostrarClienteConsumoExtras(String IdReserva, String idHotel) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setView(R.layout.cliente_consumosextras);
         AlertDialog dialog = builder.create();
@@ -515,7 +515,7 @@ public class HistorialEventos extends AppCompatActivity implements HistorialItem
 
             // Aquí iría la validación real, por ahora mostramos mensaje:
             Toast.makeText(HistorialEventos.this, "¡Solicitud registrada correctamente!", Toast.LENGTH_SHORT).show();
-            LanzarNotificacionSolicitarCheckout();
+            LanzarNotificacionSolicitarCheckout(idHotel, userId);
             LanzarValoracion();
         });
     }
@@ -583,7 +583,7 @@ public class HistorialEventos extends AppCompatActivity implements HistorialItem
     }
 
 
-    public void LanzarNotificacionSolicitarCheckout() {
+    public void LanzarNotificacionSolicitarCheckout(String idHotel, String userIdOwo) {
         // Tipo Solicitar Checkout: 01
         String tipo = "01";
         String titulo = "Solicitar Checkout";
@@ -633,6 +633,58 @@ public class HistorialEventos extends AppCompatActivity implements HistorialItem
         if (ActivityCompat.checkSelfPermission(this, POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
             notificationManagerCompat.notify(1, builder.build());
         }
+
+        ClienteToAdminPush clienteToAdminPush = new ClienteToAdminPush();
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        // Obtener nombre completo del cliente usando userIdOwo
+        db.collection("usuarios").document(userIdOwo).get()
+                .addOnSuccessListener(clienteSnapshot -> {
+                    if (clienteSnapshot.exists()) {
+                        String nombre = clienteSnapshot.getString("nombre");
+                        String apellido = clienteSnapshot.getString("apellido");
+                        String nombreCliente = (nombre != null ? nombre : "") + " " + (apellido != null ? apellido : "");
+
+                        // Obtener el idAdminHotel desde el hotel
+                        db.collection("Hoteles").document(idHotel).get()
+                                .addOnSuccessListener(documentSnapshot -> {
+                                    if (documentSnapshot.exists()) {
+                                        String idAdminHotel = documentSnapshot.getString("idAdminHotel");
+
+                                        if (idAdminHotel != null) {
+                                            db.collection("usuarios").document(idAdminHotel).get()
+                                                    .addOnSuccessListener(userSnapshot -> {
+                                                        if (userSnapshot.exists()) {
+                                                            String fcmToken = userSnapshot.getString("fcmToken");
+                                                            Log.d("FIREBASE", "FCM Token del admin: " + fcmToken);
+                                                            clienteToAdminPush.enviarSolicitudCheckout(fcmToken, nombreCliente.trim());
+                                                        } else {
+                                                            Log.d("FIREBASE", "No se encontró el usuario con ese ID");
+                                                        }
+                                                    })
+                                                    .addOnFailureListener(e -> {
+                                                        Log.e("FIREBASE", "Error al consultar el usuario", e);
+                                                    });
+                                        } else {
+                                            Log.d("FIREBASE", "El campo idAdminHotel está vacío o es nulo");
+                                        }
+                                    } else {
+                                        Log.d("FIREBASE", "No se encontró el documento del hotel");
+                                    }
+                                })
+                                .addOnFailureListener(e -> {
+                                    Log.e("FIREBASE", "Error al obtener el documento del hotel", e);
+                                });
+
+                    } else {
+                        Log.d("FIREBASE", "No se encontró el documento del cliente");
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("FIREBASE", "Error al obtener datos del cliente", e);
+                });
+
         /*
         WorkRequest notificacionRetrasada = new OneTimeWorkRequest.Builder(NotificacionCheckoutWorker.class)
                 .setInitialDelay(15, TimeUnit.SECONDS)

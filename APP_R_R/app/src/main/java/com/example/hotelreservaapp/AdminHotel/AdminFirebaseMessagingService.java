@@ -1,18 +1,14 @@
-package com.example.hotelreservaapp.cliente;
+package com.example.hotelreservaapp.AdminHotel;
 
 import static android.Manifest.permission.POST_NOTIFICATIONS;
 
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.Build;
 import android.util.Log;
-
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
@@ -23,18 +19,18 @@ import com.example.hotelreservaapp.Objetos.Notificaciones;
 import com.example.hotelreservaapp.Objetos.NotificacionesStorageHelper;
 import com.example.hotelreservaapp.Objetos.NotificationManagerNoAPP;
 import com.example.hotelreservaapp.R;
+import com.example.hotelreservaapp.cliente.ClienteNotificaciones;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class MyFirebaseMessagingService extends FirebaseMessagingService{
-    private static final String CHANNEL_ID = "ChannelRideAndRest";
+public class AdminFirebaseMessagingService extends FirebaseMessagingService {
+    private static final String CHANNEL_ID = "ChannelRideAndRestAdmin";
 
     @Override
     public void onNewToken(String token) {
@@ -50,23 +46,23 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService{
                     .addOnSuccessListener(documentSnapshot -> {
                         if (documentSnapshot.exists()) {
                             String rol = documentSnapshot.getString("rol");
-                            if ("cliente".equals(rol)) {
+                            if ("adminHotel".equals(rol)) {
                                 Map<String, Object> data = new HashMap<>();
                                 data.put("fcmToken", token);
                                 db.collection("usuarios").document(uid)
                                         .update(data)
-                                        .addOnSuccessListener(aVoid -> Log.d("FCM", "Token guardado en Firestore para usuario rol Usuario"))
+                                        .addOnSuccessListener(aVoid -> Log.d("FCM", "Token guardado en Firestore para usuario rol adminHotel"))
                                         .addOnFailureListener(e -> Log.w("FCM", "Error guardando token", e));
                             } else {
-                                Log.d("FCM", "Usuario no tiene rol 'cliente', no guardo token");
+                                Log.d("FCM", "Usuario no tiene rol 'adminHotel', no guardo token");
                             }
                         } else {
                             Log.d("FCM", "Documento de usuario no existe");
                         }
                     })
-                    .addOnFailureListener(e -> Log.w("FCM", "Error obteniendo rol de cliente", e));
+                    .addOnFailureListener(e -> Log.w("FCM", "Error obteniendo rol de adminHotel", e));
         } else {
-            Log.d("FCM", "No hay cliente logueado, no se guarda token");
+            Log.d("FCM", "No hay adminHotel logueado, no se guarda token");
         }
     }
 
@@ -94,26 +90,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService{
         String ContentTitle=tituloAmigable;
         String ContentText=mensaje;
 
-        Context context = getApplicationContext();
-
-        // Guardar la notificación en archivo
-        NotificacionesStorageHelper storageHelper = new NotificacionesStorageHelper(context);
-
-        Notificaciones[] notificacionesGuardadas = storageHelper.leerArchivoNotificacionesDesdeSubcarpeta();
-
-        NotificationManagerNoAPP notificationManagerNoAPP = new NotificationManagerNoAPP();
-        if (notificacionesGuardadas != null && notificacionesGuardadas.length > 0) {
-            for (Notificaciones n : notificacionesGuardadas) {
-                notificationManagerNoAPP.getListaNotificaciones().add(n);
-            }
-        }
-
-        notificationManagerNoAPP.agregarNotificacion(tipo, titulo, tituloAmigable, mensaje, mensajeExtra, fecha);
-
-        Notificaciones[] arregloParaGuardar = notificationManagerNoAPP.getListaNotificaciones()
-                .toArray(new Notificaciones[0]);
-        storageHelper.guardarArchivoNotificacionesEnSubcarpeta(arregloParaGuardar);
-
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(R.drawable.logo_r_r_2)
@@ -123,29 +99,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService{
                 .setContentIntent(pendingIntent)
                 .setAutoCancel(true);
 
-        if ("02".equals(tipo)) {
+        if ("51".equals(tipo)) {
             Bitmap largeIconBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.checkout_sucessfull);
-            builder.setLargeIcon(largeIconBitmap);
-        } else if ("03".equals(tipo)) {
-            Bitmap largeIconBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.taxi);
-            builder.setLargeIcon(largeIconBitmap);
-        } else if ("04".equals(tipo)) {
-            Bitmap largeIconBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.taxi_buscando);
-            builder.setLargeIcon(largeIconBitmap);
-        } else if ("05".equals(tipo)) {
-            Bitmap largeIconBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.taxi_aceptado);
-            builder.setLargeIcon(largeIconBitmap);
-        } else if ("06".equals(tipo)) {
-            Bitmap largeIconBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.taxi_rechazado);
-            builder.setLargeIcon(largeIconBitmap);
-        } else if ("07".equals(tipo)) {
-            Bitmap largeIconBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.taxi_esperando);
-            builder.setLargeIcon(largeIconBitmap);
-        } else if ("08".equals(tipo)) {
-            Bitmap largeIconBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.taxi_encurso);
-            builder.setLargeIcon(largeIconBitmap);
-        } else if ("09".equals(tipo)) {
-            Bitmap largeIconBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.taxi_destino);
             builder.setLargeIcon(largeIconBitmap);
         }
         NotificationManagerCompat notificationManagerCompat  = NotificationManagerCompat.from(this);
@@ -153,5 +108,4 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService{
             notificationManagerCompat.notify(1, builder.build());
         }
     }
-
 }
