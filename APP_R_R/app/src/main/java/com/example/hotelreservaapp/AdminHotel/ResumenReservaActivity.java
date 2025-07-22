@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
 import com.example.hotelreservaapp.AdminHotel.Model.ReservaInicio;
+import com.example.hotelreservaapp.LogManager;
 import com.example.hotelreservaapp.R;
 import com.example.hotelreservaapp.databinding.AdminhotelActivityResumenreservaBinding;
 import com.google.firebase.auth.FirebaseAuth;
@@ -67,6 +68,59 @@ public class ResumenReservaActivity extends AppCompatActivity {
             Intent intent = new Intent(this, EditarPagoActivity.class);
             intent.putExtra(EXTRA_RESERVA, reserva);
             startActivity(intent);
+        });
+
+        binding.btnConfirmarCheckout.setOnClickListener(v -> {
+            // 1) Leer los valores actuales de la UI
+            String usuarioId = reserva.getIdUsuario();
+            String nombre    = binding.valorNombre.getText().toString();
+            db.collection("usuarios")
+                    .document(reserva.getIdUsuario())
+                    .collection("Reservas")
+                    .document(reserva.getIdreserva())
+                    .collection("PagosRealizados")
+                    .document("Pago")
+                    .get()
+                    .addOnSuccessListener(pagoSnap -> {
+                        if (!pagoSnap.exists()) return;
+                        double precioHab = pagoSnap.getDouble("PrecioHabitacion");
+                        double servExt   = pagoSnap.getDouble("ServiciosExtras");
+                        double cargos    = pagoSnap.getDouble("CargosPorDanhos");
+
+                        // 2) Preparar los datos del reporte
+                        Map<String, Object> reporte = new HashMap<>();
+                        reporte.put("usuarioId", usuarioId);
+                        reporte.put("nombre", nombre);
+                        reporte.put("totalGastado", precioHab + servExt + cargos);
+                        reporte.put("creadoEn", FieldValue.serverTimestamp());
+
+                        // 3) Guardar en ReporteUsuarios con ID = reservaId
+                        String reservaId = reserva.getIdreserva();
+                        db.collection("reporteCostosUsuario")
+                                .document(reservaId)
+                                .set(reporte)
+                                .addOnSuccessListener(a ->
+                                        Toast.makeText(this, "Reporte creado", Toast.LENGTH_SHORT).show()
+                                )
+                                .addOnFailureListener(e ->
+                                        Toast.makeText(this, "Error al crear reporte: " + e.getMessage(),
+                                                Toast.LENGTH_LONG).show()
+                                );
+
+                        db.collection("usuarios").document(uid).get()
+                                .addOnSuccessListener(doc -> {
+                                    if (doc.exists()) {
+                                        String nombre1 = doc.getString("nombre");
+                                        String apellido1 = doc.getString("apellido");
+                                        String nombreCompleto = nombre1 + apellido1;
+                                        LogManager.registrarLogRegistro(
+                                                nombreCompleto,
+                                                "Checkout validado",
+                                                "Se ha validado el checkout para el cliente "
+                                        );                              }
+                                }).addOnFailureListener(e -> Log.e("ResumenReserva", "Error cargando usuario", e));
+                    }).addOnFailureListener(e -> Log.e("ResumenReserva", "Error cargando pago", e));
+            finish();
         });
 
         // 4) Primera carga de datos
@@ -225,5 +279,16 @@ public class ResumenReservaActivity extends AppCompatActivity {
                     binding.valorPrecioTotal     .setText("S/. " + (precioHab + servExt + cargos));
                 })
                 .addOnFailureListener(e -> Log.e("ResumenReserva", "Error cargando pago", e));
+    }
+
+    // Helper para quitar “S/. ” y parsear a double
+    private double parseMonto(String texto) {
+        try {
+            // Remover todo lo que no sea dígito o punto
+            String limpio = texto.replaceAll("[^0-9.]", "");
+            return Double.parseDouble(limpio);
+        } catch (Exception e) {
+            return 0.0;
+        }
     }
 }

@@ -35,6 +35,9 @@
             android:name=".cliente.TaxistaCliente.RequestTaxi"
             android:exported="false" />
         <activity
+            android:name=".cliente.TaxistaCliente.QrClienteActivity"
+            android:exported="false" />
+        <activity
             android:name=".AdminHotel.DetallesChatActivity"
             android:exported="false" />
         <activity

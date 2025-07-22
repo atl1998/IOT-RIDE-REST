@@ -89,7 +89,7 @@ public class ReservaAdapter extends RecyclerView.Adapter<ReservaAdapter.ReservaV
                                             .addOnSuccessListener(user -> {
                                                 String nombre = user.getString("nombre");
                                                 String apellido = user.getString("apellido");
-                                                String url = user.getString("urlFotoPerfil");
+                                                String url = user.getString("UrlFotoPerfil");
                                                 r.setNombreCompleto(nombre + " " + apellido);
                                                 r.setUrlFoto(url);
                                                 System.out.println("ReservaAdapter – Nombre completo seteado: " + r.getNombreCompleto());
