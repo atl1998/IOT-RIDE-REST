@@ -37,7 +37,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"/>
 
-            <!-- Notificaciones -->
+            <!-- Notificaciones
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/NotificacionesAdminHotel"
                 android:layout_width="48dp"
@@ -53,7 +53,7 @@
                 android:contentDescription="Notificaciones"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"/>
+                app:layout_constraintBottom_toBottomOf="parent"/>-->
 
 
 
