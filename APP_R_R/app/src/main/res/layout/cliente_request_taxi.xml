@@ -53,9 +53,7 @@
                 android:backgroundTint="@color/negro"
                 app:cornerRadius="16dp"
                 app:iconGravity="textStart"
-                app:iconPadding="8dp"
-                app:insetLeft="0dp"
-                app:insetRight="0dp"/>
+                app:iconPadding="8dp" />
 
 
         </LinearLayout>
