@@ -3,10 +3,11 @@ package com.example.hotelreservaapp.AdminHotel.Model;
 
 import com.google.firebase.firestore.IgnoreExtraProperties;
 
+import java.io.Serializable;
 import java.util.Date;
 
 @IgnoreExtraProperties
-public class ReservaInicio {
+public class ReservaInicio implements Serializable {
     private String idusuario;
     private Date fechainiciocheckin;
     private String idreserva;

@@ -96,6 +96,7 @@ public class ClienteServicioTaxi extends AppCompatActivity implements OnMapReady
     private String idHotel;
     private String idReserva;
     private FrameLayout bottomSheet;
+    private FrameLayout loadingContainer;
 
 
     @Override
@@ -215,7 +216,38 @@ public class ClienteServicioTaxi extends AppCompatActivity implements OnMapReady
             solicitud.setIdHotel(idHotel);
             solicitud.setIdReserva(idReserva);
 
+
             db.collection("servicios_taxi")
+                    .add(solicitud)
+                    .addOnSuccessListener(docRef -> {
+                        String serviceId = docRef.getId();
+                        Toast.makeText(this, "Solicitud enviada", Toast.LENGTH_SHORT).show();
+
+                        // Marcamos la reserva como "En progreso"
+                        db.collection("usuarios")
+                                .document(usuarioActual.getUid())
+                                .collection("Reservas")
+                                .document(idReserva)
+                                .update("solicitarTaxista", "En progreso");
+
+                        // Lanzar la pantalla de carga
+                        Intent i = new Intent(this, RequestTaxi.class);
+                        i.putExtra("serviceId",    serviceId);
+                        i.putExtra("nombreCliente",   nombreCliente);
+                        i.putExtra("telefonoCliente", telefonoCliente);
+                        i.putExtra("fotoCliente",     fotoUrlCliente);
+                        i.putExtra("latOrigen",       originLatLng.latitude);
+                        i.putExtra("lngOrigen",       originLatLng.longitude);
+                        i.putExtra("latDestino",      markerDestino.getPosition().latitude);
+                        i.putExtra("lngDestino",      markerDestino.getPosition().longitude);
+                        startActivity(i);
+                        finish();
+                    })
+                    .addOnFailureListener(e -> {
+                        Toast.makeText(this, "Error enviando solicitud", Toast.LENGTH_SHORT).show();
+                    });
+
+           /*  db.collection("servicios_taxi")
                     .add(solicitud)
                     .addOnSuccessListener(docRef -> {
                         Toast.makeText(this, "Solicitud enviada", Toast.LENGTH_SHORT).show();
@@ -237,7 +269,7 @@ public class ClienteServicioTaxi extends AppCompatActivity implements OnMapReady
                     })
                     .addOnFailureListener(e -> {
                         Toast.makeText(this, "Error enviando solicitud", Toast.LENGTH_SHORT).show();
-                    });
+                    });*/
         });
     }
 

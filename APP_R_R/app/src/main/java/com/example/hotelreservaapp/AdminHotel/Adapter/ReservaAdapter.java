@@ -32,8 +32,16 @@ public class ReservaAdapter extends RecyclerView.Adapter<ReservaAdapter.ReservaV
     private List<ReservaInicio> reservas;
     private Context context;
 
-    public ReservaAdapter(Context context) {
+    // ① Define la interfaz
+    public interface OnItemClickListener {
+        void onItemClick(ReservaInicio reserva);
+    }
+
+    private OnItemClickListener listener;
+
+    public ReservaAdapter(Context context, OnItemClickListener listener) {
         this.context = context;
+        this.listener = listener;
         this.reservas = new ArrayList<>();
         cargarReservas();
     }
@@ -115,7 +123,7 @@ public class ReservaAdapter extends RecyclerView.Adapter<ReservaAdapter.ReservaV
     public ReservaViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.adminhotel_item_inicio    , parent, false);
-        return new ReservaViewHolder(view);
+        return new ReservaViewHolder(view, listener);
     }
 
     @Override
@@ -124,6 +132,8 @@ public class ReservaAdapter extends RecyclerView.Adapter<ReservaAdapter.ReservaV
         holder.tvNombre.setText(r.getNombreCompleto());
         String fecha = DateFormat.getDateInstance().format(r.getFechaInicioCheckIn());
         holder.tvFecha.setText("Check In: " + fecha);
+
+        holder.itemView.setTag(r);
 
         // Cargar imagen desde URL con Glide
         String imageUrl = r.getUrlFoto();
@@ -149,12 +159,21 @@ public class ReservaAdapter extends RecyclerView.Adapter<ReservaAdapter.ReservaV
         TextView tvNombre, tvFecha;
         ImageView ivFoto;
 
-        ReservaViewHolder(@NonNull View itemView) {
+        ReservaViewHolder(@NonNull View itemView, OnItemClickListener listener) {
             super(itemView);
             tvNombre = itemView.findViewById(R.id.tvNombre);
             tvFecha = itemView.findViewById(R.id.tvFecha);
             ivFoto = itemView.findViewById(R.id.ivFoto);
+
+            // ③ Asocia el click a todo el itemView
+            itemView.setOnClickListener(v -> {
+                int pos = getAdapterPosition();
+                if (pos != RecyclerView.NO_POSITION) {
+                    listener.onItemClick((ReservaInicio) v.getTag());
+                }
+            });
         }
+
     }
 
     // Wrapper para mapear el array de reservas en Firestore

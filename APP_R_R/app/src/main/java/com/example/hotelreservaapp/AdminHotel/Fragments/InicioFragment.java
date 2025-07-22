@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import com.example.hotelreservaapp.AdminHotel.Adapter.ReservaAdapter;
 import com.example.hotelreservaapp.AdminHotel.Model.ReservaInicio;
 import com.example.hotelreservaapp.AdminHotel.NotificacionesActivity;
+import com.example.hotelreservaapp.AdminHotel.ResumenReservaActivity;
 import com.example.hotelreservaapp.R;
 import com.example.hotelreservaapp.adapter.Adminhotel_UsuarioAdapter;
 import com.example.hotelreservaapp.databinding.AdminhotelFragmentInicioBinding;
@@ -52,8 +53,13 @@ public class InicioFragment extends Fragment {
         recyclerView = binding.recyclerUsuarios; // ó el id correcto de tu RV
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        //  ⇨ Aquí solo pasamos el Context, el Adapter se auto-carga
-        adapter = new ReservaAdapter(getContext());
+        adapter = new ReservaAdapter(getContext(), reserva -> {
+            // ④ Este código se ejecuta al hacer click en un item
+            Intent i = new Intent(getContext(), ResumenReservaActivity.class);
+            // Si usas Serializable:
+            i.putExtra(ResumenReservaActivity.EXTRA_RESERVA, reserva);
+            startActivity(i);
+        });
         recyclerView.setAdapter(adapter);
 
         return view;
