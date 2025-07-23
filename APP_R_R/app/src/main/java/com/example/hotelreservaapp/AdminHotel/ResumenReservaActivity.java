@@ -97,6 +97,7 @@ public class ResumenReservaActivity extends AppCompatActivity {
                         reporte.put("nombre", nombre);
                         reporte.put("totalGastado", precioHab + servExt + cargos);
                         reporte.put("creadoEn", FieldValue.serverTimestamp());
+                        reporte.put("idAdminHotel", uid);
 
                         // 3) Guardar en ReporteUsuarios con ID = reservaId
                         String reservaId = reserva.getIdreserva();
@@ -194,7 +195,7 @@ public class ResumenReservaActivity extends AppCompatActivity {
                     }).addOnFailureListener(e -> Log.e("ResumenReserva", "Error cargando pago", e));
             finish();
         });
-
+        binding.btnConfirmarCheckout.setEnabled(false);
         // 4) Primera carga de datos
         refreshAll();
     }
@@ -322,6 +323,8 @@ public class ResumenReservaActivity extends AppCompatActivity {
                     if (!resDoc.exists()) return;
                     Date ini = resDoc.getDate("fechaIni");
                     Date fin = resDoc.getDate("fechaFin");
+                    Boolean estado = resDoc.getBoolean("checkoutSolicitado");
+                    binding.btnConfirmarCheckout.setEnabled(Boolean.TRUE.equals(estado));
                     SimpleDateFormat f1 = new SimpleDateFormat("d MMM", new Locale("es","ES"));
                     SimpleDateFormat f2 = new SimpleDateFormat("d MMM yyyy", new Locale("es","ES"));
                     binding.valorFecha.setText(f1.format(ini) + " – " + f2.format(fin));

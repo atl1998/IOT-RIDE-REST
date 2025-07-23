@@ -4,85 +4,50 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.bumptech.glide.Glide;
+import com.example.hotelreservaapp.AdminHotel.Model.ReporteUsuario;
 import com.example.hotelreservaapp.R;
-import com.example.hotelreservaapp.model.UsuarioListaSuperAdmin;
-
-import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Locale;
 
-public class ReporteUsuarioAdapter extends RecyclerView.Adapter<ReporteUsuarioAdapter.MyViewHolder> {
-    private List<UsuarioListaSuperAdmin> itemList;
+public class ReporteUsuarioAdapter extends RecyclerView.Adapter<ReporteUsuarioAdapter.ViewHolder> {
 
-    Context context;
+    private final List<ReporteUsuario> lista;
+    private final SimpleDateFormat dateFmt =
+            new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
 
-    // Constructor del adapter
-    public ReporteUsuarioAdapter(Context context, List<UsuarioListaSuperAdmin> itemList) {
-        this.context = context;
-        this.itemList = itemList;
+    public ReporteUsuarioAdapter(List<ReporteUsuario> lista) {
+        this.lista = lista;
     }
 
-    @Override
-    public ReporteUsuarioAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        // Inflar el layout de cada item (puede ser un TextView o un CardView)
-        View view = LayoutInflater.from(parent.getContext())
+    @NonNull @Override
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.adminhotel_item_reporte_usuario, parent, false);
-        return new ReporteUsuarioAdapter.MyViewHolder(view);
+        return new ViewHolder(v);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ReporteUsuarioAdapter.MyViewHolder holder, int position) {
-        // Asignar el valor del item a la vista correspondiente
-        UsuarioListaSuperAdmin usuario = itemList.get(position);
-        holder.tvNombre.setText(usuario.getNombre());
-        holder.tvCheck.setText(usuario.getCorreo());
-        holder.tvFecha.setText(usuario.getRol());
-        String nombreArchivo = usuario.getUrlFoto(); // ej. "image1.png"
-        String rutaAsset = "file:///android_asset/" + nombreArchivo;
-
-        try {
-            // Intenta abrir la imagen para ver si existe
-            context.getAssets().open(nombreArchivo);
-
-            // Si no lanza excepción, la imagen existe
-            Glide.with(context)
-                    .load(rutaAsset)
-                    .placeholder(R.drawable.default_user_icon)
-                    .circleCrop()
-                    .into(holder.ivFoto);
-
-        } catch (IOException e) {
-            // Si falla (no existe), carga imagen por defecto
-            Glide.with(context)
-                    .load(R.drawable.default_user_icon)
-                    .circleCrop()
-                    .into(holder.ivFoto);
-        }
+    public void onBindViewHolder(@NonNull ViewHolder h, int pos) {
+        ReporteUsuario r = lista.get(pos);
+        h.tvNombre.setText(r.getNombre());
+        h.tvTotal .setText(String.format("S/. %.2f", r.getTotalGastado()));
+        h.tvFecha .setText(dateFmt.format(r.getCreadoEn()));
     }
 
     @Override
-    public int getItemCount() {
-        return itemList.size();
-    }
+    public int getItemCount() { return lista.size(); }
 
-    // ViewHolder para cada item
-    public static class MyViewHolder extends RecyclerView.ViewHolder {
-        TextView tvNombre, tvCheck, tvFecha;
-        ImageView ivFoto;
-
-        public MyViewHolder(@NonNull View itemView) {
+    static class ViewHolder extends RecyclerView.ViewHolder {
+        TextView tvNombre, tvTotal, tvFecha;
+        ViewHolder(@NonNull View itemView) {
             super(itemView);
             tvNombre = itemView.findViewById(R.id.tvNombre);
-            tvCheck = itemView.findViewById(R.id.tvCheck);
-            tvFecha = itemView.findViewById(R.id.tvFecha);
-            ivFoto = itemView.findViewById(R.id.tvFoto);
+            tvTotal  = itemView.findViewById(R.id.tvCosto);
+            tvFecha  = itemView.findViewById(R.id.tvCheck);
         }
     }
 }
-

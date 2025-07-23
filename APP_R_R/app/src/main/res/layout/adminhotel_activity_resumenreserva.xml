@@ -684,10 +684,10 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
-                        android:backgroundTint="@color/dorado"
+                        app:backgroundTint="@color/button_bg_tint"
                         android:text="Confirmar Check out"
                         android:textColor="#FFFFFF"
-                        android:enabled="true"/>
+                        android:enabled="false"/>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 

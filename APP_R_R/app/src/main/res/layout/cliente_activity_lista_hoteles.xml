@@ -58,95 +58,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <!-- Categorías: ScrollView horizontal -->
-        <HorizontalScrollView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:overScrollMode="never"
-            android:scrollbars="none"
-            android:background="@color/amarillo_dorado"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp">
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:paddingStart="12dp"
-                android:paddingEnd="12dp">
-
-                <!-- Botón Favoritos -->
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnFavoritos"
-                    style="@style/Widget.Material3.Button.OutlinedButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Favoritos"
-                    android:textColor="@color/marron_oscuro"
-                    app:icon="@drawable/outline_favorite_border_24"
-                    app:iconTint="@color/marron_oscuro"
-                    app:iconGravity="textStart"
-                    app:iconPadding="8dp"
-                    app:backgroundTint="@color/transparente"
-                    app:strokeColor="@color/marron_oscuro"
-                    app:strokeWidth="1dp"
-                    app:cornerRadius="30dp"
-                    android:layout_marginEnd="8dp"/>
-
-                <!-- Botón Reservas -->
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnAlojamientos"
-                    style="@style/Widget.Material3.Button.OutlinedButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Alojamientos"
-                    android:textColor="@color/marron_oscuro"
-                    app:icon="@drawable/outline_bed_24"
-                    app:iconTint="@color/marron_oscuro"
-                    app:iconGravity="textStart"
-                    app:iconPadding="8dp"
-                    app:backgroundTint="@color/transparente"
-                    app:strokeColor="@color/marron_oscuro"
-                    app:strokeWidth="1dp"
-                    app:cornerRadius="30dp"
-                    android:layout_marginEnd="8dp"/>
-
-                <!-- Botón Historial -->
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnHistorial"
-                    style="@style/Widget.Material3.Button.OutlinedButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Historial"
-                    android:textColor="@color/marron_oscuro"
-                    app:icon="@drawable/outline_history_24"
-                    app:iconTint="@color/marron_oscuro"
-                    app:iconGravity="textStart"
-                    app:iconPadding="8dp"
-                    app:backgroundTint="@color/transparente"
-                    app:strokeColor="@color/marron_oscuro"
-                    app:strokeWidth="1dp"
-                    app:cornerRadius="30dp" />
-
-                <!-- Botón taxi -->
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btntaxi"
-                    style="@style/Widget.Material3.Button.OutlinedButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Taxi"
-                    android:textColor="@color/marron_oscuro"
-                    app:icon="@drawable/local_taxi_24dp_e3e3e3_fill0_wght400_grad0_opsz24"
-                    app:iconTint="@color/marron_oscuro"
-                    app:iconGravity="textStart"
-                    app:iconPadding="8dp"
-                    app:backgroundTint="@color/transparente"
-                    app:strokeColor="@color/marron_oscuro"
-                    app:strokeWidth="1dp"
-                    app:cornerRadius="30dp" />
-            </LinearLayout>
-        </HorizontalScrollView>
     </LinearLayout>
     <!-- Línea negra abajo -->
     <View
@@ -204,7 +116,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="4dp"
             android:layout_weight="1"
-            android:text="Ordenar"
+            android:text="Ordenar por"
             android:textAllCaps="false"
             android:textColor="@color/black"
             app:icon="@drawable/sort_24dp_black"
@@ -226,6 +138,8 @@
             app:iconGravity="start"
             app:iconTint="@color/black"
             app:strokeColor="#E0E0E0" />
+
+
     </LinearLayout>
 
 

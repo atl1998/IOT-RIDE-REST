@@ -94,26 +94,22 @@ public class BuscadorDestino extends AppCompatActivity {
             try {
                 JSONObject ciudad = datosCiudades.get(position);
                 JSONObject address = ciudad.optJSONObject("address");
-                String tipo = ciudad.optString("type", "");  // Ej: city, state, administrative...
+                String tipo = ciudad.optString("addresstype", "");  // <- USAMOS addresstype
 
                 String nombreNormalizado = "";
 
-                // Determinar qué campo usar como nombre según el tipo
-                if (tipo.equals("state")) {
-                    nombreNormalizado = address != null ? address.optString("state", "") : "";
-                } else if (tipo.equals("region") || tipo.equals("administrative")) {
+                if (tipo.equals("region")) {
                     nombreNormalizado = address != null ? address.optString("region", "") : "";
                     if (nombreNormalizado.isEmpty()) {
-                        nombreNormalizado = address != null ? address.optString("state_district", "") : "";
+                        nombreNormalizado = address != null ? address.optString("state", "") : "";
                     }
-                } else if (tipo.equals("city") || tipo.equals("town") || tipo.equals("village")) {
+                } else if (tipo.equals("city") || tipo.equals("town")) {
                     nombreNormalizado = address != null ? address.optString("city", "") : "";
                     if (nombreNormalizado.isEmpty()) {
                         nombreNormalizado = ciudad.optString("display_name", "").split(",")[0].trim();
                     }
                 }
 
-                // Verificación final
                 if (nombreNormalizado.isEmpty()) {
                     Toast.makeText(this, "No se pudo obtener un nombre válido", Toast.LENGTH_SHORT).show();
                     return;
@@ -121,8 +117,8 @@ public class BuscadorDestino extends AppCompatActivity {
 
                 // Enviar datos a HomeCliente
                 Intent resultIntent = new Intent();
-                resultIntent.putExtra("name", nombreNormalizado);  // nombre limpio
-                resultIntent.putExtra("tipo", tipo);              // tipo: city, state, etc.
+                resultIntent.putExtra("name", nombreNormalizado);
+                resultIntent.putExtra("tipo", tipo);  // ← asegúrate de pasar addresstype
                 resultIntent.putExtra("nombreCompleto", ciudad.optString("display_name", ""));
                 setResult(Activity.RESULT_OK, resultIntent);
                 finish();
@@ -132,6 +128,7 @@ public class BuscadorDestino extends AppCompatActivity {
             }
         });
 
+
     }
 
     private void buscarCiudadesNominatim(String query) {
@@ -140,7 +137,7 @@ public class BuscadorDestino extends AppCompatActivity {
 
         Request request = new Request.Builder()
                 .url(url)
-                .header("User-Agent", "RideAndRest/1.0 (a20206466@pucp.edu.pe)") // obligatorio para Nominatim
+                .header("User-Agent", "RideAndRest/1.0 (a20206466@pucp.edu.pe)")
                 .get()
                 .build();
 
@@ -164,25 +161,14 @@ public class BuscadorDestino extends AppCompatActivity {
 
                         for (int i = 0; i < data.length(); i++) {
                             JSONObject lugar = data.getJSONObject(i);
-                            String displayName = lugar.getString("display_name");
                             String tipo = lugar.optString("addresstype", "");
 
-                            List<String> tiposValidos = Arrays.asList("city","region","town");
-
-                            if (tiposValidos.contains(tipo)) {
-
-                                JSONObject address = lugar.optJSONObject("address");
-                                // ✅ Filtro: mostrar solo si tiene "region" explícito en address
-                                if (address != null && address.has("region")) {
-                                    String tipoLegible = traducirTipoLugar(tipo);
-                                    nombresCiudades.add(displayName + " (" + tipoLegible + ")");
-                                    datosCiudades.add(lugar);
-                                }
-
+                            // Solo agregar si es addresstype=region
+                            if (tipo.equals("region")) {
+                                String displayName = lugar.optString("display_name", "");
+                                nombresCiudades.add(displayName + " (Departamento)");
+                                datosCiudades.add(lugar);
                             }
-
-
-
                         }
 
                         runOnUiThread(() -> adapter.notifyDataSetChanged());
@@ -196,6 +182,8 @@ public class BuscadorDestino extends AppCompatActivity {
             }
         });
     }
+
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

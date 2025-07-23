@@ -92,41 +92,24 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <com.google.android.material.textfield.TextInputLayout
+
+        <!-- Campo de Fecha -->
+        <EditText
+            android:id="@+id/etFecha"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Orden de llegada"
-            android:textColorHint="@color/dorado_oscurobajo"
-            android:layout_marginTop="15dp"
-            app:endIconMode="dropdown_menu">
+            android:layout_height="56dp"
+            android:layout_marginBottom="12dp"
+            android:drawableStart="@drawable/calendar_month"
+            android:drawablePadding="12dp"
+            android:focusable="false"
+            android:hint="Seleccione las fechas"
+            android:textColorHint="@color/hint_color"
+            android:textSize="16sp"
+            android:inputType="none"
+            android:background="@drawable/edittext_background"
+            android:padding="16dp"
+            android:elevation="2dp" />
 
-            <AutoCompleteTextView
-                android:id="@+id/spinnerHotel"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:paddingStart="12dp"
-                android:inputType="none"/>
-        </com.google.android.material.textfield.TextInputLayout>
-
-
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:endIconMode="custom"
-            android:layout_marginTop="15dp"
-            app:endIconDrawable="@drawable/calendar_icon">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etFecha"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="none"
-                android:text="Fecha"
-                android:textColor="@color/dorado_oscurobajo"
-                android:focusable="false" />
-        </com.google.android.material.textfield.TextInputLayout>
-        <!--
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnBuscar"
             android:layout_width="wrap_content"
@@ -136,8 +119,8 @@
             android:layout_marginTop="12dp"
             android:textColor="@color/black"
             android:backgroundTint="@color/dorado_claro"
-            app:cornerRadius="8dp" /> -->
-        <LinearLayout
+            app:cornerRadius="8dp" />
+        <!--<LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -168,7 +151,7 @@
                 android:backgroundTint="@color/dorado_claro"
                 app:cornerRadius="8dp"
                 android:layout_marginStart="8dp" />
-        </LinearLayout>
+        </LinearLayout>-->
 
     </LinearLayout>
 
