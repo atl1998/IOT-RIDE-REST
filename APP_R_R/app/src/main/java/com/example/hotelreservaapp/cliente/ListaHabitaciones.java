@@ -213,8 +213,8 @@ public class ListaHabitaciones extends AppCompatActivity {
 
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             String id = document.getId();  // ID del documento
-                            String nombreHab = document.getString("nombreHabitacion");
-                            Double precioHab = document.getDouble("precioPorNoche");
+                            String nombreHab = document.getString("tipo");
+                            Double precioHab = document.getDouble("precio");
                             Long cantHabLong = document.getLong("cantidadDisponible");
 
                             int cantHab = cantHabLong != null ? cantHabLong.intValue() : 0;
