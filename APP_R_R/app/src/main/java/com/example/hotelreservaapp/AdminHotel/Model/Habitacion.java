@@ -8,6 +8,8 @@ public class Habitacion {
     private String capacidad;
     private String url;
 
+    private int cantidadDisponible = 5;
+
 
     public Habitacion(String tipo, double precio, double tamano, String capacidad,  String url) {
         this.setTipo(tipo);
@@ -49,4 +51,11 @@ public class Habitacion {
         this.url = url;
     }
 
+    public int getCantidadDisponible() {
+        return cantidadDisponible;
+    }
+
+    public void setCantidadDisponible(int cantidadDisponible) {
+        this.cantidadDisponible = cantidadDisponible;
+    }
 }
